@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html.dark body {
+    @apply bg-black text-[#F5F5F5];
+  }
+
+  html:not(.dark) body {
+    @apply bg-white text-[#0A0A0A];
+  }
+}
+
+@layer components {
+  .font-brand {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .font-wordmark {
+    font-family: 'Ethnocentric Rg', 'Ethnocentric', sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    text-transform: none;
+  }
+
+  .eyebrow {
+    @apply font-sans text-[11px] font-medium uppercase tracking-eyebrow text-accent;
+  }
+
+  .halite-card {
+    @apply rounded-2xl border;
+  }
+
+  html.dark .halite-card {
+    @apply border-border-dark bg-surface-dark;
+  }
+
+  html:not(.dark) .halite-card {
+    @apply border-border-light-alt bg-surface-light;
+  }
+
+  .halite-input {
+    @apply w-full rounded-md border px-4 py-2.5 font-sans text-sm outline-none transition;
+  }
+
+  html.dark .halite-input {
+    @apply border-border-dark bg-surface-dark-alt text-[#F5F5F5] placeholder-[#555555] focus:border-accent;
+  }
+
+  html:not(.dark) .halite-input {
+    @apply border-border-light bg-white text-[#0A0A0A] placeholder-[#888888] focus:border-accent;
+  }
+
+  .halite-btn {
+    @apply inline-flex items-center justify-center gap-2 font-sans text-sm font-medium transition;
+  }
+
+  .halite-btn-primary {
+    @apply halite-btn rounded-md bg-accent px-4 py-2.5 text-black hover:bg-accent-hover;
+  }
+
+  .halite-btn-ghost {
+    @apply halite-btn rounded-md border;
+  }
+
+  html.dark .halite-btn-ghost {
+    @apply border-[#333333] text-[#F5F5F5] hover:border-accent hover:text-accent;
+  }
+
+  html:not(.dark) .halite-btn-ghost {
+    @apply border-[#BBBBBB] text-[#0A0A0A] hover:border-accent hover:text-accent;
+  }
+
+  .halite-btn-outline {
+    @apply halite-btn rounded-md border border-accent px-[18px] py-2 text-accent hover:bg-accent hover:text-black;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .status-active {
+    @apply status-badge bg-accent/15 text-accent ring-1 ring-accent/30;
+  }
+
+  .status-needs_review {
+    @apply status-badge bg-[#E8650A]/20 text-[#FF7A1A] ring-1 ring-[#E8650A]/40;
+  }
+
+  .status-invalidated {
+    @apply status-badge bg-red-500/15 text-red-400 ring-1 ring-red-500/30;
+  }
+
+  .text-primary {
+    @apply text-[#F5F5F5];
+  }
+
+  html:not(.dark) .text-primary {
+    @apply text-[#0A0A0A];
+  }
+
+  .text-secondary {
+    @apply text-[#888888];
+  }
+
+  html:not(.dark) .text-secondary {
+    @apply text-[#555555];
+  }
+
+  .border-theme {
+    @apply border-border-dark;
+  }
+
+  html:not(.dark) .border-theme {
+    @apply border-border-light-alt;
+  }
+
+  .bg-page {
+    @apply bg-black;
+  }
+
+  html:not(.dark) .bg-page {
+    @apply bg-white;
+  }
+
+  .bg-surface {
+    @apply bg-surface-dark;
+  }
+
+  html:not(.dark) .bg-surface {
+    @apply bg-surface-light;
+  }
+
+  .feature-card {
+    @apply halite-card p-8 transition duration-200 ease-in-out hover:-translate-y-1 hover:border-accent;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+  border-radius: 4px;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #cccccc;
+  border-radius: 4px;
+}
