@@ -69,7 +69,13 @@ app = FastAPI(title="Halite API", description="Living knowledge graph for softwa
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=[
+        settings.FRONTEND_URL,
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -82,8 +88,7 @@ app.include_router(webhooks.router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
 
 
-@app.get("/health")
-def health():
+def _health_payload():
     use_memory = settings.DEMO_MODE or not settings.neo4j_configured
     is_memory = hasattr(getattr(app.state, "graph_repo", None), "is_memory") and app.state.graph_repo.is_memory
     return {
@@ -94,3 +99,13 @@ def health():
         "using_memory_graph": is_memory,
         "groq_configured": settings.groq_configured,
     }
+
+
+@app.get("/health")
+def health():
+    return _health_payload()
+
+
+@app.get("/api/health")
+def api_health():
+    return _health_payload()

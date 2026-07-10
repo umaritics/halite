@@ -39,11 +39,7 @@ export const alertsAPI = {
 };
 
 export const healthAPI = {
-  check: () => {
-    const apiBase = import.meta.env.VITE_API_URL || '/api';
-    const healthUrl = apiBase.replace(/\/api\/?$/, '/health');
-    return axios.get(healthUrl);
-  },
+  check: () => api.get('/health'),
 };
 
 export default api;
