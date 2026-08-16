@@ -111,10 +111,15 @@ class MemoryGraphStore:
         return self._add_node("Document", data)
 
     def list_decisions(self, status: str | None = None) -> list[dict]:
-        decisions = self._find_nodes("Component" if False else "Decision")
+        decisions = self._find_nodes("Decision")
         if status:
             decisions = [d for d in decisions if d.get("status") == status]
-        return sorted(decisions, key=lambda d: d.get("created_at", ""), reverse=True)
+        enriched = []
+        for d in decisions:
+            full = self._decision_with_context(d["id"])
+            full["component_names"] = [c.get("name") for c in full.get("components") or [] if c.get("name")]
+            enriched.append(full)
+        return sorted(enriched, key=lambda d: d.get("created_at", ""), reverse=True)
 
     def get_decision(self, decision_id: str) -> dict | None:
         node = self._get_node(decision_id)
@@ -190,21 +195,24 @@ class MemoryGraphStore:
         components = []
         decisions = []
         seen_c, seen_d = set(), set()
-        for entity in entities:
-            el = entity.lower()
+        for entity in entities[:15]:
+            el = entity.lower().strip()
+            if len(el) < 2:
+                continue
             for node in self._find_nodes("Component"):
                 if node["id"] in seen_c:
                     continue
-                if el in node.get("name", "").lower() or el in node.get("file_path", "").lower():
+                if el in node.get("name", "").lower() or el in (node.get("file_path") or "").lower():
                     components.append(node)
                     seen_c.add(node["id"])
             for node in self._find_nodes("Decision"):
                 if node["id"] in seen_d:
                     continue
-                if el in node.get("title", "").lower() or el in node.get("reasoning", "").lower():
-                    decisions.append(node)
+                if el in node.get("title", "").lower() or el in (node.get("reasoning") or "").lower():
+                    full = self._decision_with_context(node["id"])
+                    decisions.append(full)
                     seen_d.add(node["id"])
-        return components[:5], decisions[:5]
+        return components[:20], decisions[:20]
 
     def get_neighborhood(self, node_id: str) -> dict:
         node = self._get_node(node_id)
@@ -242,6 +250,9 @@ class MemoryGraphStore:
                     "decision": decision,
                     "commit": commit,
                     "component": component,
+                    "flagged_at": decision.get("updated_at")
+                    or (commit.get("timestamp") if commit else None)
+                    or decision.get("created_at"),
                 }
             )
         return alerts

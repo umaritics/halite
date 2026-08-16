@@ -1,5 +1,20 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
+function formatAlertDate(alert) {
+  const raw =
+    alert.flagged_at ||
+    alert.commit?.timestamp ||
+    alert.decision?.updated_at ||
+    alert.decision?.created_at;
+  if (!raw || typeof raw !== 'string') return 'Date unknown';
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return raw;
+  return d.toLocaleString(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  });
+}
+
 export default function AlertBanner({ alert, onView, onAcknowledge, onInvalidate }) {
   const { decision, commit, component } = alert;
 
@@ -11,6 +26,7 @@ export default function AlertBanner({ alert, onView, onAcknowledge, onInvalidate
         </div>
         <div className="flex-1">
           <h3 className="font-brand text-primary">{decision.title}</h3>
+          <p className="mt-1 font-sans text-xs text-[#888888]">{formatAlertDate(alert)}</p>
           <p className="mt-1 line-clamp-2 font-sans text-sm text-secondary">{decision.reasoning}</p>
 
           <div className="mt-3 space-y-1 font-sans text-xs text-[#555555]">

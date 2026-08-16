@@ -10,6 +10,25 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _iso(value) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, str) and value:
+        return value
+    iso = getattr(value, "isoformat", None)
+    if callable(iso):
+        try:
+            return iso()
+        except Exception:
+            pass
+    text = str(value)
+    if text.startswith("{") or "_DateTime__" in text:
+        return None
+    return text or None
+
+
 class GraphRepository:
     """Unified graph access layer — works with MemoryGraphStore or Neo4jClient."""
 
@@ -225,28 +244,41 @@ class GraphRepository:
         if self.is_memory:
             return self.store.search_entities(entities)
         components, decisions = [], []
-        for entity in entities[:5]:
+        seen_c, seen_d = set(), set()
+        for entity in entities[:15]:
+            if not entity or len(entity.strip()) < 2:
+                continue
             crows = self.store.run_query(
                 """
                 MATCH (c:Component)
                 WHERE toLower(c.name) CONTAINS toLower($name)
                    OR toLower(c.file_path) CONTAINS toLower($name)
-                RETURN c LIMIT 5
+                RETURN c LIMIT 8
                 """,
                 {"name": entity},
             )
-            components.extend([dict(r["c"]) for r in crows])
+            for r in crows:
+                node = dict(r["c"])
+                if node.get("id") not in seen_c:
+                    seen_c.add(node["id"])
+                    components.append(node)
             drows = self.store.run_query(
                 """
                 MATCH (d:Decision)
                 WHERE toLower(d.title) CONTAINS toLower($name)
-                   OR toLower(d.reasoning) CONTAINS toLower($name)
-                RETURN d LIMIT 5
+                   OR toLower(coalesce(d.reasoning, '')) CONTAINS toLower($name)
+                OPTIONAL MATCH (d)-[:ABOUT]->(c:Component)
+                RETURN d, collect(DISTINCT c.name) as component_names
+                LIMIT 8
                 """,
                 {"name": entity},
             )
-            decisions.extend([dict(r["d"]) for r in drows])
-        return components[:10], decisions[:10]
+            for r in drows:
+                node = {**dict(r["d"]), "component_names": r.get("component_names") or []}
+                if node.get("id") not in seen_d:
+                    seen_d.add(node["id"])
+                    decisions.append(node)
+        return components[:20], decisions[:20]
 
     def graph_overview(self, limit: int = 200) -> dict:
         if self.is_memory:
@@ -283,21 +315,24 @@ class GraphRepository:
             """
             MATCH (n {id: $id})
             OPTIONAL MATCH (n)-[r]-(m)
-            RETURN n, collect({node: m, type: type(r)}) as neighbors
+            RETURN n, labels(n)[0] as nlabel,
+                   collect({node: m, type: type(r), label: labels(m)[0]}) as neighbors
             """,
             {"id": node_id},
         )
         if not rows:
             return {}
         row = rows[0]
-        return {
-            "node": dict(row["n"]),
-            "neighbors": [
-                {"node": dict(n["node"]), "relationship": n["type"]}
-                for n in row["neighbors"]
-                if n.get("node")
-            ],
-        }
+        node = dict(row["n"])
+        node["label"] = row.get("nlabel")
+        neighbors = []
+        for n in row["neighbors"]:
+            if not n.get("node"):
+                continue
+            neighbor = dict(n["node"])
+            neighbor["label"] = n.get("label")
+            neighbors.append({"node": neighbor, "relationship": n["type"]})
+        return {"node": node, "neighbors": neighbors}
 
     def get_alerts(self) -> list[dict]:
         if self.is_memory:
@@ -308,17 +343,32 @@ class GraphRepository:
             OPTIONAL MATCH (commit:Commit)-[mi:MAY_INVALIDATE]->(d)
             OPTIONAL MATCH (d)-[:ABOUT]->(c:Component)
             RETURN d, commit, c, mi.reason as reason
+            ORDER BY d.updated_at DESC
             """
         )
-        return [
-            {
-                "decision": dict(r["d"]),
-                "commit": dict(r["commit"]) if r["commit"] else None,
-                "component": dict(r["c"]) if r["c"] else None,
-                "reason": r.get("reason"),
-            }
-            for r in rows
-        ]
+        alerts = []
+        for r in rows:
+            decision = dict(r["d"])
+            commit = dict(r["commit"]) if r["commit"] else None
+            if commit:
+                commit["timestamp"] = _iso(commit.get("timestamp")) or _iso(commit.get("created_at"))
+            flagged = (
+                _iso(decision.get("updated_at"))
+                or (commit.get("timestamp") if commit else None)
+                or _iso(decision.get("created_at"))
+            )
+            decision["updated_at"] = _iso(decision.get("updated_at"))
+            decision["created_at"] = _iso(decision.get("created_at"))
+            alerts.append(
+                {
+                    "decision": decision,
+                    "commit": commit,
+                    "component": dict(r["c"]) if r["c"] else None,
+                    "reason": r.get("reason"),
+                    "flagged_at": flagged,
+                }
+            )
+        return alerts
 
     def link_commit_modified(self, commit_id: str, component_id: str):
         if self.is_memory:

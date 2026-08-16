@@ -5,8 +5,8 @@ import { ingestAPI } from '../api/client';
 export default function Ingest() {
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
-  const [owner, setOwner] = useState('demo');
-  const [repo, setRepo] = useState('halite');
+  const [owner, setOwner] = useState('umarific');
+  const [repo, setRepo] = useState('halite-demo');
   const [syncing, setSyncing] = useState(false);
   const [codeAnalyzing, setCodeAnalyzing] = useState(false);
   const [syncResult, setSyncResult] = useState(null);

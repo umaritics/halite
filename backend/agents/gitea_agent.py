@@ -1,5 +1,5 @@
 import logging
-import time
+import uuid
 
 import httpx
 
@@ -28,26 +28,25 @@ class GiteaAgent(BaseAgent):
             repo = payload.get("repository", {}).get("full_name", "").split("/")
             if len(repo) != 2:
                 return {"processed": False}
-            owner, name = repo
             results = []
             for commit in payload.get("commits", []):
                 sha = commit.get("id", "")[:40]
                 files = [f for f in commit.get("added", []) + commit.get("modified", []) + commit.get("removed", [])]
+                message = commit.get("message", "")
+                author = commit.get("author", {}).get("name", "unknown")
                 self.graph_repo.create_commit(
                     {
                         "id": sha,
-                        "message": commit.get("message", ""),
-                        "author": commit.get("author", {}).get("name", "unknown"),
+                        "message": message,
+                        "author": author,
                         "timestamp": commit.get("timestamp", ""),
                         "files_changed": files,
                     }
                 )
-                for fp in files:
-                    comp = self.graph_repo.find_component_by_path(fp)
-                    if comp:
-                        self.graph_repo.link_commit_modified(sha, comp["id"])
+                self._link_commit_files(sha, files)
                 flagged = check_invalidation(sha, files, self.graph_repo)
-                results.append({"sha": sha, "flagged": flagged})
+                created = self._extract_decision_from_commit(sha, message, files, author)
+                results.append({"sha": sha, "flagged": flagged, "decision_created": created})
             return {"processed": True, "commits": results}
         return {"processed": False, "reason": "unsupported event"}
 
@@ -72,25 +71,94 @@ class GiteaAgent(BaseAgent):
                     files = []
                     if detail.status_code == 200:
                         files = [f.get("filename", "") for f in detail.json().get("files", [])]
+                    message = commit.get("commit", {}).get("message", "")
+                    author = commit.get("commit", {}).get("author", {}).get("name", "")
                     self.graph_repo.create_commit(
                         {
                             "id": sha,
-                            "message": commit.get("commit", {}).get("message", ""),
-                            "author": commit.get("commit", {}).get("author", {}).get("name", ""),
+                            "message": message,
+                            "author": author,
                             "timestamp": commit.get("commit", {}).get("author", {}).get("date", ""),
                             "files_changed": files,
                         }
                     )
-                    for fp in files:
-                        comp = self.graph_repo.find_component_by_path(fp)
-                        if comp:
-                            self.graph_repo.link_commit_modified(sha, comp["id"])
+                    self._link_commit_files(sha, files)
                     check_invalidation(sha, files, self.graph_repo)
+                    self._extract_decision_from_commit(sha, message, files, author)
                     count += 1
         except Exception as exc:
             logger.error("Gitea sync error: %s", exc)
             return self._demo_sync_commits(owner, repo)
         return count
+
+    def _link_commit_files(self, sha: str, files: list[str]) -> None:
+        for fp in files:
+            if not fp:
+                continue
+            comp = self.graph_repo.find_component_by_path(fp)
+            if not comp:
+                name = fp.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+                comp = self.graph_repo.create_component(
+                    {
+                        "name": name,
+                        "type": "module",
+                        "file_path": fp,
+                        "description": f"Inferred from commit touching {fp}",
+                        "language": fp.rsplit(".", 1)[-1] if "." in fp else "unknown",
+                    }
+                )
+            self.graph_repo.link_commit_modified(sha, comp["id"])
+
+    def _extract_decision_from_commit(
+        self, sha: str, message: str, files: list[str], author: str
+    ) -> dict | None:
+        """Create a Decision when the commit records an architectural choice."""
+        if not message or not self.groq_service:
+            return None
+        prompt = f"""You extract software architecture decisions from git commits.
+If this commit records a real design choice (e.g. JWT vs sessions, Postgres vs Mongo, gateway, event-driven),
+return JSON: {{"decision": {{"title": "...", "reasoning": "...", "related_components": ["AuthModule"]}}}}
+If it is a routine code tweak with no new architecture choice, return {{"decision": null}}
+Return ONLY JSON.
+
+Commit message:
+{message[:1500]}
+
+Changed files:
+{', '.join(files[:20])}
+"""
+        try:
+            raw = self.groq_service.extract_json(prompt)
+            parsed = self.graph_repo.parse_json_safe(raw)
+        except Exception as exc:
+            logger.warning("Commit decision extract failed: %s", exc)
+            return None
+        item = parsed.get("decision") if isinstance(parsed, dict) else None
+        if not item or not item.get("title"):
+            return None
+        decision = self.graph_repo.create_decision(
+            {
+                "id": str(uuid.uuid4()),
+                "title": item.get("title"),
+                "reasoning": item.get("reasoning") or message[:500],
+                "status": "active",
+                "source": "commit",
+                "source_ref": sha,
+                "created_by": author or "gitea",
+            }
+        )
+        names = list(item.get("related_components") or [])
+        for fp in files:
+            comp = self.graph_repo.find_component_by_path(fp)
+            if comp:
+                self.graph_repo.link_decision_about(decision["id"], comp["id"])
+                if comp.get("name") and comp["name"] not in names:
+                    names.append(comp["name"])
+        for name in names:
+            component = self.graph_repo.find_or_create_component_by_name(name)
+            self.graph_repo.link_decision_about(decision["id"], component["id"])
+        logger.info("Created decision from commit %s: %s", sha[:8], decision.get("title"))
+        return {"id": decision["id"], "title": decision.get("title")}
 
     def _demo_sync_commits(self, owner: str, repo: str) -> int:
         sha = "demo" + owner[:4] + repo[:4]
@@ -104,10 +172,7 @@ class GiteaAgent(BaseAgent):
                 "files_changed": files,
             }
         )
-        for fp in files:
-            comp = self.graph_repo.find_component_by_path(fp)
-            if comp:
-                self.graph_repo.link_commit_modified(sha, comp["id"])
+        self._link_commit_files(sha, files)
         check_invalidation(sha, files, self.graph_repo)
         return 1
 

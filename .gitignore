@@ -19,6 +19,9 @@ frontend/dist/
 .DS_Store
 Thumbs.db
 
+# Nested demo repo (own git history for Gitea invalidation demo)
+demo-app/
+
 # Local tools / secrets
 .tools/
 backend/Untitled
