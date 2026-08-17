@@ -24,3 +24,17 @@ def decision_neighborhood(decision_id: str, graph_repo=Depends(get_graph_repo)):
     if not data:
         raise HTTPException(404, "Decision not found")
     return data
+
+
+@router.delete("/reset")
+def reset_graph(graph_repo=Depends(get_graph_repo)):
+    """Development only — wipe all nodes and edges for a clean demo."""
+    if graph_repo.is_memory:
+        graph_repo.store.nodes.clear()
+        graph_repo.store.edges.clear()
+        graph_repo.store.seed_demo_data()
+        return {"reset": True, "mode": "memory"}
+    else:
+        graph_repo.store.run_query("MATCH (n) DETACH DELETE n")
+        graph_repo.seed_demo_data()
+        return {"reset": True, "mode": "neo4j"}

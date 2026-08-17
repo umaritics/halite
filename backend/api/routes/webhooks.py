@@ -18,7 +18,9 @@ async def gitea_webhook(
     x_gitea_signature: str | None = Header(None),
 ):
     body = await request.body()
-    if settings.GITEA_WEBHOOK_SECRET and x_gitea_signature:
+    if settings.GITEA_WEBHOOK_SECRET:
+        if not x_gitea_signature:
+            raise HTTPException(401, "Missing webhook signature")
         expected = hmac.new(
             settings.GITEA_WEBHOOK_SECRET.encode(),
             body,

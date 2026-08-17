@@ -45,8 +45,7 @@ class GiteaAgent(BaseAgent):
                 )
                 self._link_commit_files(sha, files)
                 flagged = check_invalidation(sha, files, self.graph_repo)
-                created = self._extract_decision_from_commit(sha, message, files, author)
-                results.append({"sha": sha, "flagged": flagged, "decision_created": created})
+                results.append({"sha": sha, "flagged": flagged})
             return {"processed": True, "commits": results}
         return {"processed": False, "reason": "unsupported event"}
 
@@ -84,7 +83,6 @@ class GiteaAgent(BaseAgent):
                     )
                     self._link_commit_files(sha, files)
                     check_invalidation(sha, files, self.graph_repo)
-                    self._extract_decision_from_commit(sha, message, files, author)
                     count += 1
         except Exception as exc:
             logger.error("Gitea sync error: %s", exc)
@@ -206,10 +204,21 @@ Changed files:
                                 f'Extract component names from this ticket. Return JSON: {{"components": ["name"]}}\n{item["body"][:500]}'
                             )
                             parsed = self.graph_repo.parse_json_safe(raw)
-                            for name in parsed.get("components", []) if isinstance(parsed, dict) else []:
+                            for name in (parsed.get("components", []) if isinstance(parsed, dict) else []):
                                 comp = self.graph_repo.find_or_create_component_by_name(name)
-                                if hasattr(self.graph_repo, "store"):
-                                    self.graph_repo.store.link_ticket_relates(ticket["id"], comp["id"])
+                                try:
+                                    if self.graph_repo.is_memory:
+                                        self.graph_repo.store.link_ticket_relates(ticket["id"], comp["id"])
+                                    else:
+                                        self.graph_repo.store.run_query(
+                                            """
+                                            MATCH (t:Ticket {id: $tid}), (c:Component {id: $cid})
+                                            MERGE (t)-[:RELATES_TO]->(c)
+                                            """,
+                                            {"tid": ticket["id"], "cid": comp["id"]},
+                                        )
+                                except Exception as link_exc:
+                                    logger.warning("Could not link ticket %s to component %s: %s", ticket["id"], comp.get("name"), link_exc)
                         count += 1
         except Exception as exc:
             logger.error("Gitea ticket sync error: %s", exc)

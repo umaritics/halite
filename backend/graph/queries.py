@@ -39,9 +39,65 @@ class GraphRepository:
     def init_schema(self):
         self.store.init_schema()
 
+    def find_similar_decision(self, title: str, reasoning: str = "") -> dict | None:
+        """Return an existing Decision if one is similar enough to avoid duplication."""
+        if self.is_memory:
+            title_lower = title.lower().strip()
+            for node in self.store._find_nodes("Decision"):
+                existing_title = node.get("title", "").lower().strip()
+                # Exact title match
+                if existing_title == title_lower:
+                    return node
+                # High word overlap (Jaccard >= 0.6)
+                t1 = set(w for w in title_lower.split() if len(w) > 3)
+                t2 = set(w for w in existing_title.split() if len(w) > 3)
+                if t1 and t2:
+                    overlap = len(t1 & t2) / len(t1 | t2)
+                    if overlap >= 0.6:
+                        return node
+            return None
+        # Neo4j path
+        rows = self.store.run_query(
+            """
+            MATCH (d:Decision)
+            WHERE toLower(d.title) = toLower($title)
+            RETURN d LIMIT 1
+            """,
+            {"title": title},
+        )
+        if rows:
+            return dict(rows[0]["d"])
+        # Word overlap check via Neo4j
+        title_words = [w for w in title.lower().split() if len(w) > 3]
+        if not title_words:
+            return None
+        for word in title_words[:3]:
+            rows = self.store.run_query(
+                """
+                MATCH (d:Decision)
+                WHERE toLower(d.title) CONTAINS $word
+                RETURN d LIMIT 5
+                """,
+                {"word": word},
+            )
+            for r in rows:
+                existing = dict(r["d"])
+                e_words = set(w for w in existing.get("title", "").lower().split() if len(w) > 3)
+                q_words = set(title_words)
+                if e_words and q_words:
+                    overlap = len(e_words & q_words) / len(e_words | q_words)
+                    if overlap >= 0.6:
+                        return existing
+        return None
+
     def create_decision(self, data: dict) -> dict:
         if self.is_memory:
             return self.store.create_decision(data)
+        # Deduplication: return existing decision if similar enough
+        existing = self.find_similar_decision(data.get("title", ""), data.get("reasoning", ""))
+        if existing:
+            logger.info("Dedup: skipping duplicate decision '%s'", data.get("title"))
+            return existing
         data = {**data, "id": data.get("id") or str(uuid.uuid4()), "created_at": _now(), "updated_at": _now()}
         self.store.run_query(
             """
@@ -156,6 +212,20 @@ class GraphRepository:
             return self.store.create_component(
                 {"name": name, "type": "module", "file_path": "", "description": "", "language": "unknown"}
             )
+        # On Neo4j: first try to find an existing component with this name (case-insensitive)
+        rows = self.store.run_query(
+            """
+            MATCH (c:Component)
+            WHERE toLower(c.name) = toLower($name)
+            RETURN c
+            ORDER BY c.file_path DESC
+            LIMIT 1
+            """,
+            {"name": name},
+        )
+        if rows:
+            return dict(rows[0]["c"])
+        # Only create if truly not found
         rows = self.store.run_query(
             """
             MERGE (c:Component {name: $name})
