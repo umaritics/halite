@@ -1,17 +1,38 @@
 import { useEffect, useState } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../context/ThemeContext';
-import { healthAPI } from '../api/client';
+import { healthAPI, graphAPI } from '../api/client';
 import HaliteLogo from '../components/HaliteLogo';
 import BrandName from '../components/BrandName';
 
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
   const [health, setHealth] = useState(null);
+  const [resetting, setResetting] = useState(false);
+  const [resetMessage, setResetMessage] = useState(null);
 
   useEffect(() => {
     healthAPI.check().then(({ data }) => setHealth(data)).catch(() => setHealth(null));
   }, []);
+
+  const handleResetGraph = async () => {
+    const confirmed = window.confirm(
+      'This wipes the knowledge graph and restores seed demo data (JWT / PostgreSQL / AuthModule). Continue?'
+    );
+    if (!confirmed) return;
+    setResetting(true);
+    setResetMessage(null);
+    try {
+      const { data } = await graphAPI.reset();
+      setResetMessage(`Graph reset (${data.mode}). Seed decisions restored. Re-upload the transcript if you need those nodes.`);
+      const healthRes = await healthAPI.check().catch(() => null);
+      if (healthRes?.data) setHealth(healthRes.data);
+    } catch (err) {
+      setResetMessage(err.message || 'Reset failed');
+    } finally {
+      setResetting(false);
+    }
+  };
 
   return (
     <div className="h-full overflow-y-auto">
@@ -86,6 +107,24 @@ export default function Settings() {
             </dl>
           ) : (
             <p className="mt-4 font-sans text-sm text-red-400">Backend not reachable. Start the API server.</p>
+          )}
+        </section>
+
+        <section className="halite-card p-6">
+          <h3 className="font-brand text-primary">Demo graph</h3>
+          <p className="mt-2 font-sans text-sm text-secondary">
+            Wipe all nodes and restore the seeded JWT / PostgreSQL decisions. Use this before a clean viva run, then
+            ingest the transcript once.
+          </p>
+          <button
+            onClick={handleResetGraph}
+            disabled={resetting}
+            className="halite-btn mt-4 text-sm text-red-400 ring-1 ring-red-500/30 hover:bg-red-500/10 disabled:opacity-60"
+          >
+            {resetting ? 'Resetting…' : 'Reset knowledge graph'}
+          </button>
+          {resetMessage && (
+            <p className="mt-3 font-sans text-sm text-accent">{resetMessage}</p>
           )}
         </section>
 
