@@ -1,0 +1,11 @@
+task_id,mode,files_read_count,total_lines_read,search_count,agent_turns,elapsed_seconds,answer_quality,notes
+task_1,cold,,,,,,,pending
+task_1,with_context,,,,,,,pending
+task_2,cold,,,,,,,pending
+task_2,with_context,,,,,,,pending
+task_3,cold,,,,,,,pending
+task_3,with_context,,,,,,,pending
+task_4,cold,3,35,1,4,,correct,"Read auth.service.ts, gateway.ts, postgres.ts after grep/search. Concluded only auth.service.ts is mandatory; others inspected to rule out hidden refresh-token logic."
+task_4,with_context,4,45,0,3,,correct,"Used Halite context to go directly to src/auth/auth.service.ts. Also verified README.md, gateway.ts, postgres.ts to rule out undocumented paths. Same conclusion with line citations; no repo search needed."
+task_5,cold,,,,,,,pending
+task_5,with_context,,,,,,,pending

@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     NEO4J_DATABASE: str = "neo4j"
 
     GROQ_API_KEY: str = ""
-    GROQ_MODEL: str = "llama-3.3-70b-versatile"
+    GROQ_MODEL: str = "openai/gpt-oss-20b"
 
     GITEA_BASE_URL: str = ""
     GITEA_TOKEN: str = ""

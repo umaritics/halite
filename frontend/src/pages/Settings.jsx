@@ -42,14 +42,18 @@ export default function Settings() {
 
   const handleResetGraph = async () => {
     const confirmed = window.confirm(
-      'This wipes the knowledge graph and restores seed demo data (JWT / PostgreSQL / AuthModule). Continue?'
+      'This wipes the knowledge graph for a clean benchmark run and does not restore demo seed data. Continue?'
     );
     if (!confirmed) return;
     setResetting(true);
     setResetMessage(null);
     try {
-      const { data } = await graphAPI.reset();
-      setResetMessage(`Graph reset (${data.mode}). Seed decisions restored. Re-upload the transcript if you need those nodes.`);
+      const { data } = await graphAPI.reset(false);
+      setResetMessage(
+        data.seeded
+          ? `Graph reset (${data.mode}). Demo seed restored.`
+          : `Graph reset (${data.mode}). Graph is now empty for benchmark ingest. Re-upload the transcript and re-run Gitea sync.`
+      );
       const healthRes = await healthAPI.check().catch(() => null);
       if (healthRes?.data) setHealth(healthRes.data);
     } catch (err) {
@@ -156,8 +160,8 @@ export default function Settings() {
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">Demo graph</h3>
           <p className="mt-2 font-sans text-sm text-secondary">
-            Wipe all nodes and restore the seeded JWT / PostgreSQL decisions. Use this before a clean viva run, then
-            ingest the transcript once.
+            Wipe all nodes for a clean benchmark run. This no longer restores the seeded JWT / PostgreSQL demo data.
+            Re-upload the transcript and re-run Gitea sync after resetting.
           </p>
           <button
             onClick={handleResetGraph}

@@ -1,0 +1,7 @@
+[
+  {
+    "id": "task_4",
+    "title": "Minimal verification set",
+    "prompt": "You need to review a proposed refresh-token change. Identify the minimum files that must be inspected before approving it, and justify each one."
+  }
+]

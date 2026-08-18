@@ -23,7 +23,7 @@ export const graphAPI = {
   component: (id) => api.get(`/graph/component/${id}`),
   decision: (id) => api.get(`/graph/decision/${id}`),
   exportContext: () => api.get('/graph/export/context', { responseType: 'text' }),
-  reset: () => api.delete('/graph/reset'),
+  reset: (seedDemoData = false) => api.delete('/graph/reset', { params: { seed_demo_data: seedDemoData } }),
 };
 
 export const ingestAPI = {

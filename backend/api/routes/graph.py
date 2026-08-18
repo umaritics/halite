@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import PlainTextResponse
 
 from api.deps import get_graph_repo
@@ -33,14 +33,16 @@ def export_agent_context(graph_repo=Depends(get_graph_repo)):
 
 
 @router.delete("/reset")
-def reset_graph(graph_repo=Depends(get_graph_repo)):
-    """Development only — wipe all nodes and edges for a clean demo."""
+def reset_graph(seed_demo_data: bool = Query(False), graph_repo=Depends(get_graph_repo)):
+    """Development only — wipe all nodes and edges for a clean demo or benchmark run."""
     if graph_repo.is_memory:
         graph_repo.store.nodes.clear()
         graph_repo.store.edges.clear()
-        graph_repo.store.seed_demo_data()
-        return {"reset": True, "mode": "memory"}
-    else:
-        graph_repo.store.run_query("MATCH (n) DETACH DELETE n")
+        if seed_demo_data:
+            graph_repo.store.seed_demo_data()
+        return {"reset": True, "mode": "memory", "seeded": seed_demo_data}
+
+    graph_repo.store.run_query("MATCH (n) DETACH DELETE n")
+    if seed_demo_data:
         graph_repo.seed_demo_data()
-        return {"reset": True, "mode": "neo4j"}
+    return {"reset": True, "mode": "neo4j", "seeded": seed_demo_data}

@@ -32,8 +32,10 @@ Return ONLY valid JSON, no explanation."""
         )
 
         for chunk in chunks:
-            prompt = f"{self.SYSTEM_PROMPT}\n\nDocument chunk:\n{chunk}"
-            raw = self.groq_service.extract_json(prompt)
+            raw = self.groq_service.extract_json(
+                prompt=f"Document chunk:\n{chunk}",
+                system_prompt=self.SYSTEM_PROMPT,
+            )
             parsed = self.graph_repo.parse_json_safe(raw)
             items = parsed.get("decisions", []) if isinstance(parsed, dict) else []
 

@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 class GroqService:
-    def __init__(self, api_key: str, model: str = "llama-3.3-70b-versatile", demo_mode: bool = False):
+    def __init__(self, api_key: str, model: str = "openai/gpt-oss-20b", demo_mode: bool = False):
         self.api_key = api_key
         self.model = model
         self.demo_mode = demo_mode or not api_key
@@ -38,8 +38,12 @@ class GroqService:
             logger.error("Groq API error: %s", exc)
             return self._demo_response(messages, system_prompt)
 
-    def extract_json(self, prompt: str, max_tokens: int = 800) -> str:
-        return self.chat(messages=[{"role": "user", "content": prompt}], max_tokens=max_tokens)
+    def extract_json(self, prompt: str, system_prompt: str | None = None, max_tokens: int = 800) -> str:
+        return self.chat(
+            messages=[{"role": "user", "content": prompt}],
+            system_prompt=system_prompt,
+            max_tokens=max_tokens,
+        )
 
     def _demo_response(self, messages: list, system_prompt: str | None) -> str:
         user_msg = ""
