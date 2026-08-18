@@ -440,6 +440,108 @@ class GraphRepository:
             )
         return alerts
 
+    def export_agent_context(self) -> str:
+        """Return a compact markdown context pack for IDE agents."""
+        components = sorted(self.list_components(), key=lambda c: (c.get("name") or "").lower())
+        tickets = {str(t.get("id")): t for t in self.list_tickets()}
+        alerts = {
+            a["decision"]["id"]: a
+            for a in self.get_alerts()
+            if a.get("decision", {}).get("id")
+        }
+
+        lines = [
+            "# Halite Agent Context",
+            "",
+            "This file is an exported project-memory snapshot for IDE agents.",
+            "Use it to narrow code exploration, then verify the minimum necessary files.",
+            "",
+            "## Working rules",
+            "- Prefer cited file paths over broad repository scans.",
+            "- Treat decisions with status `needs_review` or `invalidated` as risky.",
+            "- Verify the referenced files before making code changes.",
+            "",
+            "## Components",
+        ]
+
+        for component in components:
+            neighborhood = self.get_neighborhood(component["id"]) or {}
+            decisions = []
+            dependencies = []
+            related_tickets = []
+
+            for item in neighborhood.get("neighbors", []):
+                node = item.get("node") or {}
+                rel = item.get("relationship")
+                label = node.get("label")
+                if label == "Decision" and node.get("title"):
+                    decisions.append(node)
+                elif label == "Component" and rel == "DEPENDS_ON":
+                    dependencies.append(node)
+                elif label == "Ticket" and node.get("title"):
+                    related_tickets.append(node)
+
+            lines.extend(
+                [
+                    "",
+                    f"### {component.get('name') or 'UnnamedComponent'}",
+                    f"- Type: {component.get('type', 'module')}",
+                    f"- File: {component.get('file_path') or 'N/A'}",
+                    f"- Description: {component.get('description') or 'No description recorded.'}",
+                ]
+            )
+
+            if dependencies:
+                dep_names = ", ".join(
+                    f"{d.get('name')} ({d.get('file_path') or 'no path'})" for d in dependencies
+                )
+                lines.append(f"- Depends on: {dep_names}")
+
+            if not decisions:
+                lines.append("- Decisions: none linked")
+                continue
+
+            lines.append("- Decisions:")
+            for decision in decisions:
+                status = decision.get("status", "active")
+                lines.append(f"  - {decision.get('title')} [{status}]")
+                reasoning = (decision.get("reasoning") or "").strip()
+                if reasoning:
+                    lines.append(f"    - Why it exists: {reasoning}")
+                lines.append(
+                    f"    - Source: {decision.get('source', 'unknown')} ({decision.get('source_ref', '')})"
+                )
+
+                linked = self.get_decision(decision["id"]) if decision.get("id") else None
+                if linked:
+                    dtickets = linked.get("tickets") or []
+                    for ticket in dtickets:
+                        t = tickets.get(str(ticket.get("id")), ticket)
+                        related_tickets.append(t)
+
+                if decision.get("id") in alerts:
+                    alert = alerts[decision["id"]]
+                    commit = alert.get("commit")
+                    trigger = "unknown change"
+                    if commit:
+                        changed = ", ".join(commit.get("files_changed") or [])
+                        trigger = f"commit {str(commit.get('id', ''))[:8]} touching {changed or 'tracked files'}"
+                    lines.append(f"    - Alert: needs review due to {trigger}")
+
+            if related_tickets:
+                seen = set()
+                lines.append("- Related tickets:")
+                for ticket in related_tickets:
+                    tid = str(ticket.get("id", ""))
+                    if tid in seen:
+                        continue
+                    seen.add(tid)
+                    lines.append(
+                        f"  - #{tid} {ticket.get('title', '')} [{ticket.get('status', 'open')}]"
+                    )
+
+        return "\n".join(lines).strip() + "\n"
+
     def link_commit_modified(self, commit_id: str, component_id: str):
         if self.is_memory:
             self.store.link_commit_modified(commit_id, component_id)

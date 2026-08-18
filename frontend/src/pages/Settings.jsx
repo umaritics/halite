@@ -8,12 +8,37 @@ import BrandName from '../components/BrandName';
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
   const [health, setHealth] = useState(null);
+  const [exporting, setExporting] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [exportMessage, setExportMessage] = useState(null);
   const [resetMessage, setResetMessage] = useState(null);
 
   useEffect(() => {
     healthAPI.check().then(({ data }) => setHealth(data)).catch(() => setHealth(null));
   }, []);
+
+  const handleExportContext = async () => {
+    setExporting(true);
+    setExportMessage(null);
+    try {
+      const { data } = await graphAPI.exportContext();
+      const stamp = new Date().toISOString().slice(0, 10);
+      const blob = new Blob([data], { type: 'text/markdown;charset=utf-8' });
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = href;
+      link.download = `halite-agent-context-${stamp}.md`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(href);
+      setExportMessage('Context exported. Give this markdown file to the IDE agent before it scans the repo.');
+    } catch (err) {
+      setExportMessage(err.message || 'Export failed');
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const handleResetGraph = async () => {
     const confirmed = window.confirm(
@@ -107,6 +132,24 @@ export default function Settings() {
             </dl>
           ) : (
             <p className="mt-4 font-sans text-sm text-red-400">Backend not reachable. Start the API server.</p>
+          )}
+        </section>
+
+        <section className="halite-card p-6">
+          <h3 className="font-brand text-primary">Agent context export</h3>
+          <p className="mt-2 font-sans text-sm text-secondary">
+            Download a compact markdown snapshot of the current graph so IDE agents can start with project memory and
+            verify fewer files.
+          </p>
+          <button
+            onClick={handleExportContext}
+            disabled={exporting}
+            className="halite-btn-primary mt-4 text-sm disabled:opacity-60"
+          >
+            {exporting ? 'Exporting…' : 'Export agent context (.md)'}
+          </button>
+          {exportMessage && (
+            <p className="mt-3 font-sans text-sm text-accent">{exportMessage}</p>
           )}
         </section>
 

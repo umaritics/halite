@@ -22,6 +22,7 @@ export const graphAPI = {
   overview: () => api.get('/graph/overview'),
   component: (id) => api.get(`/graph/component/${id}`),
   decision: (id) => api.get(`/graph/decision/${id}`),
+  exportContext: () => api.get('/graph/export/context', { responseType: 'text' }),
   reset: () => api.delete('/graph/reset'),
 };
 

@@ -1,0 +1,11 @@
+task_id,mode,prompt_tokens,completion_tokens,total_tokens,files_read_count,total_lines_read,search_count,tool_calls,elapsed_seconds,answer_excerpt
+task_1,cold,,,,,,,,,
+task_1,with_context,,,,,,,,,
+task_2,cold,,,,,,,,,
+task_2,with_context,,,,,,,,,
+task_3,cold,,,,,,,,,
+task_3,with_context,,,,,,,,,
+task_4,cold,,,,,,,,,
+task_4,with_context,,,,,,,,,
+task_5,cold,,,,,,,,,
+task_5,with_context,,,,,,,,,

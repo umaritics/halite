@@ -21,6 +21,7 @@ Thumbs.db
 
 # Nested demo repo (own git history for Gitea invalidation demo)
 demo-app/
+benchmarks/output/
 
 # Local tools / secrets
 .tools/

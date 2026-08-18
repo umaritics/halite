@@ -1,0 +1,27 @@
+[
+  {
+    "id": "task_1",
+    "title": "Auth validation workflow",
+    "prompt": "Explain where access-token validation happens, why that logic lives there instead of at the API gateway entry point, and which files you verified."
+  },
+  {
+    "id": "task_2",
+    "title": "Invalidation target",
+    "prompt": "If a commit changes the authentication workflow, which file path should invalidate the stored JWT decision first, and why is that the highest-signal file?"
+  },
+  {
+    "id": "task_3",
+    "title": "Dependency reasoning",
+    "prompt": "Explain why auth depends on the database layer in this demo and whether changing the query boundary should affect the JWT decision or only implementation details."
+  },
+  {
+    "id": "task_4",
+    "title": "Minimal verification set",
+    "prompt": "You need to review a proposed refresh-token change. Identify the minimum files that must be inspected before approving it, and justify each one."
+  },
+  {
+    "id": "task_5",
+    "title": "Change impact",
+    "prompt": "A teammate wants to move preprocessing from request time to cache-fill time. Explain how you would verify whether that matches the current workflow design, and list only the files worth opening first."
+  }
+]

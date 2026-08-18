@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import PlainTextResponse
 
 from api.deps import get_graph_repo
 
@@ -24,6 +25,11 @@ def decision_neighborhood(decision_id: str, graph_repo=Depends(get_graph_repo)):
     if not data:
         raise HTTPException(404, "Decision not found")
     return data
+
+
+@router.get("/export/context", response_class=PlainTextResponse)
+def export_agent_context(graph_repo=Depends(get_graph_repo)):
+    return graph_repo.export_agent_context()
 
 
 @router.delete("/reset")
