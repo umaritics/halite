@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  neo4j:
+    image: neo4j:5.20
+    container_name: halite-neo4j-dev
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/localdevpassword
+      NEO4J_server_memory_heap_max__size: 1G
+    volumes:
+      - neo4j_dev_data:/data
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "localdevpassword", "RETURN 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
   backend:
     build:
       context: ./backend
@@ -12,3 +31,9 @@ services:
     volumes:
       - ./backend:/app
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+volumes:
+  neo4j_dev_data:

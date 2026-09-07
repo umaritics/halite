@@ -28,3 +28,7 @@ benchmarks/output/
 backend/Untitled
 *.pem
 *.key
+
+# FAA SDR data — never commit raw or processed CSVs
+backend/data/raw/
+backend/data/processed/
