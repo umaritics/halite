@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     DEMO_MODE: bool = True
     MAX_UPLOAD_MB: int = 10
 
+    # Maintenance domain settings
+    MAINT_CONFIDENCE_THRESHOLD: float = 0.72  # Provisional — pending T7 calibration
+    MAINT_DATA_DIR: str = "data"              # Base data directory (raw/ and processed/ beneath)
+    MAINT_MAX_CANDIDATES: int = 25            # Max prior records to consider per conflict check
+
     @property
     def neo4j_configured(self) -> bool:
         return bool(self.NEO4J_URI and self.NEO4J_PASSWORD)

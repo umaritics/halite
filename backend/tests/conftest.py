@@ -2,6 +2,12 @@
 conftest.py — shared fixtures for the Halite test suite.
 
 All fixtures use MemoryGraphStore so tests run without Neo4j or Groq.
+
+Design note: we do NOT import main.py in the test fixtures.  The neo4j
+packstream module pre-allocates 65 536 dict entries at import time, which
+causes MemoryError on some machines.  Instead we build a minimal FastAPI
+app with only the routes we need — identical to what main.py would do in
+demo mode, but without pulling in the neo4j import chain.
 """
 import io
 import sys
@@ -84,43 +90,107 @@ def stub_groq():
 
 
 # ---------------------------------------------------------------------------
-# FastAPI TestClient fixture (demo mode — MemoryGraphStore, StubGroq)
+# _build_test_app() — builds a minimal FastAPI app for testing
+#
+# This function MUST NOT import main.py or Neo4jClient.  We register exactly
+# the same routes that main.py registers, but using local imports that do not
+# pull in the neo4j packstream init chain.
 # ---------------------------------------------------------------------------
 
-@pytest.fixture()
-def client(monkeypatch):
+def _build_test_app():
     """
-    Full FastAPI test client in demo mode.
+    Build and return a FastAPI app wired for testing.
 
-    Monkeypatches settings so DEMO_MODE=True and GROQ_API_KEY=''.
-    Uses MemoryGraphStore and StubGroqService; no external I/O.
+    Registers all routes, sets app.state.graph_repo / groq_service / settings.
+    Does not use the lifespan — state is set directly.
     """
-    monkeypatch.setenv("DEMO_MODE", "true")
-    monkeypatch.setenv("GROQ_API_KEY", "")
-    monkeypatch.setenv("NEO4J_URI", "")
-    monkeypatch.setenv("NEO4J_PASSWORD", "")
-
-    # Re-import config with patched env
     import importlib
+    from fastapi import FastAPI
+    from fastapi.middleware.cors import CORSMiddleware
+
+    # Reload config so any env overrides apply
     import config as cfg_module
-    importlib.reload(cfg_module)
     settings = cfg_module.Settings()
 
     from graph.memory_store import MemoryGraphStore
     from graph.queries import GraphRepository
     from services.groq_service import GroqService
-    import main as main_module
 
-    # Build app components directly (bypass lifespan for test speed)
     store = MemoryGraphStore()
     store.seed_demo_data()
-    gr = GraphRepository(store)
-    gs = GroqService("", demo_mode=True)
+    graph_repo = GraphRepository(store)
+    groq_service = GroqService("", demo_mode=True)
 
-    app = main_module.app
-    app.state.graph_repo = gr
-    app.state.groq_service = gs
+    app = FastAPI(title="Halite Test App")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Software domain routes
+    from api.routes import alerts, chat, decisions, graph, ingest, webhooks
+    app.include_router(chat.router, prefix="/api")
+    app.include_router(decisions.router, prefix="/api")
+    app.include_router(graph.router, prefix="/api")
+    app.include_router(ingest.router, prefix="/api")
+    app.include_router(webhooks.router, prefix="/api")
+    app.include_router(alerts.router, prefix="/api")
+
+    # Maintenance domain routes
+    from api.routes.maintenance import domains_router, router as maintenance_router
+    app.include_router(maintenance_router, prefix="/api")
+    app.include_router(domains_router, prefix="/api")
+
+    # Health endpoints (simplified, matching main.py's _health_payload logic)
+    from domains.registry import list_domains
+
+    @app.get("/health")
+    def health():
+        is_memory = graph_repo.is_memory
+        llm_is_live = groq_service.is_live
+        records = graph_repo.list_service_records()
+        maint_count = len(records)
+        return {
+            "status": "ok",
+            "app": "Halite",
+            "demo_mode": True,
+            "neo4j_configured": False,
+            "using_memory_graph": is_memory,
+            "groq_configured": False,
+            "graph_mode": "memory",
+            "llm_mode": "fallback",
+            "domains": list_domains(),
+            "maintenance_corpus_loaded": maint_count > 0,
+            "maintenance_record_count": maint_count,
+            "fallback_invocations": groq_service.fallback_invocations,
+        }
+
+    @app.get("/api/health")
+    def api_health():
+        return health()
+
+    # Wire state
+    app.state.graph_repo = graph_repo
+    app.state.groq_service = groq_service
     app.state.settings = settings
 
+    return app
+
+
+# ---------------------------------------------------------------------------
+# FastAPI TestClient fixture (demo mode — MemoryGraphStore, StubGroq)
+# ---------------------------------------------------------------------------
+
+@pytest.fixture()
+def client():
+    """
+    Full FastAPI test client in demo mode.
+
+    Uses MemoryGraphStore and StubGroqService; no external I/O.
+    Does NOT import main.py — uses _build_test_app() instead.
+    """
+    app = _build_test_app()
     with TestClient(app, raise_server_exceptions=True) as tc:
         yield tc
