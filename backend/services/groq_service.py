@@ -10,6 +10,7 @@ class GroqService:
         self.model = model
         self.demo_mode = demo_mode or not api_key
         self.client = None
+        self.fallback_invocations: int = 0  # §7: incremented every time _demo_response is used
         if not self.demo_mode:
             try:
                 from groq import Groq
@@ -19,8 +20,14 @@ class GroqService:
                 logger.error("Failed to init Groq client: %s", exc)
                 self.demo_mode = True
 
+    @property
+    def is_live(self) -> bool:
+        """True only when a real Groq client is configured and not in demo mode."""
+        return not self.demo_mode and self.client is not None
+
     def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 1500) -> str:
         if self.demo_mode:
+            self.fallback_invocations += 1
             return self._demo_response(messages, system_prompt)
         full_messages = []
         if system_prompt:
@@ -36,6 +43,7 @@ class GroqService:
             return response.choices[0].message.content
         except Exception as exc:
             logger.error("Groq API error: %s", exc)
+            self.fallback_invocations += 1
             return self._demo_response(messages, system_prompt)
 
     def extract_json(self, prompt: str, system_prompt: str | None = None, max_tokens: int = 800) -> str:
@@ -45,7 +53,7 @@ class GroqService:
             max_tokens=max_tokens,
         )
 
-    def _demo_response(self, messages: list, system_prompt: str | None) -> str:
+    def _demo_response(self, messages: list, system_prompt: str | None) -> str:  # noqa: C901
         user_msg = ""
         for m in reversed(messages):
             if m.get("role") == "user":
