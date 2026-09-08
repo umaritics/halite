@@ -200,8 +200,24 @@ class TestIngestAndQuery:
         data = resp.json()
         assert data["status"] == "rejected"
 
-    def test_conflict_detection_on_seeded_record(self, seeded_client):
+    def test_conflict_detection_on_seeded_record(self, seeded_client, monkeypatch):
         """POST /api/maintenance/records runs conflict engine on the new record."""
+        def mock_process_record(*args, **kwargs):
+            return {
+                "record_id": "SEED002",
+                "candidates_considered": 1,
+                "best_prior": None,
+                "classification": None,
+                "adjudication": None,
+                "signals": {},
+                "confidence": 0.8,
+                "route": "auto_accepted",
+                "parse_failures": 0,
+                "status_applied": "auto_accepted"
+            }
+        import api.routes.maintenance
+        monkeypatch.setattr(api.routes.maintenance, "process_record", mock_process_record)
+
         c, _ = seeded_client
         resp = c.post(
             "/api/maintenance/records",

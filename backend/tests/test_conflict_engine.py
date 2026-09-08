@@ -263,14 +263,14 @@ class TestScoreConfidence:
         assert score >= 0.0
 
     def test_explicit_citation_is_highest_weight(self):
-        from services.conflict_engine import score_confidence, CONFIDENCE_WEIGHTS
+        from services.conflict_engine import score_confidence, WEIGHTS_WITH_CITATION
         # Explicit citation alone
         s1 = score_confidence({"explicit_supersession_language": True})
         # All other signals combined, no explicit citation
-        s2 = score_confidence({k: True for k in CONFIDENCE_WEIGHTS if k != "explicit_supersession_language"})
+        s2 = score_confidence({k: True for k in WEIGHTS_WITH_CITATION if k != "explicit_supersession_language"})
         assert s1 > 0, "Explicit citation alone must give non-zero confidence"
         # Explicit citation should be the largest single weight
-        assert CONFIDENCE_WEIGHTS["explicit_supersession_language"] == max(CONFIDENCE_WEIGHTS.values())
+        assert WEIGHTS_WITH_CITATION["explicit_supersession_language"] == max(WEIGHTS_WITH_CITATION.values())
 
 
 # ---------------------------------------------------------------------------
@@ -346,6 +346,30 @@ class TestProcessRecord:
             assert result["parse_failures"] >= 1, (
                 f"Parse failure not counted: {result}"
             )
+
+    def test_applies_link_when_auto_accepted(self):
+        from services.conflict_engine import process_record
+        repo = _make_repo()
+        adapter = MaintenanceDomainAdapter()
+        _setup_asset_with_records(repo)
+        
+        # update R002 to have explicit citation so it hits 1.0 confidence
+        target = repo.get_service_record("R002")
+        target["text"] = "SUPPLEMENTAL REPORT FOR R001"
+        repo.update_service_record("R002", target)
+
+        groq = StubGroqLive(label="supersedes")
+        
+        linked = []
+        def mock_link(new_record_id, old_record_id, **kwargs):
+            linked.append((old_record_id, new_record_id))
+            
+        repo.link_record_supersedes = mock_link
+        
+        result = process_record(repo, groq, adapter, "R002", threshold=0.5, allow_stub=True)
+        assert result["status_applied"] == "auto_accepted"
+        assert len(linked) == 1
+
 
     def test_no_candidates_returns_auto_accepted(self):
         """Record with no prior records on the same asset → auto_accepted, 0 candidates."""

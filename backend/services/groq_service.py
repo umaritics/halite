@@ -43,8 +43,10 @@ class GroqService:
             return response.choices[0].message.content
         except Exception as exc:
             logger.error("Groq API error: %s", exc)
-            self.fallback_invocations += 1
-            return self._demo_response(messages, system_prompt)
+            if self.demo_mode:
+                self.fallback_invocations += 1
+                return self._demo_response(messages, system_prompt)
+            raise RuntimeError(f"Groq API error: {exc}") from exc
 
     def extract_json(self, prompt: str, system_prompt: str | None = None, max_tokens: int = 800) -> str:
         return self.chat(

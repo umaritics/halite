@@ -865,7 +865,7 @@ class GraphRepository:
         match = (
             "MATCH (sr:ServiceRecord)-[:ABOUT]->(a:Asset)"
             if asset_id
-            else "MATCH (sr:ServiceRecord) OPTIONAL MATCH (sr)-[:ABOUT]->(a:Asset)"
+            else "MATCH (sr:ServiceRecord)"
         )
         rows = self.store.run_query(
             f"""
