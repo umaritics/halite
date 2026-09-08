@@ -142,9 +142,13 @@ def find_candidate_pairs(
     for prior in history:
         if prior.get("record_id") == record_id:
             continue  # skip self
-        # Only look at records that are older than the target
-        if prior.get("occurred_at", "") >= target_occurred:
+        # Only look at records that are older than the target, or same day but submitted earlier
+        prior_occurred = prior.get("occurred_at", "")
+        if prior_occurred > target_occurred:
             continue
+        if prior_occurred == target_occurred:
+            if prior.get("submitted_at", "") >= target_submitted:
+                continue
 
         score = 0
         # same_part_name
