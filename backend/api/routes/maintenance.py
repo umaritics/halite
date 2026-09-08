@@ -153,13 +153,10 @@ def process_single_record(
     adapter = _get_maintenance_adapter()
     threshold = body.threshold if body.threshold is not None else settings.MAINT_CONFIDENCE_THRESHOLD
 
-    # In demo mode (groq not live), run with allow_stub=True so the API still responds
-    allow_stub = not groq_service.is_live
-
     try:
         result = process_record(
             graph_repo, groq_service, adapter, body.record_id,
-            threshold=threshold, allow_stub=allow_stub,
+            threshold=threshold, allow_stub=False,
         )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
