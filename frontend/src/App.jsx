@@ -47,11 +47,17 @@ function AppShell() {
   );
 }
 
+import { DomainProvider } from './context/DomainContext';
+
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/app/*" element={<AppShell />} />
+      <Route path="/app/*" element={
+        <DomainProvider>
+          <AppShell />
+        </DomainProvider>
+      } />
     </Routes>
   );
 }

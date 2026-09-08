@@ -1,19 +1,27 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import GraphViewer, { GraphSidePanel } from '../components/GraphViewer';
 import { useGraph } from '../hooks/useGraph';
+import { useDomain } from '../context/DomainContext';
 
-const NODE_TYPES = ['Component', 'Decision', 'Commit', 'Ticket', 'Document'];
+const SOFTWARE_TYPES = ['Component', 'Decision', 'Commit', 'Ticket', 'Document'];
+const MAINT_TYPES = ['Asset', 'ServiceRecord'];
 
 export default function Graph() {
   const { data, loading, error, refetch } = useGraph();
+  const { domain } = useDomain();
   const [selectedNode, setSelectedNode] = useState(null);
   const [search, setSearch] = useState('');
-  const [typeFilters, setTypeFilters] = useState(
-    Object.fromEntries(NODE_TYPES.map((t) => [t, true]))
-  );
+  
+  const NODE_TYPES = domain === 'maintenance' ? MAINT_TYPES : SOFTWARE_TYPES;
+  
+  const [typeFilters, setTypeFilters] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTypeFilters(Object.fromEntries(NODE_TYPES.map((t) => [t, true])));
+  }, [domain]);
 
   const stats = useMemo(() => {
     const counts = {};

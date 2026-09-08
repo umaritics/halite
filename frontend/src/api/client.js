@@ -44,4 +44,21 @@ export const healthAPI = {
   check: () => api.get('/health'),
 };
 
+export const domainsAPI = {
+  list: () => api.get('/domains'),
+};
+
+export const maintenanceAPI = {
+  ingest: (payload) => api.post('/maintenance/ingest', payload),
+  ingestFile: (formData) => api.post('/maintenance/ingest', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  submitRecord: (data) => api.post('/maintenance/records', data),
+  assets: (params) => api.get('/maintenance/assets', { params }),
+  assetHistory: (assetId) => api.get(`/maintenance/assets/${assetId}/history`),
+  reviewQueue: () => api.get('/maintenance/review-queue'),
+  accept: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/accept`, { note }),
+  reject: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/reject`, { note }),
+};
+
 export default api;
