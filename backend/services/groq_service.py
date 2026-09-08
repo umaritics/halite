@@ -42,6 +42,14 @@ class GroqService:
             )
             return response.choices[0].message.content
         except Exception as exc:
+            if "rate limit" in str(exc).lower() or "429" in str(exc):
+                from config import settings
+                if settings.GROQ_API_KEY_FALLBACK and settings.GROQ_API_KEY_FALLBACK != self.api_key:
+                    logger.warning("Rate limit hit! Switching to GROQ_API_KEY_FALLBACK.")
+                    self.api_key = settings.GROQ_API_KEY_FALLBACK
+                    self.client.api_key = self.api_key
+                    return self.chat(messages, system_prompt, max_tokens)
+            
             logger.error("Groq API error: %s", exc)
             if self.demo_mode:
                 self.fallback_invocations += 1

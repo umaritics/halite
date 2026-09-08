@@ -1,0 +1,17 @@
+{
+  "SWIA2025122876590_SWIA2025112576494_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record fixes a forward drag\u2011angle crack, while the new record addresses an aft drag\u2011angle crack, so they concern different sub\u2011components of the same vertical stabilizer.",
+    "parse_failed": false
+  },
+  "None_None_test-model": {
+    "label": "no_conflict",
+    "rationale": "bad",
+    "parse_failed": false
+  },
+  "R002_R001_test-model": {
+    "label": "supersedes",
+    "rationale": "Test rationale for supersedes.",
+    "parse_failed": false
+  }
+}

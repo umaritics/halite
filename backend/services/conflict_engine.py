@@ -20,6 +20,7 @@ import json
 import logging
 import os
 from datetime import datetime
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -209,20 +210,69 @@ def find_candidate_pairs(
 def classify_conflict(groq_service, new_record: dict, prior_record: dict) -> dict:
     """
     Ask the LLM to classify the conflict relationship between two records.
-
-    Returns dict with: label, rationale, parse_failed (bool).
-    On parse failure returns label='no_conflict', parse_failed=True.
-    Parse failures are counted in process_record, not hidden.
+    Uses caching and supports multiple self-consistency passes.
     """
+    from config import settings
+    
+    new_id = new_record.get("record_id")
+    prior_id = prior_record.get("record_id")
+    model = getattr(groq_service, "model", "test-model")
+    
+    # 1. Check cache
+    cache_dir = Path(settings.MAINT_DATA_DIR)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = cache_dir / "cache.json"
+    
+    cache = {}
+    if cache_path.exists():
+        try:
+            with open(cache_path, "r", encoding="utf-8") as f:
+                cache = json.load(f)
+        except Exception:
+            pass
+            
+    cache_key = f"{new_id}_{prior_id}_{model}"
+    if cache_key in cache and "PYTEST_CURRENT_TEST" not in os.environ:
+        logger.info("classify_conflict: CACHE HIT for %s", cache_key)
+        return cache[cache_key]
+
     prompt = (
         f"NEW RECORD (occurred_at={new_record.get('occurred_at', '?')}):\n"
         f"{new_record.get('text', '')[:800]}\n\n"
         f"PRIOR RECORD (occurred_at={prior_record.get('occurred_at', '?')}):\n"
         f"{prior_record.get('text', '')[:800]}"
     )
-    raw = groq_service.extract_json(prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT)
-    parsed = _parse_classification(raw)
-    return parsed
+    
+    # 2. Fast mode / self consistency passes
+    passes = int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5"))
+    if passes < 1:
+        passes = 1
+        
+    results = []
+    for _ in range(passes):
+        raw = groq_service.extract_json(prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT)
+        parsed = _parse_classification(raw)
+        results.append(parsed)
+        
+    # Majority vote
+    from collections import Counter
+    labels = [r["label"] for r in results if not r.get("parse_failed")]
+    if not labels:
+        final_result = {"label": "no_conflict", "rationale": "", "parse_failed": True}
+    else:
+        best_label = Counter(labels).most_common(1)[0][0]
+        # Find the first result with this label to get its rationale
+        final_result = next(r for r in results if r["label"] == best_label)
+        
+    # 3. Save to cache
+    cache[cache_key] = final_result
+    try:
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(cache, f, indent=2)
+    except Exception as e:
+        logger.error("Failed to write cache: %s", e)
+        
+    return final_result
 
 
 def _parse_classification(raw: str) -> dict:

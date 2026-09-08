@@ -88,10 +88,29 @@ def strip_citation(text: str) -> str:
 
 import argparse
 
+
+def _get_asset_id(graph_repo, record_id: str, record_uuid: str) -> str | None:
+    """Get asset_id for a record — works on both backends."""
+    if graph_repo.is_memory:
+        for e in graph_repo.store.edges:
+            if e["source"] == record_uuid and e["type"] == "ABOUT":
+                return e["target"]
+        return None
+    else:
+        rows = graph_repo.store.run_query(
+            "MATCH (sr:ServiceRecord {record_id: $rid})-[:ABOUT]->(a:Asset) RETURN a.id AS asset_id",
+            {"rid": record_id},
+        )
+        return rows[0]["asset_id"] if rows else None
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--balanced", action="store_true")
     parser.add_argument("--sweep", action="store_true")
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--limit", type=int, default=None,
+                        help="Limit positives to N (subsample mode)")
     args = parser.parse_args()
 
     # Create app context
@@ -108,49 +127,42 @@ def main():
         logger.error("Ground truth file is empty.")
         sys.exit(1)
 
-    # Also we need to evaluate false-conflict rate on records with NO ground truth.
-    # We will sample some records that are NOT in superseding_record_id.
+    import random
     all_superseding = set(gt_df["superseding_record_id"])
+
+    if args.limit:
+        random.seed(args.seed)
+        gt_df = gt_df.sample(min(args.limit, len(gt_df)), random_state=args.seed)
+        logger.info("SUBSAMPLE N=%d seed=%d", len(gt_df), args.seed)
+
     all_records = graph_repo.list_service_records()
-    all_record_ids = [r["record_id"] for r in all_records]
+    logger.info("Graph has %d total service records", len(all_records))
 
     # Find negative samples
     negative_samples = []
     if args.balanced:
-        # Sample records that: (a) belong to an asset with at least 3 prior records, 
-        # (b) appear in no ground-truth pair, 
-        # (c) contain no supplemental-report citation and no WILL BE SUBMITTED open marker.
-        import random
-        random.seed(42)
+        random.seed(args.seed)
         all_records_shuffled = list(all_records)
         random.shuffle(all_records_shuffled)
-        
+
         for r in all_records_shuffled:
             if r["record_id"] in all_superseding:
                 continue
-            
             text = r.get("text", "").upper()
             if "SUPPLEMENTAL REPORT FOR" in text or "WILL BE SUBMITTED" in text:
                 continue
-                
-            asset_id = None
-            for e in graph_repo.store.edges:
-                if e["source"] == r["id"] and e["type"] == "ABOUT":
-                    asset_id = e["target"]
-                    break
-                    
+            asset_id = _get_asset_id(graph_repo, r["record_id"], r.get("id", ""))
             if not asset_id:
                 continue
-                
             history = graph_repo.list_asset_history(asset_id, limit=200)
-            older = [x for x in history if x["occurred_at"] <= r["occurred_at"] and x["record_id"] != r["record_id"]]
-            
+            older = [x for x in history
+                     if x["occurred_at"] <= r["occurred_at"] and x["record_id"] != r["record_id"]]
             if len(older) >= 3:
                 negative_samples.append(r["record_id"])
                 if len(negative_samples) >= len(gt_df):
                     break
 
-    logger.info(f"Loaded {len(gt_df)} ground truth pairs and {len(negative_samples)} negative samples.")
+    logger.info("Loaded %d ground truth pairs and %d negative samples.", len(gt_df), len(negative_samples))
 
     results_gt = []
     
@@ -184,24 +196,27 @@ def main():
         # Restore original text
         graph_repo.update_service_record(superseding_id, {"text": original_text})
 
-        # Baseline: most-recent-prior-record-on-same-asset
-        asset_id = None
-        for e in graph_repo.store.edges:
-            if e["source"] == sr["id"] and e["type"] == "ABOUT":
-                asset_id = e["target"]
-                break
+        # Baseline: most-recent-prior-record-on-same-asset (Neo4j-compatible)
+        asset_id = _get_asset_id(graph_repo, superseding_id, sr.get("id", ""))
         history = graph_repo.list_asset_history(asset_id, limit=200) if asset_id else []
-        older = []
-        for x in history:
-            if x["record_id"] == superseding_id:
-                continue
-            if x["occurred_at"] < sr["occurred_at"]:
-                older.append(x)
-            elif x["occurred_at"] == sr["occurred_at"] and x.get("submitted_at", "") < sr.get("submitted_at", ""):
-                older.append(x)
-                
-        older.sort(key=lambda x: (x["occurred_at"], x.get("submitted_at", "")), reverse=True)
+        older = sorted(
+            [x for x in history
+             if x["record_id"] != superseding_id
+             and (x["occurred_at"] < sr["occurred_at"]
+                  or (x["occurred_at"] == sr["occurred_at"]
+                      and x.get("submitted_at", "") < sr.get("submitted_at", "")))],
+            key=lambda x: (x["occurred_at"], x.get("submitted_at", "")),
+            reverse=True,
+        )
         baseline_pred_id = older[0]["record_id"] if older else None
+
+        logger.info(
+            "Processed %s | conf=%.3f action=%s pred=%s true=%s baseline=%s",
+            superseding_id, res["confidence"],
+            res["adjudication"]["action"] if res["adjudication"] else "no_action",
+            res["best_prior"]["record_id"] if res["best_prior"] else None,
+            superseded_id, baseline_pred_id,
+        )
 
         results_gt.append({
             "record_id": superseding_id,
@@ -236,12 +251,17 @@ def main():
     n_neg = len(results_neg)
 
     # C2: Partitions
-    # Easy: baseline_prior_id == true_prior_id
-    # Hard: baseline_prior_id != true_prior_id
     easy_gt = [r for r in results_gt if r["baseline_prior_id"] == r["true_prior_id"]]
     hard_gt = [r for r in results_gt if r["baseline_prior_id"] != r["true_prior_id"]]
-    
-    logger.info(f"Partitions: Easy N={len(easy_gt)}, Hard N={len(hard_gt)}")
+    logger.info("Partitions: Easy N=%d, Hard N=%d", len(easy_gt), len(hard_gt))
+
+    # Confidence distribution
+    confs = sorted([r["confidence"] for r in results_gt])
+    n_c = len(confs)
+    logger.info(
+        "Confidence distribution (N=%d): min=%.3f p25=%.3f median=%.3f p75=%.3f max=%.3f",
+        n_c, confs[0], confs[n_c//4], confs[n_c//2], confs[3*n_c//4], confs[-1]
+    )
 
     def compute_metrics(threshold, include_negatives=False):
         # We compute for baseline and engine.
@@ -296,8 +316,8 @@ def main():
         aa_prec = aa_tp / (aa_tp + aa_fp) if (aa_tp + aa_fp) > 0 else 0.0
         
         return {
-            "engine": {"precision": engine_prec, "recall": engine_rec, "f1": engine_f1, "fcr": engine_fcr, "coverage": engine_coverage, "aa_prec": aa_prec},
-            "baseline": {"precision": baseline_prec, "recall": baseline_rec, "f1": baseline_f1, "fcr": baseline_fcr}
+            "engine": {"precision": engine_prec, "recall": engine_rec, "f1": engine_f1, "fcr": engine_fcr, "coverage": engine_coverage, "aa_prec": aa_prec, "tp": engine_tp, "fp": engine_fp, "fn": engine_fn},
+            "baseline": {"precision": baseline_prec, "recall": baseline_rec, "f1": baseline_f1, "fcr": baseline_fcr, "tp": baseline_tp, "fp": baseline_fp, "fn": baseline_fn}
         }
         
     metrics = compute_metrics(0.72, include_negatives=args.balanced)
@@ -320,61 +340,100 @@ def main():
                 "threshold": t,
                 "coverage": m["coverage"],
                 "precision": m["aa_prec"],
+                "engine_tp": m["tp"],
+                "engine_fp": m["fp"],
+                "recall": m["recall"],
+                "f1": m["f1"],
                 "routed": routed
             })
             
-        with open(csv_path, "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=["threshold", "coverage", "precision", "routed"])
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=["threshold", "coverage", "precision", "engine_tp", "engine_fp", "recall", "f1", "routed"])
             writer.writeheader()
             writer.writerows(sweep_results)
 
-    # Write Markdown Report
-    with open(md_path, "w") as f:
-        f.write("# Halite Maintenance Domain - Conflict Engine Evaluation\n\n")
-        f.write("This report details the evaluation of the maintenance conflict engine against ground-truth FAA SDRs.\n")
-        f.write("The explicit citations ('SUPPLEMENTAL REPORT FOR...') were stripped from the superseding records before processing.\n\n")
-        
-        f.write("## Overall Metrics\n")
-        f.write(f"- **Ground truth pairs evaluated (N):** {n_gt}\n")
-        f.write(f"- **Negative samples evaluated (N):** {n_neg}\n")
-        
-        if args.balanced:
-            f.write(f"- **Baseline Precision:** {metrics['baseline']['precision']:.3f}\n")
-            f.write(f"- **Baseline Recall:** {metrics['baseline']['recall']:.3f}\n")
-            f.write(f"- **Baseline F1:** {metrics['baseline']['f1']:.3f}\n")
-            f.write(f"- **Baseline False Conflict Rate:** {metrics['baseline']['fcr']:.3f}\n")
-            
-            f.write(f"- **Engine Precision:** {metrics['engine']['precision']:.3f}\n")
-            f.write(f"- **Engine Recall:** {metrics['engine']['recall']:.3f}\n")
-            f.write(f"- **Engine F1:** {metrics['engine']['f1']:.3f}\n")
-            f.write(f"- **Engine False Conflict Rate:** {metrics['engine']['fcr']:.3f}\n")
-            
-        f.write(f"- **Automation Coverage:** {metrics['engine']['coverage']:.3f}\n")
-        f.write(f"- **Auto-Accepted Precision:** {metrics['engine']['aa_prec']:.3f}\n\n")
-        
-        f.write("## Partitions\n")
-        f.write(f"- **Easy Partition (N={len(easy_gt)}):** Baseline correctly picked the prior record.\n")
-        f.write(f"- **Hard Partition (N={len(hard_gt)}):** There were intervening records.\n")
-        
-        # Re-compute for partitions
-        if len(easy_gt) > 0:
-            e_tp = sum(1 for r in easy_gt if r["confidence"] >= 0.72 and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
-            f.write(f"- **Engine Recall on Easy:** {e_tp / len(easy_gt):.3f}\n")
-        if len(hard_gt) > 0:
-            h_tp = sum(1 for r in hard_gt if r["confidence"] >= 0.72 and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
-            f.write(f"- **Engine Recall on Hard:** {h_tp / len(hard_gt):.3f}\n\n")
+    import datetime
+    model = settings.GROQ_MODEL
+    date_str = datetime.date.today().isoformat()
+    subsample_note = f" — SUBSAMPLE N={len(gt_df)} seed={args.seed}" if args.limit else ""
+    backend = "neo4j" if (settings.neo4j_configured and not settings.DEMO_MODE) else "memory"
+
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(f"# Halite Maintenance Domain — Conflict Engine Evaluation{subsample_note}\n\n")
+        f.write(f"**Model:** `{model}`  \n**Date:** {date_str}  \n**Backend:** {backend}  \n\n")
+        f.write("> Citations stripped before processing (§T7). Confidence produced by fixed "
+                "`score_confidence` (clamp [0,1]); all prior divide-by-100 numbers are void.\n\n")
+
+        f.write("## Invalidated Numbers\n\n")
+        f.write("The following were computed with the old `score_confidence` / 100 bug:\n\n")
+        f.write("- All threshold-sweep coverage and precision figures from previous reports\n")
+        f.write("- The '67.4%' and '66.7%' engine accuracy claims (confidence-gated)\n")
+        f.write("- The '0.65 ceiling' (was a bug symptom, not a real ceiling)\n\n")
+        f.write("**Still valid** (pure detection / pairing, no confidence used):\n\n")
+        f.write("- Baseline (most-recent-prior) recall: see Partitions section below\n\n")
+
+        f.write(f"## Overall Metrics (N_gt={n_gt}, N_neg={n_neg})\n\n")
+        if n_neg > 0:
+            f.write("### Confusion Matrix — Baseline\n\n")
+            f.write("| TP | FP | FN | Precision | Recall | F1 | FCR |\n|---|---|---|---|---|---|---|\n")
+            f.write(f"| {metrics['baseline']['tp']} | {n_neg} | {n_gt - metrics['baseline']['tp']} "
+                    f"| {metrics['baseline']['precision']:.3f} | {metrics['baseline']['recall']:.3f} "
+                    f"| {metrics['baseline']['f1']:.3f} | 1.000 |\n\n")
+            f.write("### Confusion Matrix — Engine (threshold=0.72)\n\n")
+            f.write("| TP | FP | FN | Precision | Recall | F1 | FCR | Coverage | AA-Prec |\n"
+                    "|---|---|---|---|---|---|---|---|---|\n")
+            f.write(f"| {metrics['engine']['tp']} | {metrics['engine']['fp']} | {metrics['engine']['fn']} "
+                    f"| {metrics['engine']['precision']:.3f} | {metrics['engine']['recall']:.3f} "
+                    f"| {metrics['engine']['f1']:.3f} | {metrics['engine']['fcr']:.3f} "
+                    f"| {metrics['engine']['coverage']:.3f} | {metrics['engine']['aa_prec']:.3f} |\n\n")
+        else:
+            f.write(f"- Baseline recall (N={n_gt}): {metrics['baseline']['recall']:.3f}\n")
+            f.write(f"- Engine TP at threshold=0.72: {metrics['engine']['tp']} / {n_gt}\n")
+            f.write(f"- Engine recall at 0.72: {metrics['engine']['recall']:.3f}\n")
+            f.write(f"- Automation coverage at 0.72: {metrics['engine']['coverage']:.3f}\n\n")
+
+        # Confidence distribution
+        n_c = len(confs)
+        f.write(f"## Confidence Distribution (positives only, N={n_c})\n\n")
+        f.write("| min | p25 | median | p75 | max |\n|---|---|---|---|---|\n")
+        f.write(f"| {confs[0]:.3f} | {confs[n_c//4]:.3f} | {confs[n_c//2]:.3f} "
+                f"| {confs[3*n_c//4]:.3f} | {confs[-1]:.3f} |\n\n")
+
+        f.write("## Partition Analysis\n\n")
+        f.write("| Partition | N | Baseline Recall | Engine Recall (t=0.72) |\n|---|---|---|---|\n")
+        e_tp = sum(1 for r in easy_gt if r["confidence"] >= 0.72
+                   and r["pred_prior_id"] == r["true_prior_id"]
+                   and r["action"] in ("supersedes", "partial_supersedes"))
+        h_tp = sum(1 for r in hard_gt if r["confidence"] >= 0.72
+                   and r["pred_prior_id"] == r["true_prior_id"]
+                   and r["action"] in ("supersedes", "partial_supersedes"))
+        def sr2(a, b): return f"{a/b:.3f}" if b else "N/A"
+        f.write(f"| Easy | {len(easy_gt)} | 1.000 | {sr2(e_tp, len(easy_gt))} |\n")
+        f.write(f"| Hard | {len(hard_gt)} | 0.000 | {sr2(h_tp, len(hard_gt))} |\n\n")
 
         if args.sweep:
             f.write("## Threshold Sweep\n\n")
-            f.write("| Threshold | Automation Coverage | Auto-Accepted Precision | Routed to Review |\n")
-            f.write("|---|---|---|---|\n")
+            f.write("| Threshold | Coverage | AA-Prec | TP | FP | Recall | F1 | Routed |\n"
+                    "|---|---|---|---|---|---|---|---|\n")
             for sr in sweep_results:
-                f.write(f"| {sr['threshold']:.2f} | {sr['coverage']:.3f} | {sr['precision']:.3f} | {sr['routed']} |\n")
-                
-        f.write("\n## Limitations\n")
-        f.write("- Negative labels are weak (absence of an author-recorded link is not proof of no conflict).\n")
-        f.write("- N is small and corpus is only one year of one dataset.\n")
-        f.write("- Classifier is an external hosted model.\n")
+                f.write(f"| {sr['threshold']:.2f} | {sr['coverage']:.3f} | {sr['precision']:.3f} "
+                        f"| {sr['engine_tp']} | {sr['engine_fp']} "
+                        f"| {sr['recall']:.3f} | {sr['f1']:.3f} | {sr['routed']} |\n")
+            f.write("\n")
+            # Recommendation: highest F1
+            best = max(sweep_results, key=lambda m: (m["f1"], m["coverage"]))
+            f.write("## Threshold Recommendation\n\n")
+            f.write(f"Recommended: **{best['threshold']:.2f}** (max F1 criterion).  \n")
+            f.write(f"Coverage={best['coverage']:.3f}, AA-Prec={best['precision']:.3f}, "
+                    f"Recall={best['recall']:.3f}, F1={best['f1']:.3f}.  \n\n")
+            if best["threshold"] != 0.50:
+                f.write("> The old 0.50 default was an artefact of the divide-by-100 bug "
+                        "(all scores in [0.00, 0.01]). With correct scores the optimal threshold shifts.\n\n")
+
+        f.write("## Limitations\n\n")
+        f.write("- N is small (single year, one dataset).\n")
+        f.write("- Negative labels are weak (absence of link ≠ no conflict).\n")
+        f.write("- External model subject to rate limits (200K TPD).\n")
 
     logger.info(f"Evaluation complete. Results written to {csv_path} and {md_path}")
 
