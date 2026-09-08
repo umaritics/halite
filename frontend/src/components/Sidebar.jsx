@@ -5,6 +5,7 @@ import {
   DocumentArrowUpIcon,
   ExclamationTriangleIcon,
   Cog6ToothIcon,
+  MagnifyingGlassIcon,
   ScaleIcon,
   WrenchScrewdriverIcon,
   ClipboardDocumentListIcon,
@@ -28,6 +29,7 @@ const NAV_BY_DOMAIN = {
   maintenance: [
     { to: '/app/assets', label: 'Assets', icon: WrenchScrewdriverIcon },
     { to: '/app/records', label: 'Service Records', icon: ClipboardDocumentListIcon },
+    { to: '/app/diagnostics', label: 'Diagnostics', icon: MagnifyingGlassIcon },
     { to: '/app/review-queue', label: 'Review Queue', icon: InboxStackIcon, badge: true },
     { to: '/app/maintenance-ingest', label: 'Ingest', icon: DocumentArrowUpIcon },
     { to: '/app/graph', label: 'Knowledge Graph', icon: CircleStackIcon },

@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.routes import alerts, chat, decisions, graph, ingest, webhooks
 from api.routes.maintenance import domains_router, router as maintenance_router
+from api.routes.diagnostics import router as diagnostics_router
 from config import settings
 from graph.memory_store import MemoryGraphStore
 from graph.neo4j_client import Neo4jClient
@@ -88,6 +89,7 @@ app.include_router(ingest.router, prefix="/api")
 app.include_router(webhooks.router, prefix="/api")
 app.include_router(alerts.router, prefix="/api")
 app.include_router(maintenance_router, prefix="/api")
+app.include_router(diagnostics_router, prefix="/api")
 app.include_router(domains_router, prefix="/api")
 
 

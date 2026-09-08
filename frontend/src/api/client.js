@@ -59,6 +59,8 @@ export const maintenanceAPI = {
   reviewQueue: () => api.get('/maintenance/review-queue'),
   accept: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/accept`, { note }),
   reject: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/reject`, { note }),
+  diagnose: (assetId, symptomText) => api.post('/maintenance/diagnose', { asset_id: assetId, symptom_text: symptomText }),
+  chat: (message, assetId, history) => api.post('/maintenance/chat', { message, asset_id: assetId, history }),
 };
 
 export default api;
