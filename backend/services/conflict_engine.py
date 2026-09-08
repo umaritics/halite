@@ -37,13 +37,22 @@ PAIR_WEIGHTS: dict[str, int] = {
 # ---------------------------------------------------------------------------
 # Confidence scoring weights — one weight per signal, one comment per line.
 # ---------------------------------------------------------------------------
-CONFIDENCE_WEIGHTS: dict[str, float] = {
+WEIGHTS_WITH_CITATION: dict[str, float] = {
     "explicit_supersession_language": 0.40,  # "SUPPLEMENTAL REPORT FOR" in text — strongest
     "classification_supersedes": 0.20,        # LLM says 'supersedes' or 'partial_supersedes'
     "recency_advantage": 0.15,                # New record is clearly later by date
     "authority_advantage": 0.10,              # New record from more authoritative source
     "part_agreement": 0.10,                   # Same PartName and JASCCode
     "proximity_bonus": 0.05,                  # DifficultyDate within 30 days
+}
+
+WEIGHTS_NO_CITATION: dict[str, float] = {
+    "explicit_supersession_language": 0.0,
+    "classification_supersedes": 0.35,        # increased weight
+    "recency_advantage": 0.25,                # increased weight
+    "authority_advantage": 0.15,              # increased weight
+    "part_agreement": 0.15,                   # increased weight
+    "proximity_bonus": 0.10,                  # increased weight
 }
 
 # Default threshold — provisional, pending T7 calibration.
@@ -325,17 +334,12 @@ def adjudicate(new_record: dict, prior_record: dict, classification: dict, adapt
 def score_confidence(signals: dict) -> float:
     """
     Compute a confidence score in [0, 1] from evidence signals.
-
-    signals keys (all bool or numeric):
-      explicit_supersession_language  — bool
-      classification_supersedes       — bool (label in {'supersedes','partial_supersedes'})
-      recency_advantage               — bool (new record is later)
-      authority_advantage             — bool (new auth >= prior auth)
-      part_agreement                  — bool (same part_name AND jasc_code)
-      proximity_bonus                 — bool (within 30 days)
     """
     score = 0.0
-    for key, weight in CONFIDENCE_WEIGHTS.items():
+    has_citation = signals.get("explicit_supersession_language", False)
+    weights = WEIGHTS_WITH_CITATION if has_citation else WEIGHTS_NO_CITATION
+    
+    for key, weight in weights.items():
         if signals.get(key, False):
             score += weight
     # Clamp to [0, 1]

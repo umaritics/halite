@@ -86,7 +86,15 @@ def strip_citation(text: str) -> str:
     return stripped
 
 
-def run_evaluation():
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--balanced", action="store_true")
+    parser.add_argument("--sweep", action="store_true")
+    args = parser.parse_args()
+
+    # Create app context
     graph_repo, groq_service, adapter = init_app_state()
 
     # Load ground truth
@@ -106,21 +114,40 @@ def run_evaluation():
     all_records = graph_repo.list_service_records()
     all_record_ids = [r["record_id"] for r in all_records]
 
-    # Find negative samples (records not in ground truth as superseding, but have prior history)
+    # Find negative samples
     negative_samples = []
-    for r in all_records:
-        if r["record_id"] not in all_superseding:
+    if args.balanced:
+        # Sample records that: (a) belong to an asset with at least 3 prior records, 
+        # (b) appear in no ground-truth pair, 
+        # (c) contain no supplemental-report citation and no WILL BE SUBMITTED open marker.
+        import random
+        random.seed(42)
+        all_records_shuffled = list(all_records)
+        random.shuffle(all_records_shuffled)
+        
+        for r in all_records_shuffled:
+            if r["record_id"] in all_superseding:
+                continue
+            
+            text = r.get("text", "").upper()
+            if "SUPPLEMENTAL REPORT FOR" in text or "WILL BE SUBMITTED" in text:
+                continue
+                
             asset_id = None
             for e in graph_repo.store.edges:
                 if e["source"] == r["id"] and e["type"] == "ABOUT":
                     asset_id = e["target"]
                     break
-            # Must have prior history on the same asset to be a valid negative test
+                    
+            if not asset_id:
+                continue
+                
             history = graph_repo.list_asset_history(asset_id, limit=200)
             older = [x for x in history if x["occurred_at"] <= r["occurred_at"] and x["record_id"] != r["record_id"]]
-            if older:
+            
+            if len(older) >= 3:
                 negative_samples.append(r["record_id"])
-                if len(negative_samples) >= len(gt_df):  # Balance the set
+                if len(negative_samples) >= len(gt_df):
                     break
 
     logger.info(f"Loaded {len(gt_df)} ground truth pairs and {len(negative_samples)} negative samples.")
@@ -158,7 +185,12 @@ def run_evaluation():
         graph_repo.update_service_record(superseding_id, {"text": original_text})
 
         # Baseline: most-recent-prior-record-on-same-asset
-        history = graph_repo.list_asset_history(sr.get("asset_key", ""), limit=200)
+        asset_id = None
+        for e in graph_repo.store.edges:
+            if e["source"] == sr["id"] and e["type"] == "ABOUT":
+                asset_id = e["target"]
+                break
+        history = graph_repo.list_asset_history(asset_id, limit=200) if asset_id else []
         older = []
         for x in history:
             if x["record_id"] == superseding_id:
@@ -202,90 +234,149 @@ def run_evaluation():
 
     n_gt = len(results_gt)
     n_neg = len(results_neg)
-    sample_warn = " SMALL SAMPLE — indicative only" if n_gt < 30 else ""
 
-    # Metric: Baseline detection accuracy
-    baseline_correct = sum(1 for r in results_gt if r["pred_prior_id"] == r["baseline_prior_id"] and r["baseline_prior_id"] == r["true_prior_id"])
-    baseline_acc = baseline_correct / n_gt
+    # C2: Partitions
+    # Easy: baseline_prior_id == true_prior_id
+    # Hard: baseline_prior_id != true_prior_id
+    easy_gt = [r for r in results_gt if r["baseline_prior_id"] == r["true_prior_id"]]
+    hard_gt = [r for r in results_gt if r["baseline_prior_id"] != r["true_prior_id"]]
+    
+    logger.info(f"Partitions: Easy N={len(easy_gt)}, Hard N={len(hard_gt)}")
 
-    # Metric: Detection accuracy (did it pick the right prior record out of the candidate pool?)
-    detection_correct = sum(1 for r in results_gt if r["pred_prior_id"] == r["true_prior_id"])
-    detection_acc = detection_correct / n_gt
-
-    # Metric: Adjudication accuracy (did it realize it supersedes?)
-    adjudication_correct = sum(1 for r in results_gt if r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
-    adjudication_acc = adjudication_correct / n_gt
-
-    # Sweep threshold
-    thresholds = [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
-    sweep_results = []
-
-    for t in thresholds:
-        # True positives: GT pair with confidence >= t and correct prior and action supersedes
-        tp = sum(1 for r in results_gt if r["confidence"] >= t and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
+    def compute_metrics(threshold, include_negatives=False):
+        # We compute for baseline and engine.
+        # For engine, a positive prediction is when confidence >= threshold AND action is supersedes/partial
         
-        # False Positives:
-        # 1. GT pair with confidence >= t but WRONG prior OR action is not supersedes
-        # 2. Negative sample with confidence >= t and action is supersedes
-        fp_gt = sum(1 for r in results_gt if r["confidence"] >= t and (r["pred_prior_id"] != r["true_prior_id"] or r["action"] not in ("supersedes", "partial_supersedes")))
-        fp_neg = sum(1 for r in results_neg if r["confidence"] >= t and r["action"] in ("supersedes", "partial_supersedes"))
-        fp = fp_gt + fp_neg
+        # Positive Set
+        # Engine true positive: pred_prior == true_prior AND conf >= t AND action supersedes
+        # Baseline true positive: baseline_prior == true_prior
+        engine_tp = sum(1 for r in results_gt if r["confidence"] >= threshold and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
+        baseline_tp = sum(1 for r in results_gt if r["baseline_prior_id"] == r["true_prior_id"])
         
-        # False Negatives: GT pair with confidence < t
-        fn = sum(1 for r in results_gt if r["confidence"] < t)
-
-        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
-        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        engine_fn = n_gt - engine_tp
+        baseline_fn = n_gt - baseline_tp
         
-        auto_accepted_gt = sum(1 for r in results_gt if r["confidence"] >= t)
-        auto_accepted_neg = sum(1 for r in results_neg if r["confidence"] >= t)
-        total_auto = auto_accepted_gt + auto_accepted_neg
-        total_records = n_gt + n_neg
-        automation_coverage = total_auto / total_records if total_records > 0 else 0.0
-
-        false_conflict_rate = fp_neg / n_neg if n_neg > 0 else 0.0
-
-        sweep_results.append({
-            "threshold": f"{t:.2f}",
-            "precision": f"{precision:.3f}",
-            "recall": f"{recall:.3f}",
-            "automation_coverage": f"{automation_coverage:.3f}",
-            "false_conflict_rate": f"{false_conflict_rate:.3f}"
-        })
-
-    # Write CSV
+        # Negative Set (only if include_negatives)
+        engine_fp = 0
+        baseline_fp = 0
+        if include_negatives and n_neg > 0:
+            # Engine false positive: conf >= t AND action supersedes
+            engine_fp = sum(1 for r in results_neg if r["confidence"] >= threshold and r["action"] in ("supersedes", "partial_supersedes"))
+            # Baseline false positive: baseline_prior_id is not None
+            # Wait, baseline always picks the most recent. On negative set, baseline ALWAYs picks something.
+            # But the negative set elements are guaranteed to have at least 3 prior records.
+            # So baseline ALWAYS produces a conflict.
+            baseline_fp = n_neg
+            
+        # Precision = TP / (TP + FP)
+        engine_prec = engine_tp / (engine_tp + engine_fp) if (engine_tp + engine_fp) > 0 else 0.0
+        baseline_prec = baseline_tp / (baseline_tp + baseline_fp) if (baseline_tp + baseline_fp) > 0 else 0.0
+        
+        # Recall = TP / (TP + FN)  -> same as accuracy on positives
+        engine_rec = engine_tp / n_gt if n_gt > 0 else 0.0
+        baseline_rec = baseline_tp / n_gt if n_gt > 0 else 0.0
+        
+        # F1
+        engine_f1 = 2 * (engine_prec * engine_rec) / (engine_prec + engine_rec) if (engine_prec + engine_rec) > 0 else 0.0
+        baseline_f1 = 2 * (baseline_prec * baseline_rec) / (baseline_prec + baseline_rec) if (baseline_prec + baseline_rec) > 0 else 0.0
+        
+        # False Conflict Rate
+        engine_fcr = engine_fp / n_neg if n_neg > 0 else 0.0
+        baseline_fcr = baseline_fp / n_neg if n_neg > 0 else 0.0
+        
+        # Coverage
+        engine_auto_accepted = sum(1 for r in results_gt if r["confidence"] >= threshold) + sum(1 for r in results_neg if r["confidence"] >= threshold)
+        engine_coverage = engine_auto_accepted / (n_gt + n_neg) if (n_gt + n_neg) > 0 else 0.0
+        
+        # Precision within auto-accepted subset
+        # Auto-accepted positives that are TP
+        aa_tp = sum(1 for r in results_gt if r["confidence"] >= threshold and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
+        aa_fp = sum(1 for r in results_gt if r["confidence"] >= threshold and not (r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))) + engine_fp
+        
+        aa_prec = aa_tp / (aa_tp + aa_fp) if (aa_tp + aa_fp) > 0 else 0.0
+        
+        return {
+            "engine": {"precision": engine_prec, "recall": engine_rec, "f1": engine_f1, "fcr": engine_fcr, "coverage": engine_coverage, "aa_prec": aa_prec},
+            "baseline": {"precision": baseline_prec, "recall": baseline_rec, "f1": baseline_f1, "fcr": baseline_fcr}
+        }
+        
+    metrics = compute_metrics(0.72, include_negatives=args.balanced)
+    
+    # Save sweep results
+    import csv
     docs_dir = Path("../docs")
     docs_dir.mkdir(exist_ok=True)
-    
     csv_path = docs_dir / "evaluation_results.csv"
-    with open(csv_path, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["threshold", "precision", "recall", "automation_coverage", "false_conflict_rate"])
-        writer.writeheader()
-        writer.writerows(sweep_results)
-
-    # Write Markdown
     md_path = docs_dir / "evaluation_results.md"
+    
+    thresholds = [0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95]
+    sweep_results = []
+    if args.sweep:
+        for t in thresholds:
+            m = compute_metrics(t, include_negatives=args.balanced)["engine"]
+            # routed to review: everything not auto-accepted
+            routed = (n_gt + n_neg) - (sum(1 for r in results_gt if r["confidence"] >= t) + sum(1 for r in results_neg if r["confidence"] >= t))
+            sweep_results.append({
+                "threshold": t,
+                "coverage": m["coverage"],
+                "precision": m["aa_prec"],
+                "routed": routed
+            })
+            
+        with open(csv_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=["threshold", "coverage", "precision", "routed"])
+            writer.writeheader()
+            writer.writerows(sweep_results)
+
+    # Write Markdown Report
     with open(md_path, "w") as f:
-        f.write("# Halite Maintenance Domain — Conflict Engine Evaluation\n\n")
+        f.write("# Halite Maintenance Domain - Conflict Engine Evaluation\n\n")
         f.write("This report details the evaluation of the maintenance conflict engine against ground-truth FAA SDRs.\n")
         f.write("The explicit citations ('SUPPLEMENTAL REPORT FOR...') were stripped from the superseding records before processing.\n\n")
         
         f.write("## Overall Metrics\n")
-        f.write(f"- **Ground truth pairs evaluated (N):** {n_gt}{sample_warn}\n")
-        f.write(f"- **Negative samples evaluated (N):** {n_neg}{sample_warn}\n")
-        f.write(f"- **Baseline (most-recent) detection accuracy:** {baseline_acc:.1%} (N={n_gt})\n")
-        f.write(f"- **Engine detection accuracy:** {detection_acc:.1%} (N={n_gt})\n")
-        f.write(f"- **Engine adjudication accuracy:** {adjudication_acc:.1%} (N={n_gt})\n\n")
-
-        f.write("## Threshold Sweep\n\n")
-        f.write("| Threshold | Precision | Recall | Automation Coverage | False Conflict Rate |\n")
-        f.write("|---|---|---|---|---|\n")
-        for sr in sweep_results:
-            f.write(f"| {sr['threshold']} | {sr['precision']} | {sr['recall']} | {sr['automation_coverage']} | {sr['false_conflict_rate']} |\n")
+        f.write(f"- **Ground truth pairs evaluated (N):** {n_gt}\n")
+        f.write(f"- **Negative samples evaluated (N):** {n_neg}\n")
         
-        f.write("\n\n*Note: Precision within the auto-accepted subset is listed in the Precision column.*")
+        if args.balanced:
+            f.write(f"- **Baseline Precision:** {metrics['baseline']['precision']:.3f}\n")
+            f.write(f"- **Baseline Recall:** {metrics['baseline']['recall']:.3f}\n")
+            f.write(f"- **Baseline F1:** {metrics['baseline']['f1']:.3f}\n")
+            f.write(f"- **Baseline False Conflict Rate:** {metrics['baseline']['fcr']:.3f}\n")
+            
+            f.write(f"- **Engine Precision:** {metrics['engine']['precision']:.3f}\n")
+            f.write(f"- **Engine Recall:** {metrics['engine']['recall']:.3f}\n")
+            f.write(f"- **Engine F1:** {metrics['engine']['f1']:.3f}\n")
+            f.write(f"- **Engine False Conflict Rate:** {metrics['engine']['fcr']:.3f}\n")
+            
+        f.write(f"- **Automation Coverage:** {metrics['engine']['coverage']:.3f}\n")
+        f.write(f"- **Auto-Accepted Precision:** {metrics['engine']['aa_prec']:.3f}\n\n")
+        
+        f.write("## Partitions\n")
+        f.write(f"- **Easy Partition (N={len(easy_gt)}):** Baseline correctly picked the prior record.\n")
+        f.write(f"- **Hard Partition (N={len(hard_gt)}):** There were intervening records.\n")
+        
+        # Re-compute for partitions
+        if len(easy_gt) > 0:
+            e_tp = sum(1 for r in easy_gt if r["confidence"] >= 0.72 and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
+            f.write(f"- **Engine Recall on Easy:** {e_tp / len(easy_gt):.3f}\n")
+        if len(hard_gt) > 0:
+            h_tp = sum(1 for r in hard_gt if r["confidence"] >= 0.72 and r["pred_prior_id"] == r["true_prior_id"] and r["action"] in ("supersedes", "partial_supersedes"))
+            f.write(f"- **Engine Recall on Hard:** {h_tp / len(hard_gt):.3f}\n\n")
+
+        if args.sweep:
+            f.write("## Threshold Sweep\n\n")
+            f.write("| Threshold | Automation Coverage | Auto-Accepted Precision | Routed to Review |\n")
+            f.write("|---|---|---|---|\n")
+            for sr in sweep_results:
+                f.write(f"| {sr['threshold']:.2f} | {sr['coverage']:.3f} | {sr['precision']:.3f} | {sr['routed']} |\n")
+                
+        f.write("\n## Limitations\n")
+        f.write("- Negative labels are weak (absence of an author-recorded link is not proof of no conflict).\n")
+        f.write("- N is small and corpus is only one year of one dataset.\n")
+        f.write("- Classifier is an external hosted model.\n")
 
     logger.info(f"Evaluation complete. Results written to {csv_path} and {md_path}")
 
 if __name__ == "__main__":
-    run_evaluation()
+    main()
