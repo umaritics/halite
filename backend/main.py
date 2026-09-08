@@ -124,6 +124,8 @@ def _health_payload():
         # §T6 additions
         "graph_mode": "memory" if is_memory else "neo4j",
         "llm_mode": "live" if llm_is_live else "fallback",
+        "model": groq_service.model if groq_service else "unknown",
+        "maint_threshold": settings.MAINT_CONFIDENCE_THRESHOLD,
         "domains": domains,
         "maintenance_corpus_loaded": maintenance_corpus_loaded,
         "maintenance_record_count": maintenance_record_count,
