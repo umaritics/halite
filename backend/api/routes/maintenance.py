@@ -42,7 +42,14 @@ class IngestRequest(BaseModel):
 
 
 class RecordProcessRequest(BaseModel):
-    record_id: str
+    record_id: str | None = None
+    tail_number: str | None = None
+    date: str | None = None
+    part_name: str | None = None
+    condition: str | None = None
+    location: str | None = None
+    jasc_code: str | None = None
+    discrepancy: str | None = None
     threshold: float | None = None
 
 
@@ -146,16 +153,37 @@ def process_single_record(
     settings=Depends(get_settings),
 ):
     """
-    Run conflict detection on an already-ingested record.
-
-    Body: {"record_id": str, "threshold": float | None}
+    Run conflict detection on an already-ingested record, or ingest and process a new one.
     """
     adapter = _get_maintenance_adapter()
     threshold = body.threshold if body.threshold is not None else settings.MAINT_CONFIDENCE_THRESHOLD
 
+    record_id = body.record_id
+    if body.tail_number:
+        import datetime
+        if not record_id:
+            record_id = f"DEMO{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+        
+        # Inline ingestion
+        raw = {
+            "OperatorControlNumber": record_id,
+            "RegistryNNumber": body.tail_number,
+            "DifficultyDate": body.date,
+            "PartName": body.part_name,
+            "PartCondition": body.condition,
+            "PartLocation": body.location,
+            "JASCCode": body.jasc_code,
+            "Discrepancy": body.discrepancy
+        }
+        agent = MaintenanceAgent(graph_repo, None)
+        agent.run({"records": [raw]})
+
+    if not record_id:
+        raise HTTPException(status_code=422, detail="record_id is required if not providing a full record")
+
     try:
         result = process_record(
-            graph_repo, groq_service, adapter, body.record_id,
+            graph_repo, groq_service, adapter, record_id,
             threshold=threshold, allow_stub=False,
         )
     except ValueError as exc:

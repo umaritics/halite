@@ -43,32 +43,17 @@ export default function MaintenanceIngest() {
     setFormSubmitting(true);
     setFormResult(null);
     try {
-      // 1. Generate an OCN (Record ID)
-      const recordId = `NEW-${Date.now()}`;
+      const payload = {
+        tail_number: form.tailNumber,
+        date: form.date,
+        part_name: form.partName,
+        condition: form.condition,
+        location: form.location,
+        jasc_code: form.jasc,
+        discrepancy: form.discrepancy
+      };
       
-      // 2. Create CSV blob
-      const headers = ['OperatorControlNumber', 'RegistryNNumber', 'DifficultyDate', 'PartName', 'PartCondition', 'PartLocation', 'JASCCode', 'Discrepancy'];
-      const row = [
-        recordId,
-        form.tailNumber,
-        form.date,
-        form.partName,
-        form.condition,
-        form.location,
-        form.jasc,
-        `"${form.discrepancy.replace(/"/g, '""')}"`
-      ];
-      
-      const csvContent = headers.join(',') + '\n' + row.join(',');
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const formData = new FormData();
-      formData.append('file', blob, 'single_record.csv');
-
-      // 3. Upload to ingest endpoint
-      await maintenanceAPI.ingestFile(formData);
-
-      // 4. Run conflict engine via submitRecord
-      const { data } = await maintenanceAPI.submitRecord({ record_id: recordId });
+      const { data } = await maintenanceAPI.submitRecord(payload);
       setFormResult(data);
 
     } catch (err) {
