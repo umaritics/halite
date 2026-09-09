@@ -13,5 +13,755 @@
     "label": "supersedes",
     "rationale": "Test rationale for supersedes.",
     "parse_failed": false
+  },
+  "DALA2025012700640_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes an emergency exit light, while the prior record dealt with a door proximity sensor; they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025013000730_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern door 2L but address different components\u2014prior replaced the prox sensor, new replaced the PSCU\u2014so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025021001050_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve corrective work on the 2L door proximity sensor and report successful adjustments, so the actions are compatible rather than contradictory.",
+    "parse_failed": false
+  },
+  "DALA2025021801219_DALA2025013000730_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve door 2L, but the prior replaced the PSCU while the new record cleaned and adjusted the door indication, addressing different components of the door system.",
+    "parse_failed": false
+  },
+  "DALA2025022401433_DALA2025021001050_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve corrective work on door proximity sensors but address different sensors and issues, with no contradictory claims, so they are compatible maintenance actions.",
+    "parse_failed": false
+  },
+  "DALA2025031201908_DALA2025012700640_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a corroded seat track, while the prior record resecured an emergency light; they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025031201911_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different locations (FR 35\u201137 RH Y\u20111959 vs FR 33\u201135 RH Y\u2011450), so they address distinct parts.",
+    "parse_failed": false
+  },
+  "DALA2025031201915_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records report seat\u2011track corrosion repairs on the same aircraft but at different row ranges and opposite sides, addressing distinct components.",
+    "parse_failed": false
+  },
+  "DALA2025031201914_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe the same seat\u2011track corrosion repair on the same aircraft with consistent corrective action, only differing in location detail, so there is no conflict.",
+    "parse_failed": false
+  },
+  "DALA2025031201917_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different frame locations (FR53.5\u201153.6 LH vs FR33\u201135 RH), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025031201916_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different locations (FR53.3\u201153.4, Y\u20112462 vs FR33\u201135, Y\u2011450), so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025031201912_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records refer to different seat track identifiers and locations (Y-953 at FR33 vs Y-450 between FR33\u2011FR35), so they address distinct components despite similar actions.",
+    "parse_failed": false
+  },
+  "DALA2025031201910_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different locations (FR33\u201135 vs FR36\u201137), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025031201913_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Each record fixes corrosion on a different cabin seat track location (FR37 LH vs FR33\u201135 RH), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031201909_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion repairs on different seat tracks (different frame locations and side), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031201920_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but the affected locations (FR53.5\u201153.7 LH vs FR33\u201135 RH) are different, so they address distinct components.",
+    "parse_failed": false
+  },
+  "DALA2025031201921_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern the same seat track but address corrosion in distinct, non-overlapping frame ranges, so they involve different parts of the component without conflict.",
+    "parse_failed": false
+  },
+  "DALA2025031201922_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion on different seat tracks (FR33\u2011FR35 RH vs FR35\u2011FR37 LH), so they involve distinct components and do not overlap.",
+    "parse_failed": false
+  },
+  "DALA2025031201918_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Each record replaces a different seat track at distinct fuselage stations, so they address separate parts of the cabin without overlapping.",
+    "parse_failed": false
+  },
+  "DALA2025031201924_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "partial_supersedes",
+    "rationale": "Both records involve the same cabin seat track; the new entry adds repair work covering a broader span after the prior replacement, thus it addresses the same issue but only partially supersedes the earlier action.",
+    "parse_failed": false
+  },
+  "DALA2025031201919_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion on different seat tracks (different frame numbers, sides, and part numbers), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "DALA2025031802034_DALA2025021801219_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left\u2011hand fuselage dent, while the prior record cleans/adjusts a left\u2011door cabin indication; they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA20250320038_VNAA20250320035_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on PAX DOOR MID INTERCOSTAL DD2, while the prior record addressed corrosion on PAX DOOR DD4 AFT, involving different components.",
+    "parse_failed": false
+  },
+  "VNAA20250320049_VNAA20250320046_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a corroded frame sector at FS 379, while the prior record fixes a corroded stringer 22R at FS 319; they involve different parts, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320044_VNAA20250320042_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on the right\u2011hand floor sill (FS310\u2011319) while the prior record repaired corrosion on a different floor support (LBL27 at FS1028/FS1036), so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA20250320039_VNAA20250320034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the passenger\u2011door inner skin, while the prior record replaces the door\u2019s mid intercostal DD6; they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320034_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a corroded passenger\u2011door intercostal DD6, while the prior record concerns corroded flap\u2011vane trunnion bodies; they involve different parts, so the records are disjoint in scope.",
+    "parse_failed": false
+  },
+  "VNAA20250320045_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded galley mount fitting, while the prior record concerns corroded flap\u2011vane trunnion bodies; they involve different parts/systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320037_VNAA20250320036_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the pax door frame at FS 313.56 between DD4 and DD5, while the prior record replaces a different pax door frame at FS 320 (338.963), so they address distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA20250320043_VNAA20250320042_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs LBL\u202f9 floor support at FS1033, while the prior record repairs LBL\u202f27 floor support at FS1028 and FS1036, addressing different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA20250320046_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a corroded stringer 22R at station 319, while the prior record concerns corroded trunnion bodies on flap vane actuators at stations 24\u2011140; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320041_VNAA20250320040_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a right\u2011hand flap vane actuator at FLS65.50, while the prior record addresses a left\u2011hand actuator at FLS24.00, involving different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320032_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded floor seat track, while the prior record concerns corroded flap\u2011vane trunnion bodies; they involve distinct parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320035_VNAA20250320034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the aft DD4 pax door, while the prior record replaces the mid DD6 pax door; they involve different door locations, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320050_VNAA20250320034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on the avionics bay door surround intercostal, while the prior record addresses corrosion on a pax door mid intercostal, involving different parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA20250320033_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "The new record concerns a corroded trunnion body on L/H flap 140 requiring fabrication, while the prior record deals with other stations and states no fabrication needed for R/H flap 140, so the records do not conflict.",
+    "parse_failed": false
+  },
+  "VNAA20250320036_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a passenger door frame, while the prior record replaces a floor seat track; they involve distinct components and systems, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320040_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "Both records address the LH flap vane actuator at FLS24.00, but the prior record states the actuator assembly was replaced (no fabrication needed) while the new record describes repairing the existing actuator rod, creating a mutually exclusive claim.",
+    "parse_failed": false
+  },
+  "VNAA20250320042_VNAA20250320035_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs corrosion on LBL27 floor support, while the prior record replaces a corroded passenger door; they involve distinct components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320047_VNAA20250320035_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded lower\u2011sill kickplate angle, while the prior record replaces a corroded door intercostal; they involve different components of the passenger door, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025031902075_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion but refer to different seat locations (FR13A LH Y953 vs FR33\u201135 RH Y\u2011450), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025031902072_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both entries replace seat tracks due to corrosion, but they concern different seat track locations (FR73.5\u201174 LH vs FR33\u201135 RH), so the scopes are separate.",
+    "parse_failed": false
+  },
+  "DALA2025031902073_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they concern different seat track locations (FR33\u201135 RH vs FR73.5\u201174 LH), so their scopes do not overlap.",
+    "parse_failed": false
+  },
+  "DALA2025031902074_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks due to corrosion, but they concern different track locations (FR33\u201135 vs FR73\u201173.5), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031902070_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks on the same aircraft but refer to different frame ranges (FR13A\u2011FR18 vs FR33\u2011FR35), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "DALA2025031902069_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a cabin floor beam, while the prior record addressed a seat track; they involve different components despite being on the same aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031902071_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks but involve different frame locations and part identifiers, so they address separate issues on the same aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031902068_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks but refer to different frame locations (FR33\u201135 vs FR56\u201158), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025032002112_DALA2025031902069_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve the cabin floor beam longitudinal on the same aircraft, but they address corrosion at different frame locations (FR75\u201178 vs FR80\u201182), so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032502207_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks on the same aircraft but concern different locations (FR33\u201135 RH Y\u2011450 vs FR73\u201173.5 LH YC1), so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032502208_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the right exit door slider mechanism, while the prior record dealt with a left cabin door proximity sensor, involving different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025032602225_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a wing flap track bridge, while the prior record replaced a cabin seat track; they concern distinct systems with no overlapping scope.",
+    "parse_failed": false
+  },
+  "DALA2025032802309_DALA2025031802034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses chafing on fuselage skin at stations FR54\u201155, while the prior record concerns a dent at FR32\u201135; they involve different locations and issues, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032802303_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern corrosion on the same seat track but at different frame locations (FR33\u201135 vs FR74\u201175), so their scopes do not overlap.",
+    "parse_failed": false
+  },
+  "DALA2025032802304_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern cabin seat\u2011track corrosion but involve different seat\u2011track locations (FR33\u201135 vs FR71\u201173) and different part numbers, so they address distinct components of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025032802305_DALA2025031802034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs chafing on the belly faring and fuselage attach surface, while the prior record repaired a dent on a left\u2011hand fuselage stringer; they involve different parts and issues, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032802306_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve cabin seat\u2011track corrosion on the same aircraft but refer to different frame ranges (FR33\u2011FR35 vs FR72\u2011FR74), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "DALA2025032802308_DALA2025031802034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record repairs a dent on FR32, while the new record fixes oversized fastener holes on FR49/50; they involve different fuselage frames and issues, making the scopes disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032802302_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve corrosion on separate seat tracks (different rows and opposite sides), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025032802307_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion on different seat\u2011track sections (FR33\u201135 RH vs FR72\u201174 LH), so they address distinct parts of the cabin seat track system.",
+    "parse_failed": false
+  },
+  "DALA2025040202483_DALA2025032802305_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve different belly fairing part numbers (197GB vs 198GB), so they pertain to distinct components despite similar chafing findings.",
+    "parse_failed": false
+  },
+  "DALA2025040202484_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the ASPSU on Door\u202f1, while the prior record replaced a prox sensor and adjusted gaps on Door\u202fL; they concern different components, so there is no conflict.",
+    "parse_failed": false
+  },
+  "DALA2025040202472_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion on the wing box center tank skin, while the prior record concerns a cabin seat track; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025040302523_DALA2025032502208_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "The new entry records compliance with a generic ERA, while the prior entry documents a specific exit\u2011door slider mechanism repair; they involve different issues with no overlapping claims.",
+    "parse_failed": false
+  },
+  "DALA2025040402583_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on a dummy rail at FR13A, while the prior record addressed corrosion on a cabin seat track between FR33\u201135, involving different parts and locations.",
+    "parse_failed": false
+  },
+  "DALA2025040302522_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern seat\u2011track corrosion but refer to different locations (FR33\u201135 RH vs FR73\u201173.5 LH), so they address distinct components without conflict.",
+    "parse_failed": false
+  },
+  "DALA2025040402581_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve seat\u2011track corrosion but refer to distinct frame locations (FR33\u201135 vs FR73\u201173.5), so they address different components of the cabin.",
+    "parse_failed": false
+  },
+  "VNAA202504160033_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a permanent repair of the left-hand elevator assembly, while the prior record deals with corrosion and replacement of flap vane actuator trunnion bodies, involving different aircraft structures.",
+    "parse_failed": false
+  },
+  "VNAA202504160029_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on RBL\u202f9 seat track (stations\u202f350\u2011485) while the prior record addressed RBL\u202f27 seat track (stations\u202f985\u20111000); they involve different rows and locations, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160034_VNAA20250320039_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns fuselage skin corrosion near the ADF antenna, while the prior record dealt with corrosion of the passenger\u2011door inner skin, so they address different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA202504160022_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve seat tracks on LBL\u202f27 but at different station ranges (FS\u202f364\u2011485 vs FS\u202f985\u20111000), so they concern distinct components.",
+    "parse_failed": false
+  },
+  "VNAA202504160025_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track at stations 923\u2011977 on row 27, while the prior record addressed a different seat track segment at stations 985\u20111000, so they concern separate parts.",
+    "parse_failed": false
+  },
+  "VNAA202504160019_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a corroded seat rail on row 9 (FS 581\u2011682), while the prior record fixes a corroded seat track on row 27 (FS 985\u20111000); they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160024_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record notes corrosion on seat track stations 581\u2011661, while the prior record addressed corrosion and replacement of seat track stations 985\u20111000; they concern different sections of the same system.",
+    "parse_failed": false
+  },
+  "VNAA202504160027_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a seat track at F.S.374\u2011485, while the prior record addresses a seat track at F.S.985\u20111000, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA202504160028_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track at F.S.661\u2011863 (LBL\u202f9) with part SH670\u201135864\u20113, while the prior record addressed a different seat track at F.S.985\u20111000 (RBL\u202f27) using part BA670\u201145073\u20113; they concern distinct components.",
+    "parse_failed": false
+  },
+  "VNAA202504160030_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track at F.S. 863\u2011988, while the prior record dealt with a different floor seat track at F.S.985\u20111000 on RBL\u202f27, so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA202504160031_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track on RBL\u202f9 (stations\u202f661\u2011863), while the prior record replaced a seat track on RBL\u202f27 (stations\u202f985\u20111000); they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160017_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded seat rail on RBL\u202f9 (FS\u202f485\u2011581) while the prior record addressed a corroded seat track on RBL\u202f27 (FS\u202f985\u20111000), involving different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160021_VNAA20250320042_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record notes corrosion on the right\u2011hand pressure floor sill angle (FS\u202f761.85\u2011785.15) while the prior record documents repaired corrosion on LBL27 floor support at FS\u202f1028\u20111036, involving different parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160026_VNAA202504160025_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses a right\u2011hand seat track (RBL 27, stations 909\u2011977) while the prior record concerns a left\u2011hand seat track (LBL 27, stations 923\u2011977); they involve different components despite overlapping station numbers.",
+    "parse_failed": false
+  },
+  "VNAA202504160035_VNAA202504160034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a dent at FS1020, whereas the prior record reports corrosion between FS477\u2011691; they involve different fuselage sections with no overlapping issue.",
+    "parse_failed": false
+  },
+  "VNAA202504160010_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a right\u2011side seat rail at station 15R (frames 572\u2011677) while the prior record addresses a floor seat track at frames 985\u20111000, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA202504160007_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a left\u2011hand side seat rail between FS\u202f863\u2011969, while the prior record addresses a floor seat track between FS\u202f985\u20111000 on rib\u202f27; they involve distinct parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160011_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a right\u2011hand side seat rail at STGR\u202f15R, while the prior record dealt with a floor seat track at FS\u202f985\u20111000 RBL\u202f27; they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160002_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left\u2011side seat rail at station 15L (FS\u202f485\u2011572) while the prior record repaired a floor seat track at FS\u202f985\u20111000 on RBL\u202f27, addressing different components/locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160003_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a left\u2011side seat rail at stations 572\u2011677, while the prior record addressed a floor seat track at stations 985\u20111000 on a different rib, so they concern distinct components.",
+    "parse_failed": false
+  },
+  "VNAA202504160012_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a right\u2011hand side seat rail at FS\u202f708\u2011761.85, while the prior record dealt with a floor seat track at FS\u202f985\u20111000, so they concern different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160013_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve corrosion repairs but replace different components (right\u2011hand side seat rail vs floor seat track) at distinct stations, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160001_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion of the left\u2011hand side seat rail at stations 379\u2011485, while the prior record dealt with a floor seat track at stations 985\u20111000, involving different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160004_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left\u2011side seat rail at station 15L (FS 677\u2011708), while the prior record addresses a floor seat track at FS 985\u20111000 RBL\u202f27, so they concern different components.",
+    "parse_failed": false
+  },
+  "VNAA202504160005_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a left\u2011hand side seat rail at station 15L, while the prior record addressed a floor seat track at stations 985\u20111000 on RBL\u202f27; they concern different parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160008_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a right\u2011hand side seat rail at station 15R (FS 379\u2011485), while the prior record fixes a floor seat track at station 27 (FS 985\u20111000); they concern different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160009_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a right\u2011hand side seat rail at station 15R, while the prior record addressed a floor seat track at RBL\u202f27 (FS985\u2011FS1000); they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160014_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record reports corrosion on the right\u2011hand side seat rail between FS\u202f863\u2011969, while the prior record concerns a floor seat track at FS\u202f985\u20111000 on rib\u202f27, so they involve different parts/locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160016_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat rail at LBL\u202f9 (FS\u202f485\u2011581) while the prior record dealt with a different seat track at RBL\u202f27 (FS\u202f985\u20111000), so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA202504160018_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat rail at FS 581\u2011682, while the prior record replaces a floor seat track at FS 985\u20111000; they concern different parts/locations, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160036_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corroded forward cargo floor tracks (part DSY7058-3) while the prior record repaired a corroded floor seat track (part BA670-45073-3); they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876594_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces right\u2011side slat track rollers, whereas the prior record addressed left\u2011side rollers, so they concern different components despite the same aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025091876596_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the right side roller slat track 2\u20112, while the prior record addressed right side roller slat track 1\u20112, so they concern different components.",
+    "parse_failed": false
+  },
+  "SWIA2025091876593_SWIA2025091876515_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces left wing slat track rollers, while the prior record repairs the left inboard flap upper skin/vane assembly; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876598_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the right side roller slat track 3\u20112, while the prior record dealt with right side roller slat track 1\u20112; they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876603_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record works on left track roller slat 2\u20112, while the prior record concerns side roller slat track 1\u20112; they involve different components, so the records are disjoint in scope.",
+    "parse_failed": false
+  },
+  "SWIA2025091876595_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve different slat track locations (track 1\u20112 vs track 2\u20112) and distinct components, so they address separate scopes despite the same aircraft and date.",
+    "parse_failed": false
+  },
+  "SWIA2025091876600_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe removal and installation of new right\u2011side roller slat track 1\u20112 with successful operational test; they are compatible descriptions of the same maintenance action, not contradictory or disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876597_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the left side roller track 3\u20112, while the prior record dealt with left side roller track 1\u20112, so they concern different components of the slat system.",
+    "parse_failed": false
+  },
+  "SWIA2025091876599_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records replace rollers on left track 1-2 but refer to different subcomponents (side roller vs top\u2011forward roller) and use distinct AMM references, so they are compatible, not contradictory or superseding each other.",
+    "parse_failed": false
+  },
+  "SWIA2025091876601_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record addresses left side roller slat track 1\u20112, while the new record concerns left track roller slat 1\u20113, involving different components and tasks.",
+    "parse_failed": false
+  },
+  "SWIA2025091976602_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record concerns right\u2011side track roller slat 1\u20112, while the new record addresses right\u2011side track roller slat 1\u20113, so they involve different components despite the same aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025091976604_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record deals with right\u2011side track roller slat 1\u20112, while the new record concerns track roller slat 2\u20112, so they address different components despite being on the same aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025110676472_SWIA2025091876515_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward cargo door upper guide fitting, while the prior record repairs the left inboard flap upper skin; they involve different parts/systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2026070676517_SWIA2025110676493_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses the right landing gear door latch, while the prior record concerns the forward lower guide fitting of the center cargo door, involving different parts.",
+    "parse_failed": false
+  },
+  "SWIA2025110676560_SWIA2026070676517_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a left-hand landing gear door latch, while the prior record concerns the right-hand door latch; they involve different components despite similar procedures, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025110676534_SWIA2025091876515_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs fuselage skin nicks between stations FS1000\u2011FS1051, while the prior record addresses a permanent repair of the left inboard flap upper skin and vane assembly; they involve different aircraft structures despite using the same task card.",
+    "parse_failed": false
+  },
+  "SWIA2026070676548_SWIA2025110676534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a dent on the left engine fan cowl door, while the prior record fixes nicks on exterior skin; they involve different parts of the aircraft despite both referencing the same task card.",
+    "parse_failed": false
+  },
+  "SWIA2025110676531_SWIA2025110676493_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward upper guide fitting, while the prior record addresses the forward lower guide fitting; they involve different components of the cargo door, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025110676493_SWIA2025110676472_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward lower guide fitting, while the prior record repaired the forward upper guide fitting; they concern different components of the cargo door, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2026070676545_SWIA2025110676534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a gouge on panel 642AT fastener hole, while the prior record addresses nicks/gouges on exterior skin between FS1000\u20111051.30 on different stations, so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "SWIA2026070676502_SWIA2025111376495_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion and replacement of main avionics stringer 26R, while the prior record deals with stringer 20R; they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376540_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a main avionics frame, while the prior record addresses a landing gear door; they involve distinct aircraft systems, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376482_SWIA2025111376476_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs stringer 20R while the prior record addresses stringer 26L, involving different components despite the same aircraft and date.",
+    "parse_failed": false
+  },
+  "SWIA2025111376492_SWIA2025111376482_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records address corrosion on the same intercostal/stringer but refer to non\u2011overlapping fastener ranges (FS319\u2011FS333 vs FS364\u2011FS379), so they involve different parts of the component.",
+    "parse_failed": false
+  },
+  "SWIA2025111376495_SWIA2025111376482_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records address corrosion on stringer 20R but reference non\u2011overlapping FS ranges (295\u2011310 vs 364\u2011379), so they involve different sections of the same component, making the scopes disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376465_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion and replacement of the main avionics S25R longeron, while the prior record concerns a cracked left-hand true door landing latch; they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376528_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward lavatory impact angle, while the prior record repaired the left-hand trailing door latch; they involve different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376481_SWIA2025111376476_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a 25R splice corrosion, while the prior record addresses corrosion on a different 26L structure; they involve distinct components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376476_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on the main avionics strut, while the prior record repairs a landing door latch; they involve different parts/systems, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111476567_SWIA2025111476475_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a forward interior floor mounting bracket, while the prior record replaces a passenger\u2011door piano hinge; they involve distinct components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111476576_SWIA2025111476475_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both entries replace piano hinges, but one addresses the door\u2011side hinge while the prior record concerns the fuselage\u2011side hinge, so they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111476475_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a passenger\u2011door piano hinge, while the prior record replaced a landing\u2011door latch; they involve different components despite being in the same door area.",
+    "parse_failed": false
+  },
+  "SWIA2025111576508_SWIA2025110676531_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the forward passenger door former, while the prior record repaired a forward cargo\u2011door upper guide fitting; they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2026070676552_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record replaced the entire forward passenger door, while the new record only replaced corroded cleats on the door's intercostal; they address different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2026070676537_SWIA2025111676523_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the aft DD3 door intercostal, while the prior record addresses the aft DD4 door intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676553_SWIA2026070676537_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the aft DD5 intercostal, while the prior record addressed the aft DD3 intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676589_SWIA2025111676553_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the mid DD4 intercostal, while the prior record addresses the aft DD5 intercostal, which are distinct components.",
+    "parse_failed": false
+  },
+  "SWIA2025111676459_SWIA2025111676447_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the forward DD5 door intercostal, while the prior record addressed the aft DD2 door intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676449_SWIA2025111676447_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the mid DD2 intercostal, while the prior record repaired the aft DD2 intercostal, addressing different parts of the pax door system.",
+    "parse_failed": false
+  },
+  "SWIA2025111676523_SWIA2026070676512_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the aft DD4 passenger\u2011door intercostal, while the prior record addressed the forward DD2 intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676447_SWIA2025111376492_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a passenger\u2011door aft DD2 intercostal, while the prior record addresses a main\u2011avionics intercostal 20R; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111676546_SWIA2025110676534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes scratches on the passenger\u2011door outer skin, while the prior record repairs nicks on fuselage exterior skin sections, so they concern different parts despite shared task card.",
+    "parse_failed": false
+  },
+  "SWIA2025111676591_SWIA2025111676553_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the DD7A passenger door intercostal, while the prior record addresses the DD5 aft passenger door intercostal, involving different components.",
+    "parse_failed": false
+  },
+  "SWIA2026070676557_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses the aft passenger door while the prior record concerns the forward passenger door, so they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2026070676565_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records concern the same pax door former; the new entry replaces it again, updating the prior replacement, so it supersedes the earlier record.",
+    "parse_failed": false
+  },
+  "SWIA2026070676512_SWIA2025111676496_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the forward door DD2 intercostal, while the prior record addresses the mid door DD6 intercostal, involving different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676496_SWIA2025111676447_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a mid\u2011DD6 pax\u2011door intercostal, while the prior record addresses an aft\u2011DD2 intercostal, so they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676578_SWIA2025111676553_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the forward DD3 intercostal, while the prior record addressed the aft DD5 intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2026070676514_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve separate repairs on the forward passenger door (former vs pull\u2011in cam doubler) and do not contradict or replace each other; they are compatible maintenance actions.",
+    "parse_failed": false
+  },
+  "DEMO20260909165206_SWIA2025122876590_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records concern a crack at the drag angle; the new entry merely notes a finding and refers to the prior work, without conflicting or superseding it.",
+    "parse_failed": false
+  },
+  "DEMO20260909170109_SWIA2025122876590_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both entries refer to a crack at the drag angle of the vertical stabilizer; the new record only notes the finding and references prior work, without contradicting or superseding the earlier repair.",
+    "parse_failed": false
+  },
+  "DEMO20260909171523_SWIA2025122876590_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records concern the same drag angle; the new entry merely notes a crack found, which does not conflict with the prior repair documentation.",
+    "parse_failed": false
   }
 }

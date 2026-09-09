@@ -33,3 +33,9 @@ The system relies on an external LLM provider whose rate limits may be exhausted
 
 ## Database
 The demonstration must run against the live Neo4j database using `NEO4J_URI=bolt://localhost:7687` in the environment. All demonstration paths rely on native Cypher queries which bypass the in-memory fallback store.
+
+## Demo Walkthrough
+
+**Step 10 — The query interface.** A senior technician has a symptom on 813SK. Instead of working the standard protocol in order, they ask the system. It answers from that airframe's 153 records plus fleet-wide matches, returns a ranked inspection order with the evidence behind each rank, and surfaces a rare prior occurrence from months earlier. Every line cites a real record. *The ranking comes from the graph; the language model only phrases it.*
+
+*(Note: Diagnostic queries evaluate under 3 seconds using the internal cache keyed on `(asset_id, symptom, model)`. No explicit pre-warming is required for the live demo.)*
