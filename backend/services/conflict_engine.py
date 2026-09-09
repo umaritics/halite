@@ -150,11 +150,13 @@ def find_candidate_pairs(
     target_submitted = target.get("submitted_at", "")
 
     for prior in history:
-        if prior.get("record_id") == record_id:
-            continue  # skip self
-        # Only look at records that are older than the target, or same day but submitted earlier
+        prior_id = prior.get("record_id") or prior.get("id")
+        if prior_id == record_id:
+            continue
+            
+        # Prevent leakage: do not score against records from the future
         prior_occurred = prior.get("occurred_at", "")
-        if prior_occurred > target_occurred:
+        if prior_occurred and target_occurred and prior_occurred > target_occurred:
             continue
         if prior_occurred == target_occurred:
             if prior.get("submitted_at", "") >= target_submitted:
@@ -443,11 +445,15 @@ def process_record(
     target = graph_repo.get_service_record(record_id)
     if target is None:
         raise ValueError(f"process_record: record {record_id!r} not found in graph")
+        
+    asset = graph_repo.find_or_create_asset(target.get("asset_key", ""))
+    history_size = len(graph_repo.list_asset_history(asset["id"]))
 
     if not candidates:
         return {
             "record_id": record_id,
             "candidates_considered": 0,
+            "history_size": history_size,
             "best_prior": None,
             "classification": None,
             "adjudication": None,
@@ -516,11 +522,17 @@ def process_record(
     else:
         status_applied = routing_decision
 
-    graph_repo.update_service_record(record_id, {"status": status_applied, "confidence": confidence})
+    graph_repo.update_service_record(record_id, {
+        "status": status_applied, 
+        "confidence": confidence,
+        "history_size": history_size,
+        "candidates_considered": len(candidates)
+    })
 
     return {
         "record_id": record_id,
         "candidates_considered": len(candidates),
+        "history_size": history_size,
         "best_prior": best,
         "classification": classification,
         "adjudication": adjudication_result,
