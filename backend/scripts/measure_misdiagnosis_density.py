@@ -22,8 +22,11 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # 1. Load corpus for part metadata lookups
 # ---------------------------------------------------------------------------
-CORPUS = Path("backend/data/processed/sdr_poc_corpus.csv")
-GT_PAIRS = Path("backend/data/processed/ground_truth_pairs.csv")
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+CORPUS = BASE_DIR / "data/processed/sdr_poc_corpus.csv"
+GT_PAIRS = BASE_DIR / "data/processed/ground_truth_pairs.csv"
 
 def normalise(s: str) -> str:
     if not s:
