@@ -38,7 +38,7 @@ def _record_is_superseded(record: dict) -> bool:
 # Public API
 # ---------------------------------------------------------------------------
 
-def asset_history_context(graph_repo, asset_id: str, limit: int = 30) -> list[dict]:
+def asset_history_context(graph_repo, asset_id: str, limit: int = 30, exclude_synthetic: bool = True) -> list[dict]:
     """
     Return this asset's ServiceRecords, newest first, with status and any
     SUPERSEDES relationship indicated.
@@ -50,6 +50,8 @@ def asset_history_context(graph_repo, asset_id: str, limit: int = 30) -> list[di
     history = graph_repo.list_asset_history(asset_id, limit=200)
     # Sort newest first
     history.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
+    if exclude_synthetic:
+        history = [r for r in history if not str(r.get("record_id", r.get("id", ""))).startswith("DEMO")]
 
     results = []
     for rec in history[:limit]:
@@ -78,6 +80,7 @@ def similar_symptom_records(
     jasc_code: Optional[str] = None,
     exclude_asset_id: Optional[str] = None,
     limit: int = 20,
+    exclude_synthetic: bool = True,
 ) -> list[dict]:
     """
     Fleet-wide retrieval: records on *other* assets matching the symptom.
@@ -100,6 +103,10 @@ def similar_symptom_records(
 
     for rec in all_records:
         rec_asset = rec.get("asset_key") or rec.get("asset_id") or ""
+        rec_id = str(rec.get("record_id", rec.get("id", "")))
+
+        if exclude_synthetic and rec_id.startswith("DEMO"):
+            continue
 
         # Skip own asset
         if exclude_asset_id and (rec_asset == exclude_asset_id or
@@ -173,6 +180,7 @@ def build_diagnostic_context(
     graph_repo,
     asset_id: str,
     symptom_text: str,
+    exclude_synthetic: bool = True,
 ) -> dict:
     """
     Assemble the full diagnostic payload for (asset_id, symptom_text).
@@ -195,7 +203,7 @@ def build_diagnostic_context(
     Nothing is synthesised.
     """
     # 1. Asset's own history
-    history = asset_history_context(graph_repo, asset_id, limit=30)
+    history = asset_history_context(graph_repo, asset_id, limit=30, exclude_synthetic=exclude_synthetic)
 
     # 2. Infer JASC from symptom by checking against asset history
     jasc_hint = None
@@ -211,6 +219,7 @@ def build_diagnostic_context(
         jasc_code=jasc_hint,
         exclude_asset_id=asset_id,
         limit=20,
+        exclude_synthetic=exclude_synthetic,
     )
 
     # 4. Resolution outcomes for all retrieved records
