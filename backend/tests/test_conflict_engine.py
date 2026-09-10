@@ -280,23 +280,37 @@ class TestScoreConfidence:
 class TestRoute:
     def test_at_threshold_is_auto_accepted(self):
         from services.conflict_engine import route
-        assert route({}, 0.72, 0.72) == "auto_accepted"
+        assert route({}, 0.72, 0.72, {"label": "supersedes"}) == "auto_accepted"
 
     def test_just_below_threshold_is_needs_review(self):
         from services.conflict_engine import route
-        assert route({}, 0.719, 0.72) == "needs_review"
+        assert route({}, 0.719, 0.72, {"label": "supersedes"}) == "needs_review"
 
     def test_just_above_threshold_is_auto_accepted(self):
         from services.conflict_engine import route
-        assert route({}, 0.721, 0.72) == "auto_accepted"
+        assert route({}, 0.721, 0.72, {"label": "supersedes"}) == "auto_accepted"
 
     def test_zero_confidence_is_needs_review(self):
         from services.conflict_engine import route
-        assert route({}, 0.0, 0.72) == "needs_review"
+        assert route({}, 0.0, 0.72, {"label": "supersedes"}) == "needs_review"
 
     def test_max_confidence_is_auto_accepted(self):
         from services.conflict_engine import route
-        assert route({}, 1.0, 0.72) == "auto_accepted"
+        assert route({}, 1.0, 0.72, {"label": "supersedes"}) == "auto_accepted"
+
+    def test_contradicts_always_needs_review(self):
+        from services.conflict_engine import route
+        assert route({}, 1.0, 0.72, {"label": "contradicts"}) == "needs_review"
+        assert route({}, 0.0, 0.72, {"label": "contradicts"}) == "needs_review"
+
+    def test_partial_supersedes_always_needs_review(self):
+        from services.conflict_engine import route
+        assert route({}, 1.0, 0.72, {"label": "partial_supersedes"}) == "needs_review"
+
+    def test_no_action_for_no_conflict_and_scope_disjoint(self):
+        from services.conflict_engine import route
+        assert route({}, 1.0, 0.72, {"label": "no_conflict"}) == "no_action"
+        assert route({}, 1.0, 0.72, {"label": "scope_disjoint"}) == "no_action"
 
 
 # ---------------------------------------------------------------------------
@@ -330,7 +344,7 @@ class TestProcessRecord:
         assert isinstance(result["candidates_considered"], int)
         assert result["candidates_considered"] >= 0
         assert 0.0 <= result["confidence"] <= 1.0
-        assert result["route"] in ("auto_accepted", "needs_review")
+        assert result["route"] in ("auto_accepted", "needs_review", "no_action")
 
     def test_parse_failure_counted(self):
         """Parse failures must be counted in the returned dict."""

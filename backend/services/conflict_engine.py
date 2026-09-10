@@ -398,15 +398,17 @@ def score_confidence(signals: dict) -> float:
     return max(0.0, min(1.0, score))
 
 
-def route(record: dict, confidence: float, threshold: float) -> str:
+def route(record: dict, confidence: float, threshold: float, classification: dict = None) -> str:
     """
-    Route a record to auto_accepted or needs_review based on confidence.
-
-    confidence >= threshold → auto_accepted
-    confidence <  threshold → needs_review
-
-    Returns one of: 'auto_accepted', 'needs_review'
+    Route a record based on classification and confidence.
     """
+    label = classification.get("label", "no_conflict") if classification else "no_conflict"
+    
+    if label in ("contradicts", "partial_supersedes"):
+        return "needs_review"
+    if label in ("no_conflict", "scope_disjoint"):
+        return "no_action"
+        
     return "auto_accepted" if confidence >= threshold else "needs_review"
 
 
@@ -505,7 +507,7 @@ def process_record(
     confidence = score_confidence(signals)
 
     # 6. Route
-    routing_decision = route(target, confidence, threshold)
+    routing_decision = route(target, confidence, threshold, classification)
 
     # 7. Apply to graph on confirmed supersession
     action = adjudication_result.get("action")
