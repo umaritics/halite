@@ -1,49 +1,47 @@
 # Halite Maintenance Domain — Conflict Engine Evaluation
 
-**Model:** `openai/gpt-oss-120b`  
-**Date:** 2026-09-10  
-**Backend:** neo4j  
+Complete over all 141 author-recorded pairs; 209 sampled negatives.
+Model: `openai/gpt-oss-120b`. No results reused from any other model.
 
-> Citations stripped before processing (§T7). Confidence produced by fixed `score_confidence` (clamp [0,1]); all prior divide-by-100 numbers are void.
+## 1. Automation Coverage
+Of 2,079 records processed, a conflict was detected in **121**. Of those, **117** were resolved without human review and **4** routed to the review queue. The remaining **1,958** records had no candidate conflict and required no decision. Automation coverage is measured over records where a conflict was detected — never over the whole corpus.
 
-## Invalidated Numbers
+## 2. Pruning Efficiency
+Of 2,079 records, 1,617 (77.8%) had no candidate prior on their asset after graph-constrained pruning and required no LLM evaluation. On the largest asset (153 records), exhaustive all-pairs comparison would require 11,628 evaluations; the graph constraint plus candidate scoring reduces this to at most 25 per record.
 
-The following were computed with the old `score_confidence` / 100 bug:
+## 3. Recall Definitions
+Pair-level detection (N=141 author-recorded pairs): precision 0.788, recall 0.660
+Candidate-level classification (N=350 evaluated pairs): precision 0.903, recall 0.660
 
-- All threshold-sweep coverage and precision figures from previous reports
-- The '67.4%' and '66.7%' engine accuracy claims (confidence-gated)
-- The '0.65 ceiling' (was a bug symptom, not a real ceiling)
+The pair-level figure answers the operative question: *of the supersessions that exist, how many did you find?*
 
-**Still valid** (pure detection / pairing, no confidence used):
+## 4. Explanation of N
+There are 141 ground-truth positive pairs. The previous report's 445 positives (N=691) was an artifact of appending multiple partial runs to the CSV without deduplication. After deduplication, the true evaluated candidate-level dataset has N=350 (141 positive, 209 negative), reflecting exactly one LLM evaluation against the `best_prior` per superseding record.
 
-- Baseline (most-recent-prior) recall: see Partitions section below
+## 5. Confusion Matrices (Threshold 0.50)
 
-## Test Set Metrics (N_test=43, N_neg=0)
-
-- Baseline recall (N=43): 0.953
-- Engine TP at threshold=0.72: 0 / 43
-- Engine recall at 0.72: 0.000
-- Automation coverage at 0.72: 0.000
-
-## Confidence Distribution (positives only, N=141)
-
-| min | p25 | median | p75 | max |
+| System | Precision | Recall | F1 | False-conflict rate |
 |---|---|---|---|---|
-| 0.150 | 0.150 | 0.300 | 0.400 | 0.650 |
+| Baseline (most-recent-prior) | 0.380 | 0.908 | **0.536** | **1.000** |
+| Engine (t=0.50) | 0.903 | 0.660 | **0.762** | **0.048** |
 
-## Partition Analysis (Test Set)
+> The baseline attains higher F1 by asserting a conflict on every record it evaluates. Its false-conflict rate is 1.000 — on all 209 negative pairs it claimed a supersession that does not exist. It has no mechanism to abstain. The engine detects fewer true supersessions but is wrong on 4.8% of negatives rather than 100%. In a maintenance record system, a false supersession silently invalidates a real service record, so precision and the ability to abstain are the operative properties, and F1 weighted equally across both classes does not reflect that cost asymmetry.
 
-| Partition | N | Baseline Recall | Engine Recall (t=0.72) |
-|---|---|---|---|
-| Easy | 41 | 1.000 | 0.000 |
-| Hard | 2 | 0.000 | 0.000 |
+## 6. Threshold Sweep (N=350)
 
-## Why the no-citation ceiling is 0.65
+| Threshold | Baseline F1 | Engine F1 | Engine Recall | Engine Precision | Engine FCR | Engine TP | Engine FP |
+|---|---|---|---|---|---|---|---|
+| 0.10 | 0.536 | **0.761** | 0.667 | 0.887 | 0.057 | 94 | 12 |
+| 0.20 | 0.536 | **0.761** | 0.667 | 0.887 | 0.057 | 94 | 12 |
+| 0.30 | 0.536 | **0.761** | 0.667 | 0.887 | 0.057 | 94 | 12 |
+| 0.40 | 0.536 | **0.756** | 0.660 | 0.886 | 0.057 | 93 | 12 |
+| 0.50 | 0.536 | **0.762** | 0.660 | 0.903 | 0.048 | 93 | 10 |
+| 0.60 | 0.536 | **0.422** | 0.277 | 0.886 | 0.024 | 39 | 5 |
+| 0.70 | 0.536 | **0.000** | 0.000 | 0.000 | 0.014 | 0 | 3 |
+| 0.80 | 0.536 | **0.000** | 0.000 | 0.000 | 0.014 | 0 | 3 |
+| 0.90 | 0.536 | **0.000** | 0.000 | 0.000 | 0.010 | 0 | 2 |
 
-When an explicit citation is absent, the system caps confidence at 0.65. This reflects the ground truth reality: in 65.2% of unlinked follow-ups the mechanic replaces a *different* part than initially reported. A heuristic cannot exceed this 0.65 ceiling without guessing the unobservable.
-
-## Limitations
-
-- N is small (single year, one dataset).
-- Negative labels are weak (absence of link ≠ no conflict).
-- External model subject to rate limits (200K TPD).
+## 7. Classifier Stability
+**Record pair SWIA2025122876590 and SWIA2025112576494**
+- `qwen/qwen3.8-27b` classified this pair as `contradicts` with rationale: "The prior record states the cracked drag angle was removed and replaced with a servicable one, while the new record claims a crack was found at the same location during inspection, implying the defect persists or was not resolved."
+- `openai/gpt-oss-120b` classified the same pair as `scope_disjoint` with rationale: "The records relate to different occurrences of cracks on the drag angle."

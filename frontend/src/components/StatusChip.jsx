@@ -4,6 +4,8 @@ export default function StatusChip({ status }) {
   const baseClasses = "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border";
 
   switch (status) {
+    case 'unscored':
+      return <span className={`${baseClasses} bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400`}>Unscored</span>;
     case 'auto_accepted':
       return <span className={`${baseClasses} bg-accent/10 border-accent/20 text-accent`}>Auto Accepted</span>;
     case 'needs_review':

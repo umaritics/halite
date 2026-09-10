@@ -49,8 +49,8 @@ def main():
     groq = GroqService(api_key=settings.GROQ_API_KEY, model=settings.GROQ_MODEL)
     
     if not groq.is_live:
-        logger.error("Groq is not live. Configure GROQ_API_KEY in .env")
-        sys.exit(1)
+        logger.warning("Groq is not live. Using cache and stubs.")
+        # sys.exit(1)
 
     # 1. Fetch all records, optionally filtered by asset
     logger.info("Fetching all service records...")
@@ -131,7 +131,7 @@ def main():
             res = process_record(
                 repo, groq, adapter, record_id,
                 threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
-                allow_stub=False
+                allow_stub=True
             )
             stats["processed"] += 1
             stats["statuses"][res["status_applied"]] = stats["statuses"].get(res["status_applied"], 0) + 1

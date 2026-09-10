@@ -419,6 +419,7 @@ def process_record(
     record_id: str,
     threshold: float = MAINT_CONFIDENCE_THRESHOLD,
     allow_stub: bool = False,
+    dry_run: bool = False,
 ) -> dict:
     """
     Full conflict-detection pipeline for a single ServiceRecord.
@@ -512,24 +513,28 @@ def process_record(
     # 7. Apply to graph on confirmed supersession
     action = adjudication_result.get("action")
     if routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes"):
-        graph_repo.link_record_supersedes(
-            new_record_id=record_id,
-            old_record_id=best["record_id"],
-            scope=action,
-            confidence=confidence,
-            rationale=classification.get("rationale", ""),
-        )
-        graph_repo.update_service_record(best["record_id"], {"status": "superseded"})
+        if not dry_run:
+            graph_repo.link_record_supersedes(
+                new_record_id=record_id,
+                old_record_id=best["record_id"],
+                scope=action,
+                confidence=confidence,
+                rationale=classification.get("rationale", ""),
+            )
+            graph_repo.update_service_record(best["record_id"], {"status": "superseded"})
         status_applied = "auto_accepted"
     else:
         status_applied = routing_decision
 
-    graph_repo.update_service_record(record_id, {
-        "status": status_applied, 
-        "confidence": confidence,
-        "history_size": history_size,
-        "candidates_considered": len(candidates)
-    })
+    if not dry_run:
+        graph_repo.update_service_record(record_id, {
+            "status": status_applied, 
+            "confidence": confidence,
+            "history_size": history_size,
+            "candidates_considered": len(candidates),
+            "classification_label": classification.get("label") if classification else None,
+            "classification_rationale": classification.get("rationale") if classification else None
+        })
 
     return {
         "record_id": record_id,

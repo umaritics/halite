@@ -53,7 +53,8 @@ export const maintenanceAPI = {
   ingestFile: (formData) => api.post('/maintenance/ingest', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  submitRecord: (data) => api.post('/maintenance/records', data),
+  submitRecord: (payload) => api.post('/maintenance/records', payload),
+  getRecord: (id) => api.get(`/maintenance/records/${id}`),
   assets: (params) => api.get('/maintenance/assets', { params }),
   assetHistory: (assetId) => api.get(`/maintenance/assets/${assetId}/history`),
   reviewQueue: () => api.get('/maintenance/review-queue'),

@@ -17,8 +17,15 @@ export default function ReviewQueue() {
   const fetchQueue = useCallback(() => {
     return maintenanceAPI.reviewQueue()
       .then(res => {
-        setQueue(res.data);
-        if (res.data.length === 0) {
+        const sorted = res.data.sort((a, b) => {
+          const isConfA = ['contradicts', 'partial_supersedes'].includes(a.classification_label);
+          const isConfB = ['contradicts', 'partial_supersedes'].includes(b.classification_label);
+          if (isConfA && !isConfB) return -1;
+          if (!isConfA && isConfB) return 1;
+          return new Date(b.occurred_at || 0) - new Date(a.occurred_at || 0);
+        });
+        setQueue(sorted);
+        if (sorted.length === 0) {
           setDetails(null);
         }
       })
@@ -42,7 +49,7 @@ export default function ReviewQueue() {
     const tail = activeRecord.asset_key || activeRecord.asset_id; // Try to extract tail if asset_id is not tail
 
     Promise.all([
-      maintenanceAPI.submitRecord({ record_id: activeRecord.record_id }),
+      maintenanceAPI.getRecord(activeRecord.record_id),
       maintenanceAPI.assetHistory(tail).catch(() => ({ data: { count: '?' } }))
     ]).then(([recRes, histRes]) => {
       setDetails(recRes.data);
@@ -211,6 +218,11 @@ export default function ReviewQueue() {
                       <StatusChip status={details.classification?.label || 'no_conflict'} />
                       <ConfidenceBar confidence={details.confidence} />
                     </div>
+                    {!['contradicts', 'partial_supersedes', 'supersedes'].includes(details.classification?.label) && (
+                      <div className="bg-surface-dark/20 text-secondary text-xs p-2 rounded mb-3 border border-theme/50 font-sans">
+                        Low-confidence no-detection held back as a miss-safety net, not a conflict awaiting adjudication.
+                      </div>
+                    )}
                     <p className="font-sans text-sm text-primary mb-3">
                       {details.classification?.rationale || 'No rationale provided.'}
                     </p>

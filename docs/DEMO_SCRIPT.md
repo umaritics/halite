@@ -12,6 +12,9 @@ The following three assets have genuinely long histories and provide the best de
 - **Pinned Model**: `openai/gpt-oss-120b`
 - **Recalibrated Threshold**: `0.50` (selected via max F1 criterion on E1 evaluation)
 
+## Automation Coverage
+Of 2,079 records processed, a conflict was detected in **121**. Of those, **117** were resolved without human review and **4** routed to the review queue. The remaining **1,958** records had no candidate conflict and required no decision. Automation coverage is measured over records where a conflict was detected — never over the whole corpus.
+
 ## Performance and Contingencies (`429 Too Many Requests`)
 
 The system relies on an external LLM provider whose rate limits may be exhausted during demonstration due to prior evaluation runs.
@@ -33,6 +36,20 @@ The system relies on an external LLM provider whose rate limits may be exhausted
 
 ## Database
 The demonstration must run against the live Neo4j database using `NEO4J_URI=bolt://localhost:7687` in the environment. All demonstration paths rely on native Cypher queries which bypass the in-memory fallback store.
+
+### Database Snapshot & Restore
+To safeguard the pre-defense state, a database snapshot should be taken offline (Neo4j Community Edition requires stopping the DB):
+```bash
+docker compose stop neo4j
+docker run --rm -v neo4j_dev_data:/data -v ${PWD}/backups:/backups neo4j:5.20 neo4j-admin database dump neo4j --to-path=/backups
+docker compose start neo4j
+```
+To restore the demonstration database if required:
+```bash
+docker compose stop neo4j
+docker run --rm -v neo4j_dev_data:/data -v ${PWD}/backups:/backups neo4j:5.20 neo4j-admin database load neo4j --from-path=/backups --overwrite-destination=true
+docker compose start neo4j
+```
 
 ## Demo Walkthrough
 

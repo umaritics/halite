@@ -54,3 +54,7 @@ Pairs missing from corpus: **0**
 **Decision**: **Skip G2** — both thresholds were not met. G3 is built without dependency edges. This finding is documented here.
 
 *The thresholds were stated in the G0 specification before this measurement was run and have not been adjusted.*
+
+## Confidence Threshold Provisional Status
+
+The `MAINT_CONFIDENCE_THRESHOLD` has been set to a provisional value of `0.72` in `.env.example` and `config.py`. This threshold dictates whether a conflict is auto-accepted or routed for manual review. It is provisional pending full calibration via the T7 evaluation harness (`evaluate_conflict_detection.py`), as the optimal threshold shifts when the confidence metric is properly constrained to `[0,1]`.

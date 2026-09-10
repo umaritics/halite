@@ -142,6 +142,36 @@ async def maintenance_ingest_upload(
 
 
 # ---------------------------------------------------------------------------
+# GET /api/maintenance/records/{record_id} — read-only detail
+# ---------------------------------------------------------------------------
+
+@router.get("/records/{record_id}")
+def get_single_record(
+    record_id: str,
+    graph_repo=Depends(get_graph_repo),
+    groq_service=Depends(get_groq_service),
+    settings=Depends(get_settings),
+):
+    """
+    Read-only fetch of a single record's conflict details. 
+    Runs the engine in dry_run mode to fetch classification without mutating the graph.
+    """
+    adapter = _get_maintenance_adapter()
+    try:
+        result = process_record(
+            graph_repo, groq_service, adapter, record_id,
+            threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
+            allow_stub=False,
+            dry_run=True
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    return result
+
+
+# ---------------------------------------------------------------------------
 # POST /api/maintenance/records — single record through conflict engine
 # ---------------------------------------------------------------------------
 

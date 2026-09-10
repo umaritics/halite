@@ -40,7 +40,12 @@ export default function Graph() {
     <div className="flex h-full flex-col">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-theme px-6 py-4">
         <div>
-          <h2 className="font-brand text-xl text-primary">Knowledge Graph</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="font-brand text-xl text-primary">Knowledge Graph</h2>
+            <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent border border-accent/20">
+              Capped at 2000 nodes
+            </span>
+          </div>
           <p className="font-sans text-sm text-secondary">3D visualization of decisions, components & relationships</p>
         </div>
         <div className="flex items-center gap-3">

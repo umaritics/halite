@@ -1,7 +1,17 @@
 import React from 'react';
 
 export default function ConfidenceBar({ confidence, threshold = 0.50 }) {
-  if (confidence === undefined || confidence === null) return null;
+  if (confidence === undefined || confidence === null) {
+    return (
+      <div className="flex flex-col gap-1 w-full max-w-[120px]">
+        <div className="flex justify-between items-center text-xs font-mono text-secondary">
+          <span>Conf</span>
+          <span className="italic">null</span>
+        </div>
+        <div className="text-[10px] text-secondary/60 uppercase tracking-wider">Not evaluated</div>
+      </div>
+    );
+  }
 
   const value = Math.max(0, Math.min(1, confidence));
   const percent = (value * 100).toFixed(0);

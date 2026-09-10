@@ -150,8 +150,9 @@ def _rank_components(context: dict) -> list[dict]:
                 "sources": [],
             }
         component_scores[key]["score"] += weight
-        component_scores[key]["evidence_count"] += 1
-        component_scores[key]["evidence_record_ids"].append(record_id)
+        if record_id not in component_scores[key]["evidence_record_ids"]:
+            component_scores[key]["evidence_count"] += 1
+            component_scores[key]["evidence_record_ids"].append(record_id)
         if source not in component_scores[key]["sources"]:
             component_scores[key]["sources"].append(source)
 
@@ -298,7 +299,7 @@ def diagnose(
         # Strip markdown fences if present
         cleaned = re.sub(r"^```[a-z]*\n?", "", raw_llm.strip(), flags=re.MULTILINE)
         cleaned = re.sub(r"```$", "", cleaned.strip())
-        llm_json = json.loads(cleaned)
+        llm_json = json.loads(cleaned, strict=False)
     except Exception:
         llm_json = {"explanation": raw_llm, "rare_cases": [], "warnings": []}
 

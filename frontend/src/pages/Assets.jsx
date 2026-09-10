@@ -58,7 +58,7 @@ export default function Assets() {
             {filtered.map(a => (
               <NavLink 
                 key={a.id} 
-                to={`/app/assets/${a.id}`}
+                to={`/app/asset-history/${a.id}`}
                 className="halite-card p-4 hover:border-accent transition-colors block"
               >
                 <div className="flex justify-between items-start mb-2">

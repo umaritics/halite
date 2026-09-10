@@ -356,7 +356,7 @@ class GraphRepository:
         nodes_rows = self.store.run_query(
             """
             MATCH (n)
-            WHERE n:Component OR n:Decision OR n:Commit OR n:Ticket OR n:Document
+            WHERE n:Component OR n:Decision OR n:Commit OR n:Ticket OR n:Document OR n:Asset OR n:ServiceRecord
             RETURN n, labels(n)[0] as label
             LIMIT $limit
             """,
@@ -758,8 +758,8 @@ class GraphRepository:
             "part_location": data.get("part_location", ""),
             "jasc_code": data.get("jasc_code", ""),
             "text": data.get("text", ""),
-            "status": data.get("status", "auto_accepted"),
-            "confidence": data.get("confidence", 1.0),
+            "status": data.get("status", "unscored"),
+            "confidence": data.get("confidence", None),
             "source": data.get("source", "faa_sdr"),
             "id": data.get("id") or str(uuid.uuid4()),
             "created_at": data.get("created_at") or _now(),

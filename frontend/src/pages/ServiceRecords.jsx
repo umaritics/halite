@@ -6,6 +6,7 @@ import ConfidenceBar from '../components/ConfidenceBar';
 
 const STATUS_FILTERS = [
   { id: 'all', label: 'All' },
+  { id: 'unscored', label: 'Unscored' },
   { id: 'auto_accepted', label: 'Auto Accepted' },
   { id: 'needs_review', label: 'Needs Review' },
   { id: 'accepted', label: 'Accepted' },
@@ -108,7 +109,7 @@ export default function ServiceRecords() {
                 paginated.map(rec => (
                   <Link 
                     key={rec.id || rec.record_id}
-                    to={`/app/assets/${rec.asset_id}#${rec.record_id}`}
+                    to={`/app/asset-history/${rec.asset_id}#${rec.record_id}`}
                     className="flex items-center gap-4 px-4 py-3 border-b border-theme hover:bg-surface-dark/5 transition-colors font-sans text-sm"
                   >
                     <div className="w-32 font-mono text-xs text-primary truncate" title={rec.record_id}>

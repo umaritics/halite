@@ -235,7 +235,10 @@ export default function Diagnostics() {
                       <div className="flex items-center justify-between">
                         <button
                           className="font-sans text-sm font-medium text-accent hover:underline"
-                          onClick={() => navigate(`/app/asset-history/${ev.asset_id}`)}
+                          onClick={() => {
+                            const assetUuid = assets.find(a => a.tail_number === ev.asset_id)?.id || ev.asset_id;
+                            navigate(`/app/asset-history/${assetUuid}#${ev.record_id}`);
+                          }}
                         >
                           {ev.record_id}
                         </button>
