@@ -5,23 +5,43 @@ import {
   DocumentArrowUpIcon,
   ExclamationTriangleIcon,
   Cog6ToothIcon,
+  MagnifyingGlassIcon,
   ScaleIcon,
+  WrenchScrewdriverIcon,
+  ClipboardDocumentListIcon,
+  InboxStackIcon
 } from '@heroicons/react/24/outline';
 import HaliteLogo from './HaliteLogo';
 import BrandName from './BrandName';
+import DomainSwitcher from './DomainSwitcher';
 import { useTheme } from '../context/ThemeContext';
+import { useDomain } from '../context/DomainContext';
 
-const navItems = [
-  { to: '/app/chat', label: 'Chat', icon: ChatBubbleLeftRightIcon },
-  { to: '/app/graph', label: 'Knowledge Graph', icon: CircleStackIcon },
-  { to: '/app/decisions', label: 'Decisions', icon: ScaleIcon },
-  { to: '/app/ingest', label: 'Ingest', icon: DocumentArrowUpIcon },
-  { to: '/app/alerts', label: 'Alerts', icon: ExclamationTriangleIcon, badge: true },
-  { to: '/app/settings', label: 'Settings', icon: Cog6ToothIcon },
-];
+const NAV_BY_DOMAIN = {
+  software: [
+    { to: '/app/chat', label: 'Chat', icon: ChatBubbleLeftRightIcon },
+    { to: '/app/graph', label: 'Knowledge Graph', icon: CircleStackIcon },
+    { to: '/app/decisions', label: 'Decisions', icon: ScaleIcon },
+    { to: '/app/ingest', label: 'Ingest', icon: DocumentArrowUpIcon },
+    { to: '/app/alerts', label: 'Alerts', icon: ExclamationTriangleIcon, badge: true },
+    { to: '/app/settings', label: 'Settings', icon: Cog6ToothIcon },
+  ],
+  maintenance: [
+    { to: '/app/assets', label: 'Assets', icon: WrenchScrewdriverIcon },
+    { to: '/app/records', label: 'Service Records', icon: ClipboardDocumentListIcon },
+    { to: '/app/diagnostics', label: 'Diagnostics', icon: MagnifyingGlassIcon },
+    { to: '/app/review-queue', label: 'Review Queue', icon: InboxStackIcon, badge: true },
+    { to: '/app/maintenance-ingest', label: 'Ingest', icon: DocumentArrowUpIcon },
+    { to: '/app/graph', label: 'Knowledge Graph', icon: CircleStackIcon },
+    { to: '/app/settings', label: 'Settings', icon: Cog6ToothIcon },
+  ],
+};
 
 export default function Sidebar({ alertCount = 0 }) {
   const { isDark } = useTheme();
+  const { domain } = useDomain();
+
+  const navItems = NAV_BY_DOMAIN[domain] || NAV_BY_DOMAIN.software;
 
   return (
     <aside
@@ -37,6 +57,7 @@ export default function Sidebar({ alertCount = 0 }) {
             <p className="font-sans text-xs text-secondary">Knowledge Graph</p>
           </div>
         </Link>
+        <DomainSwitcher />
       </div>
 
       <nav className="flex-1 space-y-1 p-3">
@@ -65,7 +86,9 @@ export default function Sidebar({ alertCount = 0 }) {
 
       <div className="border-t border-theme p-4">
         <p className="font-sans text-xs text-[#555555]">
-          Institutional memory for software teams
+          {domain === 'maintenance' 
+            ? 'Service history intelligence for maintenance teams'
+            : 'Institutional memory for software teams'}
         </p>
       </div>
     </aside>

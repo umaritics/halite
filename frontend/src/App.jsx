@@ -8,6 +8,12 @@ import Ingest from './pages/Ingest';
 import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
 import Landing from './pages/Landing';
+import Assets from './pages/Assets';
+import AssetHistory from './pages/AssetHistory';
+import ServiceRecords from './pages/ServiceRecords';
+import ReviewQueue from './pages/ReviewQueue';
+import MaintenanceIngest from './pages/MaintenanceIngest';
+import Diagnostics from './pages/Diagnostics';
 import { alertsAPI } from './api/client';
 import { useTheme } from './context/ThemeContext';
 
@@ -41,17 +47,29 @@ function AppShell() {
           <Route path="ingest" element={<Ingest />} />
           <Route path="alerts" element={<Alerts />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="assets" element={<Assets />} />
+          <Route path="asset-history/:assetId" element={<AssetHistory />} />
+          <Route path="records" element={<ServiceRecords />} />
+          <Route path="review-queue" element={<ReviewQueue />} />
+          <Route path="maintenance-ingest" element={<MaintenanceIngest />} />
+          <Route path="diagnostics" element={<Diagnostics />} />
         </Routes>
       </main>
     </div>
   );
 }
 
+import { DomainProvider } from './context/DomainContext';
+
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/app/*" element={<AppShell />} />
+      <Route path="/app/*" element={
+        <DomainProvider>
+          <AppShell />
+        </DomainProvider>
+      } />
     </Routes>
   );
 }

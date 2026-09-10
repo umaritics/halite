@@ -116,22 +116,38 @@ export default function Settings() {
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">System Status</h3>
           {health ? (
-            <dl className="mt-4 space-y-2 font-sans text-sm">
-              <div className="flex justify-between">
-                <dt className="text-secondary">API Status</dt>
-                <dd className="text-accent">{health.status}</dd>
+            <dl className="mt-4 space-y-3 font-sans text-sm">
+              <div className="flex justify-between items-center">
+                <dt className="text-secondary">Graph Mode</dt>
+                <dd>
+                  {health.graph_mode === 'memory' ? (
+                    <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-500 ring-1 ring-inset ring-amber-500/20">Memory (Demo)</span>
+                  ) : (
+                    <span className="text-accent">{health.graph_mode}</span>
+                  )}
+                </dd>
               </div>
-              <div className="flex justify-between">
-                <dt className="text-secondary">Demo Mode</dt>
-                <dd className="text-accent">
-                  {health.demo_mode ? 'Yes (in-memory graph)' : 'No (Neo4j)'}
+              <div className="flex justify-between items-center">
+                <dt className="text-secondary">LLM Mode</dt>
+                <dd>
+                  {health.llm_mode === 'fallback' ? (
+                    <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-medium text-amber-500 ring-1 ring-inset ring-amber-500/20">Fallback (Stubbed)</span>
+                  ) : (
+                    <span className="text-accent">{health.llm_mode}</span>
+                  )}
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-secondary">Groq LLM</dt>
-                <dd className="text-accent">
-                  {health.groq_configured ? 'Configured' : 'Demo responses'}
-                </dd>
+                <dt className="text-secondary">Pinned Model</dt>
+                <dd className="text-accent">{health.model || 'unknown'}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-secondary">Maintenance Records</dt>
+                <dd className="text-accent">{health.maintenance_record_count || 0} ingested</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-secondary">Confidence Threshold</dt>
+                <dd className="text-accent">{health.maint_threshold?.toFixed(2) || '0.50'}</dd>
               </div>
             </dl>
           ) : (

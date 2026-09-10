@@ -10,6 +10,7 @@ class GroqService:
         self.model = model
         self.demo_mode = demo_mode or not api_key
         self.client = None
+        self.fallback_invocations: int = 0  # §7: incremented every time _demo_response is used
         if not self.demo_mode:
             try:
                 from groq import Groq
@@ -19,8 +20,14 @@ class GroqService:
                 logger.error("Failed to init Groq client: %s", exc)
                 self.demo_mode = True
 
+    @property
+    def is_live(self) -> bool:
+        """True only when a real Groq client is configured and not in demo mode."""
+        return not self.demo_mode and self.client is not None
+
     def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 1500) -> str:
         if self.demo_mode:
+            self.fallback_invocations += 1
             return self._demo_response(messages, system_prompt)
         full_messages = []
         if system_prompt:
@@ -35,8 +42,19 @@ class GroqService:
             )
             return response.choices[0].message.content
         except Exception as exc:
+            if "rate limit" in str(exc).lower() or "429" in str(exc):
+                from config import settings
+                if settings.GROQ_API_KEY_FALLBACK and settings.GROQ_API_KEY_FALLBACK != self.api_key:
+                    logger.warning("Rate limit hit! Switching to GROQ_API_KEY_FALLBACK.")
+                    self.api_key = settings.GROQ_API_KEY_FALLBACK
+                    self.client.api_key = self.api_key
+                    return self.chat(messages, system_prompt, max_tokens)
+            
             logger.error("Groq API error: %s", exc)
-            return self._demo_response(messages, system_prompt)
+            if self.demo_mode:
+                self.fallback_invocations += 1
+                return self._demo_response(messages, system_prompt)
+            raise RuntimeError(f"Groq API error: {exc}") from exc
 
     def extract_json(self, prompt: str, system_prompt: str | None = None, max_tokens: int = 800) -> str:
         return self.chat(
@@ -45,7 +63,7 @@ class GroqService:
             max_tokens=max_tokens,
         )
 
-    def _demo_response(self, messages: list, system_prompt: str | None) -> str:
+    def _demo_response(self, messages: list, system_prompt: str | None) -> str:  # noqa: C901
         user_msg = ""
         for m in reversed(messages):
             if m.get("role") == "user":

@@ -356,7 +356,7 @@ class GraphRepository:
         nodes_rows = self.store.run_query(
             """
             MATCH (n)
-            WHERE n:Component OR n:Decision OR n:Commit OR n:Ticket OR n:Document
+            WHERE n:Component OR n:Decision OR n:Commit OR n:Ticket OR n:Document OR n:Asset OR n:ServiceRecord
             RETURN n, labels(n)[0] as label
             LIMIT $limit
             """,
@@ -694,3 +694,201 @@ class GraphRepository:
         except json.JSONDecodeError:
             logger.warning("Failed to parse JSON from LLM response")
             return {}
+
+    # ==================================================================
+    # Maintenance domain — Asset and ServiceRecord operations
+    # ==================================================================
+
+    def find_or_create_asset(self, tail_number: str, metadata: dict | None = None) -> dict:
+        """
+        Return an existing Asset by tail_number, or create one.
+
+        metadata may contain: make, model, serial_number.
+        """
+        metadata = metadata or {}
+        if self.is_memory:
+            return self.store.find_or_create_asset(tail_number, metadata)
+        rows = self.store.run_query(
+            "MATCH (a:Asset {tail_number: $tail}) RETURN a",
+            {"tail": tail_number},
+        )
+        if rows:
+            return dict(rows[0]["a"])
+        asset_id = str(uuid.uuid4())
+        props = {
+            "id": asset_id,
+            "tail_number": tail_number,
+            "make": metadata.get("make", ""),
+            "model": metadata.get("model", ""),
+            "serial_number": metadata.get("serial_number", ""),
+            "created_at": _now(),
+            "updated_at": _now(),
+        }
+        self.store.run_query(
+            "CREATE (a:Asset) SET a = $props RETURN a",
+            {"props": props},
+        )
+        return props
+
+    def create_service_record(self, data: dict) -> dict:
+        """
+        Create a ServiceRecord node.  Idempotent: if record_id already exists,
+        return the existing node without modification.
+
+        Required keys in data: record_id, asset_key, occurred_at, text.
+        Optional:  submitted_at, part_name, part_condition, part_location,
+                   jasc_code, status, confidence, source, created_at.
+        """
+        if self.is_memory:
+            return self.store.create_service_record(data)
+        # Idempotency check
+        rows = self.store.run_query(
+            "MATCH (sr:ServiceRecord {record_id: $rid}) RETURN sr",
+            {"rid": data["record_id"]},
+        )
+        if rows:
+            return dict(rows[0]["sr"])
+        props = {
+            "record_id": data["record_id"],
+            "asset_key": data.get("asset_key", ""),
+            "occurred_at": data.get("occurred_at", ""),
+            "submitted_at": data.get("submitted_at", ""),
+            "part_name": data.get("part_name", ""),
+            "part_condition": data.get("part_condition", ""),
+            "part_location": data.get("part_location", ""),
+            "jasc_code": data.get("jasc_code", ""),
+            "text": data.get("text", ""),
+            "status": data.get("status", "unscored"),
+            "confidence": data.get("confidence", None),
+            "source": data.get("source", "faa_sdr"),
+            "id": data.get("id") or str(uuid.uuid4()),
+            "created_at": data.get("created_at") or _now(),
+            "updated_at": _now(),
+        }
+        self.store.run_query(
+            "CREATE (sr:ServiceRecord) SET sr = $props RETURN sr",
+            {"props": props},
+        )
+        return props
+
+    def get_service_record(self, record_id: str) -> dict | None:
+        """Return a ServiceRecord by record_id, or None."""
+        if self.is_memory:
+            return self.store.get_service_record(record_id)
+        rows = self.store.run_query(
+            "MATCH (sr:ServiceRecord {record_id: $rid}) RETURN sr",
+            {"rid": record_id},
+        )
+        return dict(rows[0]["sr"]) if rows else None
+
+    def link_record_about_asset(self, record_id: str, asset_id: str) -> None:
+        """Create ABOUT edge: ServiceRecord → Asset."""
+        if self.is_memory:
+            self.store.link_record_about_asset(record_id, asset_id)
+            return
+        self.store.run_query(
+            """
+            MATCH (sr:ServiceRecord {record_id: $rid}), (a:Asset {id: $aid})
+            MERGE (sr)-[:ABOUT]->(a)
+            """,
+            {"rid": record_id, "aid": asset_id},
+        )
+
+    def list_asset_history(self, asset_id: str, limit: int = 50) -> list[dict]:
+        """Return ServiceRecords for an asset ordered ascending by occurred_at."""
+        if self.is_memory:
+            return self.store.list_asset_history(asset_id, limit)
+        rows = self.store.run_query(
+            """
+            MATCH (sr:ServiceRecord)-[:ABOUT]->(a:Asset {id: $aid})
+            RETURN sr
+            ORDER BY sr.occurred_at ASC
+            LIMIT $limit
+            """,
+            {"aid": asset_id, "limit": limit},
+        )
+        return [dict(r["sr"]) for r in rows]
+
+    def link_record_supersedes(
+        self,
+        new_record_id: str,
+        old_record_id: str,
+        scope: str,
+        confidence: float,
+        rationale: str,
+    ) -> None:
+        """
+        Create SUPERSEDES edge: new ServiceRecord → old ServiceRecord.
+
+        Properties: scope, confidence, rationale, created_at.
+        """
+        if self.is_memory:
+            self.store.link_record_supersedes(
+                new_record_id, old_record_id, scope, confidence, rationale
+            )
+            return
+        self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid}),
+                  (old:ServiceRecord {record_id: $oid})
+            MERGE (new)-[r:SUPERSEDES]->(old)
+            SET r.scope = $scope,
+                r.confidence = $confidence,
+                r.rationale = $rationale,
+                r.created_at = $now
+            """,
+            {
+                "nid": new_record_id,
+                "oid": old_record_id,
+                "scope": scope,
+                "confidence": confidence,
+                "rationale": rationale,
+                "now": _now(),
+            },
+        )
+
+    def list_service_records(
+        self, status: str | None = None, asset_id: str | None = None
+    ) -> list[dict]:
+        """List ServiceRecords, optionally filtered by status and/or asset_id."""
+        if self.is_memory:
+            return self.store.list_service_records(status, asset_id)
+        where_clauses = []
+        params: dict = {}
+        if status:
+            where_clauses.append("sr.status = $status")
+            params["status"] = status
+        if asset_id:
+            where_clauses.append("a.id = $asset_id")
+            params["asset_id"] = asset_id
+        where = "WHERE " + " AND ".join(where_clauses) if where_clauses else ""
+        match = (
+            "MATCH (sr:ServiceRecord)-[:ABOUT]->(a:Asset)"
+            if asset_id
+            else "MATCH (sr:ServiceRecord)"
+        )
+        rows = self.store.run_query(
+            f"""
+            {match}
+            {where}
+            RETURN sr
+            ORDER BY sr.occurred_at DESC
+            """,
+            params,
+        )
+        return [dict(r["sr"]) for r in rows]
+
+    def update_service_record(self, record_id: str, updates: dict) -> dict | None:
+        """Apply a partial update to a ServiceRecord.  Returns the updated node."""
+        updates = {**updates, "updated_at": _now()}
+        if self.is_memory:
+            return self.store.update_service_record(record_id, updates)
+        rows = self.store.run_query(
+            """
+            MATCH (sr:ServiceRecord {record_id: $rid})
+            SET sr += $updates
+            RETURN sr
+            """,
+            {"rid": record_id, "updates": updates},
+        )
+        return dict(rows[0]["sr"]) if rows else None

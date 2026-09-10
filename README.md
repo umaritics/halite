@@ -18,7 +18,15 @@ Institutional memory for software teams. Halite captures, stores, and serves the
 
 Demo mode runs with an in-memory graph and mock LLM responses — no Neo4j or Groq required.
 
-### Backend
+### Backend (With local Neo4j for Full Demo)
+
+If you are running the maintenance domain demo with real data, you must start the local Neo4j instance via Docker first:
+
+```bash
+docker compose up -d neo4j
+```
+
+Then start the backend server:
 
 ```bash
 cd backend
@@ -29,8 +37,31 @@ venv\Scripts\activate
 source venv/bin/activate
 
 pip install -r requirements.txt
-cp .env.example .env
+cp .env.example .env # Ensure NEO4J_URI=bolt://localhost:7687 and DEMO_MODE=false
 uvicorn main:app --reload --port 8000
+```
+
+### Ingesting Maintenance Data
+
+To populate the Neo4j database with FAA SDR maintenance records, you must first fetch the raw dataset:
+
+```bash
+cd backend
+python scripts/fetch_sdr_data.py
+```
+
+This will download the SDR database into `backend/data/raw/` and extract `sdr_poc_corpus.csv` into `backend/data/processed/`.
+
+Once downloaded, you can ingest the records into the running Neo4j instance by navigating to the **Ingest** tab in the web UI and selecting "Run ingest pipeline" under the Maintenance Domain, or via the API:
+
+```bash
+curl -X POST http://localhost:8000/api/maintenance/ingest
+```
+
+Finally, to evaluate the conflict engine against the ground-truth labels and regenerate the evaluation report:
+```bash
+cd backend
+python scripts/evaluate_conflict_detection.py --sweep
 ```
 
 ### Frontend

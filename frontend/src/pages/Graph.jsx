@@ -1,19 +1,27 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import GraphViewer, { GraphSidePanel } from '../components/GraphViewer';
 import { useGraph } from '../hooks/useGraph';
+import { useDomain } from '../context/DomainContext';
 
-const NODE_TYPES = ['Component', 'Decision', 'Commit', 'Ticket', 'Document'];
+const SOFTWARE_TYPES = ['Component', 'Decision', 'Commit', 'Ticket', 'Document'];
+const MAINT_TYPES = ['Asset', 'ServiceRecord'];
 
 export default function Graph() {
   const { data, loading, error, refetch } = useGraph();
+  const { domain } = useDomain();
   const [selectedNode, setSelectedNode] = useState(null);
   const [search, setSearch] = useState('');
-  const [typeFilters, setTypeFilters] = useState(
-    Object.fromEntries(NODE_TYPES.map((t) => [t, true]))
-  );
+  
+  const NODE_TYPES = domain === 'maintenance' ? MAINT_TYPES : SOFTWARE_TYPES;
+  
+  const [typeFilters, setTypeFilters] = useState({});
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setTypeFilters(Object.fromEntries(NODE_TYPES.map((t) => [t, true])));
+  }, [domain]);
 
   const stats = useMemo(() => {
     const counts = {};
@@ -32,7 +40,12 @@ export default function Graph() {
     <div className="flex h-full flex-col">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-theme px-6 py-4">
         <div>
-          <h2 className="font-brand text-xl text-primary">Knowledge Graph</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="font-brand text-xl text-primary">Knowledge Graph</h2>
+            <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent border border-accent/20">
+              Capped at 2000 nodes
+            </span>
+          </div>
           <p className="font-sans text-sm text-secondary">3D visualization of decisions, components & relationships</p>
         </div>
         <div className="flex items-center gap-3">

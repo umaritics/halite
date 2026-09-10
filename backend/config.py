@@ -10,7 +10,8 @@ class Settings(BaseSettings):
     NEO4J_DATABASE: str = "neo4j"
 
     GROQ_API_KEY: str = ""
-    GROQ_MODEL: str = "openai/gpt-oss-20b"
+    GROQ_API_KEY_FALLBACK: str = ""
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
 
     GITEA_BASE_URL: str = ""
     GITEA_TOKEN: str = ""
@@ -21,6 +22,11 @@ class Settings(BaseSettings):
 
     DEMO_MODE: bool = True
     MAX_UPLOAD_MB: int = 10
+
+    # Maintenance domain settings
+    MAINT_CONFIDENCE_THRESHOLD: float = 0.50  # Re-calibrated via evaluate_conflict_detection.py
+    MAINT_DATA_DIR: str = "data"              # Base data directory (raw/ and processed/ beneath)
+    MAINT_MAX_CANDIDATES: int = 25            # Max prior records to consider per conflict check
 
     @property
     def neo4j_configured(self) -> bool:

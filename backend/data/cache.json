@@ -1,0 +1,3932 @@
+{
+  "SWIA2025122876590_SWIA2025112576494_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record fixes a forward drag\u2011angle crack, while the new record addresses an aft drag\u2011angle crack, so they concern different sub\u2011components of the same vertical stabilizer.",
+    "parse_failed": false
+  },
+  "None_None_test-model": {
+    "label": "no_conflict",
+    "rationale": "bad",
+    "parse_failed": false
+  },
+  "R002_R001_test-model": {
+    "label": "supersedes",
+    "rationale": "Test rationale for supersedes.",
+    "parse_failed": false
+  },
+  "DALA2025012700640_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes an emergency exit light, while the prior record dealt with a door proximity sensor; they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025013000730_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern door 2L but address different components\u2014prior replaced the prox sensor, new replaced the PSCU\u2014so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025021001050_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve corrective work on the 2L door proximity sensor and report successful adjustments, so the actions are compatible rather than contradictory.",
+    "parse_failed": false
+  },
+  "DALA2025021801219_DALA2025013000730_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve door 2L, but the prior replaced the PSCU while the new record cleaned and adjusted the door indication, addressing different components of the door system.",
+    "parse_failed": false
+  },
+  "DALA2025022401433_DALA2025021001050_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve corrective work on door proximity sensors but address different sensors and issues, with no contradictory claims, so they are compatible maintenance actions.",
+    "parse_failed": false
+  },
+  "DALA2025031201908_DALA2025012700640_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a corroded seat track, while the prior record resecured an emergency light; they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025031201911_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different locations (FR 35\u201137 RH Y\u20111959 vs FR 33\u201135 RH Y\u2011450), so they address distinct parts.",
+    "parse_failed": false
+  },
+  "DALA2025031201915_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records report seat\u2011track corrosion repairs on the same aircraft but at different row ranges and opposite sides, addressing distinct components.",
+    "parse_failed": false
+  },
+  "DALA2025031201914_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe the same seat\u2011track corrosion repair on the same aircraft with consistent corrective action, only differing in location detail, so there is no conflict.",
+    "parse_failed": false
+  },
+  "DALA2025031201917_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different frame locations (FR53.5\u201153.6 LH vs FR33\u201135 RH), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025031201916_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different locations (FR53.3\u201153.4, Y\u20112462 vs FR33\u201135, Y\u2011450), so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025031201912_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records refer to different seat track identifiers and locations (Y-953 at FR33 vs Y-450 between FR33\u2011FR35), so they address distinct components despite similar actions.",
+    "parse_failed": false
+  },
+  "DALA2025031201910_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they refer to different locations (FR33\u201135 vs FR36\u201137), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025031201913_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Each record fixes corrosion on a different cabin seat track location (FR37 LH vs FR33\u201135 RH), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031201909_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion repairs on different seat tracks (different frame locations and side), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031201920_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but the affected locations (FR53.5\u201153.7 LH vs FR33\u201135 RH) are different, so they address distinct components.",
+    "parse_failed": false
+  },
+  "DALA2025031201921_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern the same seat track but address corrosion in distinct, non-overlapping frame ranges, so they involve different parts of the component without conflict.",
+    "parse_failed": false
+  },
+  "DALA2025031201922_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion on different seat tracks (FR33\u2011FR35 RH vs FR35\u2011FR37 LH), so they involve distinct components and do not overlap.",
+    "parse_failed": false
+  },
+  "DALA2025031201918_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Each record replaces a different seat track at distinct fuselage stations, so they address separate parts of the cabin without overlapping.",
+    "parse_failed": false
+  },
+  "DALA2025031201924_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "partial_supersedes",
+    "rationale": "Both records involve the same cabin seat track; the new entry adds repair work covering a broader span after the prior replacement, thus it addresses the same issue but only partially supersedes the earlier action.",
+    "parse_failed": false
+  },
+  "DALA2025031201919_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion on different seat tracks (different frame numbers, sides, and part numbers), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "DALA2025031802034_DALA2025021801219_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left\u2011hand fuselage dent, while the prior record cleans/adjusts a left\u2011door cabin indication; they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA20250320038_VNAA20250320035_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on PAX DOOR MID INTERCOSTAL DD2, while the prior record addressed corrosion on PAX DOOR DD4 AFT, involving different components.",
+    "parse_failed": false
+  },
+  "VNAA20250320049_VNAA20250320046_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a corroded frame sector at FS 379, while the prior record fixes a corroded stringer 22R at FS 319; they involve different parts, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320044_VNAA20250320042_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on the right\u2011hand floor sill (FS310\u2011319) while the prior record repaired corrosion on a different floor support (LBL27 at FS1028/FS1036), so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA20250320039_VNAA20250320034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the passenger\u2011door inner skin, while the prior record replaces the door\u2019s mid intercostal DD6; they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320034_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a corroded passenger\u2011door intercostal DD6, while the prior record concerns corroded flap\u2011vane trunnion bodies; they involve different parts, so the records are disjoint in scope.",
+    "parse_failed": false
+  },
+  "VNAA20250320045_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded galley mount fitting, while the prior record concerns corroded flap\u2011vane trunnion bodies; they involve different parts/systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320037_VNAA20250320036_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the pax door frame at FS 313.56 between DD4 and DD5, while the prior record replaces a different pax door frame at FS 320 (338.963), so they address distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA20250320043_VNAA20250320042_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs LBL\u202f9 floor support at FS1033, while the prior record repairs LBL\u202f27 floor support at FS1028 and FS1036, addressing different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA20250320046_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a corroded stringer 22R at station 319, while the prior record concerns corroded trunnion bodies on flap vane actuators at stations 24\u2011140; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320041_VNAA20250320040_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a right\u2011hand flap vane actuator at FLS65.50, while the prior record addresses a left\u2011hand actuator at FLS24.00, involving different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320032_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded floor seat track, while the prior record concerns corroded flap\u2011vane trunnion bodies; they involve distinct parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320035_VNAA20250320034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the aft DD4 pax door, while the prior record replaces the mid DD6 pax door; they involve different door locations, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320050_VNAA20250320034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on the avionics bay door surround intercostal, while the prior record addresses corrosion on a pax door mid intercostal, involving different parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA20250320033_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "The new record concerns a corroded trunnion body on L/H flap 140 requiring fabrication, while the prior record deals with other stations and states no fabrication needed for R/H flap 140, so the records do not conflict.",
+    "parse_failed": false
+  },
+  "VNAA20250320036_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a passenger door frame, while the prior record replaces a floor seat track; they involve distinct components and systems, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320040_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "Both records address the LH flap vane actuator at FLS24.00, but the prior record states the actuator assembly was replaced (no fabrication needed) while the new record describes repairing the existing actuator rod, creating a mutually exclusive claim.",
+    "parse_failed": false
+  },
+  "VNAA20250320042_VNAA20250320035_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs corrosion on LBL27 floor support, while the prior record replaces a corroded passenger door; they involve distinct components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA20250320047_VNAA20250320035_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded lower\u2011sill kickplate angle, while the prior record replaces a corroded door intercostal; they involve different components of the passenger door, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025031902075_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion but refer to different seat locations (FR13A LH Y953 vs FR33\u201135 RH Y\u2011450), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025031902072_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both entries replace seat tracks due to corrosion, but they concern different seat track locations (FR73.5\u201174 LH vs FR33\u201135 RH), so the scopes are separate.",
+    "parse_failed": false
+  },
+  "DALA2025031902073_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks due to corrosion, but they concern different seat track locations (FR33\u201135 RH vs FR73.5\u201174 LH), so their scopes do not overlap.",
+    "parse_failed": false
+  },
+  "DALA2025031902074_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks due to corrosion, but they concern different track locations (FR33\u201135 vs FR73\u201173.5), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031902070_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks on the same aircraft but refer to different frame ranges (FR13A\u2011FR18 vs FR33\u2011FR35), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "DALA2025031902069_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a cabin floor beam, while the prior record addressed a seat track; they involve different components despite being on the same aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031902071_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks but involve different frame locations and part identifiers, so they address separate issues on the same aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025031902068_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace cabin seat tracks but refer to different frame locations (FR33\u201135 vs FR56\u201158), so they address distinct parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025032002112_DALA2025031902069_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve the cabin floor beam longitudinal on the same aircraft, but they address corrosion at different frame locations (FR75\u201178 vs FR80\u201182), so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032502207_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace seat tracks on the same aircraft but concern different locations (FR33\u201135 RH Y\u2011450 vs FR73\u201173.5 LH YC1), so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032502208_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the right exit door slider mechanism, while the prior record dealt with a left cabin door proximity sensor, involving different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025032602225_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a wing flap track bridge, while the prior record replaced a cabin seat track; they concern distinct systems with no overlapping scope.",
+    "parse_failed": false
+  },
+  "DALA2025032802309_DALA2025031802034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses chafing on fuselage skin at stations FR54\u201155, while the prior record concerns a dent at FR32\u201135; they involve different locations and issues, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032802303_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern corrosion on the same seat track but at different frame locations (FR33\u201135 vs FR74\u201175), so their scopes do not overlap.",
+    "parse_failed": false
+  },
+  "DALA2025032802304_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern cabin seat\u2011track corrosion but involve different seat\u2011track locations (FR33\u201135 vs FR71\u201173) and different part numbers, so they address distinct components of the aircraft.",
+    "parse_failed": false
+  },
+  "DALA2025032802305_DALA2025031802034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs chafing on the belly faring and fuselage attach surface, while the prior record repaired a dent on a left\u2011hand fuselage stringer; they involve different parts and issues, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032802306_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve cabin seat\u2011track corrosion on the same aircraft but refer to different frame ranges (FR33\u2011FR35 vs FR72\u2011FR74), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "DALA2025032802308_DALA2025031802034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record repairs a dent on FR32, while the new record fixes oversized fastener holes on FR49/50; they involve different fuselage frames and issues, making the scopes disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025032802302_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve corrosion on separate seat tracks (different rows and opposite sides), so they address distinct parts of the cabin.",
+    "parse_failed": false
+  },
+  "DALA2025032802307_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern corrosion on different seat\u2011track sections (FR33\u201135 RH vs FR72\u201174 LH), so they address distinct parts of the cabin seat track system.",
+    "parse_failed": false
+  },
+  "DALA2025040202483_DALA2025032802305_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve different belly fairing part numbers (197GB vs 198GB), so they pertain to distinct components despite similar chafing findings.",
+    "parse_failed": false
+  },
+  "DALA2025040202484_DALA2025010200011_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the ASPSU on Door\u202f1, while the prior record replaced a prox sensor and adjusted gaps on Door\u202fL; they concern different components, so there is no conflict.",
+    "parse_failed": false
+  },
+  "DALA2025040202472_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion on the wing box center tank skin, while the prior record concerns a cabin seat track; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "DALA2025040302523_DALA2025032502208_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "The new entry records compliance with a generic ERA, while the prior entry documents a specific exit\u2011door slider mechanism repair; they involve different issues with no overlapping claims.",
+    "parse_failed": false
+  },
+  "DALA2025040402583_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on a dummy rail at FR13A, while the prior record addressed corrosion on a cabin seat track between FR33\u201135, involving different parts and locations.",
+    "parse_failed": false
+  },
+  "DALA2025040302522_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records concern seat\u2011track corrosion but refer to different locations (FR33\u201135 RH vs FR73\u201173.5 LH), so they address distinct components without conflict.",
+    "parse_failed": false
+  },
+  "DALA2025040402581_DALA2025031201908_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve seat\u2011track corrosion but refer to distinct frame locations (FR33\u201135 vs FR73\u201173.5), so they address different components of the cabin.",
+    "parse_failed": false
+  },
+  "VNAA202504160033_VNAA20250320031_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a permanent repair of the left-hand elevator assembly, while the prior record deals with corrosion and replacement of flap vane actuator trunnion bodies, involving different aircraft structures.",
+    "parse_failed": false
+  },
+  "VNAA202504160029_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on RBL\u202f9 seat track (stations\u202f350\u2011485) while the prior record addressed RBL\u202f27 seat track (stations\u202f985\u20111000); they involve different rows and locations, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160034_VNAA20250320039_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns fuselage skin corrosion near the ADF antenna, while the prior record dealt with corrosion of the passenger\u2011door inner skin, so they address different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA202504160022_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve seat tracks on LBL\u202f27 but at different station ranges (FS\u202f364\u2011485 vs FS\u202f985\u20111000), so they concern distinct components.",
+    "parse_failed": false
+  },
+  "VNAA202504160025_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track at stations 923\u2011977 on row 27, while the prior record addressed a different seat track segment at stations 985\u20111000, so they concern separate parts.",
+    "parse_failed": false
+  },
+  "VNAA202504160019_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a corroded seat rail on row 9 (FS 581\u2011682), while the prior record fixes a corroded seat track on row 27 (FS 985\u20111000); they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160024_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record notes corrosion on seat track stations 581\u2011661, while the prior record addressed corrosion and replacement of seat track stations 985\u20111000; they concern different sections of the same system.",
+    "parse_failed": false
+  },
+  "VNAA202504160027_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a seat track at F.S.374\u2011485, while the prior record addresses a seat track at F.S.985\u20111000, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA202504160028_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track at F.S.661\u2011863 (LBL\u202f9) with part SH670\u201135864\u20113, while the prior record addressed a different seat track at F.S.985\u20111000 (RBL\u202f27) using part BA670\u201145073\u20113; they concern distinct components.",
+    "parse_failed": false
+  },
+  "VNAA202504160030_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track at F.S. 863\u2011988, while the prior record dealt with a different floor seat track at F.S.985\u20111000 on RBL\u202f27, so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA202504160031_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat track on RBL\u202f9 (stations\u202f661\u2011863), while the prior record replaced a seat track on RBL\u202f27 (stations\u202f985\u20111000); they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160017_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a corroded seat rail on RBL\u202f9 (FS\u202f485\u2011581) while the prior record addressed a corroded seat track on RBL\u202f27 (FS\u202f985\u20111000), involving different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160021_VNAA20250320042_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record notes corrosion on the right\u2011hand pressure floor sill angle (FS\u202f761.85\u2011785.15) while the prior record documents repaired corrosion on LBL27 floor support at FS\u202f1028\u20111036, involving different parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160026_VNAA202504160025_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses a right\u2011hand seat track (RBL 27, stations 909\u2011977) while the prior record concerns a left\u2011hand seat track (LBL 27, stations 923\u2011977); they involve different components despite overlapping station numbers.",
+    "parse_failed": false
+  },
+  "VNAA202504160035_VNAA202504160034_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a dent at FS1020, whereas the prior record reports corrosion between FS477\u2011691; they involve different fuselage sections with no overlapping issue.",
+    "parse_failed": false
+  },
+  "VNAA202504160010_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a right\u2011side seat rail at station 15R (frames 572\u2011677) while the prior record addresses a floor seat track at frames 985\u20111000, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "VNAA202504160007_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a left\u2011hand side seat rail between FS\u202f863\u2011969, while the prior record addresses a floor seat track between FS\u202f985\u20111000 on rib\u202f27; they involve distinct parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160011_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a right\u2011hand side seat rail at STGR\u202f15R, while the prior record dealt with a floor seat track at FS\u202f985\u20111000 RBL\u202f27; they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160002_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left\u2011side seat rail at station 15L (FS\u202f485\u2011572) while the prior record repaired a floor seat track at FS\u202f985\u20111000 on RBL\u202f27, addressing different components/locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160003_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a left\u2011side seat rail at stations 572\u2011677, while the prior record addressed a floor seat track at stations 985\u20111000 on a different rib, so they concern distinct components.",
+    "parse_failed": false
+  },
+  "VNAA202504160012_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a right\u2011hand side seat rail at FS\u202f708\u2011761.85, while the prior record dealt with a floor seat track at FS\u202f985\u20111000, so they concern different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160013_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve corrosion repairs but replace different components (right\u2011hand side seat rail vs floor seat track) at distinct stations, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160001_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion of the left\u2011hand side seat rail at stations 379\u2011485, while the prior record dealt with a floor seat track at stations 985\u20111000, involving different components and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160004_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left\u2011side seat rail at station 15L (FS 677\u2011708), while the prior record addresses a floor seat track at FS 985\u20111000 RBL\u202f27, so they concern different components.",
+    "parse_failed": false
+  },
+  "VNAA202504160005_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a left\u2011hand side seat rail at station 15L, while the prior record addressed a floor seat track at stations 985\u20111000 on RBL\u202f27; they concern different parts and locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160008_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a right\u2011hand side seat rail at station 15R (FS 379\u2011485), while the prior record fixes a floor seat track at station 27 (FS 985\u20111000); they concern different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160009_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a right\u2011hand side seat rail at station 15R, while the prior record addressed a floor seat track at RBL\u202f27 (FS985\u2011FS1000); they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160014_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record reports corrosion on the right\u2011hand side seat rail between FS\u202f863\u2011969, while the prior record concerns a floor seat track at FS\u202f985\u20111000 on rib\u202f27, so they involve different parts/locations.",
+    "parse_failed": false
+  },
+  "VNAA202504160016_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat rail at LBL\u202f9 (FS\u202f485\u2011581) while the prior record dealt with a different seat track at RBL\u202f27 (FS\u202f985\u20111000), so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "VNAA202504160018_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a seat rail at FS 581\u2011682, while the prior record replaces a floor seat track at FS 985\u20111000; they concern different parts/locations, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "VNAA202504160036_VNAA20250320032_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corroded forward cargo floor tracks (part DSY7058-3) while the prior record repaired a corroded floor seat track (part BA670-45073-3); they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876594_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces right\u2011side slat track rollers, whereas the prior record addressed left\u2011side rollers, so they concern different components despite the same aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025091876596_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the right side roller slat track 2\u20112, while the prior record addressed right side roller slat track 1\u20112, so they concern different components.",
+    "parse_failed": false
+  },
+  "SWIA2025091876593_SWIA2025091876515_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces left wing slat track rollers, while the prior record repairs the left inboard flap upper skin/vane assembly; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876598_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the right side roller slat track 3\u20112, while the prior record dealt with right side roller slat track 1\u20112; they concern different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876603_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record works on left track roller slat 2\u20112, while the prior record concerns side roller slat track 1\u20112; they involve different components, so the records are disjoint in scope.",
+    "parse_failed": false
+  },
+  "SWIA2025091876595_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve different slat track locations (track 1\u20112 vs track 2\u20112) and distinct components, so they address separate scopes despite the same aircraft and date.",
+    "parse_failed": false
+  },
+  "SWIA2025091876600_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe removal and installation of new right\u2011side roller slat track 1\u20112 with successful operational test; they are compatible descriptions of the same maintenance action, not contradictory or disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025091876597_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the left side roller track 3\u20112, while the prior record dealt with left side roller track 1\u20112, so they concern different components of the slat system.",
+    "parse_failed": false
+  },
+  "SWIA2025091876599_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records replace rollers on left track 1-2 but refer to different subcomponents (side roller vs top\u2011forward roller) and use distinct AMM references, so they are compatible, not contradictory or superseding each other.",
+    "parse_failed": false
+  },
+  "SWIA2025091876601_SWIA2025091876593_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record addresses left side roller slat track 1\u20112, while the new record concerns left track roller slat 1\u20113, involving different components and tasks.",
+    "parse_failed": false
+  },
+  "SWIA2025091976602_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record concerns right\u2011side track roller slat 1\u20112, while the new record addresses right\u2011side track roller slat 1\u20113, so they involve different components despite the same aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025091976604_SWIA2025091876594_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record deals with right\u2011side track roller slat 1\u20112, while the new record concerns track roller slat 2\u20112, so they address different components despite being on the same aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025110676472_SWIA2025091876515_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward cargo door upper guide fitting, while the prior record repairs the left inboard flap upper skin; they involve different parts/systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2026070676517_SWIA2025110676493_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses the right landing gear door latch, while the prior record concerns the forward lower guide fitting of the center cargo door, involving different parts.",
+    "parse_failed": false
+  },
+  "SWIA2025110676560_SWIA2026070676517_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a left-hand landing gear door latch, while the prior record concerns the right-hand door latch; they involve different components despite similar procedures, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025110676534_SWIA2025091876515_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs fuselage skin nicks between stations FS1000\u2011FS1051, while the prior record addresses a permanent repair of the left inboard flap upper skin and vane assembly; they involve different aircraft structures despite using the same task card.",
+    "parse_failed": false
+  },
+  "SWIA2026070676548_SWIA2025110676534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a dent on the left engine fan cowl door, while the prior record fixes nicks on exterior skin; they involve different parts of the aircraft despite both referencing the same task card.",
+    "parse_failed": false
+  },
+  "SWIA2025110676531_SWIA2025110676493_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward upper guide fitting, while the prior record addresses the forward lower guide fitting; they involve different components of the cargo door, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025110676493_SWIA2025110676472_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward lower guide fitting, while the prior record repaired the forward upper guide fitting; they concern different components of the cargo door, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2026070676545_SWIA2025110676534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a gouge on panel 642AT fastener hole, while the prior record addresses nicks/gouges on exterior skin between FS1000\u20111051.30 on different stations, so they concern distinct parts.",
+    "parse_failed": false
+  },
+  "SWIA2026070676502_SWIA2025111376495_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion and replacement of main avionics stringer 26R, while the prior record deals with stringer 20R; they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376540_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a main avionics frame, while the prior record addresses a landing gear door; they involve distinct aircraft systems, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376482_SWIA2025111376476_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs stringer 20R while the prior record addresses stringer 26L, involving different components despite the same aircraft and date.",
+    "parse_failed": false
+  },
+  "SWIA2025111376492_SWIA2025111376482_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records address corrosion on the same intercostal/stringer but refer to non\u2011overlapping fastener ranges (FS319\u2011FS333 vs FS364\u2011FS379), so they involve different parts of the component.",
+    "parse_failed": false
+  },
+  "SWIA2025111376495_SWIA2025111376482_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records address corrosion on stringer 20R but reference non\u2011overlapping FS ranges (295\u2011310 vs 364\u2011379), so they involve different sections of the same component, making the scopes disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376465_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses corrosion and replacement of the main avionics S25R longeron, while the prior record concerns a cracked left-hand true door landing latch; they involve different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376528_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward lavatory impact angle, while the prior record repaired the left-hand trailing door latch; they involve different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376481_SWIA2025111376476_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a 25R splice corrosion, while the prior record addresses corrosion on a different 26L structure; they involve distinct components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111376476_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes corrosion on the main avionics strut, while the prior record repairs a landing door latch; they involve different parts/systems, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111476567_SWIA2025111476475_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a forward interior floor mounting bracket, while the prior record replaces a passenger\u2011door piano hinge; they involve distinct components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111476576_SWIA2025111476475_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both entries replace piano hinges, but one addresses the door\u2011side hinge while the prior record concerns the fuselage\u2011side hinge, so they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111476475_SWIA2025110676560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a passenger\u2011door piano hinge, while the prior record replaced a landing\u2011door latch; they involve different components despite being in the same door area.",
+    "parse_failed": false
+  },
+  "SWIA2025111576508_SWIA2025110676531_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the forward passenger door former, while the prior record repaired a forward cargo\u2011door upper guide fitting; they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2026070676552_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record replaced the entire forward passenger door, while the new record only replaced corroded cleats on the door's intercostal; they address different components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2026070676537_SWIA2025111676523_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the aft DD3 door intercostal, while the prior record addresses the aft DD4 door intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676553_SWIA2026070676537_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the aft DD5 intercostal, while the prior record addressed the aft DD3 intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676589_SWIA2025111676553_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the mid DD4 intercostal, while the prior record addresses the aft DD5 intercostal, which are distinct components.",
+    "parse_failed": false
+  },
+  "SWIA2025111676459_SWIA2025111676447_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the forward DD5 door intercostal, while the prior record addressed the aft DD2 door intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676449_SWIA2025111676447_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the mid DD2 intercostal, while the prior record repaired the aft DD2 intercostal, addressing different parts of the pax door system.",
+    "parse_failed": false
+  },
+  "SWIA2025111676523_SWIA2026070676512_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the aft DD4 passenger\u2011door intercostal, while the prior record addressed the forward DD2 intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676447_SWIA2025111376492_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a passenger\u2011door aft DD2 intercostal, while the prior record addresses a main\u2011avionics intercostal 20R; they involve different parts, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "SWIA2025111676546_SWIA2025110676534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes scratches on the passenger\u2011door outer skin, while the prior record repairs nicks on fuselage exterior skin sections, so they concern different parts despite shared task card.",
+    "parse_failed": false
+  },
+  "SWIA2025111676591_SWIA2025111676553_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the DD7A passenger door intercostal, while the prior record addresses the DD5 aft passenger door intercostal, involving different components.",
+    "parse_failed": false
+  },
+  "SWIA2026070676557_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses the aft passenger door while the prior record concerns the forward passenger door, so they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2026070676565_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records concern the same pax door former; the new entry replaces it again, updating the prior replacement, so it supersedes the earlier record.",
+    "parse_failed": false
+  },
+  "SWIA2026070676512_SWIA2025111676496_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces the forward door DD2 intercostal, while the prior record addresses the mid door DD6 intercostal, involving different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676496_SWIA2025111676447_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a mid\u2011DD6 pax\u2011door intercostal, while the prior record addresses an aft\u2011DD2 intercostal, so they involve different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2025111676578_SWIA2025111676553_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the forward DD3 intercostal, while the prior record addressed the aft DD5 intercostal, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "SWIA2026070676514_SWIA2025111576508_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve separate repairs on the forward passenger door (former vs pull\u2011in cam doubler) and do not contradict or replace each other; they are compatible maintenance actions.",
+    "parse_failed": false
+  },
+  "DEMO20260909165206_SWIA2025122876590_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records concern a crack at the drag angle; the new entry merely notes a finding and refers to the prior work, without conflicting or superseding it.",
+    "parse_failed": false
+  },
+  "DEMO20260909170109_SWIA2025122876590_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both entries refer to a crack at the drag angle of the vertical stabilizer; the new record only notes the finding and references prior work, without contradicting or superseding the earlier repair.",
+    "parse_failed": false
+  },
+  "DEMO20260909171523_SWIA2025122876590_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records concern the same drag angle; the new entry merely notes a crack found, which does not conflict with the prior repair documentation.",
+    "parse_failed": false
+  },
+  "DALA2025012700640_DALA2025010200011_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025013000730_DALA2025010200011_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025021001050_DALA2025010200011_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025021801219_DALA2025013000730_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025022401433_DALA2025021001050_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201908_DALA2025012700640_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201911_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201915_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201914_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201917_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201916_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201912_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201910_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201913_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201909_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201920_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201921_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201922_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201918_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201924_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031201919_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031802034_DALA2025021801219_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320038_VNAA20250320035_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320049_VNAA20250320046_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320044_VNAA20250320042_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320039_VNAA20250320034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320034_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320045_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320037_VNAA20250320036_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320043_VNAA20250320042_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320046_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320041_VNAA20250320040_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320032_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320035_VNAA20250320034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320050_VNAA20250320034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320033_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320036_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320040_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320042_VNAA20250320035_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA20250320047_VNAA20250320035_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902075_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902072_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902073_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902074_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902070_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902069_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902071_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025031902068_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032002112_DALA2025031902069_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032502207_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032502208_DALA2025010200011_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032602225_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802309_DALA2025031802034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802303_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802304_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802305_DALA2025031802034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802306_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802308_DALA2025031802034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802302_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025032802307_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040202483_DALA2025032802305_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040202484_DALA2025010200011_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040202472_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040302523_DALA2025032502208_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040402583_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040302522_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025040402581_DALA2025031201908_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160033_VNAA20250320031_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160029_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160034_VNAA20250320039_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160022_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160025_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160019_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160024_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160027_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160028_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160030_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160031_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160017_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160021_VNAA20250320042_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160026_VNAA202504160025_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160035_VNAA202504160034_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160010_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160007_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160011_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160002_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160003_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160012_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160013_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160001_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160004_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160005_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160008_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160009_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160014_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160016_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160018_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504160036_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876597_SWIA2025091876593_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876593_SWIA2025091876515_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876595_SWIA2025091876593_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876601_SWIA2025091876593_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876598_SWIA2025091876594_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876600_SWIA2025091876594_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876599_SWIA2025091876593_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876603_SWIA2025091876593_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876596_SWIA2025091876594_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091876594_SWIA2025091876593_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091976602_SWIA2025091876594_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025091976604_SWIA2025091876594_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676517_SWIA2025110676493_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025110676560_SWIA2026070676517_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676548_SWIA2025110676534_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025110676472_SWIA2025091876515_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025110676531_SWIA2025110676493_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025110676534_SWIA2025091876515_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025110676493_SWIA2025110676472_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676545_SWIA2025110676534_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676502_SWIA2025111376495_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376540_SWIA2025110676560_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376482_SWIA2025111376476_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376492_SWIA2025111376482_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376465_SWIA2025110676560_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376528_SWIA2025110676560_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376495_SWIA2025111376482_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376476_SWIA2025110676560_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111376481_SWIA2025111376476_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111476567_SWIA2025111476475_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111476475_SWIA2025110676560_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111476576_SWIA2025111476475_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111576508_SWIA2025110676531_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676459_SWIA2025111676447_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676557_SWIA2025111576508_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676512_SWIA2025111676496_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676546_SWIA2025110676534_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676589_SWIA2025111676553_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676578_SWIA2025111676553_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676523_SWIA2026070676512_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676447_SWIA2025111376492_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676565_SWIA2025111576508_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676449_SWIA2025111676447_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676552_SWIA2025111576508_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676553_SWIA2026070676537_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676537_SWIA2025111676523_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676496_SWIA2025111676447_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025111676591_SWIA2025111676553_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026070676514_SWIA2025111576508_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505150214_AALA202505154106_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508263546_AALA202508193546_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502264577_AALA202502194577_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504176493_AALA202504116493_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507014784_AALA202506274784_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601081496_AALA202512311496_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506091334_AALA202506061334_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509242525_AALA202509192525_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601056931_AALA202507142738_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501159236_AALA202501031169_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502223801_AALA202502073801_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503314784_AALA202503124784_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502111958_AALA202502031958_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508117694_AALA202507317694_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509023891_AALA202508066451_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601066439_AALA202601026439_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502171457_AALA202502141457_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601058632_AALA202512318632_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501155255_AALA202501151248_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510205571_AALA202510175571_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505158295_AALA202505138295_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507010262_AALA202506250262_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510204966_AALA202510021322_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508299000_AALA202508289000_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505151932_AALA202505131932_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501132199_AALA202501088435_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504302845_AALA202504249701_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503182003_AALA202502241517_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506305157_AALA202506235157_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509176203_AALA202508063808_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502079012_AALA202501155909_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502042619_AALA202501312619_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501304517_AALA202501091769_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503110046_AALA202502050046_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504257753_AALA202504013074_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505139098_AALA202505119098_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509045297_AALA202509035297_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506106042_AALA202505150214_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508047323_AALA202508037323_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505238726_AALA202504212680_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501035620_AALA202501025620_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504297048_AALA202504227048_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502243981_AALA202502143981_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503128282_AALA202501139634_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502133159_AALA202502033159_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502136446_AALA202502126446_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512021215_AALA202511184178_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505292883_AALA202503193346_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505139929_AALA202505119929_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503283151_AALA202503273151_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502079343_AALA202502049343_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509027164_AALA202508087164_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503125936_AALA202503071076_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502116308_AALA202502114415_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506052830_AALA202506022830_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506021666_AALA202505301666_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507255446_AALA202507185446_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504011909_AALA202504010627_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502258795_AALA202502128795_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506104685_AALA202506094685_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601068333_AALA202501298517_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507148431_AALA202507088431_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501181933_AALA202501151933_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502282383_AALA202502272383_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506038452_AALA202506028452_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510230129_AALA202510210129_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505059873_AALA202504153576_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505159763_AALA202505149763_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506258071_AALA202505197222_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504241097_AALA202504221097_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501246707_AALA202501240507_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506050273_AALA202506059401_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506127305_AALA202506059401_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504094141_AALA202504073991_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503101840_AALA202502261840_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502285537_AALA202502275537_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507172094_AALA202507152094_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501249100_AALA202501229100_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503185090_AALA202503175090_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505193549_AALA202504219339_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506115484_AALA202506065484_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510140789_AALA202510090789_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510302796_AALA202510012796_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501186333_AALA202501180173_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501175630_AALA202501145630_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512086906_AALA202512026906_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501138435_AALA202501088435_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502075611_AALA202502055611_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503119386_AALA202502279386_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505232050_AALA202505222050_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510022319_AALA202509252319_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501240287_AALA202501030802_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507148423_AALA202506115484_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510309329_AALA202510249329_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510073847_AALA202509268985_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504249701_AALA202504239701_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504105792_AALA202504075792_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512086774_AALA202512036774_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504012799_AALA202504018424_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507256183_AALA202507156183_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505011774_AALA202504281774_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601069824_AALA202512319824_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506059401_AALA202506029401_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512169539_AALA202512059539_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506250435_AALA202506230435_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503131183_AALA202501309558_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504298847_AALA202504228847_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506252718_AALA202506232718_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504087761_AALA202504083644_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506171647_AALA202506091647_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601060573_AALA202501272158_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510304928_AALA202510218901_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504295967_AALA202504160285_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505235102_AALA202505205102_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502266076_AALA202502112836_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601057475_AALA202512297475_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504295985_AALA202504285985_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505137458_AALA202505087458_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510270712_AALA202503107680_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503116345_AALA202502106345_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502243381_AALA202502213381_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508204578_AALA202508118886_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601063655_AALA202512103373_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501074549_AALA202501034549_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504229527_AALA202504219527_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502114415_AALA202502104415_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501135866_AALA202501078888_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502119524_AALA202502049343_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508018581_AALA202507161602_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507227996_AALA202506028294_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510060718_AALA202510069285_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506139830_AALA202506099830_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505238006_AALA202505208006_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510230424_AALA202510210424_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202603069117_AALA202501273286_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502114535_AALA202501217380_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505200184_AALA202505150184_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508120644_AALA202508110644_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502074551_AALA202502044551_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506251119_AALA202506241119_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507299614_AALA202501221567_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509279225_AALA202501091769_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511104132_AALA202508051342_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170052_VNAA202504170049_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511214931_AALA202601145241_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508076314_AALA202507143939_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508012249_AALA202506208254_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509178765_AALA202509177972_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510029202_AALA202507159930_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601149757_AALA202601144543_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501188151_AALA202501184290_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508050360_AALA202505198611_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601143082_AALA202601140515_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507085307_AALA202507142738_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506182534_AALA202506186856_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501240507_AALA202501247485_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503172883_AALA202502249867_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502060099_AALA202502061873_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511105152_AALA202507078811_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508313641_AALA202505232050_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601146352_AALA202601158169_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507316684_AALA202507086655_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511219112_AALA202601145241_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510275870_AALA202510022574_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502149234_AALA202501249100_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508011236_AALA202508018581_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504140391_AALA202502112624_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025072805634_DALA2025072805633_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510076932_AALA202509023546_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025113076536_SWIA2025113076522_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505055759_AALA202504283198_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504257758_AALA202503031099_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025072805629_DALA2025072805628_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511268745_AALA202505286150_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504283890_AALA202505073170_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502144728_AALA202502149234_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504075687_AALA202504024072_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025112376458_SWIA2025112176518_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506065484_AALA202505130126_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503193804_AALA202503280189_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506103969_AALA202501174751_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511069870_AALA202511067278_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170089_VNAA20250320039_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025112076487_SWIA2026070676502_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506191639_AALA202506208254_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501182636_AALA202501182131_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504282915_AALA202504288236_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170096_VNAA202504170061_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510203273_AALA202510159445_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601153081_AALA202601140077_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170094_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503058342_AALA202503046233_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511057486_AALA202502281153_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509093761_AALA202509147411_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512094765_AALA202512238128_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025112476577_SWIA2025111376540_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501188527_AALA202501136333_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510078254_AALA202510072358_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508291520_AALA202502133538_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503133142_AALA202503139551_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512268045_AALA202506163987_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601144395_AALA202601142879_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503222956_AALA202502223801_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509101026_AALA202508193872_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504286397_AALA202504282915_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506124324_AALA202506028294_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2026060776549_SWIA2026070676451_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601130172_AALA202601148200_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504282845_AALA202504249701_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512034539_AALA202505206150_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025073005715_DALA2025070905176_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504010553_AALA202506196913_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601152253_AALA202601145337_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512300790_AALA202506203282_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512303824_AALA202504022626_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510302433_AALA202510272433_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512103373_AALA202512107711_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512169162_AALA202512099162_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170088_VNAA20250320032_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511144072_AALA202511134887_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503040928_AALA202503110046_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503063653_AALA202502137250_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508197813_AALA202503086361_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502066033_AALA202502061873_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501279548_AALA202501245152_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504084759_AALA202504081910_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025112376456_SWIA2026070676502_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502060273_AALA202502061873_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511242633_AALA202510094872_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509216501_AALA202508220467_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601143069_AALA202601142634_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202512162991_AALA202506115484_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503170268_AALA202503140268_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508189457_AALA202509093761_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510035477_AALA202501240837_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025113076461_SWIA2025113076457_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505029492_AALA202501186333_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504285985_AALA202503189083_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510138998_AALA202510076294_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507224531_AALA202507153952_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504303393_AALA202504102325_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025120376581_SWIA2025112376462_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508291583_AALA202502039208_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202502143935_AALA202502040029_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510012796_AALA202503287652_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202503059066_AALA202502257320_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DALA2025072805645_DALA2025071105220_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504287459_AALA202504283198_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "SWIA2025112376530_SWIA2025111376528_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202511068693_AALA202511069793_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508317971_AALA202508311091_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202508160405_AALA202508163934_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202501181587_AALA202501180198_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170073_VNAA20250320046_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202509230745_AALA202507161320_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601148200_AALA202601147590_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202603064734_AALA202603063263_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202506303094_AALA202506040977_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505300902_AALA202505067378_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504154710_AALA202504102325_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504014664_AALA202503127750_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202601145337_AALA202503035188_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202505260261_AALA202501133984_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202504085395_AALA202504085255_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202510305674_AALA202510304928_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170076_VNAA20250320050_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "VNAA202504170067_VNAA20250320042_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "AALA202507211480_AALA202501309558_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "",
+    "parse_failed": true
+  },
+  "DEMO20260910071121_SWIA2025122876590_qwen/qwen3.8-27b": {
+    "label": "contradicts",
+    "rationale": "The prior record confirms the crack was found, the part replaced, and the issue resolved, whereas the new record claims a crack was found during inspection, implying the defect persisted or was not addressed.",
+    "parse_failed": false
+  },
+  "DEMO20260910071553_SWIA2025122876590_qwen/qwen3.8-27b": {
+    "label": "contradicts",
+    "rationale": "The prior record confirms the crack was found, the part replaced, and the issue resolved, while the new record claims a crack was found at the same location the next day, implying a recurrence or error that conflicts with the completed repair status.",
+    "parse_failed": false
+  },
+  "DEMO20260910072103_SWIA2025122876590_qwen/qwen3.8-27b": {
+    "label": "contradicts",
+    "rationale": "The prior record documents the removal and replacement of the cracked drag angle, while the new record claims a crack was found at the same location during a subsequent inspection, implying the issue persisted or was not resolved.",
+    "parse_failed": false
+  },
+  "DEMO20260910072220_SWIA2025122876590_qwen/qwen3.8-27b": {
+    "label": "contradicts",
+    "rationale": "The prior record states the cracked drag angle was removed and replaced with a servicable one, while the new record claims a crack was found at the same location during inspection, implying the defect persists or was not resolved.",
+    "parse_failed": false
+  },
+  "SWIA2025122876590_SWIA2025112576494_qwen/qwen3.8-27b": {
+    "label": "scope_disjoint",
+    "rationale": "The records address different specific components (aft drag angle vs. forward drag angle) on the same vertical stabilizer, representing distinct maintenance events without overlap or contradiction.",
+    "parse_failed": false
+  },
+  "AALA202505150214_AALA202505154106_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the prior actions and adds a closure note, explicitly updating and closing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202508263546_AALA202508193546_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record adds the corrective action (transmitter replacement) and marks the issue closed, updating the prior open record describing the same emergency.",
+    "parse_failed": false
+  },
+  "AALA202502264577_AALA202502194577_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal and replacement of the frayed R1 slide and marks the task closed, updating the prior open report that only noted the issue and pending supplemental report.",
+    "parse_failed": false
+  },
+  "AALA202504176493_AALA202504116493_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides findings, corrective actions, and marks the issue closed, updating the previously open report about the same gear warning problem.",
+    "parse_failed": false
+  },
+  "AALA202507014784_AALA202506274784_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the prior incident description but adds corrective actions and marks the issue closed, explicitly updating the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202601081496_AALA202512311496_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves and closes the previously open record describing the same left fuel tank pump 2 low pressure event.",
+    "parse_failed": false
+  },
+  "AALA202506091334_AALA202506061334_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides the corrective action and closes the issue that the prior open record described, directly updating and completing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202509242525_AALA202509192525_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details corrective actions and resolves the same engine stall incident that the prior record listed as open, thus updating and closing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202508157501_AALA202508128560_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve door 3R but address different components\u2014mechanical disarm handle vs electronic CIDS DEU\u2014so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202510224057_AALA202504109668_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with the aft service door girt\u2011bar hook, while the prior record concerns the aft emergency\u2011door escape\u2011strap lanyard hooks, which are different components.",
+    "parse_failed": false
+  },
+  "AALA202508087650_AALA202508047323_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses a flight deck door latch issue, while the prior record concerns a left\u2011hand side window replacement; they involve different aircraft components.",
+    "parse_failed": false
+  },
+  "AALA202506308535_AALA202503117903_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes an emergency power supply battery, while the prior record addressed a flight attendant flashlight; they involve different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202506193303_AALA202506132780_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The two records describe repairs on hole #2 but on opposite sides (left vs right) and different panels (aft vs forward), indicating they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "AALA202510077496_AALA202510131127_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace intercostals in the passenger cabin floor, but they involve different BS ranges (294\u2011312 vs 328\u2011344) and locations, so they address separate parts of the structure.",
+    "parse_failed": false
+  },
+  "AALA202504073887_AALA202504071714_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records detail corrosion repairs on passenger cabin floor beams, but they refer to different stations/locations (STA 947 vs STA 987), so the scopes do not overlap.",
+    "parse_failed": false
+  },
+  "AALA202508055175_AALA202507210408_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records concern the aft left lavatory door; the new entry confirms the door is now operational after lubrication, updating and closing the earlier jammed-door report.",
+    "parse_failed": false
+  },
+  "AALA202509126209_AALA202504109941_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the L1 door gust\u2011lock lever, while the prior record adjusted the Door\u202f1 right girt\u2011bar retainer; they involve different door components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202504283187_AALA202504289160_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "One record repairs a crack in the right\u2011hand stabilizer skin, the other a crack in the left\u2011hand skin; they concern different parts of the same system, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202501247485_AALA202501136707_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record cites the prior hydraulic loss write\u2011up and details corrective actions (oil flushes, filter change, EDP replacement) that resolve the earlier open issue, thus updating/closing the prior report.",
+    "parse_failed": false
+  },
+  "AALA202502061779_AALA202502079318_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a cracked intercostal at stations 380\u2011400, while the prior record addressed corrosion at station 962, involving different parts of the cabin floor.",
+    "parse_failed": false
+  },
+  "AALA202507130066_AALA202506090459_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both entries concern the same lavatory door, but the new record reports a later jam that was lubricated and cleared, which is compatible with the prior adjustment and does not contradict it.",
+    "parse_failed": false
+  },
+  "DALA2025072805632_DALA2025072805629_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern different frames (FR62 vs FR63), so they address separate parts despite identical procedures.",
+    "parse_failed": false
+  },
+  "AALA202501222158_AALA202501155255_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The prior record dealt with tank compensators and fuel quantity indication, while the new record concerns a low\u2011pressure light on the left forward fuel pump, addressing different components of the fuel system.",
+    "parse_failed": false
+  },
+  "DALA2025072405572_DALA2025070905176_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Each record repairs damage on different stringers/locations (STR\u2011S4R FR61\u201162 vs STGR\u202f1L forward of FR60), so their scopes do not overlap.",
+    "parse_failed": false
+  },
+  "AALA202503189203_AALA202503104038_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records report identical service of the R4 door damper and emergency cylinder with no differing or contradictory information.",
+    "parse_failed": false
+  },
+  "AALA202504026624_AALA202504011393_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern different beam\u2011seat track locations (\u2011Y1292 vs +Y1292) and use different SRM numbers, indicating distinct maintenance scopes.",
+    "parse_failed": false
+  },
+  "AALA202506196913_AALA202506191639_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve LH side windshield cracks but address different components (center post/mirror fitting vs continuity fitting), so the scopes are separate.",
+    "parse_failed": false
+  },
+  "AALA202505198249_AALA202501240837_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a hydraulic system emergency, while the prior record addresses a lavatory door repair; they involve distinct aircraft systems with no overlapping scope.",
+    "parse_failed": false
+  },
+  "AALA202507135163_AALA202501093404_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records address the same aft lavatory D door difficulty; the later adjustment and operational check update and effectively replace the earlier lubrication note.",
+    "parse_failed": false
+  },
+  "AALA202507214857_AALA202506189785_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a slide\u2011armed indicator voltage issue on Door L1, while the prior record replaced a door damper and emergency cylinder on Door 841, addressing different components.",
+    "parse_failed": false
+  },
+  "AALA202512023224_AALA202511268076_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve flight deck door maintenance but address different latch components, with no contradictory or overriding statements.",
+    "parse_failed": false
+  },
+  "AALA202510223955_AALA202510224057_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns the aft entry door girt bar, while the prior record concerns the aft service door girt bar, indicating different components despite similar actions.",
+    "parse_failed": false
+  },
+  "AALA202508053196_AALA202507285950_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve reinstalling exit signs, but they refer to different locations (row 16 vs overwing exits), so they address separate parts of the aircraft.",
+    "parse_failed": false
+  },
+  "AALA202510210424_AALA202502071912_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "Both records refer to the same lavatory door; the prior entry states it was lubricated and operational, while the new entry reports it is still hard to open, creating mutually exclusive claims.",
+    "parse_failed": false
+  },
+  "AALA202511172904_AALA202506304191_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records address the same Lavatory\u2011D door sticking issue with compatible fixes (readjustment then lubrication) and both report a good operational check, so there is no conflict.",
+    "parse_failed": false
+  },
+  "AALA202508056423_AALA202507285950_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve re\u2011securing exit signs on the same aircraft; the later entry documents a new, separate repair, not overriding or contradicting the earlier one.",
+    "parse_failed": false
+  },
+  "AALA202504085401_AALA202504080332_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "Both records describe the same crack but disagree on its position (front spar vs aft spar), making mutually exclusive claims about the same part.",
+    "parse_failed": false
+  },
+  "AALA202505066352_AALA202504136428_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records replace emergency oxygen container assemblies but refer to distinct locations (aft galley vs. row 24 RH cabin), so they address different parts of the aircraft without conflict.",
+    "parse_failed": false
+  },
+  "AALA202601056931_AALA202507142738_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces a flight management computer, while the prior record repaired a cargo\u2011tank support bracket; they involve different aircraft systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202501159236_AALA202501031169_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with fuel tank compensators, while the prior record concerns an emergency exit rope cover; they involve distinct systems, so the records are unrelated in scope.",
+    "parse_failed": false
+  },
+  "AALA202502223801_AALA202502073801_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record identifies the cause, details corrective actions, and closes the issue, updating and completing the prior open report about the same odor problem.",
+    "parse_failed": false
+  },
+  "AALA202503314784_AALA202503124784_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record adds the corrective replacement and closes the incident, updating the prior open report that only noted the issue and pending supplemental report.",
+    "parse_failed": false
+  },
+  "AALA202502111958_AALA202502031958_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record adds APU replacement and marks the issue closed, updating the prior open record describing the same foul odor problem.",
+    "parse_failed": false
+  },
+  "AALA202508117694_AALA202507317694_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record addresses the same fuel pump issue, documents its replacement, and marks the prior open record as closed, thus superseding it.",
+    "parse_failed": false
+  },
+  "AALA202509023891_AALA202508066451_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records involve the left overwing exit proximity sensors; the later entry adjusts multiple sensors and closes the caution, updating the earlier replacement action without conflict.",
+    "parse_failed": false
+  },
+  "AALA202601066439_AALA202601026439_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same missing connector issue and closes it, updating the prior open report that only noted the problem.",
+    "parse_failed": false
+  },
+  "AALA202502171457_AALA202502141457_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves and closes the previously open issue about the same oven, updating the prior record.",
+    "parse_failed": false
+  },
+  "AALA202601058632_AALA202512318632_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves and closes the prior open record by detailing engine replacement and task completion, updating the earlier event description.",
+    "parse_failed": false
+  },
+  "AALA202501155255_AALA202501151248_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the prior details but adds a closed status, explicitly updating and concluding the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202510205571_AALA202510175571_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the missing heatshrink issue and marks it closed, updating the prior open report about the same problem.",
+    "parse_failed": false
+  },
+  "AALA202505158295_AALA202505138295_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces the inoperative light, completes testing, and closes the issue, thereby updating and concluding the prior open report about the same light.",
+    "parse_failed": false
+  },
+  "AALA202507010262_AALA202506250262_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports the door was adjusted and the issue closed, updating the prior open report about the same problem.",
+    "parse_failed": false
+  },
+  "AALA202510204966_AALA202510021322_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns engine smoke and ECS decontamination, while the prior record addresses a 5AC emergency light connector; they involve distinct systems with no overlapping claims.",
+    "parse_failed": false
+  },
+  "AALA202508299000_AALA202508289000_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same lavatory emergency light issue and marks it closed, updating the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202505151932_AALA202505131932_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the completed repair and closure of the same hydraulic pump failure previously reported as open, thus updating and superseding the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202501132199_AALA202501088435_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents replacement of the pump and successful test, resolving the repeat issue noted in the prior open report, thus updating and closing it.",
+    "parse_failed": false
+  },
+  "AALA202504302845_AALA202504249701_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve the left wing fuel compensator and fuel imbalance, but describe separate incidents with no contradictory claims; the new record simply documents a later, independent repair.",
+    "parse_failed": false
+  },
+  "AALA202503182003_AALA202502241517_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces an auto\u2011throttle switch assembly, while the prior record deals with a stiff aft service\u2011door grit\u2011bar retainer; they involve distinct systems, so the records are unrelated in scope.",
+    "parse_failed": false
+  },
+  "AALA202506305157_AALA202506235157_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents replacement and successful test of the valve, closing the issue that the prior open report flagged, thus updating and superseding it.",
+    "parse_failed": false
+  },
+  "AALA202509176203_AALA202508063808_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses engine 2 EGT over\u2011limit and related wiring, while the prior record concerns a mid\u2011lavatory door adjustment; they involve distinct systems with no overlapping claims.",
+    "parse_failed": false
+  },
+  "AALA202502079012_AALA202501155909_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records involve slat\u2011drive related faults on the same aircraft but address different components (assembly replacement vs wire repair); they are compatible actions, not contradictory or superseding each other.",
+    "parse_failed": false
+  },
+  "AALA202502042619_AALA202501312619_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same lavatory\u2011D door issue and marks it CLOSED, updating the prior OPEN entry.",
+    "parse_failed": false
+  },
+  "AALA202501304517_AALA202501091769_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses a fuel\u2011system issue (right main tank and boost pump valves), whereas the prior record repaired a left horizontal stabilizer skin crack, involving different aircraft parts/systems.",
+    "parse_failed": false
+  },
+  "AALA202503110046_AALA202502050046_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents the completed replacement and closure of the same cracked rib issue that the prior open record reported, thereby updating and closing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202504257753_AALA202504013074_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides a final operational check stating no fault and closes the issue, updating the earlier lubrication action for the same door.",
+    "parse_failed": false
+  },
+  "AALA202505139098_AALA202505119098_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same oven issue reported earlier and marks it closed, updating the prior open supplemental report.",
+    "parse_failed": false
+  },
+  "AALA202509045297_AALA202509035297_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same low\u2011pressure light issue and marks it closed, updating the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202506106042_AALA202505150214_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with cabin ventilation, battery, and moisture shrouds, while the prior record concerns landing\u2011gear warnings and radio avionics, involving different systems with no overlapping parts.",
+    "parse_failed": false
+  },
+  "AALA202508047323_AALA202508037323_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents replacement of the delaminated window, closing the previously open incident describing the same emergency.",
+    "parse_failed": false
+  },
+  "AALA202505238726_AALA202504212680_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "Both records involve the L1 door but address different components (guide arm/plates vs. inner handle mechanism), so they are unrelated scopes rather than conflicting or superseding each other.",
+    "parse_failed": false
+  },
+  "AALA202501035620_AALA202501025620_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents removal and replacement of the emergency aisle light that fixes the missing sign reported in the prior open record, thereby updating and closing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202504297048_AALA202504227048_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports replacement of the broken trim strips and marks the issue closed, directly updating and resolving the prior open record about the same lavatory\u2011D door problem.",
+    "parse_failed": false
+  },
+  "AALA202502243981_AALA202502143981_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides corrective actions and marks the issue closed, updating the prior open record about the same low\u2011pressure light.",
+    "parse_failed": false
+  },
+  "AALA202503128282_AALA202501139634_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records address the anti\u2011skid inoperative light; the new entry reports a successful repair and closure, updating the earlier grounding incident.",
+    "parse_failed": false
+  },
+  "AALA202502133159_AALA202502033159_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents the repair (connector replacement) and marks the issue as closed, updating the prior open record describing the same fuel pump light problem.",
+    "parse_failed": false
+  },
+  "AALA202502136446_AALA202502126446_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces the open prior entry by documenting removal, replacement, and closure of the same oven issue.",
+    "parse_failed": false
+  },
+  "AALA202512021215_AALA202511184178_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records involve the seat 5D floor proximity emergency light; the new record replaces the same light again and closes the issue, updating the earlier replacement.",
+    "parse_failed": false
+  },
+  "AALA202505292883_AALA202503193346_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces and closes the prior open report about the L2 slide, resolving the same issue.",
+    "parse_failed": false
+  },
+  "AALA202505139929_AALA202505119929_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the sensor replacement and successful check, closing the issue that the prior open record only noted pending supplemental reporting.",
+    "parse_failed": false
+  },
+  "AALA202503283151_AALA202503273151_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record completes the previously open L1 door heat\u2011shrink issue and marks it closed, updating the prior open report.",
+    "parse_failed": false
+  },
+  "AALA202502079343_AALA202502049343_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces the prior open report by detailing corrective action and closing the issue, thus updating and superseding the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202509027164_AALA202508087164_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same acrid\u2011smell issue by fixing the APU oil leak and closes the case, updating the prior open report.",
+    "parse_failed": false
+  },
+  "AALA202503125936_AALA202503071076_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the same girbbar clip adjustment, adds detail, and marks the issue closed, updating the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202502116308_AALA202502114415_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern different emergency lights (row\u202f23 vs row\u202f32), so they address distinct parts of the aircraft without conflict.",
+    "parse_failed": false
+  },
+  "AALA202506052830_AALA202506022830_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports the broken spring was removed, replaced, and the issue closed, directly updating the prior open record about the same faulty spring.",
+    "parse_failed": false
+  },
+  "AALA202506021666_AALA202505301666_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record completes and closes the previously open flashlight removal/installation issue, updating the prior open entry.",
+    "parse_failed": false
+  },
+  "AALA202507255446_AALA202507185446_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports the flashlight was removed and replaced, resolving the previously open issue, thus updating and closing the prior record.",
+    "parse_failed": false
+  },
+  "AALA202504011909_AALA202504010627_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the prior details and adds a '(CLOSED)' note, indicating it updates and finalizes the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202502258795_AALA202502128795_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the reported smell by identifying and fixing the leak, closing the issue that the prior open record only noted.",
+    "parse_failed": false
+  },
+  "AALA202506104685_AALA202506094685_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal and replacement of the same flashlight and closes the issue that was previously open, directly updating the prior record.",
+    "parse_failed": false
+  },
+  "AALA202601068333_AALA202501298517_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a fuel pressure switch, while the prior record dealt with a cargo compartment shield; they concern distinct systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202507148431_AALA202507088431_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports the missing red heat shrink was installed and no further defects, resolving the open issue noted in the prior record, thus it supersedes the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202501181933_AALA202501151933_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents completion of corrective action, component replacement and closure of the same intercom fault described in the prior open record, thereby updating and superseding it.",
+    "parse_failed": false
+  },
+  "AALA202502282383_AALA202502272383_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves and closes the same hydraulic pressure line issue described in the prior open record, updating its status.",
+    "parse_failed": false
+  },
+  "AALA202506038452_AALA202506028452_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents installing a new lock release button and closing the issue that was previously opened for the same L2 door gust lock.",
+    "parse_failed": false
+  },
+  "AALA202510230129_AALA202510210129_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the same emergency event, adds repair actions, and marks the issue closed, thereby updating and completing the previously open record.",
+    "parse_failed": false
+  },
+  "AALA202505059873_AALA202504153576_openai/gpt-oss-120b": {
+    "label": "partial_supersedes",
+    "rationale": "Both records address the same overwing exit flight\u2011lock issue; the new record adds a rigging fix after earlier component replacements, resolving the fault without negating the prior work, thus it partially supersedes the prior record.",
+    "parse_failed": false
+  },
+  "AALA202505159763_AALA202505149763_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents removal and replacement of the fuel pressure switch and closes the issue that was previously open, thus updating and superseding the prior record.",
+    "parse_failed": false
+  },
+  "AALA202506258071_AALA202505197222_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes an autopilot\u2011B actuator issue, while the prior record dealt with a forward entry door emergency slide; they involve distinct aircraft systems with no overlapping scope.",
+    "parse_failed": false
+  },
+  "AALA202504241097_AALA202504221097_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal, replacement, and closure of the corroded transfer cylinder that was previously open, directly updating and resolving the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202501246707_AALA202501240507_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe the identical emergency, actions taken, and closure status; there is no contradictory or additional scope, making them compatible duplicates.",
+    "parse_failed": false
+  },
+  "AALA202506050273_AALA202506059401_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The later record repeats the same installation and closure for the same L1 door issue, updating the earlier supplemental report, so it supersedes the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202506127305_AALA202506059401_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes an elevator feel computer hydraulic leak, while the prior record dealt with L1 door gust\u2011lock hardware; they concern distinct aircraft systems with no overlap.",
+    "parse_failed": false
+  },
+  "AALA202504094141_AALA202504073991_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record adds specific filter replacements that address and resolve the oil filter bypass issue described in the prior open record, effectively updating and closing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202503101840_AALA202502261840_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record contains the same incident description and adds completed maintenance actions, closing the prior open supplemental report.",
+    "parse_failed": false
+  },
+  "AALA202502285537_AALA202502275537_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the corrective action (replaced extinguisher bottle) and closes the issue, updating the prior open report about the same incident.",
+    "parse_failed": false
+  },
+  "AALA202507172094_AALA202507152094_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides the detailed inspection results and closes the issue that the prior open report only noted, effectively updating and concluding the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202501249100_AALA202501229100_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents corrective action, verification, and closure of the same lavatory\u2011D door difficulty noted in the prior record, thus updating and superseding it.",
+    "parse_failed": false
+  },
+  "AALA202503185090_AALA202503175090_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves and closes the same left fuel filter issue that the prior open record reported, effectively updating it.",
+    "parse_failed": false
+  },
+  "AALA202505193549_AALA202504219339_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both entries concern the same lavatory door but describe different, compatible fixes (hinge lubrication vs lock threshold adjustment) without contradictory claims.",
+    "parse_failed": false
+  },
+  "AALA202506115484_AALA202506065484_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents completed corrective actions and marks the issue as closed, updating the prior open record about the same lavatory door problem.",
+    "parse_failed": false
+  },
+  "AALA202510140789_AALA202510090789_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal and replacement of the leaking lavatory assembly and marks the issue closed, directly updating and resolving the prior open record describing the same leak.",
+    "parse_failed": false
+  },
+  "AALA202510302796_AALA202510012796_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repairs and closes the same exit sign issue that the prior record had opened, explicitly updating it.",
+    "parse_failed": false
+  },
+  "AALA202501186333_AALA202501180173_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe the same emergency vibration event and identical replacement of the left-hand green hydraulic elevator servo and hinge arm fittings, with no differing or contradictory details.",
+    "parse_failed": false
+  },
+  "AALA202501175630_AALA202501145630_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same intermittent light issue by replacing the assembly and closes the previously open report, thus superseding it.",
+    "parse_failed": false
+  },
+  "AALA202512086906_AALA202512026906_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents replacement of the broken emergency light and marks the issue closed, explicitly updating the prior identical report.",
+    "parse_failed": false
+  },
+  "AALA202501138435_AALA202501088435_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents replacement and successful test, closing the issue that the prior open report flagged, thus updating and superseding the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202502075611_AALA202502055611_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal, replacement, and successful check of the same flashlight issue, closing it, which updates and resolves the previously open report.",
+    "parse_failed": false
+  },
+  "AALA202503119386_AALA202502279386_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces the open prior report by documenting removal, replacement, and closure of the same oven smoke issue, thus updating and closing the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202505232050_AALA202505222050_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same dislodged emergency light panel issue and marks it closed, updating the prior open report.",
+    "parse_failed": false
+  },
+  "AALA202510022319_AALA202509252319_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details removal, replacement, and successful test of the same emergency light, closing the previously open record.",
+    "parse_failed": false
+  },
+  "AALA202501240287_AALA202501030802_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with the number\u202f2 engine fuel\u2011flow indicator, while the prior record concerns a forward\u2011closet megaphone, so they address different aircraft systems.",
+    "parse_failed": false
+  },
+  "AALA202507148423_AALA202506115484_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records concern the forward lavatory door sticking; the newer entry fixes the threshold and hinge issues, updating and closing the earlier report on the same problem.",
+    "parse_failed": false
+  },
+  "AALA202510309329_AALA202510249329_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces the lavatory-D door and marks the issue closed, updating the previously opened record for the same problem.",
+    "parse_failed": false
+  },
+  "AALA202510073847_AALA202509268985_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same smell issue noted in the prior open record by replacing the engine and filters and marks the case closed, thus updating the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202504249701_AALA202504239701_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides the completed corrective actions and marks the issue closed, updating the prior open report on the same fuel imbalance event.",
+    "parse_failed": false
+  },
+  "AALA202504105792_AALA202504075792_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details corrective actions (engine part install and hydraulic flush) that resolve the open emergency described in the prior record, effectively updating and closing it.",
+    "parse_failed": false
+  },
+  "AALA202512086774_AALA202512036774_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same shimmy issue by replacing the damper and closes the prior open record, thus updating it.",
+    "parse_failed": false
+  },
+  "AALA202504012799_AALA202504018424_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the same actions and adds a CLOSED status, explicitly updating and finalizing the prior identical entry.",
+    "parse_failed": false
+  },
+  "AALA202507256183_AALA202507156183_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents removal and replacement of the same rear galley outlet and marks the issue closed, directly updating the prior open report of the same problem.",
+    "parse_failed": false
+  },
+  "AALA202505011774_AALA202504281774_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents removal and replacement of engine 1 and marks the issue closed, directly updating the prior open record describing the same emergency.",
+    "parse_failed": false
+  },
+  "AALA202601069824_AALA202512319824_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports installing a replacement light and closing the issue that the prior open record had reported for the same seat, thus updating and superseding it.",
+    "parse_failed": false
+  },
+  "AALA202506059401_AALA202506029401_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "Prior record states the aircraft was not grounded despite a gust lock fault, while the new record declares the aircraft was grounded for the same gust lock issue and reports a fix, creating mutually exclusive claims.",
+    "parse_failed": false
+  },
+  "AALA202512169539_AALA202512059539_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same exit sign problem and marks it closed, updating the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202506250435_AALA202506230435_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record closes the incident by documenting engine replacement, updating the previously open report that only noted the emergency and pending supplemental report.",
+    "parse_failed": false
+  },
+  "AALA202503131183_AALA202501309558_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with APU oil leak and ECS decontamination, while the prior record concerns a loose 3L door arming lever, addressing different systems.",
+    "parse_failed": false
+  },
+  "AALA202504298847_AALA202504228847_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal and replacement of the retainer clip and marks the issue closed, directly updating and completing the previously open report.",
+    "parse_failed": false
+  },
+  "AALA202506252718_AALA202506232718_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents testing, part replacement, and a successful operational check that resolves and closes the same fuel indicator problem noted in the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202504087761_AALA202504083644_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the same repairs and adds a closure note, explicitly updating and finalizing the prior identical entry.",
+    "parse_failed": false
+  },
+  "AALA202506171647_AALA202506091647_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides the completed maintenance action and closes the issue, updating the prior open report, so it supersedes the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202601060573_AALA202501272158_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the number\u202f2 aft main fuel pump, while the prior record dealt with the left forward boost pump, so they concern different components.",
+    "parse_failed": false
+  },
+  "AALA202510304928_AALA202510218901_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records address the same left\u2011tank fuel\u2011quantity fault; the newer entry resolves the issue with additional repairs and declares the aircraft operational, effectively updating and closing the earlier grounded record.",
+    "parse_failed": false
+  },
+  "AALA202504295967_AALA202504160285_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record fixes the auto\u2011brake disarm illumination by replacing both switchpacks and closes the issue, updating the earlier open report about the same problem.",
+    "parse_failed": false
+  },
+  "AALA202505235102_AALA202505205102_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides the final corrective action (engine removal/replacement) and marks the issue closed, updating the earlier open report about the same emergency event.",
+    "parse_failed": false
+  },
+  "AALA202502266076_AALA202502112836_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record replaces the earlier hinge\u2011screw fix with a threshold replacement for the same lavatory door, updating and closing the prior discrepancy.",
+    "parse_failed": false
+  },
+  "AALA202601057475_AALA202512297475_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the same emergency event and adds completed repairs and a closed status, updating the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202504295985_AALA202504285985_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record fixes the same cockpit door locking issue and marks it closed, updating the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202505137458_AALA202505087458_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record adds maintenance actions and marks the incident as closed, updating the prior open record describing the same fume event.",
+    "parse_failed": false
+  },
+  "AALA202510270712_AALA202503107680_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern emergency lights on different seat rows (row\u202f20 vs row\u202f18), so they address distinct components rather than the same issue.",
+    "parse_failed": false
+  },
+  "AALA202503116345_AALA202502106345_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports the lavatory\u2011D door was repaired and the issue is closed, updating the prior open report about the same problem.",
+    "parse_failed": false
+  },
+  "AALA202502243381_AALA202502213381_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents installation and closure of the missing heatshrink tubing issue that the prior record left open, thus updating and superseding it.",
+    "parse_failed": false
+  },
+  "AALA202508204578_AALA202508118886_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "Both records concern the same aft left lavatory door jam; the later entry adds a new adjustment and confirms the door now operates normally, effectively updating and closing the earlier record.",
+    "parse_failed": false
+  },
+  "AALA202601063655_AALA202512103373_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses an engine lubrication unit leak, while the prior record concerns emergency seat lighting, involving distinct aircraft systems with no overlapping scope.",
+    "parse_failed": false
+  },
+  "AALA202501074549_AALA202501034549_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details corrective actions and marks the issue as closed, updating the prior open supplemental report about the same fuel pump low\u2011pressure event.",
+    "parse_failed": false
+  },
+  "AALA202504229527_AALA202504219527_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the corrective action (sensor box replacement) and closes the issue that the prior record left open, directly updating the same incident.",
+    "parse_failed": false
+  },
+  "AALA202502114415_AALA202502104415_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same light issue by fixing it and closes the case, updating the prior open report.",
+    "parse_failed": false
+  },
+  "AALA202501135866_AALA202501078888_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a fuel\u2011system issue, while the prior record concerns a cabin exit sign; they involve different aircraft systems, so there is no conflict.",
+    "parse_failed": false
+  },
+  "AALA202502119524_AALA202502049343_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes an emergency seat light, while the prior record concerns a flight\u2011attendant jumpseat flashlight button, which are different components.",
+    "parse_failed": false
+  },
+  "AALA202508018581_AALA202507161602_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes nose landing gear components, while the prior record addressed an overhead exit sign, involving distinct aircraft systems.",
+    "parse_failed": false
+  },
+  "AALA202507227996_AALA202506028294_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records involve different doors (right vs left forward cabin doors) and distinct proximity sensors, so they address separate components despite similar issue type.",
+    "parse_failed": false
+  },
+  "AALA202510060718_AALA202510069285_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the same actions as the prior one but adds a closure note, explicitly updating and finalizing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202506139830_AALA202506099830_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record provides detailed DFDR data and documents the replacement of engine #1, resolving the incident that the prior open report only described, thus updating and closing the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202505238006_AALA202505208006_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same anti\u2011skid problem and marks it closed, explicitly updating the prior open record.",
+    "parse_failed": false
+  },
+  "AALA202510230424_AALA202510210424_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports removal, replacement, and closure of the Lavatory\u2011D door issue that was previously open, directly updating and resolving the prior entry.",
+    "parse_failed": false
+  },
+  "AALA202603069117_AALA202501273286_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with fuel system components, while the prior record concerns an entry door girt bar; they involve different parts and no overlapping issues.",
+    "parse_failed": false
+  },
+  "AALA202502114535_AALA202501217380_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a fuel quantity probe wiring issue, while the prior record repairs corrosion on the APU compartment door; they involve different aircraft systems.",
+    "parse_failed": false
+  },
+  "AALA202505200184_AALA202505150184_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record reports the missing heat\u2011shrink tubing was replaced and the issue closed, updating the prior open report about the same problem.",
+    "parse_failed": false
+  },
+  "AALA202508120644_AALA202508110644_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the same nose\u2011gear light issue described in the prior open record and marks it closed, thus updating and superseding the earlier entry.",
+    "parse_failed": false
+  },
+  "AALA202502074551_AALA202502044551_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details the corrective action (valve replacement, tests) and marks the issue closed, directly updating and completing the prior open report about the same landing\u2011gear failure.",
+    "parse_failed": false
+  },
+  "AALA202506251119_AALA202506241119_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record closes the previously open flashlight issue and details corrective action, updating the prior open report.",
+    "parse_failed": false
+  },
+  "AALA202507299614_AALA202501221567_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the L3 door slide inflation reservoir, while the prior record serviced the R2 door damper and cylinder, involving distinct doors and components.",
+    "parse_failed": false
+  },
+  "AALA202502060273_AALA202502061873_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the right\u2011hand stabilizer hinge, while the prior record addressed the left\u2011hand hinge, so they involve different components.",
+    "parse_failed": false
+  },
+  "AALA202503172883_AALA202502249867_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a dislodged L2 door slide, while the prior record deals with an odor from a potable water source; they involve different aircraft components and issues, making their scopes disjoint.",
+    "parse_failed": false
+  },
+  "AALA202504140391_AALA202502112624_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns a left main landing gear door hinge replacement, while the prior record involves an emergency exit lamp replacement; they address different aircraft systems.",
+    "parse_failed": false
+  },
+  "AALA202504010553_AALA202506196913_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a crack in the LH door stop fitting, while the prior record addresses a crack in the LH side windshield continuity fitting; they concern different components.",
+    "parse_failed": false
+  },
+  "AALA202501240507_AALA202501247485_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record repeats the prior entry but adds a '(CLOSED)' note, explicitly updating and finalizing the earlier record.",
+    "parse_failed": false
+  },
+  "AALA202512268045_AALA202506163987_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the right emergency door damper and cylinder, while the prior record dealt with the left over\u2011wing exit relay, so they involve different parts and do not conflict.",
+    "parse_failed": false
+  },
+  "AALA202505097615_AALA202505087615_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record documents removal and replacement of the roller plunger, resolving the previously open lavatory-D issue, thus it updates and closes the prior record.",
+    "parse_failed": false
+  },
+  "AALA202511103376_AALA202502112836_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records address the same lavatory\u2011D door issue with compatible fixes (hinge adjustment then lubrication) and do not contradict or replace each other.",
+    "parse_failed": false
+  },
+  "AALA202503207109_AALA202503116345_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a crack in the L1 door inner skin, while the prior record dealt with a jammed Lavatory\u2011D door; they involve different doors/components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202506177975_AALA202505307313_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns an inoperative auto\u2011brake system, while the prior record dealt with a door\u2011slide grit\u2011bar orientation; they involve different aircraft systems and do not overlap.",
+    "parse_failed": false
+  },
+  "SWIA2025112376462_SWIA2025110676531_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left forward emergency\u2011exit door member, while the prior record addresses a center cargo door guide fitting; they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "AALA202502115985_AALA202502079027_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records address delamination on different emergency doors (833 vs 834), so they involve distinct components.",
+    "parse_failed": false
+  },
+  "AALA202511062677_AALA202511060534_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record replaces hinge arm #2, while the prior record replaced hinge arm #4, so they concern different components despite being on the same stabilizer.",
+    "parse_failed": false
+  },
+  "AALA202505154106_AALA202505149407_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record details corrective actions that resolve the previously open grounding issue, updating and closing the prior record.",
+    "parse_failed": false
+  },
+  "AALA202510291620_AALA202510302433_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record updates the same L1 door problem by replacing the guide arm after the prior record's readjustment, explicitly advancing the corrective action.",
+    "parse_failed": false
+  },
+  "AALA202511209262_AALA202510276823_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both entries involve the 26C emergency exit light, with the new record reporting a repeat failure and replacement, which is compatible with the prior reinstall and does not contradict it.",
+    "parse_failed": false
+  },
+  "AALA202506191639_AALA202506208254_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a left windshield post crack, while the prior record fixes a right\u2011side forward skin panel hole; they involve different aircraft structures.",
+    "parse_failed": false
+  },
+  "AALA202510033480_AALA202505286150_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs the forward lavatory door latch, while the prior record addressed the forward entry L1 girt bar slide; they involve distinct components, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202511064294_AALA202511062921_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern different hinge arm end fittings (#1 vs #4) on the same stabilizer, so they address distinct components.",
+    "parse_failed": false
+  },
+  "AALA202503286220_AALA202503256938_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the left\u2011hand elevator hinge arm, while the prior record addressed the right\u2011hand hinge arm, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "AALA202503062494_AALA202503100605_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs a fuselage skin crack, while the prior record replaced elevator tab control spring bushings, involving distinct aircraft structures.",
+    "parse_failed": false
+  },
+  "AALA202511134227_AALA202511138586_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a cracked center fuselage pressure deck membrane, while the prior record replaced a worn aft avionics rack fitting; they involve distinct aircraft structures.",
+    "parse_failed": false
+  },
+  "AALA202502137250_AALA202503171395_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs an intercostal fitting, while the prior record repaired a sliding window handle; they concern different components, so their scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202503133142_AALA202503139551_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the left stabilizer hinge arm, while the prior record addressed the right side, so they concern different components.",
+    "parse_failed": false
+  },
+  "AALA202509240834_AALA202507169103_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe lubricating the same Lavatory\u2011D door latch and report a good operational check, with no contradictory or mutually exclusive statements.",
+    "parse_failed": false
+  },
+  "AALA202508203598_AALA202507089431_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record addresses a missing heatshrink on the L2 door girt bar, while the prior record concerns a flight attendant flashlight battery; they involve different parts, so the records are disjoint in scope.",
+    "parse_failed": false
+  },
+  "AALA202503286402_AALA202502246890_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "New record reports emergency lights still inoperative and a short at seat 29C, directly opposing prior record's claim that the lights were operational after battery pack replacement.",
+    "parse_failed": false
+  },
+  "AALA202506244126_AALA202502122118_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes the flight deck door and cockpit switch, while the prior record dealt with the aft lavatory door; they concern distinct systems with no overlapping issues.",
+    "parse_failed": false
+  },
+  "AALA202503270402_AALA202506196913_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with a right\u2011hand aft\u2011door corrosion repair, while the prior record concerns a left\u2011hand windshield crack repair, involving distinct parts and systems.",
+    "parse_failed": false
+  },
+  "AALA202507257153_AALA202505029492_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe servicing the same left emergency exit door damper and cylinder, with compatible statements and no contradictory or exclusive claims.",
+    "parse_failed": false
+  },
+  "AALA202508134689_AALA202508214977_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records describe separate crack repairs on the same bulkhead area; the new repair fixes a different location and does not contradict or replace the prior work.",
+    "parse_failed": false
+  },
+  "SWIA2026070676554_SWIA2026070676502_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record repairs left\u2011hand stringer 3L at FS280\u2011FS282, while the prior record addressed right\u2011hand avionics stringer 26R at BS295\u2011310, involving different components despite using the same task card.",
+    "parse_failed": false
+  },
+  "SWIA2025112476485_SWIA2025112476468_openai/gpt-oss-120b": {
+    "label": "no_conflict",
+    "rationale": "Both records repair wear on the same actuator beam but at different flap stations (65.5 vs 102.9), so they describe separate, compatible actions without conflict.",
+    "parse_failed": false
+  },
+  "AALA202510203314_AALA202507180950_openai/gpt-oss-120b": {
+    "label": "contradicts",
+    "rationale": "Both records address the same door damper and cylinder, but one says the aircraft was not grounded while the other says it was in base maintenance (grounded), creating mutually exclusive claims.",
+    "parse_failed": false
+  },
+  "AALA202503135158_AALA202503139551_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The records concern different hinge arms (#4 vs #5) on the same stabilizer, so they address distinct components.",
+    "parse_failed": false
+  },
+  "AALA202508164942_AALA202501143364_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record fixes a left forward overwing exit door window, while the prior record addresses a right lavatory door; they concern different parts of the aircraft with no overlapping scope.",
+    "parse_failed": false
+  },
+  "AALA202505299850_AALA202505209850_openai/gpt-oss-120b": {
+    "label": "supersedes",
+    "rationale": "The new record resolves the missing L2 door slide issue by replacing it, updating and closing the prior open report about the same problem.",
+    "parse_failed": false
+  },
+  "AALA202510210129_AALA202510033480_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record deals with a flap indication emergency, while the prior record concerns a forward lavatory door latch; they involve different aircraft systems, so the scopes are disjoint.",
+    "parse_failed": false
+  },
+  "AALA202503105902_AALA202502133538_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record services the left (L4) door damper and cylinder, while the prior record addressed the right (R4) door damper and cylinder, so they concern different parts of the aircraft.",
+    "parse_failed": false
+  },
+  "AALA202510016568_AALA202504077975_openai/gpt-oss-120b": {
+    "label": "scope_disjoint",
+    "rationale": "The new record concerns an APU electrical failure, while the prior record deals with a lavatory door issue; they involve different systems and do not conflict.",
+    "parse_failed": false
+  },
+  "AALA202510210424_AALA202502071912_qwen/qwen3.8-27b": {
+    "label": "no_conflict",
+    "rationale": "The records address different lavatory locations (LAVATORY-D vs. AFT LEFT) and describe separate maintenance events without overlapping scope or contradictory claims.",
+    "parse_failed": false
+  },
+  "AALA202504085401_AALA202504080332_qwen/qwen3.8-27b": {
+    "label": "contradicts",
+    "rationale": "The records describe the same crack location (STA 129.50) but specify mutually exclusive reference points ('front spar' vs 'aft spar'), creating a contradiction in the physical description of the defect.",
+    "parse_failed": false
+  }
+}

@@ -325,3 +325,111 @@ class MemoryGraphStore:
         )
         self.link_decision_ticket(jwt_decision["id"], ticket["id"])
         self.link_ticket_relates(ticket["id"], auth["id"])
+
+    # ==================================================================
+    # Maintenance domain — Asset and ServiceRecord operations
+    # ==================================================================
+
+    def find_or_create_asset(self, tail_number: str, metadata: dict) -> dict:
+        """Return existing Asset by tail_number, or create one."""
+        existing = self._find_nodes("Asset", tail_number=tail_number)
+        if existing:
+            return existing[0]
+        props = {
+            "tail_number": tail_number,
+            "make": metadata.get("make", ""),
+            "model": metadata.get("model", ""),
+            "serial_number": metadata.get("serial_number", ""),
+        }
+        return self._add_node("Asset", props)
+
+    def create_service_record(self, data: dict) -> dict:
+        """Create a ServiceRecord.  Idempotent on record_id."""
+        existing = self._find_nodes("ServiceRecord", record_id=data["record_id"])
+        if existing:
+            return existing[0]
+        props = {
+            "record_id": data["record_id"],
+            "asset_key": data.get("asset_key", ""),
+            "occurred_at": data.get("occurred_at", ""),
+            "submitted_at": data.get("submitted_at", ""),
+            "part_name": data.get("part_name", ""),
+            "part_condition": data.get("part_condition", ""),
+            "part_location": data.get("part_location", ""),
+            "jasc_code": data.get("jasc_code", ""),
+            "text": data.get("text", ""),
+            "status": data.get("status", "auto_accepted"),
+            "confidence": data.get("confidence", 1.0),
+            "source": data.get("source", "faa_sdr"),
+        }
+        if data.get("id"):
+            props["id"] = data["id"]
+        return self._add_node("ServiceRecord", props)
+
+    def get_service_record(self, record_id: str) -> dict | None:
+        """Return ServiceRecord by record_id, or None."""
+        matches = self._find_nodes("ServiceRecord", record_id=record_id)
+        return matches[0] if matches else None
+
+    def link_record_about_asset(self, record_id: str, asset_id: str) -> None:
+        """ABOUT edge: ServiceRecord node_id → Asset node_id."""
+        # Find the ServiceRecord node's internal id
+        sr_nodes = self._find_nodes("ServiceRecord", record_id=record_id)
+        if not sr_nodes:
+            return
+        self._add_edge(sr_nodes[0]["id"], asset_id, "ABOUT")
+
+    def list_asset_history(self, asset_id: str, limit: int = 50) -> list[dict]:
+        """Return ServiceRecords linked to asset_id, ascending by occurred_at."""
+        records = []
+        for edge in self.edges:
+            if edge["target"] == asset_id and edge["type"] == "ABOUT":
+                node = self._get_node(edge["source"])
+                if node and node.get("label") == "ServiceRecord":
+                    records.append(node)
+        records.sort(key=lambda r: r.get("occurred_at", ""))
+        return records[:limit]
+
+    def link_record_supersedes(
+        self,
+        new_record_id: str,
+        old_record_id: str,
+        scope: str,
+        confidence: float,
+        rationale: str,
+    ) -> None:
+        """SUPERSEDES edge: new ServiceRecord → old ServiceRecord."""
+        new_nodes = self._find_nodes("ServiceRecord", record_id=new_record_id)
+        old_nodes = self._find_nodes("ServiceRecord", record_id=old_record_id)
+        if not new_nodes or not old_nodes:
+            return
+        self._add_edge(
+            new_nodes[0]["id"],
+            old_nodes[0]["id"],
+            "SUPERSEDES",
+            {"scope": scope, "confidence": confidence, "rationale": rationale},
+        )
+
+    def list_service_records(
+        self, status: str | None = None, asset_id: str | None = None
+    ) -> list[dict]:
+        """List ServiceRecords optionally filtered by status and asset_id."""
+        records = self._find_nodes("ServiceRecord")
+        if status:
+            records = [r for r in records if r.get("status") == status]
+        if asset_id:
+            # Keep only records linked to this asset
+            linked_record_ids: set[str] = set()
+            for edge in self.edges:
+                if edge["target"] == asset_id and edge["type"] == "ABOUT":
+                    linked_record_ids.add(edge["source"])
+            records = [r for r in records if r["id"] in linked_record_ids]
+        records.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
+        return records
+
+    def update_service_record(self, record_id: str, updates: dict) -> dict | None:
+        """Apply partial update to a ServiceRecord identified by record_id."""
+        nodes = self._find_nodes("ServiceRecord", record_id=record_id)
+        if not nodes:
+            return None
+        return self._update_node(nodes[0]["id"], updates)

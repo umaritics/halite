@@ -44,4 +44,24 @@ export const healthAPI = {
   check: () => api.get('/health'),
 };
 
+export const domainsAPI = {
+  list: () => api.get('/domains'),
+};
+
+export const maintenanceAPI = {
+  ingest: (payload) => api.post('/maintenance/ingest', payload),
+  ingestFile: (formData) => api.post('/maintenance/ingest', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  submitRecord: (payload) => api.post('/maintenance/records', payload),
+  getRecord: (id) => api.get(`/maintenance/records/${id}`),
+  assets: (params) => api.get('/maintenance/assets', { params }),
+  assetHistory: (assetId) => api.get(`/maintenance/assets/${assetId}/history`),
+  reviewQueue: () => api.get('/maintenance/review-queue'),
+  accept: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/accept`, { note }),
+  reject: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/reject`, { note }),
+  diagnose: (assetId, symptomText) => api.post('/maintenance/diagnose', { asset_id: assetId, symptom_text: symptomText }),
+  chat: (message, assetId, history) => api.post('/maintenance/chat', { message, asset_id: assetId, history }),
+};
+
 export default api;

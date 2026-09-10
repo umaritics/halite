@@ -8,6 +8,8 @@ const NODE_COLORS = {
   Commit: '#888888',
   Ticket: '#C45A0A',
   Document: '#666666',
+  Asset: '#FF9E5E', // Distinct from Decision
+  ServiceRecord: '#B34A00', // distinct
 };
 
 const DECISION_STATUS_COLORS = {
@@ -19,6 +21,9 @@ const DECISION_STATUS_COLORS = {
 function getNodeColor(node) {
   if (node.label === 'Decision' || node.title) {
     return DECISION_STATUS_COLORS[node.status] || NODE_COLORS.Decision;
+  }
+  if (node.label === 'ServiceRecord') {
+    return node.status === 'superseded' ? '#555555' : NODE_COLORS.ServiceRecord;
   }
   return NODE_COLORS[node.label] || '#E8650A';
 }

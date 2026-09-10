@@ -1,0 +1,1286 @@
+{
+  "f1ae5d632ffef938": {
+    "asset_id": "c61330ce-90e4-47d8-9232-5914697d89cf",
+    "symptom_text": "slide light will not extinguish at door 1R",
+    "ranked_checks": [
+      {
+        "part_name": "DRAG ANGLE",
+        "score": 0.8333,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "DEMO20260909171523",
+          "DEMO20260909170109",
+          "DEMO20260909165206",
+          "SWIA2025122876590"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "LIGHT",
+        "score": 0.4138,
+        "evidence_count": 10,
+        "evidence_record_ids": [
+          "AALA202510206779",
+          "AALA202512099162",
+          "AALA202505138295",
+          "AALA202502106308",
+          "AALA202502104415",
+          "AALA202510210712",
+          "AALA202512026906",
+          "AALA202507289418",
+          "AALA202512185081",
+          "AALA202501145630"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "DOOR",
+        "score": 0.2336,
+        "evidence_count": 6,
+        "evidence_record_ids": [
+          "AALA202505198726",
+          "AALA202502106345",
+          "AALA202506250262",
+          "AALA202510249329",
+          "AALA202508212424",
+          "AALA202507130066"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1224,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "SWIA2026070676558",
+          "SWIA2025120676529",
+          "SWIA2026070676497",
+          "SWIA2025120576568"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "score": 0.1219,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "SWIA2026070606541",
+          "SWIA2025120676586",
+          "SWIA2025120576544"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      },
+      {
+        "part_name": "SLIDE",
+        "score": 0.1155,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "AALA202505209850",
+          "AALA202510147624",
+          "AALA202507229614"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 6
+      },
+      {
+        "part_name": "SLAT TRACK",
+        "score": 0.1074,
+        "evidence_count": 7,
+        "evidence_record_ids": [
+          "SWIA2025113076564",
+          "SWIA2025113076539",
+          "SWIA2025113076536",
+          "SWIA2025113076522",
+          "SWIA2025113076507",
+          "SWIA2025113076457",
+          "SWIA2025113076461"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.08,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122076513"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "score": 0.0571,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121776533"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9
+      },
+      {
+        "part_name": "WINDOW FRAME",
+        "score": 0.05,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121576470"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "record_id": "SWIA2026070606541",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-17",
+        "part_name": "STRINGER SPLICE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025120676529",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-06",
+        "part_name": "STRINGER",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2026070676497",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-05",
+        "part_name": "STRINGER",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "DEMO20260909171523",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-29",
+        "part_name": "DRAG ANGLE",
+        "status": "needs_review",
+        "is_superseded": false
+      },
+      {
+        "record_id": "DEMO20260909165206",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-29",
+        "part_name": "DRAG ANGLE",
+        "status": "needs_review",
+        "is_superseded": false
+      },
+      {
+        "record_id": "AALA202512099162",
+        "asset_id": "957AN",
+        "occurred_at": "2025-12-06",
+        "part_name": "LIGHT",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025120676586",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-06",
+        "part_name": "STRINGER SPLICE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025120576544",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-05",
+        "part_name": "STRINGER SPLICE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2026070676558",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-13",
+        "part_name": "STRINGER",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "DEMO20260909170109",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-29",
+        "part_name": "DRAG ANGLE",
+        "status": "needs_review",
+        "is_superseded": false
+      }
+    ],
+    "rare_cases": [
+      {
+        "record_id": "AALA202510206779",
+        "asset_id": "919AN",
+        "occurred_at": "2025-10-18",
+        "part_name": "LIGHT",
+        "text": "AIRCRAFT WAS NOT GROUNDED: R1 DOOR EMERGENCY SLIDE LIGHT INOPERATIVE. REPLACED DOOR R1 EMERGENCY SLIDE LIGHT LAMP. PER AMM 33-51-04. OPERATIONAL TEST GOOD."
+      }
+    ],
+    "explanation": "The ranking reflects how often each component appears in recent evidence for this asset and similar fleet cases. \n1. **DRAG ANGLE** is top\u2011ranked because the asset has three very recent DRAG ANGLE records on 2025\u201112\u201129 that are still marked *needs_review* (DEMO20260909171523, DEMO20260909170109, DEMO20260909165206). These recent, unresolved issues outweigh older auto\u2011accepted work. \n2. **LIGHT** is second because the fleet\u2011wide matches contain ten LIGHT\u2011related incidents, including the directly relevant case where the R1 door slide light was inoperative (AALA202510206779) and other emergency\u2011light failures (AALA202512099162, AALA202505138295). The high evidence count shows a strong pattern of slide\u2011light problems across the fleet. \n3. **DOOR** ranks third with six matches, the most pertinent being a grounded aircraft where the forward left L1 door would not open (AALA202505198726). Although this case concerns door motion rather than the slide light, door\u2011related faults often affect slide\u2011light circuitry. \n4. **STRINGER** appears fourth with four matches (SWIA2026070676558, SWIA2025120676529, SWIA2026070676497). Stringer issues can impact the wiring harness that powers the slide light, giving it moderate relevance. \n5. **STRINGER SPLICE** is fifth with three matches (SWIA2026070606541, SWIA2025120676586, SWIA2025120576544). Splice problems are less common but still a possible source of intermittent power to the slide light.",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 20,
+      "fleet_assets": 18,
+      "wall_clock_s": 4.35
+    },
+    "citation_validation": {
+      "valid_ids": [
+        "SWIA2026070606541",
+        "SWIA2025120676529",
+        "SWIA2026070676497",
+        "DEMO20260909171523",
+        "DEMO20260909165206",
+        "AALA202512099162",
+        "SWIA2025120676586",
+        "SWIA2025120576544",
+        "SWIA2026070676558",
+        "DEMO20260909170109",
+        "AALA202510206779",
+        "AALA202505198726",
+        "AALA202505138295"
+      ],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": [
+      "SWIA2025122876590 (auto_accepted DRAG ANGLE) is superseded by newer DRAG ANGLE records (DEMO20260909171523, DEMO20260909170109, DEMO20260909165206) and should not be acted upon."
+    ]
+  },
+  "92af9cfa49368c07": {
+    "asset_id": "580b9524-bbfd-491a-8e4c-dbd9c8fd2fa7",
+    "symptom_text": "RH IDG failing",
+    "ranked_checks": [
+      {
+        "part_name": "TRANSDUCER",
+        "score": 0.4,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "VNAA2025121211102"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "BALLAST",
+        "score": 0.2,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "VNAA2025081311102"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "SLAT TRACK",
+        "score": 0.1738,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "VNAA202504170097",
+          "VNAA202504170096",
+          "VNAA202504170095"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "TRUNNION",
+        "score": 0.1343,
+        "evidence_count": 6,
+        "evidence_record_ids": [
+          "VNAA202504170092",
+          "VNAA202504170105",
+          "VNAA202504170107",
+          "VNAA202504170106",
+          "VNAA202504170083",
+          "VNAA202504170082"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "SUPPORT ANGLE",
+        "score": 0.1333,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "VNAA202504170037"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1171,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "VNAA202504170010",
+          "VNAA202504170108",
+          "VNAA202504170087"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 6
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "score": 0.1165,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "VNAA202504170094",
+          "VNAA202504170093",
+          "VNAA202504170088",
+          "VNAA202504170086"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7
+      },
+      {
+        "part_name": "STRINGER CLIP",
+        "score": 0.1,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "VNA2025F00010"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8
+      },
+      {
+        "part_name": "DOOR SILL",
+        "score": 0.0536,
+        "evidence_count": 2,
+        "evidence_record_ids": [
+          "VNAA20250417001",
+          "VNA2025F00011"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9
+      },
+      {
+        "part_name": "INTERCOSTAL",
+        "score": 0.0481,
+        "evidence_count": 2,
+        "evidence_record_ids": [
+          "VNAA202504170091",
+          "VNAA202504170084"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "record_id": "VNAA202504170096",
+        "asset_id": "508AE",
+        "occurred_at": "2025-04-17",
+        "part_name": "SLAT TRACK",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "VNAA202504170097",
+        "asset_id": "508AE",
+        "occurred_at": "2025-04-17",
+        "part_name": "SLAT TRACK",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "VNAA202504170095",
+        "asset_id": "508AE",
+        "occurred_at": "2025-04-17",
+        "part_name": "SLAT TRACK",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "VNAA2025081311102",
+        "asset_id": "508AE",
+        "occurred_at": "2025-08-11",
+        "part_name": "BALLAST",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "VNAA2025121211102",
+        "asset_id": "508AE",
+        "occurred_at": "2025-12-11",
+        "part_name": "TRANSDUCER",
+        "status": "auto_accepted",
+        "is_superseded": false
+      }
+    ],
+    "rare_cases": [],
+    "explanation": "{\n  \"explanation\": \"The ranking reflects both the number of past failure records (evidence_count) and how recent those records are for the asset. \\n1. **TRANSDUCER** is ranked first because it has one evidence record (VNAA2025121211102) and that record is the most recent maintenance event on the asset (2025-12-11), indicating a fresh history of issues. \\n2. **BALLAST** is second with one evidence record (VNAA2025081311102) and a relatively recent repair date (2025-08-11), making it the next most likely suspect. \\n3. **SLAT TRACK** appears third with three evidence records (VNAA202504170097, VNAA202504170096, VNAA202504170095). Although it has the highest evidence count after TRANSDUCER and BALLAST, all three records are from April 2025, so they are older than the TRANSDUCER and BALLAST",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 0,
+      "fleet_assets": 0,
+      "wall_clock_s": 2.85
+    },
+    "citation_validation": {
+      "valid_ids": [
+        "VNAA202504170096",
+        "VNAA202504170097",
+        "VNAA202504170095",
+        "VNAA2025081311102",
+        "VNAA2025121211102"
+      ],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": []
+  },
+  "45393f1dcdc26a75": {
+    "asset_id": "9934e3f1-d42c-43cb-8d8b-6dcbc6167807",
+    "symptom_text": "A/C PACK INOP",
+    "ranked_checks": [
+      {
+        "part_name": "BATTERY PACK",
+        "score": 0.6618,
+        "evidence_count": 14,
+        "evidence_record_ids": [
+          "AALA202501159548",
+          "AALA202501154311",
+          "AALA202508051342",
+          "AALA202505067378",
+          "AALA202512202206",
+          "AALA202502246890",
+          "AALA202504286966",
+          "AALA202510209751",
+          "AALA202510167723",
+          "AALA202510164968",
+          "AALA202510165035",
+          "AALA202508299000",
+          "AALA202501060702",
+          "AALA202501063811"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.499,
+        "evidence_count": 15,
+        "evidence_record_ids": [
+          "DALA2025100907387",
+          "DALA2025100907385",
+          "DALA2025100807353",
+          "DALA2025100807352",
+          "DALA2025072805635",
+          "DALA2025072805634",
+          "DALA2025072805633",
+          "DALA2025072805632",
+          "DALA2025072805629",
+          "DALA2025072805628",
+          "DALA2025072805627",
+          "DALA2025072805626",
+          "DALA2025072805625",
+          "DALA2025072805624",
+          "DALA2025072805623"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "BOTTLE",
+        "score": 0.4,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "DALA2025110308021"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "A/C PACK",
+        "score": 0.3634,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "AALA202502143372",
+          "AALA202505137458",
+          "AALA202510204966"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "INDICATOR",
+        "score": 0.2,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "DALA2025102807900"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      },
+      {
+        "part_name": "SKIN",
+        "score": 0.1444,
+        "evidence_count": 6,
+        "evidence_record_ids": [
+          "DALA2025090406558",
+          "DALA2025072805645",
+          "DALA2025073005716",
+          "DALA2025072805631",
+          "DALA2025072805630",
+          "DALA2025072805650"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 6
+      },
+      {
+        "part_name": "BRACKET",
+        "score": 0.1344,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "DALA2025100807351",
+          "DALA2025100707295",
+          "DALA2025100607248"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7
+      },
+      {
+        "part_name": "ELEC CONNECTOR",
+        "score": 0.1333,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "DALA2025102007675"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8
+      },
+      {
+        "part_name": "BLEED VALVE",
+        "score": 0.0333,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "DALA2025082206260"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9
+      },
+      {
+        "part_name": "SHEAR TIE",
+        "score": 0.0286,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "DALA2025072805643"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 10
+      }
+    ],
+    "evidence": [],
+    "rare_cases": [],
+    "explanation": "",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 17,
+      "fleet_assets": 13,
+      "wall_clock_s": 3.04
+    },
+    "citation_validation": {
+      "valid_ids": [],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": []
+  },
+  "452fdaeeba4af65c": {
+    "asset_id": "c61330ce-90e4-47d8-9232-5914697d89cf",
+    "symptom_text": "slide light will not extinguish at door 1R",
+    "ranked_checks": [
+      {
+        "part_name": "DRAG ANGLE",
+        "score": 0.98,
+        "evidence_count": 6,
+        "evidence_record_ids": [
+          "DEMO20260910071121",
+          "DEMO20260910065851",
+          "DEMO20260909171523",
+          "DEMO20260909170109",
+          "DEMO20260909165206",
+          "SWIA2025122876590"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "LIGHT",
+        "score": 0.4138,
+        "evidence_count": 10,
+        "evidence_record_ids": [
+          "AALA202510206779",
+          "AALA202512099162",
+          "AALA202505138295",
+          "AALA202502106308",
+          "AALA202502104415",
+          "AALA202510210712",
+          "AALA202512026906",
+          "AALA202507289418",
+          "AALA202512185081",
+          "AALA202501145630"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "DOOR",
+        "score": 0.2336,
+        "evidence_count": 6,
+        "evidence_record_ids": [
+          "AALA202505198726",
+          "AALA202502106345",
+          "AALA202506250262",
+          "AALA202510249329",
+          "AALA202508212424",
+          "AALA202507130066"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "SLIDE",
+        "score": 0.1155,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "AALA202505209850",
+          "AALA202510147624",
+          "AALA202507229614"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1053,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "SWIA2026070676558",
+          "SWIA2025120676529",
+          "SWIA2026070676497",
+          "SWIA2025120576568"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "score": 0.0985,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "SWIA2026070606541",
+          "SWIA2025120676586",
+          "SWIA2025120576544"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 6
+      },
+      {
+        "part_name": "SLAT TRACK",
+        "score": 0.0743,
+        "evidence_count": 5,
+        "evidence_record_ids": [
+          "SWIA2025113076564",
+          "SWIA2025113076539",
+          "SWIA2025113076536",
+          "SWIA2025113076522",
+          "SWIA2025113076507"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.0571,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122076513"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "score": 0.0444,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121776533"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9
+      },
+      {
+        "part_name": "WINDOW FRAME",
+        "score": 0.04,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121576470"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "record_id": "DEMO20260910065851",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-29",
+        "part_name": "DRAG ANGLE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "AALA202510206779",
+        "asset_id": "919AN",
+        "occurred_at": "2025-10-18",
+        "part_name": "LIGHT",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "AALA202505198726",
+        "asset_id": "967AN",
+        "occurred_at": "2025-05-17",
+        "part_name": "DOOR",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "DEMO20260910071121",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-29",
+        "part_name": "DRAG ANGLE",
+        "status": "needs_review",
+        "is_superseded": false
+      },
+      {
+        "record_id": "DEMO20260909171523",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-29",
+        "part_name": "DRAG ANGLE",
+        "status": "needs_review",
+        "is_superseded": false
+      }
+    ],
+    "rare_cases": [
+      {
+        "record_id": "AALA202510206779",
+        "asset_id": "919AN",
+        "occurred_at": "2025-10-18",
+        "part_name": "LIGHT",
+        "text": "AIRCRAFT WAS NOT GROUNDED: R1 DOOR EMERGENCY SLIDE LIGHT INOPERATIVE. REPLACED DOOR R1 EMERGENCY SLIDE LIGHT LAMP. PER AMM 33-51-04. OPERATIONAL TEST GOOD."
+      }
+    ],
+    "explanation": "The symptom 'slide light will not extinguish at door 1R' directly implicates the LIGHT component, which is ranked #2 with the highest evidence count (10). Fleet record AALA202510206779 provides a direct match for an inoperative R1 door emergency slide light, confirming the relevance of this component. The DRAG ANGLE is ranked #1 (evidence_count=6) due to recent activity on this specific asset (records DEMO20260910071121, DEMO20260910065851, DEMO20260909171523), suggesting a potential mechanical linkage issue affecting the light's sensor or switch, although the direct symptom is electrical/optical. The DOOR component is ranked #3 (evidence_count=6) because the light is located at the door; fleet record AALA202505198726 shows a door operational issue, which can sometimes correlate with sensor faults. The SLIDE and STRINGER components are ranked lower (#4 and #5) as they are less directly related to the electrical status of the light, though slide deployment status can affect light logic.",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 20,
+      "fleet_assets": 18,
+      "wall_clock_s": 1.93
+    },
+    "citation_validation": {
+      "valid_ids": [
+        "DEMO20260910065851",
+        "AALA202510206779",
+        "AALA202505198726",
+        "DEMO20260910071121",
+        "DEMO20260909171523"
+      ],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": [
+      "Record DEMO20260909170109 and DEMO20260909165206 are recent DRAG ANGLE entries marked 'needs_review'; verify if these are duplicates or superseded by the newer entries DEMO20260910071121 and DEMO20260910065851 before taking action.",
+      "Fleet record AALA202505198726 involves a grounded aircraft for a door opening issue, which is distinct from a light fault; do not conflate mechanical door failure with electrical light inoperability."
+    ]
+  },
+  "c743aa52e208720c": {
+    "asset_id": "c61330ce-90e4-47d8-9232-5914697d89cf",
+    "symptom_text": "CRACKED DRAG ANGLE",
+    "ranked_checks": [
+      {
+        "part_name": "DRAG ANGLE",
+        "score": 1.6869,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "SWIA2025122876590",
+          "SWIA2025122876590",
+          "SWIA2026070676519",
+          "SWIA2025112576494"
+        ],
+        "sources": [
+          "asset_history",
+          "fleet_match"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "ANGLE",
+        "score": 1.1071,
+        "evidence_count": 17,
+        "evidence_record_ids": [
+          "AALA202504164624",
+          "AALA202511256907",
+          "AALA202504283198",
+          "AALA202509222592",
+          "AALA202508291773",
+          "VNAA202504170041",
+          "AALA202504287459",
+          "AALA202504285800",
+          "AALA202512095087",
+          "AALA202512096857",
+          "AALA202510075829",
+          "AALA202508293364",
+          "AALA202505138765",
+          "AALA202502256706",
+          "AALA202504286335",
+          "AALA202509221988",
+          "SWIA2026070606499"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "score": 0.2164,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "SWIA2026070606541",
+          "SWIA2025120676586",
+          "SWIA2025120576544",
+          "SWIA2026070676504"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.2,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122076513"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1779,
+        "evidence_count": 5,
+        "evidence_record_ids": [
+          "SWIA2026070676558",
+          "SWIA2025120676529",
+          "SWIA2026070676497",
+          "SWIA2025120576568",
+          "SWIA2025112876585"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      },
+      {
+        "part_name": "SLAT TRACK",
+        "score": 0.1358,
+        "evidence_count": 8,
+        "evidence_record_ids": [
+          "SWIA2025113076564",
+          "SWIA2025113076539",
+          "SWIA2025113076536",
+          "SWIA2025113076522",
+          "SWIA2025113076507",
+          "SWIA2025113076457",
+          "SWIA2025113076461",
+          "SWIA2025113076583"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 6
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "score": 0.1,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121776533"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7
+      },
+      {
+        "part_name": "WINDOW FRAME",
+        "score": 0.08,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121576470"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8
+      },
+      {
+        "part_name": "DOOR SILL",
+        "score": 0.0571,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121276556"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9
+      },
+      {
+        "part_name": "RIB",
+        "score": 0.05,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025120876572"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "record_id": "SWIA2026070676519",
+        "asset_id": "813SK",
+        "occurred_at": "2025-11-25",
+        "part_name": "DRAG ANGLE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025122876590",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-28",
+        "part_name": "DRAG ANGLE",
+        "status": "no_action",
+        "is_superseded": false
+      }
+    ],
+    "rare_cases": [],
+    "explanation": "{\n  \"explanation\": \"Component ranking is based on the number of supporting evidences and relevance of recent or fleet\u2011wide records.\\n1. **DRAG ANGLE** \u2013 Ranked #1 because it has the highest evidence count (4) and includes the most recent asset record SWIA2025122876590 (no_action) which directly mentions a possible crack, plus SWIA2026070676519 which also reports a crack. Fleet",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 20,
+      "fleet_assets": 9,
+      "wall_clock_s": 2.82
+    },
+    "citation_validation": {
+      "valid_ids": [
+        "SWIA2026070676519",
+        "SWIA2025122876590"
+      ],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": []
+  },
+  "5af1218b3ec09df1": {
+    "asset_id": "c61330ce-90e4-47d8-9232-5914697d89cf",
+    "symptom_text": "During walkaround inspection, noticed deep gouging on the left wing slat track sector gear.",
+    "ranked_checks": [
+      {
+        "part_name": "SLAT TRACK",
+        "score": 0.8857,
+        "evidence_count": 28,
+        "evidence_record_ids": [
+          "SWIA2025113076564",
+          "SWIA2025113076539",
+          "SWIA2025113076536",
+          "SWIA2025113076522",
+          "SWIA2025113076507",
+          "SWIA2025113076457",
+          "SWIA2025113076461",
+          "SWIA2025113076583",
+          "SWIA2025113076583",
+          "SWIA2025113076522",
+          "SWIA2025113076536",
+          "SWIA2025113076507",
+          "SWIA2025113076539",
+          "SWIA2025113076564",
+          "SWIA2025113076457",
+          "SWIA2025113076461",
+          "AALA202506099861",
+          "VNAA202504170059",
+          "VNAA202504170097",
+          "VNAA202504170052",
+          "VNAA202504170057",
+          "VNAA202504170058",
+          "VNAA202504170062",
+          "VNAA202504170053",
+          "VNAA202504170056",
+          "VNAA202504170061",
+          "VNAA202504170096",
+          "VNAA202504170095"
+        ],
+        "sources": [
+          "asset_history",
+          "fleet_match"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "DRAG ANGLE",
+        "score": 0.4,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122876590"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "score": 0.2164,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "SWIA2026070606541",
+          "SWIA2025120676586",
+          "SWIA2025120576544",
+          "SWIA2026070676504"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.2,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122076513"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1779,
+        "evidence_count": 5,
+        "evidence_record_ids": [
+          "SWIA2026070676558",
+          "SWIA2025120676529",
+          "SWIA2026070676497",
+          "SWIA2025120576568",
+          "SWIA2025112876585"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "score": 0.1,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121776533"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 6
+      },
+      {
+        "part_name": "WINDOW FRAME",
+        "score": 0.08,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121576470"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7
+      },
+      {
+        "part_name": "DOOR SILL",
+        "score": 0.0571,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121276556"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8
+      },
+      {
+        "part_name": "RIB",
+        "score": 0.05,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025120876572"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9
+      },
+      {
+        "part_name": "CLEAT",
+        "score": 0.0444,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025120776453"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 10
+      }
+    ],
+    "evidence": [
+      {
+        "record_id": "SWIA2025113076539",
+        "asset_id": "813SK",
+        "occurred_at": "2025-11-30",
+        "part_name": "SLAT TRACK",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025113076564",
+        "asset_id": "813SK",
+        "occurred_at": "2025-11-30",
+        "part_name": "SLAT TRACK",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025113076536",
+        "asset_id": "813SK",
+        "occurred_at": "2025-11-30",
+        "part_name": "SLAT TRACK",
+        "status": "auto_accepted",
+        "is_superseded": false
+      }
+    ],
+    "rare_cases": [],
+    "explanation": "{\n  \"explanation\": \"Component ranking follows the amount and relevance of documented evidence for the observed deep gouging on the left wing slat track sector gear. \\n1. **SLAT TRACK** is ranked first because it has the highest evidence count (28) and includes the specific record IDs SWIA2025113076564, SWIA2025113076539, and SWIA2025113076536. Fleet\u2011wide matches also point to slat\u2011",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 20,
+      "fleet_assets": 3,
+      "wall_clock_s": 3.14
+    },
+    "citation_validation": {
+      "valid_ids": [
+        "SWIA2025113076539",
+        "SWIA2025113076564",
+        "SWIA2025113076536"
+      ],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": []
+  }
+}
