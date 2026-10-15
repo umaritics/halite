@@ -44,6 +44,8 @@ To be filled only from observed output after the stack starts:
 
 ## Hosted delivery evidence
 
+Post-audit rerun: <https://github.com/umaritics/halite/actions/runs/38792927785> at `d54d4bd01b1a2c9ea0ef731a0754253c86a5d702`. Backend job `116621839984` passed; Docker job `116621840373` passed all smoke/cleanup steps; frontend job `116621839866` failed during tests and therefore skipped its hosted build step. The overall workflow remains red.
+
 | Item | Value |
 | --- | --- |
 | DevOps branch commit | `2651eab580c2c3e46069dec1a5c1364f8fafb95b` on `origin/usman` |

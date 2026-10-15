@@ -107,6 +107,8 @@ Status: **BLOCKED**, not passed. Docker Desktop cannot start on this host and th
 
 ## Known failures, dependencies, and readiness
 
+Post-audit hosted rerun for evidence commit `d54d4bd01b1a2c9ea0ef731a0754253c86a5d702`: [workflow 38792927785](https://github.com/umaritics/halite/actions/runs/38792927785). Backend [job 116621839984](https://github.com/umaritics/halite/actions/runs/38792927785/job/116621839984) passed. Docker real-graph [job 116621840373](https://github.com/umaritics/halite/actions/runs/38792927785/job/116621840373) passed Compose render, image builds, full-stack startup, health, Neo4j/corpus/API verification, frontend serving, logs, and cleanup. Frontend [job 116621839866](https://github.com/umaritics/halite/actions/runs/38792927785/job/116621839866) failed at tests, so its hosted production-build step was skipped and the overall workflow remained red.
+
 - Mandatory frontend test gate: FAIL; owned by Shahmeer; precise handoff is in `06_frontend_review_queue_handoff.md`.
 - Real FAA data in running Neo4j: BLOCKED locally and not available on the stale VM.
 - Current persistent staging/CD: FAIL/NOT VERIFIED; the reachable VM lacks maintenance routes and no CD workflow exists.
