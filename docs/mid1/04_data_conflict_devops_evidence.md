@@ -23,8 +23,8 @@ The official Mid-I rubric specifically expects a working core module with failur
 | Frontend tests | **Blocked outside Usman ownership** | 12 passed, 1 failed because `ReviewQueue.test.jsx` omits the existing `maintenanceAPI.getRecord` mock |
 | Compose structure | **Verified** | `docker compose config --quiet` passed |
 | Local full Docker runtime | **Blocked by host** | Docker Desktop failed under the Windows paging-file/WSL engine condition; see `docs/mid1_test_evidence.md` |
-| Hosted Docker runtime | **Remote pending** | Workflow now builds images, starts all services, verifies real Neo4j mode, ingests a synthetic fixture, and exercises APIs |
-| Hosted GitHub Actions URL | **Remote pending** | To be inserted after the `usman` branch push and run completion |
+| Hosted Docker runtime | **Verified** | Docker job `116587631664` built images, started all services, verified real Neo4j/corpus/API behavior, served the frontend, and cleaned up successfully |
+| Hosted GitHub Actions URL | **Captured; overall red on cross-owner frontend test** | <https://github.com/umaritics/halite/actions/runs/38782968975> |
 | Secrets/data protection | **Verified** | `.env`, raw FAA data, and processed FAA data are ignored; `backend/.env` is absent from Git object history |
 
 ## A1 — Data and environment baseline
@@ -32,8 +32,8 @@ The official Mid-I rubric specifically expects a working core module with failur
 | Required point | Status | Evidence and proof |
 | --- | --- | --- |
 | Read handoff/state/Compose/environment docs | **Verified** | Audited `README.md`, `docs/maintenance_handoff.md`, `docs/maintenance_state_report.md`, `docker-compose.yml`, and `backend/.env.example` |
-| Docker uses real Neo4j with `DEMO_MODE=false` | **Implemented; hosted proof pending** | Compose overrides `NEO4J_URI=bolt://neo4j:7687` and `DEMO_MODE=false`; remote smoke asserts `graph_mode=neo4j`, `using_memory_graph=false`, and `demo_mode=false` |
-| Health records graph/corpus/model mode | **Implemented and unit-tested; hosted proof pending** | `/api/health` exposes `graph_mode`, `using_memory_graph`, `maintenance_corpus_loaded`, `maintenance_record_count`, and `llm_mode`; health tests pass |
+| Docker uses real Neo4j with `DEMO_MODE=false` | **Verified remotely** | Compose overrides `NEO4J_URI=bolt://neo4j:7687` and `DEMO_MODE=false`; hosted smoke passed assertions for `graph_mode=neo4j`, `using_memory_graph=false`, and `demo_mode=false` |
+| Health records graph/corpus/model mode | **Verified remotely** | `/api/health` exposed the required fields; hosted smoke verified Neo4j mode and a loaded non-zero corpus while preserving fallback model disclosure |
 | Identify safe import command | **Verified** | `POST /api/maintenance/ingest` loads `data/processed/sdr_poc_corpus.csv`; second import is verified idempotent in unit tests and remote smoke |
 | Select a real deterministic asset | **Verified against local FAA corpus** | Local ignored corpus has 2,079 rows and 118 assets; asset `813SK` has 153 records. Example record: `SWIA2025111676447` |
 | Select a real conflict case | **Verified against local ground truth** | 141 ground-truth pairs exist. Deterministic example: `AALA202501025620` → `AALA202501035620`, tail `811NN` |
@@ -103,15 +103,20 @@ Workflow: `.github/workflows/ci.yml`
 
 The Docker job deletes only its ephemeral GitHub runner volume after capturing logs. The setup guide explicitly warns against `docker compose down -v` on the team's persistent demo corpus.
 
-Remote evidence to populate after run:
+Remote evidence from the latest run:
 
 ```text
-Commit SHA: PENDING
-Workflow URL: PENDING
-Backend job: PENDING
-Frontend job: expected to fail until Shahmeer's stale ReviewQueue mock is corrected
-Docker smoke job: PENDING
+Commit SHA: 2651eab580c2c3e46069dec1a5c1364f8fafb95b
+Workflow URL: https://github.com/umaritics/halite/actions/runs/38782968975
+Backend job: SUCCESS
+  https://github.com/umaritics/halite/actions/runs/38782968975/job/116587631265
+Frontend job: FAILURE on Shahmeer's stale ReviewQueue mock
+  https://github.com/umaritics/halite/actions/runs/38782968975/job/116587632014
+Docker smoke job: SUCCESS
+  https://github.com/umaritics/halite/actions/runs/38782968975/job/116587631664
 ```
+
+The Docker job independently passed all of these hosted steps: Compose render, backend/frontend image builds, full-stack startup, backend health wait, real Neo4j/corpus/API verification, frontend HTTP verification, log capture, and ephemeral cleanup. The overall workflow conclusion remains red only because the independent frontend test job failed; this is not represented as a fully green workflow.
 
 ## A4 — Backend wiring and documentation
 
@@ -167,8 +172,8 @@ Required frontend-owner action:
 - [x] Docker images and full real-Neo4j runtime are exercised by hosted smoke automation.
 - [x] Setup, health interpretation, ingestion, deployment diagram, and limitations documented.
 - [x] Secrets and downloaded datasets excluded from Git.
-- [ ] Hosted workflow URL captured.
-- [ ] Docker smoke job observed green on GitHub.
+- [x] Hosted workflow and individual job URLs captured.
+- [x] Docker smoke job observed green on GitHub.
 - [ ] Frontend owner resolves the one stale test mock and complete workflow becomes green.
 - [ ] Final demo database health shows `graph_mode=neo4j` and a non-zero real FAA corpus.
 - [ ] Independent reviewer and PR evidence recorded.
