@@ -6,7 +6,7 @@ Baseline commit: `8840c68c32054bf1e9dd1505bbbdef4e22d26f6c`<br>
 Scope source: `docs/Halite_FYP1_Mid_Three_Member_Execution_Blueprint.tex`, sections 7.1–7.7<br>
 University sources checked: `FYP-1-Mid-Assessment-Guidelines-and-Rubrics.pdf` and `F26_FYP1_Mid_Report_LaTeX_Complete.pdf`
 
-> Final-audit status (2026-10-15): read this implementation record with [`05_usman_final_audit.md`](05_usman_final_audit.md). Current verdicts are A1 PARTIAL, A2 PASS, A3 PARTIAL, and A4 PARTIAL. Overall CI remains red, running real-corpus Neo4j proof is blocked, the reachable VM lacks the current maintenance API, live-model success is not verified, and independent review is pending.
+> Final-audit status (2026-10-15): read this historical implementation record with [`05_usman_final_audit.md`](05_usman_final_audit.md) and [`07_usman_release_readiness.md`](07_usman_release_readiness.md). Latest verified run: [`38794104215`](https://github.com/umaritics/halite/actions/runs/38794104215) at `fc3db4c`. Current verdicts are A1 BLOCKED, A2 PASS, A3 PARTIAL, and A4 PARTIAL. Overall CI remains red, running real-corpus Neo4j proof needs external infrastructure, the VM lacks current maintenance routes, live-model success is not verified, and independent review is pending.
 
 ## Verification standard
 

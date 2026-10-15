@@ -14,6 +14,7 @@ Status: **OPEN - mandatory CI failure**
 - Downstream assertion failure: `Unable to find an element with the text: INCOMING RECORD`
 - Local result: 12 passed, 1 failed; one unhandled error.
 - Hosted result: [frontend job 116589585616](https://github.com/umaritics/halite/actions/runs/38783534592/job/116589585616) failed.
+- Latest reproduction: [frontend job 116625881625](https://github.com/umaritics/halite/actions/runs/38794104215/job/116625881625) failed at tests; its build step was skipped.
 
 ## Cause and expected contract
 

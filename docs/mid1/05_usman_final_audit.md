@@ -4,6 +4,11 @@ Audit date: 2026-10-15<br>
 Owner: Muhammad Usman Al Haq<br>
 Branch: `usman`<br>
 Code and verification SHA: `e569ea881470ab6166e0d6e6888b60b8db66763b`<br>
+Latest evidence SHA verified by hosted CI: `fc3db4c56e382b0d78bca59305304ef721226812`<br>
+Latest GitHub Actions run: [`38794104215`](https://github.com/umaritics/halite/actions/runs/38794104215)<br>
+Verdicts: **A1 BLOCKED; A2 PASS; A3 PARTIAL; A4 PARTIAL**<br>
+Known blockers: isolated real-FAA Neo4j runtime; stale VM backend; red frontend test; protected/ambiguous Vercel previews; no verified live inference; independent review pending.<br>
+Remaining owners: infrastructure/deployment administrator, Shahmeer (frontend test and canonical preview), Umar (live model), release coordinator/reviewer.
 Baseline `origin/main`: `4329556c2405ffa1a397979ae26bc68ad8814eac`
 
 ## Executive verdict
@@ -12,7 +17,7 @@ The owned maintenance backend and conflict workflow pass their focused tests, th
 
 | Work package | Verdict | Reason |
 | --- | --- | --- |
-| A1 - data and environment | **PARTIAL** | Static real-corpus facts and hosted synthetic Neo4j behavior are verified; running real-corpus Neo4j proof is blocked locally. |
+| A1 - data and environment | **BLOCKED** | Static real-corpus facts and hosted synthetic Neo4j behavior are verified; required running real-corpus proof cannot proceed without an approved isolated runtime. |
 | A2 - maintenance APIs and conflict workflow | **PASS** | 59/59 owned tests passed and the hosted real-Neo4j synthetic smoke passed. |
 | A3 - CI and deployment | **PARTIAL** | Backend and Docker jobs pass; frontend job fails; no automatic CD exists and the reachable VM is stale. |
 | A4 - documentation and integration | **PARTIAL** | Commands/contracts were reconciled here; final reviewer, green workflow, and current deployment evidence remain open. |
@@ -108,6 +113,8 @@ Status: **BLOCKED**, not passed. Docker Desktop cannot start on this host and th
 ## Known failures, dependencies, and readiness
 
 Post-audit hosted rerun for evidence commit `d54d4bd01b1a2c9ea0ef731a0754253c86a5d702`: [workflow 38792927785](https://github.com/umaritics/halite/actions/runs/38792927785). Backend [job 116621839984](https://github.com/umaritics/halite/actions/runs/38792927785/job/116621839984) passed. Docker real-graph [job 116621840373](https://github.com/umaritics/halite/actions/runs/38792927785/job/116621840373) passed Compose render, image builds, full-stack startup, health, Neo4j/corpus/API verification, frontend serving, logs, and cleanup. Frontend [job 116621839866](https://github.com/umaritics/halite/actions/runs/38792927785/job/116621839866) failed at tests, so its hosted production-build step was skipped and the overall workflow remained red.
+
+Latest verified rerun for `fc3db4c56e382b0d78bca59305304ef721226812`: [workflow 38794104215](https://github.com/umaritics/halite/actions/runs/38794104215). Backend [job 116625881694](https://github.com/umaritics/halite/actions/runs/38794104215/job/116625881694) passed; Docker [job 116625881043](https://github.com/umaritics/halite/actions/runs/38794104215/job/116625881043) passed every build/start/health/API/frontend/cleanup step; frontend [job 116625881625](https://github.com/umaritics/halite/actions/runs/38794104215/job/116625881625) failed during tests and skipped its hosted build. Overall conclusion: FAIL.
 
 - Mandatory frontend test gate: FAIL; owned by Shahmeer; precise handoff is in `06_frontend_review_queue_handoff.md`.
 - Real FAA data in running Neo4j: BLOCKED locally and not available on the stale VM.
