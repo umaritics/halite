@@ -11,7 +11,13 @@ from __future__ import annotations
 
 import json
 import os
+import sys
+from pathlib import Path
 from urllib import error, request
+
+# Direct script execution sets sys.path[0] to backend/scripts. Add backend/ so
+# imports behave the same inside Compose and during host-based verification.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from graph.neo4j_client import Neo4jClient
 
