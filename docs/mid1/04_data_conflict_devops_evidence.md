@@ -6,6 +6,8 @@ Baseline commit: `8840c68c32054bf1e9dd1505bbbdef4e22d26f6c`<br>
 Scope source: `docs/Halite_FYP1_Mid_Three_Member_Execution_Blueprint.tex`, sections 7.1–7.7<br>
 University sources checked: `FYP-1-Mid-Assessment-Guidelines-and-Rubrics.pdf` and `F26_FYP1_Mid_Report_LaTeX_Complete.pdf`
 
+> Final-audit status (2026-10-15): read this implementation record with [`05_usman_final_audit.md`](05_usman_final_audit.md). Current verdicts are A1 PARTIAL, A2 PASS, A3 PARTIAL, and A4 PARTIAL. Overall CI remains red, running real-corpus Neo4j proof is blocked, the reachable VM lacks the current maintenance API, live-model success is not verified, and independent review is pending.
+
 ## Verification standard
 
 An item is marked **Verified** only when an executed command, test, or inspectable source file supports it. **Remote pending** means the implementation exists locally but requires a hosted GitHub Actions result. **Blocked** records a real failure and is not counted as completed. No result below is inferred from generated code alone.
@@ -125,9 +127,9 @@ The Docker job independently passed all of these hosted steps: Compose render, b
 | Router/health wiring | **Verified** | `backend/main.py` registers maintenance, diagnostics, and domains routers and exposes both health paths |
 | Maintenance-focused README | **Verified** | `README.md` now describes the Mid-I workflow, Docker endpoints, ingestion, and failure-safe demo flow |
 | Reproducible setup manual | **Verified** | `docs/mid1_setup.md` includes requirements, safe variables, Docker and host startup, ingestion, health assertions, tests, diagram, and troubleshooting |
-| Exact test/result log | **Verified locally; remote pending** | `docs/mid1_test_evidence.md` records commands, counts, failures, limitations, and remote placeholders |
+| Exact test/result log | **Verified locally and job-level remote evidence recorded** | `docs/mid1_test_evidence.md` and `docs/mid1/05_usman_final_audit.md`; the mandatory overall workflow remains red |
 | Runtime/deployment diagram | **Verified** | Mermaid dependency diagram in `docs/mid1_setup.md` |
-| Deterministic container install | **Verified in source; hosted build pending** | Backend pins Python requirements; frontend Dockerfile uses lockfile-backed `npm ci` |
+| Deterministic container install | **Verified in source and hosted Docker build** | Backend pins Python requirements; frontend Dockerfile uses lockfile-backed `npm ci`; hosted Docker job `116589585728` passed |
 
 ## Complete local command log
 
