@@ -108,6 +108,17 @@ class TestAssetsEmpty:
         resp = client.get("/api/maintenance/assets/nonexistent-id/history")
         assert resp.status_code == 404
 
+    def test_ingest_rejects_non_positive_limit(self, client):
+        resp = client.post("/api/maintenance/ingest", json={"limit": 0})
+        assert resp.status_code == 422
+
+    def test_record_processing_rejects_invalid_threshold(self, client):
+        resp = client.post(
+            "/api/maintenance/records",
+            json={"record_id": "missing", "threshold": 1.01},
+        )
+        assert resp.status_code == 422
+
 
 # ---------------------------------------------------------------------------
 # Ingest-then-query pattern (inline ingest via graph_repo directly)
@@ -190,6 +201,14 @@ class TestIngestAndQuery:
         resp = c.post("/api/maintenance/review-queue/SEED001/reject", json={})
         assert resp.status_code == 422, "Reject without note should return 422"
 
+    def test_reject_disallows_blank_note(self, seeded_client):
+        c, _ = seeded_client
+        resp = c.post(
+            "/api/maintenance/review-queue/SEED001/reject",
+            json={"note": "   "},
+        )
+        assert resp.status_code == 422
+
     def test_reject_with_note_succeeds(self, seeded_client):
         c, _ = seeded_client
         resp = c.post(
@@ -199,6 +218,22 @@ class TestIngestAndQuery:
         assert resp.status_code == 200
         data = resp.json()
         assert data["status"] == "rejected"
+        assert data["record"]["text"] == "Exit sign missing."
+        assert data["record"]["record_id"] == "SEED001"
+
+    def test_reject_cannot_overwrite_completed_review(self, seeded_client):
+        c, _ = seeded_client
+        accepted = c.post(
+            "/api/maintenance/review-queue/SEED001/accept",
+            json={"note": "Verified by panel"},
+        )
+        assert accepted.status_code == 200
+
+        rejected = c.post(
+            "/api/maintenance/review-queue/SEED001/reject",
+            json={"note": "Changed mind"},
+        )
+        assert rejected.status_code == 409
 
     def test_conflict_detection_on_seeded_record(self, seeded_client, monkeypatch):
         """POST /api/maintenance/records runs conflict engine on the new record."""

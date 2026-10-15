@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 
 from agents.maintenance_agent import MaintenanceAgent
 from api.deps import get_graph_repo, get_groq_service, get_settings
@@ -38,7 +38,7 @@ domains_router = APIRouter(tags=["domains"])
 
 class IngestRequest(BaseModel):
     csv_path: str | None = None
-    limit: int | None = None
+    limit: int | None = Field(default=None, gt=0)
 
 
 class RecordProcessRequest(BaseModel):
@@ -50,7 +50,7 @@ class RecordProcessRequest(BaseModel):
     location: str | None = None
     jasc_code: str | None = None
     discrepancy: str | None = None
-    threshold: float | None = None
+    threshold: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class ReviewActionRequest(BaseModel):
@@ -58,7 +58,15 @@ class ReviewActionRequest(BaseModel):
 
 
 class RejectActionRequest(BaseModel):
-    note: str  # required for rejection
+    note: str = Field(min_length=1)  # required for rejection
+
+    @field_validator("note")
+    @classmethod
+    def note_must_explain_rejection(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("rejection note must not be blank")
+        return value
 
 
 # ---------------------------------------------------------------------------
@@ -324,6 +332,11 @@ def reject_record(
     sr = graph_repo.get_service_record(record_id)
     if sr is None:
         raise HTTPException(status_code=404, detail=f"Record {record_id!r} not found")
+    if sr.get("status") not in ("needs_review", "auto_accepted"):
+        raise HTTPException(
+            status_code=409,
+            detail=f"Record {record_id!r} is in status '{sr.get('status')}', cannot reject",
+        )
     updated = graph_repo.update_service_record(
         record_id, {"status": "rejected", "review_note": body.note}
     )

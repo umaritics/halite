@@ -1,34 +1,41 @@
-# Halite — Living Knowledge Graph Prototype
+# Halite — Maintenance Diagnostic Support
 
-Institutional memory for software teams. Halite captures, stores, and serves the reasoning layer behind your codebase — decisions, components, and their relationships in a queryable knowledge graph.
+Halite is a maintenance-focused diagnostic support prototype. It loads FAA Service Difficulty Reports into a knowledge graph, exposes asset histories and conflict-review workflows, and returns evidence-linked diagnostic investigations.
 
-> Originally specified as **LogicVault** — this prototype is branded **Halite**.
+> Legacy software-domain modules remain in the repository, but they are outside the FYP-I Mid product scope.
 
-## Features
+## Mid-I workflow
 
-- **Knowledge Graph** — Components, decisions, commits, tickets, and documents with relationship edges
-- **AI Chat** — Groq-powered Q&A grounded in graph context (demo mode without API key)
-- **Document Ingestion** — Extract decisions from PDF, DOCX, TXT, MD uploads
-- **Gitea Integration** — Sync commits/issues, analyze code, webhook invalidation
-- **Invalidation Alerts** — Flag decisions when linked files change
-- **3D Graph Visualization** — `react-force-graph-3d` + Three.js crystal nodes
-- **Halite Theme** — Dark crystal aesthetic with light/dark toggle in Settings
+- Browse real maintenance assets and dated service-record history.
+- Submit a symptom for graph-grounded diagnostic investigation.
+- Open source record identifiers used as evidence.
+- Inspect conservative conflict classifications and the human review queue.
+- Verify graph, corpus, and model mode through `/api/health`.
 
-## Quick Start (Demo Mode)
+## Quick Start (Docker)
 
-Demo mode runs with an in-memory graph and mock LLM responses — no Neo4j or Groq required.
+Full local stack: Neo4j, FastAPI, and the Vite frontend. See [`docs/mid1_setup.md`](docs/mid1_setup.md) for environment variables, ingestion, verification, and failure modes.
 
-### Backend (With local Neo4j for Full Demo)
+```bash
+cp backend/.env.example backend/.env   # set GROQ_API_KEY if you need the LLM
+docker compose up --build
+```
 
-If you are running the maintenance domain demo with real data, you must start the local Neo4j instance via Docker first:
+- Frontend: [http://localhost:5173](http://localhost:5173)
+- API: [http://localhost:8000/health](http://localhost:8000/health)
+- Neo4j Browser: [http://localhost:7474](http://localhost:7474) (`neo4j` / `localdevpassword`)
+
+The backend container always uses `bolt://neo4j:7687`. If you run the API on the host instead, keep `NEO4J_URI=bolt://localhost:7687` and `DEMO_MODE=false` in `backend/.env`.
+
+### Quick Start (Demo Mode, no Docker)
+
+Demo mode runs with an in-memory graph and fallback model behavior. It is useful for unit tests and UI development, but it is not evidence of the required real-corpus demonstration.
+
+### Backend on the host (Neo4j still in Docker)
 
 ```bash
 docker compose up -d neo4j
-```
 
-Then start the backend server:
-
-```bash
 cd backend
 python -m venv venv
 # Windows
@@ -91,14 +98,13 @@ DEMO_MODE=false
 
 ## Demo Flow (Supervisor Presentation)
 
-1. Open Halite — see seeded demo decisions (JWT, PostgreSQL)
-2. **Chat** — ask "Why did we choose JWT?"
-3. **Graph** — explore 3D knowledge graph, click nodes
-4. **Decisions** — add a manual decision
-5. **Ingest** — upload a meeting transcript or sync Gitea
-6. **Ingest → Sync Commits** — triggers invalidation on auth module
-7. **Alerts** — JWT decision flagged as needs review
-8. **Chat again** — see warning badges on outdated sources
+1. Verify `/api/health` reports Neo4j mode and a loaded maintenance corpus.
+2. Select a real asset and inspect its chronological service history.
+3. Submit a symptom and show ranked checks with source record IDs.
+4. Open a cited record from the evidence/history interface.
+5. Show a real conflict-review item and explain its classification.
+6. Demonstrate an unknown/no-data or model-unavailable case without invented output.
+7. Show the reviewed branch/PR and hosted GitHub Actions run.
 
 ## Project Structure
 
