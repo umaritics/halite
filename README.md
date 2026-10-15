@@ -142,19 +142,19 @@ flowchart TB
     DiagAPI --> Citation
     Conflict --> GroqBoundary
     DiagAPI --> GroqBoundary
-    GroqBoundary -. "when configured" .-> Groq
+    GroqBoundary -->|when configured| Groq
     Agent --> Repo
     Retrieval --> Repo
     Conflict --> Repo
     Citation --> Repo
     Repo --> Neo4j
-    Repo -. "DEMO_MODE=true or graph unavailable" .-> Memory
+    Repo -->|demo or fallback mode| Memory
     FAA --> Corpus
     Corpus --> Agent
     Fixture --> Agent
     Actions --> Fixture
-    Actions --> Application
-    Actions --> Presentation
+    Actions --> MaintAPI
+    Actions --> UI
 ```
 
 ### Runtime modes
