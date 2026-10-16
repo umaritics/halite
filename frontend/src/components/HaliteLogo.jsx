@@ -5,7 +5,7 @@ export default function HaliteLogo({ className = 'h-8 w-8', alt = 'Halite' }) {
       alt={alt}
       className={`shrink-0 object-contain ${className}`}
       decoding="async"
-      fetchPriority="high"
+      fetchpriority="high"
     />
   );
 }

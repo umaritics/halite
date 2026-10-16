@@ -1,5 +1,4 @@
 import { useMemo, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import GraphViewer, { GraphSidePanel } from '../components/GraphViewer';
 import { useGraph } from '../hooks/useGraph';
@@ -17,7 +16,6 @@ export default function Graph() {
   const NODE_TYPES = domain === 'maintenance' ? MAINT_TYPES : SOFTWARE_TYPES;
   
   const [typeFilters, setTypeFilters] = useState({});
-  const navigate = useNavigate();
 
   useEffect(() => {
     setTypeFilters(Object.fromEntries(NODE_TYPES.map((t) => [t, true])));
@@ -46,7 +44,7 @@ export default function Graph() {
               Capped at 2000 nodes
             </span>
           </div>
-          <p className="font-sans text-sm text-secondary">3D visualization of decisions, components & relationships</p>
+          <p className="font-sans text-sm text-secondary">3D visualization of assets, service records & their relationships</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -107,11 +105,6 @@ export default function Graph() {
               <GraphSidePanel
                 node={selectedNode}
                 onClose={() => setSelectedNode(null)}
-                onChatAbout={(node) =>
-                  navigate('/app/chat', {
-                    state: { prefill: node.displayName || node.title || node.name },
-                  })
-                }
               />
             </>
           )}
