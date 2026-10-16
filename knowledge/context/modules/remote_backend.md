@@ -26,14 +26,11 @@ One **centralized** API for the whole team. Partners do **not** need VM SSH. The
 
 ## Frontend: point at the shared API
 
-Create `frontend/.env.local` (gitignored):
+**Versioned default:** `frontend/.env.development` sets  
+`VITE_API_URL=https://dev1.corp.curatech.pk/halite-api/api`  
+so `npm run dev` hits staging after pull + restart (see `docs/mid1/09_frontend_shared_api.md`).
 
-```env
-VITE_API_URL=https://dev1.corp.curatech.pk/halite-api/api
-```
-
-Then `npm run dev` / `npx vite --host 127.0.0.1 --port 5173`.  
-Do **not** rely on the Vite proxy to localhost when using the shared backend.
+Override only if you need a local backend: create gitignored `frontend/.env.local` with `VITE_API_URL=/api`.
 
 ## How backend updates reach the VM (CD)
 

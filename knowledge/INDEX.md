@@ -27,6 +27,8 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | DEMO_MODE, graph_mode, llm_mode | context/modules/devops.md |
 | CI, GitHub Actions, docker compose | flows/FLOW-ci.md, context/modules/devops.md |
 | staging, remote VM, deploy, OPS_TOKEN, ops/logs | context/modules/remote_backend.md, flows/FLOW-deploy.md |
+| Mid-I progress, partner handoff | docs/mid1/README.md, docs/mid1/08_umar_progress.md |
+| frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI | context/modules/frontend.md |
 | Usman audit, A1–A4 | decisions/DEC-20261016-usman-baseline.md |
 
