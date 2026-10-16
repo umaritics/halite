@@ -25,6 +25,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [12_u4_u5_diagnostics_handoff.md](12_u4_u5_diagnostics_handoff.md) | Umar → Shahmeer | Citation/LLM boundary + diagnose UI contract |
 | [13_u3_deterministic_ranking.md](13_u3_deterministic_ranking.md) | Umar | U3 ranking weights, tie-break, schema |
 | [14_usman_umar_integration.md](14_usman_umar_integration.md) | Usman + Umar | Combined audit, rubric mapping, performance closure, remaining Shahmeer work |
+| [15_report_mid1_addendum.md](15_report_mid1_addendum.md) ([PDF](Halite_FYP_Report_Mid1_Addendum.pdf)) | Team | Report implementation correction and responsible tool disclosure |
 
 ## Partner agents — start here
 

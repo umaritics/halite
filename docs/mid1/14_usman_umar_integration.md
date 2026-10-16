@@ -23,11 +23,11 @@ The production frontend build passes, but the current frontend suite remains
 | --- | --- | --- |
 | Live core module + failure cases | Maintenance ingest/review and diagnostic routes; 404/422/503 paths covered | PASS for Usman/Umar scope |
 | Requirements and acceptance checks | Endpoint contracts and measurable assets latency/query-count target in `10_perf_assets_api_handoff.md` | PASS for owned scope |
-| Design evolution | Current knowledge-bank artefacts match code, but `Halite_FYP_Report.pdf` section 10.4 still describes embedding/cosine retrieval while the Mid-I implementation is lexical Jaccard | PARTIAL — report correction required |
+| Design evolution | Current knowledge-bank artefacts match code; the accompanying Mid-I report addendum classifies embedding/cosine retrieval as planned and lexical/Jaccard retrieval as implemented | PASS for Usman/Umar scope |
 | Repository/member evidence | Separate Usman/Umar branches and meaningful commit histories retained, then merged | PASS |
 | Systematic tests | Backend **122 passed, 18 skipped**; skips are explicit unavailable-Neo4j parameterizations | PASS |
 | Reproducible implementation docs | Setup, staging, API, diagnostics, ownership, and handoff files are versioned | PASS |
-| Tool/dependency/risk disclosure | Engineering docs disclose Neo4j/Aura, Groq, staging, cache, latency, and no-fabrication constraints; the report does not yet contain a clear named GenAI/tool-use disclosure | PARTIAL — report correction required |
+| Tool/dependency/risk disclosure | Engineering docs and the accompanying report addendum disclose Neo4j/Aura, Groq, OpenAI Codex assistance, review responsibility, privacy, cache, latency, and no-fabrication constraints | PASS for known Usman/Umar integration usage |
 | Complete team UI gate | Review Queue test mock and Service Records request fan-out are Shahmeer-owned and still open | PENDING |
 
 ## Changes completed in this integration
@@ -60,17 +60,15 @@ skip tests or alter application behavior.
 
 ## Remaining owner actions
 
-### Report owners
+### Report handling
 
-- Update `docs/Halite_FYP_Report.pdf` (and retain its editable source) so
-  section 10.4 labels embedding/cosine and hybrid retrieval as planned FYP-I
-  Final work. The implemented Mid-I method is bounded lexical/Jaccard
-  retrieval; do not present embeddings as already implemented.
-- Add the rubric-required explicit tool disclosure: named GenAI/development
-  tools, how outputs were reviewed, privacy constraints, external services,
-  and ownership/defense responsibility.
+- `15_report_mid1_addendum.md` is the editable source for the controlling
+  addendum distributed with `docs/Halite_FYP_Report.pdf`; keep its generated
+  `Halite_FYP_Report_Mid1_Addendum.pdf` synchronized.
 - Treat `F26_FYP1_Mid_Report_LaTeX_Complete.pdf` and its ZIP as the blank
   university template/reference, not as a completed submission.
+- Each member must add any additional AI assistant they personally used before
+  final university submission; this audit discloses the verified Codex use.
 
 ### Shahmeer
 
