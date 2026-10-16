@@ -37,6 +37,16 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 
 Bulk ingest leaves all records at `auto_accepted` / `confidence=1.0` until `process_record` or `scripts/backfill_conflict_scores.py` runs. Empty Review Queue + all confidence=1 → see [`docs/mid1/16_usman_conflict_score_backfill_handoff.md`](../../../docs/mid1/16_usman_conflict_score_backfill_handoff.md).
 
+The backfill command fails closed unless `GroqService.is_live` is true and
+calls `process_record(..., allow_stub=False)`. Cached or canned stub output
+must never be persisted as staging conflict evidence.
+
+Records with no older candidate persist the engine's real result
+(`auto_accepted`, confidence `0.0`, zero candidates) instead of retaining the
+ingest placeholder confidence `1.0`. Resume mode processes only untouched
+`auto_accepted`/`1.0` records with no classification label, preserving
+supersessions, review states, and prior scored results.
+
 ## Related
 
 [FLOW-conflict-review.md](../../flows/FLOW-conflict-review.md)

@@ -218,26 +218,28 @@ Use `GROQ_API_KEY_FALLBACK` if configured (see `groq_service.py` 429 switch).
 
 1. If script changes are required (see §6), commit on Usman/`main`, let **Deploy staging backend** run.
 2. Append results to this doc or `docs/mid1/05_usman_final_audit.md` / `07_usman_release_readiness.md`.
-3. Notify Shahmeer: Review Queue should now have items; ConfidenceBar should show non-1.0 values where scored.
+3. Notify Shahmeer once C3 is met; ConfidenceBar should show non-1.0 values
+   wherever records have been scored.
 
 ---
 
-## 6. Critical script caveat (`allow_stub=True`)
+## 6. Resolved script caveat (`allow_stub=False`)
 
-Current `backfill_conflict_scores.py` calls:
+`backfill_conflict_scores.py` now calls:
 
 ```python
-process_record(..., allow_stub=True)
+process_record(..., allow_stub=False)
 ```
 
-That **bypasses** the production guard that refuses canned LLM output when Groq is not live.
+It also exits before fetching or processing records when `groq.is_live` is
+false. This preserves the production guard against canned LLM output.
 
 | Risk | Mitigation |
 | --- | --- |
-| Running backfill without live Groq produces **meaningless** confidence/status | Require `groq.is_live` before starting; **patch script to `allow_stub=False`** for staging runs (Usman-owned one-line fix + test) |
+| Running backfill without live Groq produces **meaningless** confidence/status | Command exits with status 1 before processing; regression test covers the guard |
 | Mid-I overclaim | Evidence must show `llm_mode=live` during the run |
 
-**Agent action:** Prefer patching `allow_stub=False` for staging backfill before claiming Mid-I conflict evidence. Keep `allow_stub=True` only in unit tests.
+Keep `allow_stub=True` only in unit tests.
 
 ---
 
@@ -308,7 +310,59 @@ DEMO_MODE=true python -m pytest -q tests/test_conflict_engine.py tests/test_api_
 
 ---
 
-## 11. Ownership sign-off
+## 11. Execution evidence (2026-10-16)
+
+Executed after merging `origin/main` at `d7a0ee1` into
+`fix/mid1-backend-release-hygiene`. Staging reported deployed SHA
+`b14c8eca972b69ff42c8fb76a6210a616191f8da`, `graph_mode=neo4j`,
+`llm_mode=live`, `maintenance_record_count=2079`, and an initially empty review
+queue.
+
+The known `811NN` pair was processed through the production API. Live Groq
+classified `AALA202501035620` as `supersedes` with confidence `0.8`, one
+candidate, and zero parse failures. The record was `auto_accepted`; subsequent
+asset history showed `AALA202501025620` as `superseded`.
+
+The remaining unscored `811NN` records were processed as a bounded asset
+backfill:
+
+| Record | Classification | Confidence | Stored status |
+| --- | --- | ---: | --- |
+| `AALA202508116264` | `scope_disjoint` | 0.40 | `no_action` |
+| `AALA202509026395` | `scope_disjoint` | 0.50 | `no_action` |
+| `AALA202510224521` | `scope_disjoint` | 0.55 | `no_action` |
+
+The five-record asset now has four genuinely scored records (the superseded
+older record retains its ingest confidence). This proves the corpus is no
+longer uniformly confidence `1.0` and establishes the real supersession story.
+The live model did not emit `contradicts` or `partial_supersedes`, so the review
+queue remained empty. C3 is therefore still open; no threshold was weakened
+and no synthetic queue item was inserted.
+
+A bounded follow-up checked 12 versioned evaluation candidates, including the
+documented `813SK` stability pair and five ground-truth pairs previously scored
+below the current threshold. Current live inference returned six `supersedes`,
+three `no_conflict`, and three `scope_disjoint` classifications (one parse
+failure safely defaulted to `no_conflict`). With the configured threshold of
+`0.50`, the supersessions scored `0.70` or `0.80` and correctly auto-applied;
+none legitimately routed to review. The search stopped rather than expanding
+into the optional, costly full-corpus run.
+
+Final staging verification remained `graph_mode=neo4j`, `llm_mode=live`, 2,079
+records, deployed SHA `b14c8eca972b69ff42c8fb76a6210a616191f8da`, and review
+queue count zero.
+
+The backfill command was patched to exit when `GroqService.is_live` is false
+and to call `process_record(..., allow_stub=False)`. Targeted verification:
+`52 passed in 5.68s` for the backfill safety, conflict engine, and maintenance
+API tests.
+
+Acceptance status: C1, C2, C4, C5, C6, C7, and C8 pass for the bounded run; C3
+remains open. A full-corpus run was not performed.
+
+---
+
+## 12. Ownership sign-off
 
 | Role | Action |
 | --- | --- |
@@ -316,5 +370,6 @@ DEMO_MODE=true python -m pytest -q tests/test_conflict_engine.py tests/test_api_
 | **Shahmeer** | After C3/C5 green, verify Review Queue + ConfidenceBar against staging |
 | **Umar** | No ranking change required; diagnose may benefit from real superseded flags once edges exist |
 
-**Status:** OPEN — diagnosed; not executed as of this document’s creation.  
-**Next owner:** Usman agent / Usman human on staging Neo4j + live Groq.
+**Status:** PARTIAL — Phase A and bounded Phase B executed; review queue still empty.
+**Next owner:** Usman to run additional asset batches only if a real
+`needs_review` case is required; do not weaken the gate or seed fake evidence.

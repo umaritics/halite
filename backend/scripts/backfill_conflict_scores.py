@@ -37,6 +37,15 @@ logger = logging.getLogger("backfill")
 if sys.stdout.encoding.lower() != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8')
 
+
+def _is_unscored_placeholder(record: dict) -> bool:
+    """Return true only for untouched bulk-ingest defaults."""
+    return (
+        record.get("status") == "auto_accepted"
+        and record.get("confidence") == 1.0
+        and not record.get("classification_label")
+    )
+
 def main():
     parser = argparse.ArgumentParser(description="Backfill conflict scores")
     parser.add_argument("--limit", type=int, help="Limit number of records processed")
@@ -49,8 +58,8 @@ def main():
     groq = GroqService(api_key=settings.GROQ_API_KEY, model=settings.GROQ_MODEL)
     
     if not groq.is_live:
-        logger.warning("Groq is not live. Using cache and stubs.")
-        # sys.exit(1)
+        logger.error("Groq is not live. Refusing to backfill with cache or stubs.")
+        sys.exit(1)
 
     # 1. Fetch all records, optionally filtered by asset
     logger.info("Fetching all service records...")
@@ -121,7 +130,7 @@ def main():
         asset_id = rec.get("asset_id")
         
         conf = rec.get("confidence")
-        if args.resume and conf is not None and conf != 1.0:
+        if args.resume and not _is_unscored_placeholder(rec):
             stats["skipped_resume"] += 1
             continue
             
@@ -131,7 +140,7 @@ def main():
             res = process_record(
                 repo, groq, adapter, record_id,
                 threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
-                allow_stub=True
+                allow_stub=False
             )
             stats["processed"] += 1
             stats["statuses"][res["status_applied"]] = stats["statuses"].get(res["status_applied"], 0) + 1
