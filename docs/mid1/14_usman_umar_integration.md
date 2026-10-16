@@ -54,6 +54,28 @@ The production frontend build passes, but the current frontend suite remains
 | `npm run build` | **PASS** — 857 modules transformed |
 | `git diff --check` | Run before commit/push; must pass |
 
+## Main deployment verification
+
+`main` was fast-forwarded without force-pushing to
+`b14c8eca972b69ff42c8fb76a6210a616191f8da`. GitHub Actions staging deployment
+run `38919288840` completed successfully. Public verification returned:
+
+- health and version SHA: exact `b14c8ec...` match;
+- `graph_mode=neo4j` and `llm_mode=live`;
+- real maintenance corpus loaded with 2,079 records;
+- 118 assets returned in 2.235 seconds.
+
+This closes the Usman-owned staging timing and deployed-SHA checks.
+
+GitHub Actions CI run `38919288993` produced the expected ownership split:
+
+- backend tests: **success** (job `117034727696`);
+- Docker Compose real-graph smoke: **success** (job `117034727335`);
+- frontend tests/build: **failure** (job `117034728065`) on the already
+  documented Shahmeer-owned Review Queue mock.
+
+No Usman- or Umar-owned job failed on the pushed integration SHA.
+
 `-p no:cacheprovider` is required only in this restricted Windows worktree
 because its ACL blocks Pytest's cache temp-directory creation. It does not
 skip tests or alter application behavior.
@@ -82,11 +104,7 @@ skip tests or alter application behavior.
   reports one high and two moderate production advisories (Axios and React
   Router); upgrade through the frontend-owner branch and rerun tests/build.
 
-### Release verification after this integration is deployed
+### Final assessment coordination
 
-- Time `GET /api/maintenance/assets` against staging; target is under 2–3
-  seconds and one graph query.
-- Confirm `/api/health` and `/api/ops/version` report the deployed integration
-  SHA, Neo4j mode, and the real maintenance corpus.
-- Obtain the final independent reviewer/supervisor sign-off required by the
-  university rubric.
+- Integrate and verify Shahmeer's frontend branch when it is ready.
+- Obtain the final supervisor sign-off required by the university rubric.

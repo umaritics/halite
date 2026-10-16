@@ -3,7 +3,7 @@
 Owner for fix: **Shahmeer** (frontend load patterns) + **Usman** (maintenance list APIs)  
 Diagnosed by: Umar  
 Date: 2026-10-16  
-Status: **backend fix implemented on integration branch; staging timing pending**<br>
+Status: **backend fix deployed and staging acceptance verified**<br>
 Knowledge: [`remote_backend.md`](../../knowledge/context/modules/remote_backend.md), [`modules/frontend.md`](../../knowledge/context/modules/frontend.md), Usman maintenance ownership in [`02_ownership_mid1.md`](../../knowledge/context/02_ownership_mid1.md)
 
 ## Verdict for agents
@@ -132,8 +132,22 @@ Staging = VM + Aura. Each chatty call costs ~0.5–3 s RTT. Designs that feel fi
 4. If assets is fast but Service Records still slow, fix Shahmeer fan-out.  
 5. Do not open a Redis ticket for Mid-I.
 
-The code/query-count portion is complete. The latency target remains pending
-until the integration SHA is deployed and timed against staging Aura.
+The code/query-count and staging latency acceptance checks are complete.
+
+## Deployed acceptance evidence
+
+Verified 2026-10-16 after `main` deployment at
+`b14c8eca972b69ff42c8fb76a6210a616191f8da`:
+
+| Check | Observed | Verdict |
+| --- | ---: | --- |
+| `/api/health` | `graph_mode=neo4j`, `llm_mode=live`, 2,079 records | PASS |
+| `/api/ops/version` | exact deployed SHA `b14c8ec...` | PASS |
+| `/api/maintenance/assets` | 118 assets in **2.235 seconds** | PASS |
+| Backend query shape | one `OPTIONAL MATCH` aggregation | PASS |
+
+The earlier 30–90+ second assets bottleneck is closed for the observed staging
+corpus. Shahmeer's separate Service Records history fan-out remains open.
 
 ## Related
 
