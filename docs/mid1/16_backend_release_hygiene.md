@@ -17,7 +17,7 @@ performed.
 
 | Task | Verdict | Result |
 | --- | --- | --- |
-| 1. Protect staging | **PASS** | Obsolete branch push triggers removed; only CI-successful `main` SHAs are eligible; full SHA, ancestry, confirmation, exact-CI and protected-environment gates apply. |
+| 1. Protect staging | **PARTIAL** | Obsolete branch triggers are removed and only validated, CI-successful `main` SHAs are eligible. Manual confirmation is enforced, but the GitHub `staging` Environment still has no required-reviewer rule. |
 | 2. Reconcile record count | **PASS (code fixed; live repair deferred)** | Exactly one orphan node identified; retry ingestion now repairs the missing `ABOUT` link idempotently. Production data was not modified. |
 | 3. Health efficiency | **PASS** | Health contract preserved; Neo4j uses `count(sr)` and memory mode counts nodes without record materialization. Legacy software-project API description removed. |
 | 4. Integration regression | **PASS for Umar/Usman scope** | `127 passed, 20 skipped` locally; PR backend and Docker real-graph jobs passed. The known Shahmeer frontend job failed and remains blocking. |
@@ -36,13 +36,16 @@ performed.
 4. queries Actions for a successful full CI run on the exact SHA before SSH;
 5. passes only the validated, resolved SHA through the SSH action environment;
 6. keeps the existing VM secrets and configuration unchanged;
-7. uses the `staging` GitHub Environment, which administrators must configure
-   with required reviewers and administrator bypass disabled;
+7. uses the `staging` GitHub Environment; its API currently reports
+   `protection_rules=[]` and `can_admins_bypass=true`, so an administrator must
+   still add required reviewers and disable administrator bypass;
 8. records the current `/api/ops/version` SHA before deployment and verifies
    the exact approved SHA, Neo4j health, and assets endpoint afterward.
 
 The known Shahmeer frontend failure leaves full CI red, so this policy blocks
-release until Shahmeer's fix is integrated. The gate was not weakened. Editing
+release until Shahmeer's fix is integrated. The gate was not weakened. Manual
+dispatch also requires the exact uppercase operation confirmation, but that is
+not a substitute for the still-unconfigured independent reviewer rule. Editing
 the workflow on this branch did not deploy or restart staging.
 
 ### Approved rollback

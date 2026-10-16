@@ -11,8 +11,10 @@ updated: 2026-10-16
 ## Happy path
 
 1. Reviewed work lands on `main` and the full `CI` workflow succeeds.
-2. `deploy-staging.yml` validates the exact `main` SHA and CI result, then
-   waits for the protected `staging` environment approval.
+2. `deploy-staging.yml` validates the exact `main` SHA and CI result, then uses
+   the `staging` environment. Once administrators configure required reviewers,
+   GitHub also waits for their approval; until then the workflow confirmation
+   is the only manual-intent gate.
 3. The workflow records the currently deployed SHA for rollback evidence.
 4. GitHub Actions SSHes to the VM, which checks out the approved SHA and
    rebuilds `halite-api` via `docker-compose.vm.yml`.
