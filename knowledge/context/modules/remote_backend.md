@@ -38,7 +38,7 @@ Workflow: `.github/workflows/deploy-staging.yml`
 
 Triggers:
 
-- Push to `umar/mid1-graph-diagnostics`, `feat/mid1/graph-diagnostics`, `usman`, or `main` that touches `backend/**` (or compose/deploy scripts)
+- Push to `umar/mid1-graph-diagnostics`, `usman`, or `main` that touches `backend/**` (or compose/deploy scripts)
 - Manual **Actions → Deploy staging backend → Run workflow**
 
 What it does: SSH into the VM → `git fetch/checkout` SHA → `docker compose -f docker-compose.vm.yml build/up` → verify public `/api/health`.

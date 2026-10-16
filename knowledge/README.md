@@ -76,5 +76,5 @@ knowledge/
 
 ## Current branch baseline
 
-- Implementation branch for Umar Mid-I graph/diagnostics work: `feat/mid1/graph-diagnostics` (branched from `origin/usman` @ `b949de4`).
+- Implementation branch for Umar Mid-I graph/diagnostics work: `umar/mid1-graph-diagnostics` (from `origin/usman` @ `b949de4`; supersedes deleted `feat/mid1/graph-diagnostics`).
 - Usman Mid-I DevOps evidence tip (inherited): see `docs/mid1/05_usman_final_audit.md` and [decisions/DEC-20261016-usman-baseline.md](decisions/DEC-20261016-usman-baseline.md).

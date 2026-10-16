@@ -40,5 +40,5 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | Branch | Owner focus |
 | --- | --- |
 | `usman` | A1–A4 maintenance/conflict/CI evidence |
-| `umar/mid1-graph-diagnostics` | U1–U5 diagnostics + staging CD unblock |
+| `umar/mid1-graph-diagnostics` | Umar — U1–U5 diagnostics + staging CD (team referral branch) |
 | Shahmeer frontend branch | CI mock + UI + perf load patterns |

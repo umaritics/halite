@@ -10,11 +10,11 @@ updated: 2026-10-16
 
 ## Context
 
-`.github/workflows/ci.yml` only auto-ran on `main`, `develop`, `usman`. Umar’s `feat/mid1/graph-diagnostics` would otherwise rely solely on pull_request events.
+`.github/workflows/ci.yml` only auto-ran on `main`, `develop`, `usman`. Umar’s Mid-I branch would otherwise rely solely on pull_request events.
 
 ## Decision
 
-Add `feat/mid1/graph-diagnostics` to `on.push.branches`.
+Add the Umar Mid-I push branch to `on.push.branches`. Current value: **`umar/mid1-graph-diagnostics`** (earlier temporary name `feat/mid1/graph-diagnostics` removed).
 
 ## Consequences
 

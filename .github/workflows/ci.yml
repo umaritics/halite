@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, usman, feat/mid1/graph-diagnostics, umar/mid1-graph-diagnostics]
+    branches: [main, develop, usman, umar/mid1-graph-diagnostics]
   pull_request:
 
 permissions:

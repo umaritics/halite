@@ -4,7 +4,7 @@ Audit date: 2026-10-16
 Owner: Muhammad Umar (23I-0782)  
 Branch: `umar/mid1-graph-diagnostics`  
 Tip SHA (this document): `a70652ed67f44850f039a1a6db6852ba9a52fb0f`  
-Branched from: `feat/mid1/graph-diagnostics` @ `30b322b` ← `usman` @ `b949de4`  
+Branched from: `usman` @ `b949de4` (early tip briefly named `feat/mid1/graph-diagnostics` @ `30b322b`, then renamed/superseded by this branch)  
 `origin/main` baseline (unchanged): `4329556c2405ffa1a397979ae26bc68ad8814eac`  
 Staging public API: `https://dev1.corp.curatech.pk/halite-api`  
 Usman baseline cross-check: [`knowledge/decisions/DEC-20261016-usman-baseline.md`](../../knowledge/decisions/DEC-20261016-usman-baseline.md)
@@ -64,7 +64,7 @@ Usman baseline cross-check: [`knowledge/decisions/DEC-20261016-usman-baseline.md
 | `e8093cb` | U3 `rank_diagnostic_checks` + stable tie-break |
 | `408d1c4` | U2 bounded Neo4j retrieval + staging proof doc |
 | `0f471b5` | Mid-I progress/perf/shared-API docs; `.env.development`; CI/CD branch trigger |
-| `30b322b` | Shared staging CD, ops API, knowledge bank (on `feat/mid1/graph-diagnostics`) |
+| `30b322b` | Shared staging CD, ops API, knowledge bank (ancestor commit) |
 
 ## U1 — Diagnostics audit
 
@@ -139,7 +139,7 @@ Full contract + tests: [`12_u4_u5_diagnostics_handoff.md`](12_u4_u5_diagnostics_
 | ID | Item | Evidence | Status |
 | --- | --- | --- | --- |
 | CD-1 | Workflow | `.github/workflows/deploy-staging.yml` | PASS |
-| CD-2 | Branch triggers | `umar/mid1-graph-diagnostics`, `feat/mid1/graph-diagnostics`, `usman`, `main` | PASS |
+| CD-2 | Branch triggers | `umar/mid1-graph-diagnostics`, `usman`, `main` | PASS |
 | CD-3 | Ops | `GET /api/ops/version` public; `/api/ops/logs` token | PASS |
 | CD-4 | Dedicated deploy key | GitHub `VM_SSH_KEY` = `halite_github_deploy` (not personal SSH) | PASS |
 | CD-5 | Maintenance routes on VM | assets/history/diagnose reachable (unlike Usman audit stale VM) | PASS |

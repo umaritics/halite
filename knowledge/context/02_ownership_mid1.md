@@ -21,10 +21,10 @@ Source: `docs/halite_work_division_mid1.pdf`.
 | Branch | Owner |
 | --- | --- |
 | `feat/mid1/frontend-diagnostics` | Shahmeer |
-| `feat/mid1/graph-diagnostics` | Umar |
+| `umar/mid1-graph-diagnostics` | Umar |
 | `feat/mid1/maintenance-devops` / `usman` | Usman |
 
-Current Umar working branch: **`umar/mid1-graph-diagnostics`** (from `feat/mid1/graph-diagnostics` / `origin/usman`).
+Current Umar working branch: **`umar/mid1-graph-diagnostics`** (from `origin/usman` @ `b949de4`).
 
 ## Umar work packages (checklist)
 
