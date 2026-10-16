@@ -3,27 +3,41 @@
 Owner of this file: Shahmeer Atif. Steps 1, 3 and 5 are Shahmeer's; steps 2, 4, 6, 8 belong to Usman and Umar
 (blueprint §12.1) and are included only so the hand-offs line up. Total target 8–12 minutes.
 
-All IDs below were checked against the live stack on 2026-10-16 (`graph_mode=neo4j`, `llm_mode=live`, 2079 records).
-If the corpus is re-ingested the IDs may change; re-check before the demo.
+Record IDs (SWIA…, AALA…) are the same everywhere. **Asset UUIDs are not**: 813SK is `92bdb741-42cb-4ccb-a65f-6ed5fbb7d1a4` on the
+local Neo4j used for the screenshots and `aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb` on shared staging (2026-10-16). To avoid
+typing a UUID, open Assets → 813SK and use the links the app gives you.
+
+## Choose the backend first
+
+`frontend/.env.development` (merged from `main`) points `npm run dev` at **shared staging**. Pick one and say which you used.
+
+| | Local stack | Shared staging |
+| --- | --- | --- |
+| Setup | Docker Neo4j + local backend; create git-ignored `frontend/.env.local` with `VITE_API_URL=/api` and `VITE_PROXY_TARGET=http://localhost:8000` | nothing; `npm run dev` |
+| Diagnosis narrative | Worked in my checks (full explanation, 10 evidence records, 13 verified citations for the drag-angle case) | **Returned no explanation on 2026-10-16** (3 of 3 fresh symptoms): ranking only, no Analysis / citations / evidence cards. Confirm with Umar/Usman that this is fixed **before** demoing step 5 on staging |
+| Risk | Your machine only | Shared corpus: Accept/Reject would change data for everyone |
+
+**Check `/api/health` agrees before you claim anything:** `graph_mode=neo4j`, `llm_mode=live`, `maintenance_corpus_loaded=true`.
 
 ## Before you start (5 minutes, not on stage)
 
 ```bash
-docker compose up -d neo4j
-cd backend && source venv/bin/activate && uvicorn main:app --port 8000     # terminal 1
+docker compose up -d neo4j                                                   # local mode only
+cd backend && source venv/bin/activate && uvicorn main:app --port 8000     # local mode only, terminal 1
 cd frontend && npm run dev                                                   # terminal 2
-curl -s localhost:8000/api/health   # expect graph_mode=neo4j, llm_mode=live, maintenance_record_count=2079
+curl -s localhost:8000/api/health   # local; or https://dev1.corp.curatech.pk/halite-api/api/health for staging
 ```
 
 1. Open `http://localhost:5173/`. Check the sidebar shows only: Assets, Service Records, Diagnostics, Review Queue, Ingest,
    Knowledge Graph, Settings.
 2. **Warm the cache:** run aircraft **813SK** with symptom **`crack found on drag angle during inspection`** once.
    A cached answer skips the model call; an uncached one calls Groq and is slower (the maintenance handoff puts warm queries at about 2–3 seconds).
+   Check the result actually has an **Analysis** section; if it shows "No written explanation returned", the model returned nothing.
 3. Open the Review Queue once and wait for the finding to load (it also calls the model).
-4. Have these tabs ready (replace nothing; these are real):
-   - Linked-record view: `/app/asset-history/92bdb741-42cb-4ccb-a65f-6ed5fbb7d1a4#SWIA2025122076513`
+4. Have these tabs ready (use the UUID for your environment; see above):
+   - Linked-record view: `/app/asset-history/<813SK uuid>#SWIA2025122076513`
    - Failure view: `/app/asset-history/ZZ999`
-5. Backup: `docs/mid1/screenshots/` (12 stills) and `docs/mid1/fixtures/`.
+5. Backup: `docs/mid1/screenshots/` (13 stills, captured on the local stack) and `docs/mid1/fixtures/`.
 
 **Never click Accept or Reject on the real queue.** They permanently change a record's status in the corpus and
 cannot be undone from the UI. Talk through the screen instead.
@@ -45,7 +59,7 @@ Open **Settings → System Status**: `neo4j`, `live`, `openai/gpt-oss-120b`, `20
 
 ## Step 3 — Shahmeer: an asset's dated history (about 1 min)
 
-Do: Assets → **813SK** (or open the Linked-record view tab).
+Do: Assets → **813SK** (or open the Linked-record view tab). Optional, 20 seconds: **Service Records** opens one aircraft at a time (813SK by default); change the aircraft in the selector and only that aircraft's records load.
 Say: "These are real FAA Service Difficulty Reports, oldest first, each with its original report ID. Nothing here is generated."
 Point out: record ID at the bottom of each card; the one **superseded** record (`SWIA2025111576508`, 11/15/2025) says only
 "Superseded by a later record." The API doesn't supply more, so the UI doesn't invent more.

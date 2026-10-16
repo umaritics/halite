@@ -5,8 +5,8 @@ Branch: `feat/mid1/frontend-diagnostics` · Date: 2026-10-16
 
 | Item | Value |
 | --- | --- |
-| Baseline SHA | `8840c68c32054bf1e9dd1505bbbdef4e22d26f6c` (`feat/maintenance-domain`) |
-| Code SHA verified | `1473e778e55c3840e83bc5234416a88f439256fc` |
+| Baseline SHA | `8840c68c32054bf1e9dd1505bbbdef4e22d26f6c` (`feat/maintenance-domain`); `origin/main` `b85dde0` merged in at `9fdc780` |
+| Code SHA verified | `8c59079df56b34588122d66d7890a38a54219025` (docs/knowledge-only commits follow; no code changes) |
 | Runtime used for live checks | Neo4j (docker `halite-neo4j-dev`), FastAPI on :8000, Vite on :5173 |
 | `/api/health` during live checks | `graph_mode=neo4j`, `llm_mode=live` (`openai/gpt-oss-120b`), `maintenance_record_count=2079`, `using_memory_graph=false` |
 | Node / npm | v26.11.1 / 11.20.0 |
@@ -23,6 +23,10 @@ Everything below was executed on the SHA above. Where something was **not** veri
 | `934b9da` | S3 | Diagnostics states, warnings, safer rendering |
 | `97833c6` | S4 (+S2 states) | Record deep links, review-queue safety, history error states |
 | `1473e77` | S4 | Instant jump to cited record; scrollable review finding panel |
+| `9fdc780` | merge | `origin/main` merged into this branch (clean, no conflicts) |
+| `d69039d` | handoff 10 | Service Records loads one aircraft at a time |
+| `2b66978` | handoff 12 | Diagnose UI follows the frozen contract; notice when the model returns nothing |
+| `8c59079` | handoff 14 | `npm audit fix` (axios, react-router patch) |
 
 A separate, unmerged branch `feat/mid1/graph-webgl-fallback` (`6678736`) holds one extra fix (WebGL check and
 error boundary for the 3D graph). It is not part of the SHA verified here.
@@ -87,9 +91,11 @@ npm test -- --run --reporter=verbose   # logs/frontend-tests.txt
 npm run build                          # logs/frontend-build.txt
 ```
 
-Result on `1473e77`: **10 files, 75 tests, 75 passed, 0 failed, 0 unhandled errors**; build succeeds
-(851 modules). Per file: Diagnostics 18, diagnosticsUtils 20, ReviewQueue 15, AssetHistory 9,
-Assets 3, DomainContext 3, Sidebar 3, ServiceRecords 2, MaintenanceIngest 1, dummy 1.
+Result on `8c59079`: **10 files, 99 tests, 99 passed, 0 failed, 0 unhandled errors**; build succeeds.
+Per file: Diagnostics 25, diagnosticsUtils 24, ServiceRecords 15, ReviewQueue 15, AssetHistory 9,
+Assets 3, DomainContext 3, Sidebar 3, MaintenanceIngest 1, dummy 1. (At `1473e77` the suite was 75 tests; the
+Service Records, contract and notice work added 24.) `origin/main` still shows 12 passed / 1 failed because the
+`ReviewQueue` mock fix is only on this branch.
 
 Before this work the suite had 13 tests; Usman's hosted run recorded 12 passing and 1 failing
 (`ReviewQueue`), and on Node 26 a second test (`DomainContext`) also failed locally.
@@ -150,8 +156,11 @@ aircraft and marks the record; `logs/route-smoke.txt` covers all 14 route cases.
 
 ## 7. Limitations and what was not verified
 
-- **No hosted CI run for this branch.** The only workflow (`.github/workflows/ci.yml`) is on `origin/usman`,
-  not on this branch. Local results are not CI results. CI uses Node 20; these runs used Node 26.
+- **No hosted CI run for this branch yet.** `main` has the workflow and its last run showed backend and Docker jobs
+  green and the frontend job red (the mock fixed here). This branch has not been pushed, so there is no hosted result for
+  it. Local results are not CI results. CI uses Node 20; these runs used Node 26.
+- **Staging screenshots were not captured.** The Browser pane was only ~359 px wide during the staging pass, so the
+  staging evidence is numeric (`logs/staging-measurements.txt`). Screenshots 01–13 are from the local stack.
 - **No static analysis beyond the build.** The frontend has no lint script and ESLint is not installed.
   "Static check" here means only that `vite build` compiles.
 - **Accept / Reject were not exercised against real data.** They change a record's status in Neo4j and
@@ -184,6 +193,10 @@ For **Umar** (diagnostics route):
   `explanation`. The UI now recovers the text, but the backend should parse it properly.
 - With the model unavailable, an unknown asset returns 503 (the model check runs before the history check).
   It returns 404 only when the model is live.
+- **On shared staging, fresh diagnose calls return an empty `explanation`, empty `evidence` and empty citation lists**
+  (3 of 3 symptoms; ranking present; `llm_mode=live`). The same merged code run locally returned a full explanation
+  for 1 of 2 symptoms (the other returned 18 characters). Cause not established from outside; needs staging logs.
+  See `logs/staging-measurements.txt`. If the demo runs on staging this removes the Analysis, citations and evidence cards.
 
 For **Usman** (maintenance routes, tests, deployment):
 - `GET /maintenance/records/{id}` re-runs the conflict engine (an LLM call) on every view.
@@ -192,8 +205,10 @@ For **Usman** (maintenance routes, tests, deployment):
   teardown, deletes every `ServiceRecord` and `Asset`. Running the full suite while the dev Neo4j is up wipes the corpus.
 - `DELETE /api/graph/reset` wipes the whole graph and is reachable by anyone calling the API.
 - Hosted CI for the frontend job: the `ReviewQueue` test failure in `06_frontend_review_queue_handoff.md`
-  (on `usman`) is fixed in `6e36897` and the full local suite is 75/75; a hosted re-run is still required.
+  (on `usman`) is fixed in `6e36897` and the full local suite is now 99/99; a hosted re-run is still required.
 - Vercel previews are behind SSO; the canonical project and reviewer access are still to be sorted out.
+- Still present on `origin/main` (checked 2026-10-16): the `DELETE /api/graph/reset` route (`backend/api/routes/graph.py`) and the
+  `neo4j` fixture in `test_graph_maintenance.py` that deletes every `ServiceRecord`/`Asset` on teardown.
 
 ## 10. Reproduce
 
@@ -216,3 +231,23 @@ Claude Sonnet 5.5) working under Shahmeer's direction. Each change was verified 
 build and live checks listed above; none is claimed from generated code alone. The external model used
 inside the product is Groq `openai/gpt-oss-120b`, called from the backend for diagnostic phrasing and conflict
 classification. Shahmeer remains responsible for being able to explain every change above.
+
+## 12. Response to the Mid-I handoffs on `main` (docs 10, 12, 14)
+
+| Item | Source | Status | Evidence |
+| --- | --- | --- | --- |
+| Stop the all-aircraft history fan-out; initial load ≤ 2 calls | 10, 14 | **Done** on this branch | Production build vs staging: 2 page-initiated calls on first load (assets 688 ms + one history 1221 ms) plus the app shell's `review-queue` badge call = 3 in the network tab; switching aircraft adds 1 call (926 ms). Before: 1 + 118. `logs/staging-measurements.txt`; `ServiceRecords.test.jsx` enforces the 118-aircraft request count |
+| Diagnostics dropdown usable without a long wait | 10 | **Done** (backend fix) | Staging assets call 0.99 s (curl) / 923 ms (browser). The page still makes a single assets call |
+| Fix the `ReviewQueue` test mock; frontend CI job | 06, 14 | **Fixed here, not yet on `main`** | `6e36897`; 99/99 locally; hosted run still needed |
+| Re-run tests and build; provide the branch | 14 | Tests/build done; **branch not pushed** | `logs/frontend-tests.txt`, `logs/frontend-build.txt` |
+| Dependency advisories (axios, react-router) | 14 | **Partly done** | `npm audit --omit=dev`: 3 → 2 advisories. axios 1.18.1 → 1.20.0 (high cleared); react-router(-dom) 6.30.4 → 6.30.6. **Two moderate react-router 6.x advisories remain**; the only fix is react-router 7 (breaking), deferred because this is a client-only SPA with fixed `/app/...` link prefixes and the change is risky this close to evaluation. Not changed: dev-only vitest advisories (breaking fix). `logs/npm-audit-prod.txt` |
+| Diagnose UI checklist (`evidence_record_ids` click-through, `all_valid` gate, `[UNVERIFIED]` styling, 503/404 copy, long-request loading) | 12 | **Done** | Tests in `Diagnostics.test.jsx`, `diagnosticsUtils.test.js`. Per-check record ids link only when the record is in the response's `evidence` array (its aircraft is known); other ids stay plain text |
+| Add personally used AI tools to the report disclosure | 14, 15 | **Open** | Draft wording in §11; `docs/mid1/15_report_mid1_addendum.md` currently lists only OpenAI Codex and its PDF must be regenerated (`scripts/render_mid1_addendum.py`) |
+| Supervisor sign-off | 14 | **Open** (Shahmeer) | — |
+
+Notes:
+- `frontend/.env.development` now points `npm run dev` at shared staging. Use a local `.env.local` for a local backend.
+  `.env.local` is **not** in `.gitignore` as of this check even though other docs say it is; do not commit it.
+- Asset UUIDs differ between local Neo4j and staging (813SK: `aa4e5d11-…` vs `92bdb741-…`). Deep links with a UUID are environment-specific.
+- Staging is shared: Accept/Reject there would change the corpus everyone, including the demo, uses.
+- Dev builds run React in StrictMode, which doubles effect-driven requests; request counts above are from a production build.

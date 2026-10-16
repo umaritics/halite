@@ -1,5 +1,5 @@
-# Frontend tests — captured 2026-10-16 17:23 PKT
-# code SHA 1473e778e55c3840e83bc5234416a88f439256fc | node v26.11.1 | npm 11.20.0
+# Frontend tests — captured 2026-10-16 22:13 PKT
+# code SHA 8c59079df56b34588122d66d7890a38a54219025 (docs/knowledge-only commits may follow) | node v26.11.1 | npm 11.20.0
 # command: npm test -- --run --reporter=verbose
 
 
@@ -9,7 +9,7 @@
 
  RUN  v2.1.9 /Users/shero/halite 2/halite/frontend
 
-(node:23186) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(node:30873) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
 (Use `node --trace-warnings ...` to show where the warning was created)
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > renders ranked list, evidence links, and handles rare-case expansion
 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
@@ -28,7 +28,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
@@ -45,7 +45,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -58,7 +58,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
@@ -74,7 +74,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -87,7 +87,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
@@ -103,7 +103,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -116,7 +116,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
@@ -132,7 +132,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -145,10 +145,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 404: aircraft has no history; offers no retry
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 429: rate limited, retryable
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -160,7 +161,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -173,10 +174,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 429: rate limited, retryable
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 500: reports a server error with the status, retryable
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -188,7 +190,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -201,12 +203,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 404: aircraft has no history; offers no retry
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 429: rate limited, retryable
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 500: reports a server error with the status, retryable
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 422: flattens FastAPI validation detail (an array) instead of crashing
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -218,7 +219,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -231,11 +232,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 500: reports a server error with the status, retryable
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 422: flattens FastAPI validation detail (an array) instead of crashing
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > network failure: says the API is unreachable
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -247,7 +248,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -260,11 +261,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > 422: flattens FastAPI validation detail (an array) instead of crashing
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > network failure: says the API is unreachable
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > response states > 200 with no evidence: shows an insufficient-evidence state, not a ranking or analysis
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -276,7 +277,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -289,10 +290,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > 200 with no evidence: shows an insufficient-evidence state, not a ranking or analysis
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > response states > renders the warnings field and the citation-validation status
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -304,7 +306,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -317,10 +319,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > renders the warnings field and the citation-validation status
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > response states > flags unverified citations instead of reporting them as verified
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -332,7 +335,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -345,13 +348,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > failure states (no invented diagnosis) > network failure: says the API is unreachable
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > 200 with no evidence: shows an insufficient-evidence state, not a ranking or analysis
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > renders the warnings field and the citation-validation status
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > flags unverified citations instead of reporting them as verified
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > response states > shows readable text when the backend returns the raw model JSON as the explanation
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -363,7 +364,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -376,11 +377,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > flags unverified citations instead of reporting them as verified
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > shows readable text when the backend returns the raw model JSON as the explanation
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > response states > tolerates missing optional fields in the response
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -392,7 +393,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -405,11 +406,11 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > shows readable text when the backend returns the raw model JSON as the explanation
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > tolerates missing optional fields in the response
 stderr | src/test/Diagnostics.test.jsx > Diagnostics > response states > always states that this is decision support
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
 
@@ -421,7 +422,7 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 Warning: An update to Diagnostics inside a test was not wrapped in act(...).
@@ -434,12 +435,186 @@ act(() => {
 /* assert on the output */
 
 This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
-    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:14:42)
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
     at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
     at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
 
- ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > tolerates missing optional fields in the response
  ✓ src/test/Diagnostics.test.jsx > Diagnostics > response states > always states that this is decision support
+stderr | src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > lets a ranked check's evidence record ids open the history when the record is known
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > lets a ranked check's evidence record ids open the history when the record is known
+stderr | src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > caps long record lists per check and says how many more there are
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > caps long record lists per check and says how many more there are
+stderr | src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > styles [UNVERIFIED:ID] markers as warnings
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > styles [UNVERIFIED:ID] markers as warnings
+stderr | src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > does not call citations verified when all_valid is false, even with no invalid ids listed
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > does not call citations verified when all_valid is false, even with no invalid ids listed
+stderr | src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > says so when the model returns no explanation but a ranking exists (not a silent omission)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > says so when the model returns no explanation but a ranking exists (not a silent omission)
+stderr | src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > does not show the no-explanation notice when an explanation is present
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+Warning: An update to Diagnostics inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Diagnostics (/Users/shero/halite 2/halite/frontend/src/pages/Diagnostics.jsx:15:42)
+    at Router (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1203:17)
+    at MemoryRouter (/Users/shero/halite 2/halite/frontend/node_modules/react-router/dist/umd/react-router.development.js:1097:7)
+
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > does not show the no-explanation notice when an explanation is present
+ ✓ src/test/Diagnostics.test.jsx > Diagnostics > contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) > warns that a fresh diagnosis can be slow while it is loading
 stderr | src/test/ReviewQueue.test.jsx > ReviewQueue > loading the queue > a failed fetch is reported as a failure, never as an empty queue
 { code: 'ERR_NETWORK', message: 'Network Error', request: {} }
 
@@ -472,6 +647,27 @@ stderr | src/test/ReviewQueue.test.jsx > ReviewQueue > accept and reject change 
  ✓ src/test/ReviewQueue.test.jsx > ReviewQueue > accept and reject change real data, so the UI waits for the server > rejects with the note once the server confirms
  ✓ src/test/ReviewQueue.test.jsx > ReviewQueue > accept and reject change real data, so the UI waits for the server > a stray key press cannot accept or reject a record
  ✓ src/test/ReviewQueue.test.jsx > ReviewQueue > accept and reject change real data, so the UI waits for the server > says plainly that neither action deletes the record
+ ✓ src/test/ServiceRecords.test.jsx > ConfidenceBar > renders above and below threshold properly
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords > filters and renders records
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > first load makes exactly 2 API calls for a 118-aircraft fleet
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > switching aircraft loads only that aircraft
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > honours ?asset=<uuid> from the link
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > says so and falls back when the linked aircraft does not exist
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > shows the records of the latest selection even if an earlier request finishes last
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > links each record to its asset history by asset UUID
+stderr | src/test/ServiceRecords.test.jsx > ServiceRecords states > an aircraft-list failure is shown as a failure, never as "no records", and retry recovers
+{ code: 'ERR_NETWORK', message: 'Network Error', request: {} }
+
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords request volume > is honest that records are per aircraft and fleet-wide search is not available
+stderr | src/test/ServiceRecords.test.jsx > ServiceRecords states > a history failure is shown as a failure for that aircraft, and retry recovers
+{ response: { status: 500, data: {} } }
+
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords states > an aircraft-list failure is shown as a failure, never as "no records", and retry recovers
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords states > a history failure is shown as a failure for that aircraft, and retry recovers
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords states > says plainly when an aircraft genuinely has no records
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords states > says so when the corpus has no aircraft at all
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords states > shows a missing date plainly and lists undated records last
+ ✓ src/test/ServiceRecords.test.jsx > ServiceRecords states > filters by status and by search text within the selected aircraft
 stderr | src/test/AssetHistory.test.jsx > AssetHistory honesty and failure states > 404: says the aircraft was not found (not "no records"), no retry
 { response: { status: 404, data: { detail: "Asset 'X' not found" } } }
 
@@ -507,11 +703,13 @@ stderr | src/test/AssetHistory.test.jsx > AssetHistory honesty and failure state
  ✓ src/test/diagnosticsUtils.test.js > extractExplanation > recovers the explanation from truncated JSON
  ✓ src/test/diagnosticsUtils.test.js > extractExplanation > leaves JSON without an explanation key alone
  ✓ src/test/diagnosticsUtils.test.js > extractExplanation > handles non-string input
+ ✓ src/test/diagnosticsUtils.test.js > splitUnverified > returns one plain segment when there are no markers
+ ✓ src/test/diagnosticsUtils.test.js > splitUnverified > flags [UNVERIFIED:ID] and bare [UNVERIFIED] markers and keeps the surrounding text in order
+ ✓ src/test/diagnosticsUtils.test.js > splitUnverified > does not flag lookalikes
+ ✓ src/test/diagnosticsUtils.test.js > splitUnverified > handles empty and non-string input
  ✓ src/test/Assets.test.jsx > Assets > renders assets
  ✓ src/test/Assets.test.jsx > AssetHistory > renders empty state
  ✓ src/test/Assets.test.jsx > AssetHistory > renders populated and superseded records
- ✓ src/test/ServiceRecords.test.jsx > ConfidenceBar > renders above and below threshold properly
- ✓ src/test/ServiceRecords.test.jsx > ServiceRecords > filters and renders records
  ✓ src/test/DomainContext.test.jsx > DomainContext > is locked to the maintenance domain
  ✓ src/test/DomainContext.test.jsx > DomainContext > ignores a stale software value left in localStorage by the old switcher
  ✓ src/test/DomainContext.test.jsx > DomainContext > cannot be switched to the software domain
@@ -522,7 +720,7 @@ stderr | src/test/AssetHistory.test.jsx > AssetHistory honesty and failure state
  ✓ src/test/dummy.test.jsx > Dummy test > should pass
 
  Test Files  10 passed (10)
-      Tests  75 passed (75)
-   Start at  17:23:41
-   Duration  1.33s (transform 98ms, setup 85ms, collect 210ms, tests 471ms, environment 395ms, prepare 31ms)
+      Tests  99 passed (99)
+   Start at  22:13:14
+   Duration  1.82s (transform 124ms, setup 98ms, collect 260ms, tests 827ms, environment 439ms, prepare 38ms)
 
