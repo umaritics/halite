@@ -65,7 +65,8 @@ export default function AssetHistory() {
     if (loading || !linkedFound) return;
     const el = document.getElementById(`record-${linkedRecordId}`);
     if (el && typeof el.scrollIntoView === 'function') {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Instant jump: on a long history a smooth scroll is slow and can be caught mid-animation.
+      el.scrollIntoView({ block: 'center' });
     }
   }, [loading, linkedFound, linkedRecordId]);
 

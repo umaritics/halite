@@ -332,7 +332,7 @@ export default function ReviewQueue() {
             {detailsLoading ? (
               <div className="flex-1 flex items-center justify-center text-secondary text-sm">Loading finding details...</div>
             ) : details ? (
-              <div className="flex-1 space-y-6">
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-6 pr-1">
                 {details.best_prior ? (
                   <div>
                     <span className="eyebrow mb-4 block">RETRIEVED PRIOR RECORD</span>
@@ -372,7 +372,7 @@ export default function ReviewQueue() {
                 />
               </div>
             ) : (
-              <div className="flex-1 space-y-6">
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-6 pr-1">
                 <div role="alert" className="rounded border border-amber-500/30 bg-amber-500/5 p-3">
                   <p className="font-sans text-sm font-medium text-amber-400">Finding details unavailable</p>
                   <p className="mt-1 font-sans text-xs text-primary">
