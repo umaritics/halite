@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { maintenanceAPI } from '../api/client';
 import StatusChip from '../components/StatusChip';
 import ConfidenceBar from '../components/ConfidenceBar';
+import { formatDate } from '../utils/format';
 
 const STATUS_FILTERS = [
   { id: 'all', label: 'All' },
@@ -116,7 +117,7 @@ export default function ServiceRecords() {
                       {rec.record_id}
                     </div>
                     <div className="w-24 text-primary">{rec.tail_number}</div>
-                    <div className="w-28 text-secondary">{new Date(rec.occurred_at).toLocaleDateString()}</div>
+                    <div className="w-28 text-secondary">{formatDate(rec.occurred_at)}</div>
                     <div className="flex-1 text-primary truncate">{rec.part_name}</div>
                     <div className="w-32">
                       <ConfidenceBar confidence={rec.confidence} />
