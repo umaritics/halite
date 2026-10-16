@@ -54,7 +54,8 @@ flowchart TB
   subgraph frontend
     D[Diagnostics.jsx]
     C[api/client.js maintenanceAPI.diagnose]
-    H[AssetHistory / ServiceRecords]
+    H[AssetHistory.jsx / ServiceRecords.jsx]
+    U[utils/diagnostics.js error mapping, explanation recovery, UNVERIFIED split]
   end
   subgraph backend
     R[api/routes/diagnostics.py]
@@ -71,7 +72,9 @@ flowchart TB
   R --> G
   R --> CACHE
   RET --> QR --> N
-  D -. opens evidence .-> H
+  D -. opens evidence record_id deep link .-> H
+  D --> U
+  H --> C
 ```
 
 ## File dependencies (edges)
