@@ -346,3 +346,141 @@ def rank_diagnostic_checks(context: dict) -> list[dict]:
         item["evidence_record_ids"] = sorted(item["evidence_record_ids"])
         item["sources"] = sorted(item["sources"])
     return ranked
+
+
+# ---------------------------------------------------------------------------
+# Copilot composition (additive; the frozen /diagnose path above is unchanged)
+# ---------------------------------------------------------------------------
+
+def build_copilot_context(
+    graph_repo,
+    asset_id: Optional[str],
+    case_state: dict,
+    exclude_synthetic: bool = True,
+) -> dict:
+    """Build bounded retrieval context from the accumulated diagnostic case.
+
+    ``asset_id=None`` deliberately skips asset history and searches the fleet.
+    Ruled-out component names are removed from the retrieval query so a later
+    turn can materially change the deterministic ranking.
+    """
+    ruled_out = {_normalise(value) for value in case_state.get("ruled_out", []) if value}
+    facts = [
+        *case_state.get("symptoms", []),
+        *case_state.get("observations", []),
+    ]
+    usable_facts = [
+        str(value).strip()
+        for value in facts
+        if str(value).strip() and _normalise(str(value)) not in ruled_out
+    ]
+    query = " ".join(usable_facts).strip()
+
+    history = (
+        asset_history_context(
+            graph_repo,
+            asset_id,
+            limit=30,
+            exclude_synthetic=exclude_synthetic,
+        )
+        if asset_id
+        else []
+    )
+
+    jasc_hint = None
+    for record in history:
+        if _text_similarity(query, record.get("part_name", "")) > 0.2:
+            jasc_hint = record.get("jasc_code") or None
+            break
+
+    fleet = similar_symptom_records(
+        graph_repo,
+        query,
+        jasc_code=jasc_hint,
+        exclude_asset_id=asset_id,
+        limit=20,
+        exclude_synthetic=exclude_synthetic,
+    ) if query else []
+
+    all_ids = [record["record_id"] for record in history + fleet]
+    outcomes = resolution_outcomes(graph_repo, all_ids)
+    return {
+        "asset_id": asset_id,
+        "symptom_text": query,
+        "asset_history": history,
+        "fleet_matches": fleet,
+        "resolution_outcomes": outcomes,
+        "context_size": {
+            "asset_records": len(history),
+            "fleet_records": len(fleet),
+            "fleet_assets": len({r["asset_id"] for r in fleet if r.get("asset_id")}),
+        },
+    }
+
+
+def rank_copilot_checks(context: dict, ruled_out: list[str] | None = None) -> list[dict]:
+    """Rank active evidence with the heuristic, excluding ruled-out parts.
+
+    Superseded records remain in the returned context for transparency but are
+    never inputs to a copilot recommendation.
+    """
+    excluded = {_normalise(value) for value in (ruled_out or []) if value}
+    active_context = {
+        **context,
+        "asset_history": [r for r in context.get("asset_history", []) if not r.get("is_superseded")],
+        "fleet_matches": [r for r in context.get("fleet_matches", []) if not r.get("is_superseded")],
+    }
+    ranked = [
+        item for item in rank_diagnostic_checks(active_context)
+        if _normalise(item.get("part_name", "")) not in excluded
+    ]
+    for index, item in enumerate(ranked, start=1):
+        item["rank"] = index
+    return ranked
+
+
+def ranking_delta(previous: list[dict], current: list[dict]) -> dict:
+    """Describe deterministic rank and evidence changes between two case states."""
+    before = {item["part_name"]: item for item in previous}
+    after = {item["part_name"]: item for item in current}
+
+    moved_up = []
+    moved_down = []
+    new = []
+    dropped = []
+    for part, item in after.items():
+        if part not in before:
+            new.append({"part_name": part, "rank": item["rank"]})
+        elif item["rank"] < before[part]["rank"]:
+            moved_up.append({
+                "part_name": part,
+                "from_rank": before[part]["rank"],
+                "to_rank": item["rank"],
+            })
+        elif item["rank"] > before[part]["rank"]:
+            moved_down.append({
+                "part_name": part,
+                "from_rank": before[part]["rank"],
+                "to_rank": item["rank"],
+            })
+    for part, item in before.items():
+        if part not in after:
+            dropped.append({"part_name": part, "from_rank": item["rank"]})
+
+    before_ids = {
+        record_id
+        for item in previous
+        for record_id in item.get("evidence_record_ids", [])
+    }
+    current_ids = {
+        record_id
+        for item in current
+        for record_id in item.get("evidence_record_ids", [])
+    }
+    return {
+        "moved_up": moved_up,
+        "moved_down": moved_down,
+        "new": new,
+        "dropped": dropped,
+        "newly_cited_records": sorted(current_ids - before_ids),
+    }
