@@ -36,3 +36,4 @@ flowchart LR
 
 - Do not `docker compose down -v` against the only demo volume without backup.
 - Real FAA corpus is gitignored; CI uses synthetic `mid1_smoke.csv`.
+- Ingest sets `status=auto_accepted` and `confidence=1.0` as **placeholders**. Conflict scoring is a separate step (`process_record` / `scripts/backfill_conflict_scores.py`). If Review Queue is empty and every confidence is 1.0, see [`docs/mid1/16_usman_conflict_score_backfill_handoff.md`](../../docs/mid1/16_usman_conflict_score_backfill_handoff.md) (Usman).

@@ -26,6 +26,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [13_u3_deterministic_ranking.md](13_u3_deterministic_ranking.md) | Umar | U3 ranking weights, tie-break, schema |
 | [14_usman_umar_integration.md](14_usman_umar_integration.md) | Usman + Umar | Combined audit, rubric mapping, performance closure, remaining Shahmeer work |
 | [15_report_mid1_addendum.md](15_report_mid1_addendum.md) ([PDF](Halite_FYP_Report_Mid1_Addendum.pdf)) | Team | Report implementation correction and responsible tool disclosure |
+| [16_usman_conflict_score_backfill_handoff.md](16_usman_conflict_score_backfill_handoff.md) | **Usman** | All records confidence=1 / auto_accepted — ingest vs conflict backfill; demo Review Queue |
 
 ## Partner agents — start here
 
@@ -36,6 +37,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | Diagnostics UI | [`12`](12_u4_u5_diagnostics_handoff.md) + [`13`](13_u3_deterministic_ranking.md) |
 | Staging / CD / logs | [`knowledge/context/modules/remote_backend.md`](../../knowledge/context/modules/remote_backend.md) |
 | Usman reconciliation | [`05`](05_usman_final_audit.md) + note staging corpus now live (Umar U2) |
+| **Usman — empty Review Queue / all confidence 1** | **[`16_usman_conflict_score_backfill_handoff.md`](16_usman_conflict_score_backfill_handoff.md)** |
 
 ## Branch map
 

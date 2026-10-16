@@ -33,6 +33,10 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 - Preserve original records on accept/reject; do not claim adjudicated *diagnosis*.
 - Conflict metrics ≠ diagnostic accuracy.
 
+## Staging caveat (Mid-I)
+
+Bulk ingest leaves all records at `auto_accepted` / `confidence=1.0` until `process_record` or `scripts/backfill_conflict_scores.py` runs. Empty Review Queue + all confidence=1 → see [`docs/mid1/16_usman_conflict_score_backfill_handoff.md`](../../../docs/mid1/16_usman_conflict_score_backfill_handoff.md).
+
 ## Related
 
 [FLOW-conflict-review.md](../../flows/FLOW-conflict-review.md)

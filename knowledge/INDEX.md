@@ -24,7 +24,8 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | diagnose, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py`, docs/mid1/08–13 |
 | mid1 umar audit, U1–U5 | docs/mid1/08_umar_progress.md (+ 09–13 handoffs) |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
-| conflict, needs_review, confidence gate | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md |
+| conflict, needs_review, confidence gate | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, docs/mid1/16_usman_conflict_score_backfill_handoff.md |
+| review queue empty, all confidence 1 | docs/mid1/16_usman_conflict_score_backfill_handoff.md (Usman backfill) |
 | ingest, SDR, FAA corpus | flows/FLOW-ingest.md |
 | DEMO_MODE, graph_mode, llm_mode | context/modules/devops.md |
 | CI, GitHub Actions, docker compose | flows/FLOW-ci.md, context/modules/devops.md |
