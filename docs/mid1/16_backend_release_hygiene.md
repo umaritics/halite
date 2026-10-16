@@ -20,7 +20,7 @@ performed.
 | 1. Protect staging | **PASS** | Obsolete branch push triggers removed; only CI-successful `main` SHAs are eligible; full SHA, ancestry, confirmation, exact-CI and protected-environment gates apply. |
 | 2. Reconcile record count | **PASS (code fixed; live repair deferred)** | Exactly one orphan node identified; retry ingestion now repairs the missing `ABOUT` link idempotently. Production data was not modified. |
 | 3. Health efficiency | **PASS** | Health contract preserved; Neo4j uses `count(sr)` and memory mode counts nodes without record materialization. Legacy software-project API description removed. |
-| 4. Integration regression | **PASS locally / PARTIAL real graph** | `127 passed, 20 skipped`; local Docker/Neo4j unavailable due the existing Docker Desktop WSL failure. Prior hosted real-graph evidence remains green. |
+| 4. Integration regression | **PASS for Umar/Usman scope** | `127 passed, 20 skipped` locally; PR backend and Docker real-graph jobs passed. The known Shahmeer frontend job failed and remains blocking. |
 | 5. Exact evidence | **PASS** | This document records policy, counts, changed files, tests, limitations, and U1–U5/A1–A4 continuity. |
 
 ## Deployment workflow policy
@@ -109,6 +109,9 @@ repository test proves the Neo4j query returns only the aggregate.
 | Public staging health | **PASS**, Neo4j, 2,079 records, SHA `b14c8ec…` |
 | Public assets/history reconciliation | **PASS**, 118 assets and 2,078 unique linked records |
 | Local Docker real-graph run | **BLOCKED**, Docker Desktop WSL bootstrap error `0xc00000fd` |
+| PR #2 backend job, run `38924662398` | **PASS**, Python 3.11 backend tests |
+| PR #2 Docker job, run `38924662398` | **PASS**, Compose real-graph smoke |
+| PR #2 frontend job, run `38924662398` | **FAIL**, known Shahmeer-owned test; not bypassed |
 
 The 20 skips are explicit Neo4j parameterizations when
 `NEO4J_URI`/`NEO4J_PASSWORD` are absent. The fixture no longer invents
@@ -168,6 +171,7 @@ changed.
 - Shahmeer must fix the existing frontend test so full CI can become green.
 - Repair the one live orphan only after authorization, backup, and recorded
   pre/post counts.
-- Re-run real-Neo4j integration in hosted CI or after Docker Desktop is repaired.
+- Repair local Docker Desktop if a local real-Neo4j rerun is desired; hosted PR
+  real-graph integration already passes.
 - Merge and deploy only through separate explicit approval; this branch must
   remain an unmerged review PR until then.
