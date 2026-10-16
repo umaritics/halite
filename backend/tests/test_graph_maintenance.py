@@ -154,6 +154,27 @@ class TestLinkRecordAboutAsset:
         assert history[0]["record_id"] == "LINK001"
 
 
+class TestListAssetsWithCounts:
+    def test_returns_sorted_assets_and_counts(self, repo):
+        first = repo.find_or_create_asset("NCOUNT2", {})
+        second = repo.find_or_create_asset("NCOUNT1", {})
+        for index in range(2):
+            record_id = f"COUNT{index:03d}"
+            repo.create_service_record({
+                "record_id": record_id,
+                "asset_key": "NCOUNT2",
+                "occurred_at": f"2025-01-0{index + 1}",
+                "text": "counted record",
+            })
+            repo.link_record_about_asset(record_id, first["id"])
+
+        assets = repo.list_assets_with_counts()
+
+        assert [asset["tail_number"] for asset in assets] == ["NCOUNT1", "NCOUNT2"]
+        counts = {asset["id"]: asset["record_count"] for asset in assets}
+        assert counts == {first["id"]: 2, second["id"]: 0}
+
+
 class TestListAssetHistory:
     def test_ascending_order(self, repo):
         asset = repo.find_or_create_asset("NHIST01", {})

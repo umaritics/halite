@@ -379,6 +379,21 @@ class MemoryGraphStore:
             return
         self._add_edge(sr_nodes[0]["id"], asset_id, "ABOUT")
 
+    def list_assets_with_counts(self) -> list[dict]:
+        """Return assets and record counts with one pass over ABOUT edges."""
+        assets = self._find_nodes("Asset")
+        counts = {asset["id"]: 0 for asset in assets}
+        for edge in self.edges:
+            if edge["type"] == "ABOUT" and edge["target"] in counts:
+                counts[edge["target"]] += 1
+
+        result = [
+            {**asset, "record_count": counts[asset["id"]]}
+            for asset in assets
+        ]
+        result.sort(key=lambda asset: asset.get("tail_number", ""))
+        return result
+
     def list_asset_history(self, asset_id: str, limit: int = 50) -> list[dict]:
         """Return ServiceRecords linked to asset_id, ascending by occurred_at."""
         records = []

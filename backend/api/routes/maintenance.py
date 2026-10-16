@@ -238,22 +238,8 @@ def process_single_record(
 
 @router.get("/assets")
 def list_assets(graph_repo=Depends(get_graph_repo)):
-    """List all assets with their record counts."""
-    if graph_repo.is_memory:
-        assets = graph_repo.store._find_nodes("Asset")
-    else:
-        rows = graph_repo.store.run_query(
-            "MATCH (a:Asset) RETURN a ORDER BY a.tail_number"
-        )
-        assets = [dict(r["a"]) for r in rows]
-
-    result = []
-    for asset in assets:
-        count = len(graph_repo.list_asset_history(asset["id"], limit=9999))
-        result.append({**asset, "record_count": count})
-
-    result.sort(key=lambda a: a.get("tail_number", ""))
-    return result
+    """List assets and record counts using one repository aggregation."""
+    return graph_repo.list_assets_with_counts()
 
 
 # ---------------------------------------------------------------------------

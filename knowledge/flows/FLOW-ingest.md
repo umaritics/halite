@@ -15,6 +15,8 @@ updated: 2026-10-16
 3. `MaintenanceAgent` creates/updates `Asset` + `ServiceRecord`, `ABOUT`, chronological `PRECEDED_BY`.
 4. Idempotent: second ingest skips duplicates (`duplicates_skipped`).
 5. Health shows `maintenance_corpus_loaded` + non-zero count.
+6. `GET /api/maintenance/assets` returns assets and counts through one
+   repository aggregation; it does not issue one history query per asset.
 
 ## Dependency graph
 
@@ -23,6 +25,8 @@ flowchart LR
   CSV[sdr_poc_corpus.csv] --> Route[maintenance.py /ingest]
   Route --> Agent[maintenance_agent.py]
   Agent --> GR[GraphRepository]
+  Assets[GET /maintenance/assets] --> Count[list_assets_with_counts]
+  Count --> GR
   GR --> N[(Neo4j)]
   Compose[docker-compose.yml] --> N
   Compose --> BE[backend container]

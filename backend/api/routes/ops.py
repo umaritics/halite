@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+import secrets
 import time
 from collections import deque
 from typing import Deque
@@ -69,7 +70,8 @@ def _require_ops_token(
             status_code=503,
             detail="OPS_TOKEN is not configured on this server. Ask the deploy admin to set it.",
         )
-    if not x_ops_token or x_ops_token.strip() != expected:
+    supplied = (x_ops_token or "").strip()
+    if not supplied or not secrets.compare_digest(supplied, expected):
         raise HTTPException(status_code=401, detail="Invalid or missing X-Ops-Token")
 
 

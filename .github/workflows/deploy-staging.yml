@@ -117,9 +117,8 @@ jobs:
           PY
 
       - name: Smoke maintenance assets
-        continue-on-error: true
         run: |
-          code=$(curl -s -o /tmp/assets.json -w "%{http_code}" \
+          code=$(curl --max-time 30 -s -o /tmp/assets.json -w "%{http_code}" \
             "https://dev1.corp.curatech.pk/halite-api/api/maintenance/assets")
           echo "HTTP $code"
           head -c 500 /tmp/assets.json || true

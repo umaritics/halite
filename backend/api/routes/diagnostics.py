@@ -58,11 +58,9 @@ class ChatRequest(BaseModel):
 # Cache helpers (reuse pattern from conflict_engine.py)
 # ---------------------------------------------------------------------------
 
-def _cache_dir() -> Path:
+def _cache_path() -> Path:
     from config import settings
-    d = Path(settings.MAINT_DATA_DIR) / "diag_cache"
-    d.mkdir(parents=True, exist_ok=True)
-    return d
+    return Path(settings.MAINT_DATA_DIR) / "diag_cache" / "cache.json"
 
 
 def _cache_key(asset_id: str, symptom: str, model: str) -> str:
@@ -72,7 +70,7 @@ def _cache_key(asset_id: str, symptom: str, model: str) -> str:
 
 
 def _load_cache() -> dict:
-    p = _cache_dir() / "cache.json"
+    p = _cache_path()
     if p.exists():
         try:
             with open(p, encoding="utf-8") as f:
@@ -83,12 +81,13 @@ def _load_cache() -> dict:
 
 
 def _save_cache(cache: dict) -> None:
-    p = _cache_dir() / "cache.json"
+    p = _cache_path()
     try:
+        p.parent.mkdir(parents=True, exist_ok=True)
         with open(p, "w", encoding="utf-8") as f:
             json.dump(cache, f, indent=2)
-    except Exception as e:
-        logger.error("Failed to write diag cache: %s", e)
+    except OSError as exc:
+        logger.warning("Diagnostic cache unavailable; continuing without persistence: %s", exc)
 
 
 def _build_prompt(context: dict, ranked: list[dict]) -> str:

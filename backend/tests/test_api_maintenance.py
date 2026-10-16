@@ -157,8 +157,16 @@ class TestIngestAndQuery:
             repo.link_record_about_asset("SEED002", asset["id"])
             yield c, asset["id"]
 
-    def test_assets_listed_after_seed(self, seeded_client):
+    def test_assets_listed_after_seed(self, seeded_client, monkeypatch):
         c, asset_id = seeded_client
+        repo = c.app.state.graph_repo
+        monkeypatch.setattr(
+            repo,
+            "list_asset_history",
+            lambda *_args, **_kwargs: pytest.fail(
+                "assets endpoint must not issue per-asset history queries"
+            ),
+        )
         resp = c.get("/api/maintenance/assets")
         assert resp.status_code == 200
         assets = resp.json()

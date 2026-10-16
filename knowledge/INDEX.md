@@ -16,6 +16,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | --- | --- |
 | Mid-I, vertical slice, acceptance gate | context/00_project_overview.md |
 | maintenance-only, software domain dropped | context/01_domain_scope_deferred.md |
+| maintenance assets, history, ingest, record counts, N+1 | context/modules/maintenance_api.md, FLOW-ingest.md |
 | deferred, vector index, SaaS multi-tenant | context/01_domain_scope_deferred.md |
 | Umar, Shahmeer, Usman, ownership | context/02_ownership_mid1.md |
 | DomainAdapter, registry | context/03_architecture.md |
@@ -40,7 +41,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `backend/services/diagnostic_retrieval.py` | modules/diagnostics.md, FLOW-diagnose.md |
 | `backend/api/routes/diagnostics.py` | modules/diagnostics.md, FLOW-diagnose.md |
 | `backend/services/conflict_engine.py` | modules/conflict_engine.md, FLOW-conflict-review.md |
-| `backend/api/routes/maintenance.py` | FLOW-ingest.md, FLOW-conflict-review.md |
+| `backend/api/routes/maintenance.py` | modules/maintenance_api.md, FLOW-ingest.md, FLOW-conflict-review.md |
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |
 | `backend/agents/maintenance_agent.py` | FLOW-ingest.md |
 | `frontend/src/pages/Diagnostics.jsx` | modules/frontend.md, FLOW-diagnose.md |

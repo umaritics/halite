@@ -24,6 +24,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [11_u2_real_data_retrieval.md](11_u2_real_data_retrieval.md) | Umar | U2 staging Neo4j retrieval proof + bounds |
 | [12_u4_u5_diagnostics_handoff.md](12_u4_u5_diagnostics_handoff.md) | Umar → Shahmeer | Citation/LLM boundary + diagnose UI contract |
 | [13_u3_deterministic_ranking.md](13_u3_deterministic_ranking.md) | Umar | U3 ranking weights, tie-break, schema |
+| [14_usman_umar_integration.md](14_usman_umar_integration.md) | Usman + Umar | Combined audit, rubric mapping, performance closure, remaining Shahmeer work |
 
 ## Partner agents — start here
 

@@ -794,6 +794,23 @@ class GraphRepository:
             {"rid": record_id, "aid": asset_id},
         )
 
+    def list_assets_with_counts(self) -> list[dict]:
+        """Return every Asset with its ServiceRecord count in one graph query."""
+        if self.is_memory:
+            return self.store.list_assets_with_counts()
+        rows = self.store.run_query(
+            """
+            MATCH (a:Asset)
+            OPTIONAL MATCH (sr:ServiceRecord)-[:ABOUT]->(a)
+            RETURN a, count(sr) AS record_count
+            ORDER BY a.tail_number
+            """
+        )
+        return [
+            {**dict(row["a"]), "record_count": int(row["record_count"])}
+            for row in rows
+        ]
+
     def list_asset_history(self, asset_id: str, limit: int = 50) -> list[dict]:
         """Return ServiceRecords for an asset ordered ascending by occurred_at."""
         if self.is_memory:
