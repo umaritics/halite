@@ -16,6 +16,7 @@ typing a UUID, open Assets → 813SK and use the links the app gives you.
 | Setup | Docker Neo4j + local backend; create git-ignored `frontend/.env.local` with `VITE_API_URL=/api` and `VITE_PROXY_TARGET=http://localhost:8000` | nothing; `npm run dev` |
 | Diagnosis narrative | Worked in my checks (full explanation, 10 evidence records, 13 verified citations for the drag-angle case) | **Returned no explanation on 2026-10-16** (3 of 3 fresh symptoms): ranking only, no Analysis / citations / evidence cards. Confirm with Umar/Usman that this is fixed **before** demoing step 5 on staging |
 | Risk | Your machine only | Shared corpus: Accept/Reject would change data for everyone |
+| Conflict data (steps 6 and 7) | 9 review-queue items (first: 163AA `AALA202510203314`); 813SK has 1 superseded record (`SWIA2025111576508`) | **Empty on 2026-10-16:** review queue = 0 items; all 153 of 813SK's records are `auto_accepted`; no superseded records; no `SUPERSEDES` edges in the graph sample. The conflict backfill has apparently not been run on staging. Steps 6 and 7 (superseded record) only work on the local stack until Usman runs it there |
 
 **Check `/api/health` agrees before you claim anything:** `graph_mode=neo4j`, `llm_mode=live`, `maintenance_corpus_loaded=true`.
 

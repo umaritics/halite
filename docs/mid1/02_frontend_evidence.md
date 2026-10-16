@@ -200,6 +200,10 @@ For **Umar** (diagnostics route):
 
 For **Usman** (maintenance routes, tests, deployment):
 - `GET /maintenance/records/{id}` re-runs the conflict engine (an LLM call) on every view.
+- **Shared staging has no conflict-engine output (checked 2026-10-16):** `GET /maintenance/review-queue` returns 0 items, all 153 of 813SK's records
+  are `auto_accepted` (locally: 9 queue items, 1 superseded record), and a 2000-node graph sample contains no `SUPERSEDES` edges. The review UI is linked and
+  tested, but there is nothing to show on staging until the conflict backfill is run there.
+- The history API exposes no field naming the superseding record, so the UI can say a record was superseded but not by which one.
 - `GET /maintenance/assets/{id}/history` is keyed by UUID; a tail number returns 404. Record this in the contract.
 - `backend/tests/test_graph_maintenance.py` has a `neo4j` fixture that defaults to `bolt://localhost:7687` and, on
   teardown, deletes every `ServiceRecord` and `Asset`. Running the full suite while the dev Neo4j is up wipes the corpus.
