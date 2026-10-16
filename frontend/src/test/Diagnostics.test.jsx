@@ -348,4 +348,111 @@ describe('Diagnostics', () => {
       expect(screen.getByText(/qualified personnel remain authoritative/)).toBeDefined();
     });
   });
+
+  describe('contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md)', () => {
+    const withChecks = (checks, extra = {}) => ({
+      data: {
+        ...mockResult,
+        ranked_checks: checks,
+        ...extra,
+      },
+    });
+
+    it('lets a ranked check\'s evidence record ids open the history when the record is known', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue(
+        withChecks([
+          { part_name: 'DRAG ANGLE', evidence_count: 2, sources: ['asset_history'], evidence_record_ids: ['DEMO1', 'UNKNOWN9'] },
+        ])
+      );
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Ranked Inspection Order'));
+
+      const list = document.getElementById('ranked-checks-list');
+      // DEMO1 is in `evidence` (known aircraft) -> a button; UNKNOWN9 is not -> plain text, never a guessed link.
+      const buttons = [...list.querySelectorAll('button')].map(b => b.textContent);
+      expect(buttons).toEqual(['DEMO1']);
+      expect(list.textContent).toContain('UNKNOWN9');
+    });
+
+    it('caps long record lists per check and says how many more there are', async () => {
+      const ids = Array.from({ length: 9 }, (_, i) => `ID${i}`);
+      client.maintenanceAPI.diagnose.mockResolvedValue(
+        withChecks([{ part_name: 'ANGLE', evidence_count: 9, sources: ['fleet_match'], evidence_record_ids: ids }])
+      );
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Ranked Inspection Order'));
+
+      const text = document.getElementById('ranked-checks-list').textContent;
+      expect(text).toContain('ID4');
+      expect(text).not.toContain('ID5');
+      expect(text).toContain('+4 more');
+    });
+
+    it('styles [UNVERIFIED:ID] markers as warnings', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue({
+        data: {
+          ...mockResult,
+          explanation: 'Seen in SWIA2025000000000 [UNVERIFIED:SWIA2025000000000] and DEMO1.',
+          citation_validation: { valid_ids: ['DEMO1'], invalid_ids: ['SWIA2025000000000'], all_valid: false },
+        },
+      });
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Analysis'));
+
+      const marks = document.querySelectorAll('mark[data-unverified]');
+      expect(marks).toHaveLength(1);
+      expect(marks[0].textContent).toBe('[UNVERIFIED:SWIA2025000000000]');
+    });
+
+    it('does not call citations verified when all_valid is false, even with no invalid ids listed', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue({
+        data: {
+          ...mockResult,
+          citation_validation: { valid_ids: ['DEMO1'], invalid_ids: [], all_valid: false },
+        },
+      });
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Analysis'));
+
+      expect(screen.getByText(/citation check did not pass/i)).toBeDefined();
+      expect(screen.queryByText(/verified against the graph/)).toBeNull();
+    });
+
+    it('says so when the model returns no explanation but a ranking exists (not a silent omission)', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue({
+        data: {
+          ...mockResult,
+          explanation: '',
+          evidence: [],
+          citation_validation: { valid_ids: [], invalid_ids: [], all_valid: true },
+        },
+      });
+      renderPage();
+      await runDiagnostic();
+
+      await waitFor(() => screen.getByText('Ranked Inspection Order'));
+      expect(screen.getByText('No written explanation returned')).toBeDefined();
+      expect(screen.getByText(/computed from historical records alone/i)).toBeDefined();
+      expect(screen.queryByText('Analysis')).toBeNull();
+    });
+
+    it('does not show the no-explanation notice when an explanation is present', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue({ data: mockResult });
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Analysis'));
+      expect(screen.queryByText('No written explanation returned')).toBeNull();
+    });
+
+    it('warns that a fresh diagnosis can be slow while it is loading', async () => {
+      client.maintenanceAPI.diagnose.mockReturnValue(new Promise(() => {}));
+      renderPage();
+      await runDiagnostic();
+      await screen.findByText(/can take up to a minute/i);
+    });
+  });
 });

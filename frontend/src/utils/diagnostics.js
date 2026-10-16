@@ -138,3 +138,16 @@ export function extractExplanation(raw) {
 
   return { text: raw, warnings: [], recovered: false };
 }
+
+// The backend replaces any cited record ID it cannot find in the graph with a marker such as
+// "[UNVERIFIED:SWIA2025000000000]" (see docs/mid1/12_u4_u5_diagnostics_handoff.md). Split text
+// into plain and flagged segments so the UI can style the markers as warnings.
+const UNVERIFIED_MARKER = /(\[UNVERIFIED(?::[^\]]*)?\])/g;
+
+export function splitUnverified(text) {
+  if (typeof text !== 'string' || text === '') return [];
+  return text
+    .split(UNVERIFIED_MARKER)
+    .filter((part) => part !== '')
+    .map((part) => ({ text: part, flagged: /^\[UNVERIFIED(?::[^\]]*)?\]$/.test(part) }));
+}

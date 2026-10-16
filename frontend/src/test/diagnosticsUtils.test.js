@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatDetail, describeDiagnosticError, extractExplanation } from '../utils/diagnostics';
+import { formatDetail, describeDiagnosticError, extractExplanation, splitUnverified } from '../utils/diagnostics';
 
 describe('formatDetail', () => {
   it('passes strings through', () => {
@@ -104,5 +104,30 @@ describe('extractExplanation', () => {
   it('handles non-string input', () => {
     expect(extractExplanation(undefined).text).toBe('');
     expect(extractExplanation(null).text).toBe('');
+  });
+});
+
+describe('splitUnverified', () => {
+  it('returns one plain segment when there are no markers', () => {
+    expect(splitUnverified('Plain text.')).toEqual([{ text: 'Plain text.', flagged: false }]);
+  });
+
+  it('flags [UNVERIFIED:ID] and bare [UNVERIFIED] markers and keeps the surrounding text in order', () => {
+    expect(splitUnverified('A [UNVERIFIED:X1] b [UNVERIFIED] c')).toEqual([
+      { text: 'A ', flagged: false },
+      { text: '[UNVERIFIED:X1]', flagged: true },
+      { text: ' b ', flagged: false },
+      { text: '[UNVERIFIED]', flagged: true },
+      { text: ' c', flagged: false },
+    ]);
+  });
+
+  it('does not flag lookalikes', () => {
+    expect(splitUnverified('[VERIFIED:X1] and [unverified]').every(s => !s.flagged)).toBe(true);
+  });
+
+  it('handles empty and non-string input', () => {
+    expect(splitUnverified('')).toEqual([]);
+    expect(splitUnverified(undefined)).toEqual([]);
   });
 });

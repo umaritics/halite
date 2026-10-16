@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { maintenanceAPI } from '../api/client';
-import { describeDiagnosticError, extractExplanation } from '../utils/diagnostics';
+import { describeDiagnosticError, extractExplanation, splitUnverified } from '../utils/diagnostics';
+
+const MAX_IDS_PER_CHECK = 5;
 
 // G4: Diagnostic chat page
 // Layout:
@@ -85,6 +87,16 @@ export default function Diagnostics() {
     : [];
   const validIds = result?.citation_validation?.valid_ids ?? [];
   const invalidIds = result?.citation_validation?.invalid_ids ?? [];
+  const citationsAllValid = result?.citation_validation?.all_valid;
+
+  // Evidence records the backend returned, keyed by record id, so a ranked check's record
+  // ids can link to the right aircraft's history. IDs that are not in `evidence` stay plain
+  // text: their aircraft is unknown, so a link could land on the wrong page.
+  const evidenceById = Object.fromEntries(evidence.map(ev => [ev.record_id, ev]));
+  const openRecord = (ev) => {
+    const assetUuid = assets.find(a => a.tail_number === ev.asset_id)?.id || ev.asset_id;
+    navigate(`/app/asset-history/${assetUuid}#${ev.record_id}`);
+  };
 
   return (
     <div className="h-full overflow-y-auto">
@@ -223,6 +235,9 @@ export default function Diagnostics() {
             <p className="mt-3 font-sans text-sm text-secondary">
               Querying graph and fleet records…
             </p>
+            <p className="mt-1 font-sans text-xs text-secondary">
+              A fresh diagnosis calls the language model and can take up to a minute on the shared service.
+            </p>
           </div>
         )}
 
@@ -294,6 +309,29 @@ export default function Diagnostics() {
                           <p className="mt-0.5 font-sans text-xs text-secondary">
                             sources: {(check.sources ?? []).join(', ') || 'n/a'}
                           </p>
+                          {(check.evidence_record_ids ?? []).length > 0 && (
+                            <p className="mt-0.5 font-sans text-xs text-secondary">
+                              records:{' '}
+                              {check.evidence_record_ids.slice(0, MAX_IDS_PER_CHECK).map((rid, k) => (
+                                <span key={rid}>
+                                  {k > 0 && ', '}
+                                  {evidenceById[rid] ? (
+                                    <button
+                                      type="button"
+                                      className="font-mono text-accent hover:underline"
+                                      onClick={() => openRecord(evidenceById[rid])}
+                                    >
+                                      {rid}
+                                    </button>
+                                  ) : (
+                                    <span className="font-mono">{rid}</span>
+                                  )}
+                                </span>
+                              ))}
+                              {check.evidence_record_ids.length > MAX_IDS_PER_CHECK &&
+                                ` +${check.evidence_record_ids.length - MAX_IDS_PER_CHECK} more`}
+                            </p>
+                          )}
                         </div>
                       </li>
                     ))}
@@ -302,16 +340,44 @@ export default function Diagnostics() {
               </section>
             )}
 
+            {/* The ranking is computed from the graph; the written explanation comes from the model.
+                If the model returned nothing, say so rather than silently showing less. */}
+            {!insufficientEvidence && rankedChecks.length > 0 && !explanation?.text && (
+              <div id="no-explanation" role="status" className="halite-card border border-amber-500/30 bg-amber-500/5 p-4">
+                <p className="font-sans text-sm font-medium text-amber-400">No written explanation returned</p>
+                <p className="mt-1 font-sans text-sm text-primary">
+                  The language model did not return an explanation for this request, so no narrative or citations are shown.
+                  The ranking above is computed from historical records alone. Try again, or rephrase the symptom.
+                </p>
+              </div>
+            )}
+
             {/* LLM explanation: withheld when there is nothing for it to be grounded in */}
             {explanation?.text && !insufficientEvidence && (
               <section className="halite-card p-6">
                 <h3 className="font-brand text-primary mb-3">Analysis</h3>
                 <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
-                  {explanation.text}
+                  {splitUnverified(explanation.text).map((seg, k) =>
+                    seg.flagged ? (
+                      <mark
+                        key={k}
+                        data-unverified="true"
+                        className="rounded bg-amber-500/20 px-1 font-mono text-xs text-amber-400"
+                      >
+                        {seg.text}
+                      </mark>
+                    ) : (
+                      <Fragment key={k}>{seg.text}</Fragment>
+                    )
+                  )}
                 </p>
                 {invalidIds.length > 0 ? (
                   <p className="mt-2 font-sans text-xs text-amber-400">
                     ⚠ {invalidIds.length} unverified ID(s) were flagged and marked [UNVERIFIED].
+                  </p>
+                ) : citationsAllValid === false ? (
+                  <p className="mt-2 font-sans text-xs text-amber-400">
+                    ⚠ The citation check did not pass, so these references are not shown as verified.
                   </p>
                 ) : validIds.length > 0 ? (
                   <p id="citation-status" className="mt-2 font-sans text-xs text-secondary">
