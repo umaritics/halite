@@ -3,49 +3,60 @@ id: flow-diagnose
 title: Diagnostic investigation flow
 status: active
 owners: [Umar, Shahmeer]
-updated: 2026-10-16
+updated: 2026-10-17
 ---
 
-# FLOW-diagnose — symptom to ranked checks
+# FLOW-diagnose — evidence-grounded investigation
 
-## Actors
+## Actors and entry points
 
-Technician (UI) → Frontend → `POST /api/maintenance/diagnose` → retrieval + rank → citation validate → optional LLM explain → UI renders `ranked_checks`.
+- Technician → Diagnostics **Copilot** → `POST /api/maintenance/copilot/turn`
+- Technician → **Quick diagnose** → `POST /api/maintenance/diagnose`
 
-## Happy path
+The one-shot contract is preserved. Copilot adds a stateless multi-turn path;
+the browser sends the structured case state on every request.
 
-1. User selects asset from `/api/maintenance/assets` (real corpus ID).
-2. Opens Diagnostics; enters symptom text.
-3. UI calls `maintenanceAPI.diagnose(assetId, symptomText)`.
-4. Backend loads/builds diagnostic context from Neo4j (bounded history + similar records).
-5. Ranker orders investigative checks with evidence record IDs.
-6. LLM (or cache) produces explanation constrained to retrieved IDs.
-7. `validate_citations` (`services/citation_validation.py`) confirms/flags IDs.
-8. UI shows ranked list, explanation, warnings, citation status; user opens a cited record.
+## Copilot happy path
+
+1. Technician optionally selects an aircraft; **All fleet** is the default.
+2. UI sends `{session_id?, asset_id?, message, case_state}`.
+3. The model extracts new facts into strict case-state JSON. Invalid extraction
+   retains the raw message instead of discarding it.
+4. Retrieval runs again over all accumulated symptoms and observations. An
+   aircraft filter adds its bounded history; fleet retrieval remains bounded by
+   `FLEET_SCAN_CAP`.
+5. The established deterministic heuristic ranks active evidence. Ruled-out
+   components and superseded records cannot become recommendations.
+6. The backend compares the previous and new deterministic rankings and emits
+   moved-up/down/new/dropped components plus newly retrieved record IDs.
+7. For report help, explicit IDs or aircraft/date/topic criteria select records
+   deterministically before model summarization.
+8. The model phrases a reply only from supplied records and asks at most one
+   question. Citation validation flags unknown or out-of-context IDs.
+9. The UI shows the thread, editable case state, movement badges, evidence,
+   citation status, and deep links into aircraft history.
+10. Local sessions are saved/resumed/deleted with guarded `localStorage` calls.
+
+## Quick-diagnose path
+
+1. User selects an aircraft and enters one symptom.
+2. Backend retrieves bounded asset and fleet context and ranks checks.
+3. A live model phrases the explanation; citation validation verifies IDs.
+4. Empty model content or an empty parsed explanation is an explicit 503, never
+   a blank successful response.
 
 ## Failure modes
 
 | Case | Expected |
 | --- | --- |
-| Unknown asset | Controlled 404 / empty — no invented history |
-| No relevant history | Empty/low ranked checks; no fabricated repair |
-| Groq down, no cache | HTTP 503 with clear message |
-| Model invents ID | Citation validator rejects/flags |
-
-## UI states (Diagnostics.jsx)
-
-| Response | UI |
-| --- | --- |
-| 200 with ranking + explanation | ranked checks (rank score, all record ids expandable), analysis, citation status, evidence cards, server time, decision-support notice |
-| 200, ranking but empty `explanation` | ranking + "No written explanation returned" notice (no Analysis, no citations) |
-| 200, no ranking and no evidence | "Insufficient evidence" banner; any model text returned is still shown, labelled as not backed by retrieved evidence |
-| 404 | "No service history for this aircraft" (no retry) |
-| 422 | "Check the request" with flattened field messages |
-| 429 / 5xx / network | explicit message + Try again |
-| 503 | "Diagnostic model unavailable" + backend reason; no diagnosis shown |
-
-Note: with the model unavailable, an unknown asset also returns 503 (the live-model check runs before the history check).
-Evidence/record ids open `/app/asset-history/<asset uuid>#<record_id>`; the page scrolls to and marks that record.
+| Unknown copilot aircraft | 404 before model work |
+| Blank or >4000-character message | 422 |
+| Copilot model unavailable/rate-limited/empty | 200, `llm_status:"unavailable"`, `reply:null`; ranking/evidence retained |
+| No relevant records | Explicit no-relevant-history response; no invented records |
+| Invalid or out-of-context citation | ID marked unverified and omitted from `valid_ids` |
+| Superseded record | Visible as superseded evidence, absent from recommendation inputs |
+| Browser storage denied/corrupt | Chat remains usable; session persistence warning |
+| Quick diagnose empty model output | 503 with explicit detail |
 
 ## Dependency graph
 
@@ -53,35 +64,35 @@ Evidence/record ids open `/app/asset-history/<asset uuid>#<record_id>`; the page
 flowchart TB
   subgraph frontend
     D[Diagnostics.jsx]
-    C[api/client.js maintenanceAPI.diagnose]
-    H[AssetHistory.jsx / ServiceRecords.jsx]
-    U[utils/diagnostics.js error mapping, explanation recovery, UNVERIFIED split]
+    S[(guarded localStorage sessions)]
+    C[api/client.js]
+    H[AssetHistory deep link]
   end
   subgraph backend
     R[api/routes/diagnostics.py]
     RET[services/diagnostic_retrieval.py]
+    V[services/citation_validation.py]
     G[services/groq_service.py]
     CACHE[data/diag_cache/cache.json]
-    QR[graph/queries.py GraphRepository]
+    QR[graph/queries.py]
   end
   subgraph data
     N[(Neo4j Asset/ServiceRecord)]
   end
-  D --> C --> R
-  R --> RET
+  D -->|copilotTurn / diagnose| C --> R
+  D <--> S
+  R -->|accumulated case| RET --> QR --> N
   R --> G
-  R --> CACHE
-  RET --> QR --> N
-  D -. opens evidence record_id deep link .-> H
-  D --> U
-  H --> C
+  R --> V --> QR
+  R -->|one-shot only| CACHE
+  D -. evidence record .-> H
 ```
 
-## File dependencies (edges)
+## File dependencies
 
 - `Diagnostics.jsx` → `client.js` → `diagnostics.py`
-- `diagnostics.py` → `diagnostic_retrieval.py` → `queries.py` → Neo4j
-- `diagnostics.py` → `groq_service.py` + diag cache
-- UI evidence click → history/record routes (`maintenance.py`)
-- `Diagnostics.jsx` → `utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split)
-- `AssetHistory.jsx` reads `#record_id` and scrolls to `record-<id>`
+- `diagnostics.py` → additive copilot helpers in `diagnostic_retrieval.py`
+- `diagnostic_retrieval.py` → `queries.py` → Neo4j/memory store
+- `diagnostics.py` → `groq_service.py` + `citation_validation.py`
+- One-shot `/diagnose` retains its diagnostic cache path
+- Evidence click → `/app/asset-history/<asset uuid>#<record_id>`

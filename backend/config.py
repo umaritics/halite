@@ -11,7 +11,7 @@ class Settings(BaseSettings):
 
     GROQ_API_KEY: str = ""
     GROQ_API_KEY_FALLBACK: str = ""
-    GROQ_MODEL: str = "openai/gpt-oss-120b"
+    GROQ_MODEL: str = "openai/gpt-oss-20b"
 
     GITEA_BASE_URL: str = ""
     GITEA_TOKEN: str = ""

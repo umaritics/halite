@@ -25,7 +25,7 @@ class GroqService:
         """True only when a real Groq client is configured and not in demo mode."""
         return not self.demo_mode and self.client is not None
 
-    def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 1500) -> str:
+    def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048) -> str:
         if self.demo_mode:
             self.fallback_invocations += 1
             return self._demo_response(messages, system_prompt)
@@ -34,13 +34,30 @@ class GroqService:
             full_messages.append({"role": "system", "content": system_prompt})
         full_messages.extend(messages)
         try:
+            request_options = {
+                "model": self.model,
+                "messages": full_messages,
+                "max_tokens": max_tokens,
+                "temperature": 0.3,
+            }
+            # GPT-OSS counts private reasoning against the completion budget.
+            # Groq SDK 0.9 accepts newer API fields through extra_body.
+            if self.model.startswith("openai/gpt-oss-"):
+                request_options["extra_body"] = {
+                    "include_reasoning": False,
+                    "reasoning_effort": "low",
+                }
             response = self.client.chat.completions.create(
-                model=self.model,
-                messages=full_messages,
-                max_tokens=max_tokens,
-                temperature=0.3,
+                **request_options,
             )
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            if content is None or not str(content).strip():
+                finish_reason = getattr(response.choices[0], "finish_reason", "unknown")
+                raise RuntimeError(
+                    "Groq returned an empty model response "
+                    f"(model={self.model}, finish_reason={finish_reason})."
+                )
+            return str(content)
         except Exception as exc:
             if "rate limit" in str(exc).lower() or "429" in str(exc):
                 from config import settings

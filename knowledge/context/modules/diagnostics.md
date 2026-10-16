@@ -3,7 +3,7 @@ id: mod-diagnostics
 title: Diagnostics module
 status: active
 owners: [Umar]
-updated: 2026-10-16
+updated: 2026-10-17
 depends_on: [ctx-data-graph]
 ---
 
@@ -17,7 +17,7 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 
 | File | Role |
 | --- | --- |
-| `backend/api/routes/diagnostics.py` | `POST /api/maintenance/diagnose`, `POST /api/maintenance/chat`; cache; citation validation; LLM gate |
+| `backend/api/routes/diagnostics.py` | One-shot diagnose, legacy chat, stateless copilot turn; cache; citation validation; LLM gate |
 | `backend/services/diagnostic_retrieval.py` | History context, similar-symptom search, `build_diagnostic_context` |
 | `backend/tests/test_diagnostic_retrieval.py` | Unit/integration tests Umar extends |
 | `frontend/src/pages/Diagnostics.jsx` | Shahmeer UI consumer |
@@ -31,6 +31,28 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 | `resolution_outcomes` | Follow-on outcomes for candidate IDs |
 | `build_diagnostic_context` | Assembles context for diagnose |
 | `rank_diagnostic_checks` | Deterministic part ranking + stable tie-break (U3) |
+| `build_copilot_context` | Accumulated symptoms + observations, optional aircraft scope, bounded fleet scan |
+| `rank_copilot_checks` | Active evidence only; excludes explicitly ruled-out components |
+| `ranking_delta` | Stable moved-up/down/new/dropped + newly retrieved evidence delta |
+
+## Copilot contract
+
+`POST /api/maintenance/copilot/turn` accepts
+`{session_id?, asset_id?, message, case_state?}`. `asset_id` is optional; absent
+means fleet-wide retrieval. The client carries state because the server is
+stateless. The response includes `reply`, merged `case_state`, deterministic
+`ranked_checks`, `ranking_delta`, evidence, citation validation, `llm_status`,
+and warnings.
+
+Case state has `symptoms`, `observations`, `checks_done`, `ruled_out`, and
+`open_questions`. LLM extraction is strict JSON; invalid extraction retains the
+raw message. Model failure returns HTTP 200 with `reply:null`, an unavailable
+status, and deterministic evidence/ranking. Unknown aircraft is 404; blank or
+oversized messages are 422.
+
+Explicit record IDs and aircraft/date/topic report requests are selected
+deterministically before the model summarizes them. Superseded records remain
+visible evidence but are excluded from copilot recommendations.
 
 ## Ranking honesty (Mid-I)
 
@@ -41,6 +63,10 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 - Tie-break: score DESC → evidence_count DESC → part_name ASC. Evidence IDs and sources sorted.
 
 ## LLM boundary
+
+- `GroqService` rejects `None`/blank content. GPT-OSS uses low reasoning effort,
+  excludes reasoning output, and has a larger completion budget. The default is
+  consistently `openai/gpt-oss-20b` in config, wrapper, and `.env.example`.
 
 - Live Groq required for fresh diagnose unless a valid diag cache hit exists.
 - Missing live model → controlled **503** (or clear cache path), never silent fake diagnosis.
