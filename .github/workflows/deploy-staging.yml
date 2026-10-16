@@ -1,40 +1,57 @@
 name: Deploy staging backend
 
-# Partners without VM access: push backend changes (or Run workflow) → updates the shared API.
-# Secrets: VM_SSH_HOST, VM_SSH_USER, VM_SSH_KEY, VM_DEPLOY_PATH
-# Guide: knowledge/context/modules/remote_backend.md
+# Deploys only CI-approved commits from main. Configure required reviewers on
+# the existing `staging` GitHub Environment to approve releases and rollbacks.
+# Secrets remain: VM_SSH_HOST, VM_SSH_USER, VM_SSH_KEY, VM_DEPLOY_PATH.
 
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
-      ref:
-        description: "Git SHA or ref to deploy (empty = this commit)"
-        required: false
-        default: ""
-  push:
-    branches:
-      - umar/mid1-graph-diagnostics
-      - usman
-      - main
-    paths:
-      - "backend/**"
-      - "docker-compose.vm.yml"
-      - "scripts/vm/**"
-      - ".github/workflows/deploy-staging.yml"
+      sha:
+        description: "Full 40-character SHA from main to deploy or roll back to"
+        required: true
+        type: string
+      release_action:
+        description: "Release operation"
+        required: true
+        default: deploy
+        type: choice
+        options:
+          - deploy
+          - rollback
+      confirmation:
+        description: "Type DEPLOY or ROLLBACK to confirm the selected operation"
+        required: true
+        type: string
 
 concurrency:
   group: deploy-staging
   cancel-in-progress: false
 
 permissions:
+  actions: read
   contents: read
 
 jobs:
   deploy:
-    name: SSH deploy to shared VM
+    name: Deploy CI-approved main revision to shared VM
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     environment: staging
     steps:
+      - name: Check out main for revision validation
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
       - name: Check deploy secrets
         env:
           VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
@@ -50,19 +67,100 @@ jobs:
             fi
           done
           if [ "$missing" -ne 0 ]; then
-            echo "Add secrets under Repo Settings → Secrets and variables → Actions."
-            echo "Create Environment named 'staging' if GitHub prompts for it."
+            echo "Add secrets under Repo Settings -> Secrets and variables -> Actions."
+            echo "Keep the approval-protected Environment named 'staging'."
             echo "Guide: knowledge/context/modules/remote_backend.md"
             exit 1
           fi
 
-      - name: Resolve deploy metadata
+      - name: Validate requested revision and release intent
         id: meta
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_SHA: ${{ github.event.workflow_run.head_sha }}
+          REQUESTED_SHA: ${{ inputs.sha }}
+          RELEASE_ACTION: ${{ inputs.release_action }}
+          CONFIRMATION: ${{ inputs.confirmation }}
         run: |
-          REF="${{ github.event.inputs.ref }}"
-          if [ -z "$REF" ]; then REF="${{ github.sha }}"; fi
-          echo "sha=$REF" >> "$GITHUB_OUTPUT"
+          set -euo pipefail
+          git fetch origin main --no-tags
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            candidate="$REQUESTED_SHA"
+            expected_confirmation=$(printf '%s' "$RELEASE_ACTION" | tr '[:lower:]' '[:upper:]')
+            if [ "$CONFIRMATION" != "$expected_confirmation" ]; then
+              echo "::error::Confirmation must exactly match $expected_confirmation"
+              exit 1
+            fi
+          else
+            candidate="$WORKFLOW_SHA"
+            RELEASE_ACTION="deploy"
+          fi
+
+          if ! printf '%s' "$candidate" | grep -Eq '^[0-9a-fA-F]{40}$'; then
+            echo "::error::Deployment revision must be a full 40-character Git SHA"
+            exit 1
+          fi
+          candidate=$(printf '%s' "$candidate" | tr '[:upper:]' '[:lower:]')
+          git cat-file -e "${candidate}^{commit}"
+          resolved=$(git rev-parse "${candidate}^{commit}")
+          main_sha=$(git rev-parse origin/main)
+          if ! git merge-base --is-ancestor "$resolved" "$main_sha"; then
+            echo "::error::Revision is not reachable from origin/main"
+            exit 1
+          fi
+          if [ "$EVENT_NAME" != "workflow_dispatch" ] && [ "$resolved" != "$main_sha" ]; then
+            echo "::error::A newer main revision exists; refusing an automatic stale deployment"
+            exit 1
+          fi
+
+          echo "sha=$resolved" >> "$GITHUB_OUTPUT"
+          echo "action=$RELEASE_ACTION" >> "$GITHUB_OUTPUT"
           echo "deployed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Require successful CI for the exact revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_SHA: ${{ steps.meta.outputs.sha }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/$REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$DEPLOY_SHA&status=completed&per_page=20" \
+            > /tmp/ci-runs.json
+          python3 - <<'PY'
+          import json
+          import os
+
+          sha = os.environ["DEPLOY_SHA"]
+          with open("/tmp/ci-runs.json", encoding="utf-8") as handle:
+              runs = json.load(handle).get("workflow_runs", [])
+          approved = [
+              run for run in runs
+              if run.get("head_sha") == sha
+              and run.get("head_branch") == "main"
+              and run.get("conclusion") == "success"
+          ]
+          if not approved:
+              raise SystemExit(f"No successful full CI run on main for {sha}")
+          print(f"Verified successful CI run {approved[0]['id']} for {sha}")
+          PY
+
+      - name: Record currently deployed revision for rollback
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            https://dev1.corp.curatech.pk/halite-api/api/ops/version \
+            | tee /tmp/previous-version.json
+          echo
+          python3 - <<'PY'
+          import json
+
+          with open("/tmp/previous-version.json", encoding="utf-8") as handle:
+              payload = json.load(handle)
+          print("Previous deployed SHA:", payload.get("git_sha", "unknown"))
+          PY
 
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
@@ -75,7 +173,7 @@ jobs:
           script: |
             set -euo pipefail
             cd "$DEPLOY_PATH"
-            echo "==> Fetching $DEPLOY_SHA"
+            echo "==> Fetching approved revision $DEPLOY_SHA"
             git fetch --all --prune
             git checkout --force "$DEPLOY_SHA"
             git reset --hard "$DEPLOY_SHA"
@@ -100,20 +198,31 @@ jobs:
           DEPLOY_PATH: ${{ secrets.VM_DEPLOY_PATH }}
           DEPLOYED_AT: ${{ steps.meta.outputs.deployed_at }}
 
-      - name: Verify public health + version
+      - name: Verify public health and exact version
+        env:
+          DEPLOY_SHA: ${{ steps.meta.outputs.sha }}
         run: |
           set -euo pipefail
           BASE="https://dev1.corp.curatech.pk/halite-api"
           curl -fsS "$BASE/api/health" | tee /tmp/health.json
           echo
-          curl -fsS "$BASE/api/ops/version" | tee /tmp/version.json || true
+          curl -fsS "$BASE/api/ops/version" | tee /tmp/version.json
           echo
           python3 - <<'PY'
           import json
-          h=json.load(open("/tmp/health.json"))
-          print("git_sha=", h.get("git_sha"), "graph_mode=", h.get("graph_mode"), "domains=", h.get("domains"))
-          if "git_sha" not in h and "graph_mode" not in h:
-              raise SystemExit("Deployed API still looks like the pre-Mid-I image")
+          import os
+
+          with open("/tmp/health.json", encoding="utf-8") as handle:
+              health = json.load(handle)
+          with open("/tmp/version.json", encoding="utf-8") as handle:
+              version = json.load(handle)
+          expected = os.environ["DEPLOY_SHA"]
+          observed = version.get("git_sha") or health.get("git_sha")
+          if observed != expected:
+              raise SystemExit(f"Expected deployed SHA {expected}, observed {observed}")
+          if health.get("graph_mode") != "neo4j":
+              raise SystemExit(f"Unexpected graph mode: {health.get('graph_mode')}")
+          print("Verified deployed SHA", observed)
           PY
 
       - name: Smoke maintenance assets

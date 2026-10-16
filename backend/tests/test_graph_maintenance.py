@@ -35,9 +35,9 @@ def _neo4j_repo_or_skip():
     """Return a Neo4j-backed GraphRepository, or skip the test if unreachable."""
     from graph.neo4j_client import Neo4jClient
     from graph.queries import GraphRepository
-    uri = os.environ.get("NEO4J_URI", "bolt://localhost:7687")
+    uri = os.environ.get("NEO4J_URI")
     user = os.environ.get("NEO4J_USERNAME", "neo4j")
-    password = os.environ.get("NEO4J_PASSWORD", "localdevpassword")
+    password = os.environ.get("NEO4J_PASSWORD")
 
     if not (uri and password):
         pytest.skip("NEO4J_URI / NEO4J_PASSWORD not set — Neo4j test skipped")
@@ -152,6 +152,50 @@ class TestLinkRecordAboutAsset:
         history = repo.list_asset_history(asset["id"])
         assert len(history) == 1
         assert history[0]["record_id"] == "LINK001"
+
+    def test_repeated_link_is_idempotent(self, repo):
+        asset = repo.find_or_create_asset("NLINK02", {})
+        repo.create_service_record({
+            "record_id": "LINK002",
+            "asset_key": "NLINK02",
+            "occurred_at": "2025-04-02",
+            "text": "linked twice",
+        })
+        repo.link_record_about_asset("LINK002", asset["id"])
+        repo.link_record_about_asset("LINK002", asset["id"])
+
+        assert len(repo.list_asset_history(asset["id"])) == 1
+
+
+class TestCountServiceRecords:
+    def test_counts_nodes_including_unlinked_records(self, repo):
+        repo.create_service_record({
+            "record_id": "COUNTNODE001",
+            "asset_key": "NORPHAN",
+            "occurred_at": "2025-04-03",
+            "text": "intentionally unlinked for count contract",
+        })
+
+        assert repo.count_service_records() == 1
+
+    def test_neo4j_count_query_returns_only_aggregate(self):
+        from graph.queries import GraphRepository
+
+        class CountStore:
+            def __init__(self):
+                self.calls = []
+
+            def run_query(self, query, parameters=None):
+                self.calls.append((query, parameters))
+                return [{"record_count": 2079}]
+
+        store = CountStore()
+        repo = GraphRepository(store)
+
+        assert repo.count_service_records() == 2079
+        assert len(store.calls) == 1
+        assert "count(sr) AS record_count" in store.calls[0][0]
+        assert "RETURN sr" not in store.calls[0][0]
 
 
 class TestListAssetsWithCounts:

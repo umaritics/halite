@@ -377,7 +377,19 @@ class MemoryGraphStore:
         sr_nodes = self._find_nodes("ServiceRecord", record_id=record_id)
         if not sr_nodes:
             return
-        self._add_edge(sr_nodes[0]["id"], asset_id, "ABOUT")
+        source_id = sr_nodes[0]["id"]
+        if any(
+            edge["source"] == source_id
+            and edge["target"] == asset_id
+            and edge["type"] == "ABOUT"
+            for edge in self.edges
+        ):
+            return
+        self._add_edge(source_id, asset_id, "ABOUT")
+
+    def count_service_records(self) -> int:
+        """Count ServiceRecord nodes without materializing record dictionaries."""
+        return sum(1 for node in self.nodes.values() if node.get("label") == "ServiceRecord")
 
     def list_assets_with_counts(self) -> list[dict]:
         """Return assets and record counts with one pass over ABOUT edges."""

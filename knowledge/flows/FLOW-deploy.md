@@ -10,11 +10,14 @@ updated: 2026-10-16
 
 ## Happy path
 
-1. Engineer pushes backend change to an allowed branch (or runs workflow_dispatch).
-2. GitHub Actions `deploy-staging.yml` SSHes to the VM.
-3. VM checks out the SHA and rebuilds `halite-api` via `docker-compose.vm.yml`.
-4. Public `/api/health` and `/api/ops/version` show the new `git_sha`.
-5. Frontends using `VITE_API_URL=…/halite-api/api` see the new behavior immediately.
+1. Reviewed work lands on `main` and the full `CI` workflow succeeds.
+2. `deploy-staging.yml` validates the exact `main` SHA and CI result, then
+   waits for the protected `staging` environment approval.
+3. The workflow records the currently deployed SHA for rollback evidence.
+4. GitHub Actions SSHes to the VM, which checks out the approved SHA and
+   rebuilds `halite-api` via `docker-compose.vm.yml`.
+5. Public `/api/health` and `/api/ops/version` must show the exact new SHA.
+6. Frontends using `VITE_API_URL=…/halite-api/api` see the new behavior.
 
 ## Log visibility path
 
@@ -32,7 +35,9 @@ flowchart LR
 
 ```mermaid
 flowchart TB
-  Push[git push backend/**] --> WF[.github/workflows/deploy-staging.yml]
+  Main[reviewed main SHA] --> CI[full CI]
+  CI -->|success| Approval[staging environment approval]
+  Approval --> WF[deploy-staging.yml validates exact SHA]
   WF -->|SSH secrets| VM[VM git checkout]
   VM --> Compose[docker-compose.vm.yml]
   Compose --> Image[backend Dockerfile + GIT_SHA]
@@ -49,3 +54,6 @@ flowchart TB
 | Health OK but maintenance 404 | Old image still running; redeploy current SHA |
 | Ops logs 503 | Set `OPS_TOKEN` in VM `backend/.env` and recreate container |
 | Ops logs 401 | Wrong/missing `X-Ops-Token` header |
+| Frontend CI is red | Deployment remains blocked; fix on Shahmeer's branch, never bypass the gate |
+| Manual SHA is not a `main` ancestor | Dispatch fails before SSH |
+| Rollback needed | Use the recorded prior SHA, `rollback` + `ROLLBACK`, successful CI, and environment approval |

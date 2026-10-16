@@ -69,7 +69,11 @@ async def lifespan(app: FastAPI):
     store.close()
 
 
-app = FastAPI(title="Halite API", description="Living knowledge graph for software project reasoning", lifespan=lifespan)
+app = FastAPI(
+    title="Halite API",
+    description="Maintenance knowledge graph for evidence-backed diagnostics",
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -109,8 +113,7 @@ def _health_payload():
     maintenance_corpus_loaded = False
     if graph_repo:
         try:
-            records = graph_repo.list_service_records()
-            maintenance_record_count = len(records)
+            maintenance_record_count = graph_repo.count_service_records()
             maintenance_corpus_loaded = maintenance_record_count > 0
         except Exception:
             pass

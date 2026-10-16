@@ -13,6 +13,10 @@ updated: 2026-10-16
 - Source: public FAA Service Difficulty Reports (SDR).
 - Processed POC path (ignored by git): `backend/data/processed/sdr_poc_corpus.csv`.
 - Typical POC scale (file evidence): ~2,079 records, ~118 assets; dense demo asset `813SK`.
+- Staging reconciliation found 2,079 nodes but 2,078 `ABOUT` links: record
+  `AALA202506230216` (`991AU`) is the single orphan. The source has 2,079
+  unique IDs and no blank asset keys. Do not mutate staging without a backup
+  and approved repair; retrying ingest now idempotently repairs missing links.
 - Licence notes: `docs/DATA_LICENCE.md`.
 
 ## Node types (maintenance)

@@ -38,10 +38,33 @@ Workflow: `.github/workflows/deploy-staging.yml`
 
 Triggers:
 
-- Push to `umar/mid1-graph-diagnostics`, `usman`, or `main` that touches `backend/**` (or compose/deploy scripts)
-- Manual **Actions → Deploy staging backend → Run workflow**
+- Successful full `CI` completion for the current `main` tip. A newer `main`
+  tip invalidates an older automatic deployment.
+- Manual **Actions → Deploy staging backend → Run workflow** with a full
+  40-character SHA reachable from `main`, an operation (`deploy` or
+  `rollback`), and the matching uppercase confirmation.
 
-What it does: SSH into the VM → `git fetch/checkout` SHA → `docker compose -f docker-compose.vm.yml build/up` → verify public `/api/health`.
+Both paths require a successful full CI run for the exact SHA and use the
+existing `staging` environment. Repository administrators must configure that
+environment with required reviewers; without that GitHub setting, YAML alone
+cannot enforce human approval. The known Shahmeer frontend failure therefore
+blocks deployment and is not bypassed.
+
+What it does: validate the SHA and CI result → record the currently deployed
+SHA from `/api/ops/version` → SSH into the VM → rebuild → require public
+health/version to report the exact approved SHA.
+
+### Approved rollback
+
+1. Read the previous deployed SHA from the prior deployment log's **Record
+   currently deployed revision for rollback** step (or verify the currently
+   live SHA through `/api/ops/version` before a release).
+2. Confirm that SHA is reachable from `main` and has a successful full CI run.
+3. Manually dispatch with that full SHA, choose `rollback`, type `ROLLBACK`,
+   and approve the protected `staging` environment review.
+4. The same post-deploy health, exact-version, and assets checks must pass.
+
+Never use a branch name or arbitrary ref for rollback.
 
 ### Current VM facts (already provisioned)
 
@@ -86,8 +109,10 @@ cd U:\Development\NexiumApps\Halite
 | `VM_DEPLOY_PATH` | `/home/umar/halite` |
 | `VM_SSH_KEY` | entire contents of `%USERPROFILE%\.ssh\halite_github_deploy` (including `BEGIN`/`END` lines) |
 
-3. Settings → Environments → create **`staging`** (used by deploy workflows).
-4. Push a backend change (or Actions → **Deploy staging backend** → Run).
+3. Settings → Environments → create **`staging`**, add required reviewers,
+   and prevent administrators from bypassing the protection rule.
+4. Merge a reviewed change to `main`, or manually dispatch a validated,
+   CI-green `main` SHA for an approved release/rollback.
 
 Verify:
 
@@ -118,7 +143,7 @@ Actions → **Fetch staging backend logs** → Run workflow → download artifac
 
 | Do | Don’t |
 | --- | --- |
-| Push backend changes; let CD deploy | SSH into the VM “just to restart” |
+| Merge reviewed changes to `main`; approve CI-green releases | SSH into the VM “just to restart” |
 | Check `/api/ops/version` after deploy | Claim live Neo4j/LLM without reading `/api/health` |
 | Use shared API from frontend `.env.local` | Commit `.env` / `OPS_TOKEN` / SSH keys |
 | Run backend unit tests locally (`DEMO_MODE=true`) | Point local Vite at localhost and assume that is staging |

@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261016-main-only-staging-release](DEC-20261016-main-only-staging-release.md) | Main-only, CI-gated staging releases | accepted | Umar, Usman |
 | [DEC-20261016-shared-staging-cd](DEC-20261016-shared-staging-cd.md) | Centralized staging API + Actions CD | accepted | Umar, Usman |
 | [DEC-20261016-knowledge-rename](DEC-20261016-knowledge-rename.md) | Move bank to top-level `knowledge/` | accepted | Umar |
 | [DEC-20261016-context-bank](DEC-20261016-context-bank.md) | Adopt knowledge bank + agent protocol | accepted | all |

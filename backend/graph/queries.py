@@ -794,6 +794,15 @@ class GraphRepository:
             {"rid": record_id, "aid": asset_id},
         )
 
+    def count_service_records(self) -> int:
+        """Count ServiceRecord nodes without loading their properties into Python."""
+        if self.is_memory:
+            return self.store.count_service_records()
+        rows = self.store.run_query(
+            "MATCH (sr:ServiceRecord) RETURN count(sr) AS record_count"
+        )
+        return int(rows[0]["record_count"]) if rows else 0
+
     def list_assets_with_counts(self) -> list[dict]:
         """Return every Asset with its ServiceRecord count in one graph query."""
         if self.is_memory:

@@ -110,6 +110,31 @@ def test_idempotent_second_run():
     assert result2["duplicates_skipped"] == 2
 
 
+def test_duplicate_retry_repairs_missing_about_link_without_duplication():
+    repo = _make_repo()
+    agent = _make_agent(repo)
+    raw = _make_record("REPAIR001", tail="NREPAIR")
+    asset = repo.find_or_create_asset("NREPAIR", {})
+    repo.create_service_record({
+        "record_id": "REPAIR001",
+        "asset_key": "NREPAIR",
+        "occurred_at": "2025-01-15",
+        "text": "record created before interrupted link step",
+    })
+
+    first_retry = agent.run({"records": [raw]})
+    second_retry = agent.run({"records": [raw]})
+
+    assert first_retry["records_created"] == 0
+    assert first_retry["duplicates_skipped"] == 1
+    assert second_retry["duplicates_skipped"] == 1
+    assert [record["record_id"] for record in repo.list_asset_history(asset["id"])] == [
+        "REPAIR001"
+    ]
+    about_edges = [edge for edge in repo.store.edges if edge["type"] == "ABOUT"]
+    assert len(about_edges) == 1
+
+
 # ---------------------------------------------------------------------------
 # Blank RegistryNNumber — skip and count
 # ---------------------------------------------------------------------------
