@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
 import { maintenanceAPI } from '../api/client';
 import StatusChip from '../components/StatusChip';
+import ConfidenceBar from '../components/ConfidenceBar';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { formatDate, dateValue } from '../utils/format';
 import { describeLoadError } from '../utils/loadError';
@@ -176,6 +177,14 @@ export default function AssetHistory() {
                   <p className="font-sans text-sm text-secondary whitespace-pre-wrap">
                     {rec.text}
                   </p>
+                  {/* Conflict-engine and ingest fields exactly as the backend returns them. */}
+                  {(rec.confidence != null || rec.jasc_code || rec.source) && (
+                    <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-xs text-secondary">
+                      {rec.confidence != null && <ConfidenceBar confidence={rec.confidence} />}
+                      {rec.jasc_code && <span>JASC {rec.jasc_code}</span>}
+                      {rec.source && <span>Source: {rec.source}</span>}
+                    </div>
+                  )}
                   <div className="mt-3 font-sans text-xs text-[#888888] font-mono">
                     ID: {rec.record_id}
                   </div>

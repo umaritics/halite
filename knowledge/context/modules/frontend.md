@@ -50,6 +50,7 @@ and unknown paths redirect to `/app/assets`.
 | "Citations verified" only when `all_valid` and no invalid IDs; wording says IDs exist, not that statements are supported | `Diagnostics.jsx` |
 | Ranking is labelled as historical frequency, never a probability; decision-support notice on every result | `Diagnostics.jsx` |
 | Missing model output is stated ("No written explanation returned"), not silently omitted | `Diagnostics.jsx` |
+| **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
 | Only backend-supplied values are displayed (no invented supersession reason, no "Invalid Date") | `AssetHistory.jsx`, `utils/format.js` |
@@ -82,4 +83,5 @@ shape, not live integration. There is no linter. Evidence and live checks: `docs
   deferred scope.
 - 2026-10-16 observation: on shared staging, fresh diagnose calls returned an empty `explanation`, empty `evidence` and
   empty citation lists (3 of 3 symptoms) while the ranking was present; the same merged code run locally returned a full
-  explanation for 1 of 2. Cause not established from outside (needs staging logs). The UI shows the notice above.
+  explanation for 1 of 2. **Settings now shows staging's pinned model as `openai/gpt-oss-20b`; the local stack uses
+  `openai/gpt-oss-120b`**, a likely (unconfirmed) cause. Needs staging logs / `GROQ_MODEL` on the VM. The UI shows the notice above.
