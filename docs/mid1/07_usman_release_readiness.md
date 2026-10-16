@@ -3,9 +3,9 @@
 Audit date: 2026-10-15<br>
 Owner: Muhammad Usman Al Haq<br>
 Branch: `usman`<br>
-Verified code SHA: `e569ea881470ab6166e0d6e6888b60b8db66763b`<br>
-Latest hosted evidence SHA: `fc3db4c56e382b0d78bca59305304ef721226812`<br>
-Latest verified Actions run: [`38794104215`](https://github.com/umaritics/halite/actions/runs/38794104215)<br>
+Verified release-evidence SHA: `ecbf1d7cb830648b7f2d78858fb128fa8bd35560`<br>
+Current branch tip at repository-hygiene audit start: `b949de47a5c2baadb240cd9d0a1c6c5f8f9b96e9` (README-only commits after the release-evidence baseline)<br>
+Latest verified closure run: [`38796169387`](https://github.com/umaritics/halite/actions/runs/38796169387)<br>
 Main baseline: `4329556c2405ffa1a397979ae26bc68ad8814eac`
 
 ## Release verdict
@@ -15,9 +15,9 @@ Main baseline: `4329556c2405ffa1a397979ae26bc68ad8814eac`
 | Requirement | Status | Proof | Remaining action | Owner |
 | --- | --- | --- | --- | --- |
 | A1 real FAA corpus in running Neo4j | **BLOCKED** | Ignored CSV inspection proves 2,079 rows, 118 assets, `813SK`, `SWIA2025111676447`, and both `811NN` records. Docker Desktop cannot bootstrap WSL (`0xc00000fd`); no approved alternative corpus host/transfer exists. | Provide isolated Neo4j runtime, temporary credentials, approved private corpus transfer, and authorization to ingest/delete only the isolated database. | Infrastructure administrator + Usman |
-| A1 synthetic integration | **PASS** | Latest Docker job `116625881043` passed real-Neo4j fixture ingestion, duplicate safety, health, APIs, frontend serving, logs, and cleanup. | Do not misrepresent this as full FAA proof. | Usman |
-| A2 maintenance API/workflow | **PASS** | 59 focused tests passed; complete backend result was 102 passed and 16 explicit Neo4j skips; hosted backend job `116625881694` passed. | None in Usman's owned API scope. | Usman |
-| A3 mandatory CI | **FAIL** | Latest backend and Docker jobs pass; frontend job `116625881625` fails and skips hosted build. | Complete `06_frontend_review_queue_handoff.md`, rerun all jobs, require green overall workflow. | Shahmeer + release coordinator |
+| A1 synthetic integration | **PASS** | Docker job `116633015957` on release-evidence SHA `ecbf1d7` passed real-Neo4j fixture ingestion, duplicate safety, health, APIs, frontend serving, logs, and cleanup. | Do not misrepresent this as full FAA proof. | Usman |
+| A2 maintenance API/workflow | **PASS** | 59 focused tests passed; complete backend result was 102 passed and 16 explicit Neo4j skips; hosted backend job `116633015975` passed. | None in Usman's owned API scope. | Usman |
+| A3 mandatory CI | **FAIL** | On run `38796169387`, backend job `116633015975` and Docker job `116633015957` passed; frontend job `116633015569` failed and skipped the hosted build. | Complete `06_frontend_review_queue_handoff.md`, rerun all jobs, require green overall workflow. | Shahmeer + release coordinator |
 | A3 current persistent backend | **FAIL** | `https://dev1.corp.curatech.pk/halite-api/openapi.json` returns 200 through Caddy but exposes 17 paths and zero maintenance paths; maintenance assets returns 404. | Identify/deploy an approved current release SHA and verify health/assets/history. | VM/deployment administrator |
 | A3 deployed SHA | **NOT VERIFIED** | Public VM health/OpenAPI exposes no build SHA; server/container access is unavailable. | Provide read-only SSH/container inspection or a `/version` release-metadata mechanism approved by the backend owner. | VM administrator |
 | A3 frontend previews | **PARTIAL** | GitHub records two successful Vercel deployments for `fc3db4c`; both URLs redirect unauthenticated checks to Vercel SSO. | Identify the canonical project, grant reviewer access or provide an approved public staging URL, then verify app and `/api` behavior. | Shahmeer/Vercel owner |
@@ -77,6 +77,9 @@ This is a handoff, not evidence that deployment or rollback was executed.
 | `e569ea8` | Hosted evidence update. |
 | `d54d4bd` | Final audit and frontend-owner handoff. |
 | `fc3db4c` | Hosted audit-run evidence. |
+| `ecbf1d7` | Final release-readiness evidence reconciled to run `38796169387`. |
+
+Two later commits, `6b0b29c` and `b949de4`, modify only `README.md`; they improve project documentation and GitHub Mermaid compatibility and do not change the verified release implementation.
 
 ### Inherited cross-owner commits
 
