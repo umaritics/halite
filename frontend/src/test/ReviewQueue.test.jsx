@@ -9,6 +9,7 @@ vi.mock('../api/client', () => ({
   maintenanceAPI: {
     reviewQueue: vi.fn(),
     submitRecord: vi.fn(),
+    getRecord: vi.fn(),
     assetHistory: vi.fn(),
     accept: vi.fn(),
     reject: vi.fn(),
@@ -27,7 +28,9 @@ describe('ReviewQueue', () => {
       }]
     });
 
-    client.maintenanceAPI.submitRecord.mockResolvedValue({
+    // Same conflict payload shape for the dry-run detail fetch
+    // (GET /maintenance/records/{id}) and the submit call.
+    const conflictDetail = {
       data: {
         record_id: 'R1',
         candidates_considered: 5,
@@ -40,7 +43,9 @@ describe('ReviewQueue', () => {
           text: 'Old Broken'
         }
       }
-    });
+    };
+    client.maintenanceAPI.submitRecord.mockResolvedValue(conflictDetail);
+    client.maintenanceAPI.getRecord.mockResolvedValue(conflictDetail);
 
     client.maintenanceAPI.assetHistory.mockResolvedValue({
       data: { count: 10 }
