@@ -10,6 +10,10 @@ from __future__ import annotations
 import re
 from typing import Optional
 
+# Mid-I FAA corpus is ~2k records. Cap fleet scan so Neo4j always has a LIMIT
+# and Python scoring cannot grow unbounded if the graph grows later.
+FLEET_SCAN_CAP = 2500
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -47,11 +51,15 @@ def asset_history_context(graph_repo, asset_id: str, limit: int = 30, exclude_sy
       record_id, asset_id, occurred_at, part_name, jasc_code, text,
       status, is_superseded, superseded_by (record_id | None)
     """
-    history = graph_repo.list_asset_history(asset_id, limit=200)
-    # Sort newest first
-    history.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
+    # Fetch newest-first with the same limit we return (bounded Cypher LIMIT).
+    # Over-fetch slightly when excluding DEMO* so the visible window still fills.
+    fetch_limit = limit + 20 if exclude_synthetic else limit
+    history = graph_repo.list_asset_history_recent(asset_id, limit=fetch_limit)
     if exclude_synthetic:
-        history = [r for r in history if not str(r.get("record_id", r.get("id", ""))).startswith("DEMO")]
+        history = [
+            r for r in history
+            if not str(r.get("record_id", r.get("id", ""))).startswith("DEMO")
+        ]
 
     results = []
     for rec in history[:limit]:
@@ -95,8 +103,8 @@ def similar_symptom_records(
 
     Returns list sorted descending by score.
     """
-    # Collect all records across all assets
-    all_records = graph_repo.list_service_records()
+    # Bounded fleet scan (newest-first LIMIT in Neo4j / memory store).
+    all_records = graph_repo.list_service_records(limit=FLEET_SCAN_CAP)
 
     scored = []
     norm_jasc = _normalise(jasc_code) if jasc_code else ""
@@ -157,9 +165,24 @@ def resolution_outcomes(graph_repo, record_ids: list[str]) -> list[dict]:
     Superseded resolutions are labelled explicitly — they must not be silently
     presented as positive evidence.
     """
+    if not record_ids:
+        return []
+
+    by_id: dict[str, dict] = {}
+    if hasattr(graph_repo, "get_service_records_by_ids"):
+        for rec in graph_repo.get_service_records_by_ids(record_ids):
+            rid = str(rec.get("record_id", rec.get("id", "")))
+            if rid:
+                by_id[rid] = rec
+    else:
+        for rid in record_ids:
+            rec = graph_repo.get_service_record(rid)
+            if rec is not None:
+                by_id[str(rid)] = rec
+
     results = []
     for rid in record_ids:
-        rec = graph_repo.get_service_record(rid)
+        rec = by_id.get(str(rid))
         if rec is None:
             continue
         is_sup = _record_is_superseded(rec)

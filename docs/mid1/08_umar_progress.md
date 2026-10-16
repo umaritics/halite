@@ -19,13 +19,14 @@ Baseline: branched from `usman` @ `b949de4` via `feat/mid1/graph-diagnostics` @ 
 | GitHub Actions CD | `Deploy staging backend` green on `30b322b` |
 | Ops visibility for partners | `GET /api/ops/version` (public), `GET /api/ops/logs` (`X-Ops-Token`) |
 | Dedicated deploy SSH key | GitHub secret `VM_SSH_KEY` — not personal SSH key |
+| **U2** real-data retrieval | Staging: 813SK history 153; diagnose 200 + citations; unknown/empty → 404; Cypher LIMIT on recent history + fleet scan |
 
 ## In progress / next (Umar)
 
 | Package | Status | Next action |
 | --- | --- | --- |
-| **U2** Real-data graph retrieval | Next | Prove diagnose/history on staging Neo4j; bounded queries; unknown asset / empty history controlled |
-| **U3** Deterministic ranking | Pending | Stable tie-break; document weights; evidence per candidate |
+| **U2** Real-data graph retrieval | **Done** | Staging proof + bounds — `docs/mid1/11_u2_real_data_retrieval.md` |
+| **U3** Deterministic ranking | Next | Stable tie-break; document weights; evidence per candidate |
 | **U4** Citation validation / LLM boundary | Pending | Real FAA ID tests; 503 when no Groq/cache; no invented IDs |
 | **U5** Diagnostic backend tests + handoff | Pending | Route tests + fixtures for Shahmeer |
 

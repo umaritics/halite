@@ -48,6 +48,14 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 Request: `{ "asset_id": "...", "symptom_text": "..." }`  
 Response fields expected by UI (verify in code before renaming): `ranked_checks`, explanation, evidence/citations, citation validation status, warnings. Coordinate renames with Shahmeer.
 
+## U2 retrieval bounds (real Neo4j corpus)
+
+- Asset window: `list_asset_history_recent` (DESC + LIMIT), default 30 for diagnose context.
+- Fleet scan: `list_service_records(limit=FLEET_SCAN_CAP)` with `FLEET_SCAN_CAP=2500` in `diagnostic_retrieval.py`.
+- Outcomes: batched `get_service_records_by_ids`.
+- Controlled failures: unknown asset history → 404; diagnose with empty history → 404.
+- Staging evidence: [docs/mid1/11_u2_real_data_retrieval.md](../../../docs/mid1/11_u2_real_data_retrieval.md).
+
 ## Related
 
 - Flow: [FLOW-diagnose.md](../../flows/FLOW-diagnose.md)

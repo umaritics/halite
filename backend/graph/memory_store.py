@@ -390,6 +390,22 @@ class MemoryGraphStore:
         records.sort(key=lambda r: r.get("occurred_at", ""))
         return records[:limit]
 
+    def list_asset_history_recent(self, asset_id: str, limit: int = 30) -> list[dict]:
+        """Newest-first ServiceRecords linked to asset_id."""
+        records = self.list_asset_history(asset_id, limit=10_000)
+        records.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
+        return records[:limit]
+
+    def get_service_records_by_ids(self, record_ids: list[str]) -> list[dict]:
+        """Batch fetch ServiceRecords by record_id."""
+        wanted = set(record_ids)
+        out = []
+        for node in self._find_nodes("ServiceRecord"):
+            rid = node.get("record_id") or node.get("id")
+            if rid in wanted:
+                out.append(node)
+        return out
+
     def link_record_supersedes(
         self,
         new_record_id: str,
@@ -411,7 +427,10 @@ class MemoryGraphStore:
         )
 
     def list_service_records(
-        self, status: str | None = None, asset_id: str | None = None
+        self,
+        status: str | None = None,
+        asset_id: str | None = None,
+        limit: int | None = None,
     ) -> list[dict]:
         """List ServiceRecords optionally filtered by status and asset_id."""
         records = self._find_nodes("ServiceRecord")
@@ -425,6 +444,8 @@ class MemoryGraphStore:
                     linked_record_ids.add(edge["source"])
             records = [r for r in records if r["id"] in linked_record_ids]
         records.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
+        if limit is not None:
+            records = records[: int(limit)]
         return records
 
     def update_service_record(self, record_id: str, updates: dict) -> dict | None:

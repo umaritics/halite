@@ -184,6 +184,22 @@ class TestListAssetHistory:
         limited = repo.list_asset_history(asset["id"], limit=2)
         assert len(limited) == 2
 
+    def test_recent_newest_first_and_limited(self, repo):
+        asset = repo.find_or_create_asset("NHIST03", {})
+        for i, date in enumerate(["2025-01-01", "2025-03-01", "2025-02-01"]):
+            repo.create_service_record({
+                "record_id": f"REC{i:03d}",
+                "asset_key": "NHIST03",
+                "occurred_at": date,
+                "text": f"r{i}",
+            })
+            repo.link_record_about_asset(f"REC{i:03d}", asset["id"])
+
+        recent = repo.list_asset_history_recent(asset["id"], limit=2)
+        assert len(recent) == 2
+        assert recent[0]["occurred_at"] == "2025-03-01"
+        assert recent[1]["occurred_at"] == "2025-02-01"
+
 
 class TestLinkRecordSupersedes:
     def test_supersedes_edge_created(self, repo):

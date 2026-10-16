@@ -24,7 +24,7 @@ Source: `docs/halite_work_division_mid1.pdf`.
 | `feat/mid1/graph-diagnostics` | Umar |
 | `feat/mid1/maintenance-devops` / `usman` | Usman |
 
-Current Umar working branch: **`feat/mid1/graph-diagnostics`** (from `origin/usman`).
+Current Umar working branch: **`umar/mid1-graph-diagnostics`** (from `feat/mid1/graph-diagnostics` / `origin/usman`).
 
 ## Umar work packages (checklist)
 

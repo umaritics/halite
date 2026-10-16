@@ -14,6 +14,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [08_umar_progress.md](08_umar_progress.md) | Umar | Umar Mid-I progress + next steps + partner notes |
 | [09_frontend_shared_api.md](09_frontend_shared_api.md) | Umar (team) | Why frontend must use shared staging API |
 | [10_perf_assets_api_handoff.md](10_perf_assets_api_handoff.md) | Shahmeer + Usman | Slow loads: N+1 assets/history — no Redis first |
+| [11_u2_real_data_retrieval.md](11_u2_real_data_retrieval.md) | Umar | U2 staging Neo4j retrieval proof + bounded queries |
 
 ## Partner agents — start here
 

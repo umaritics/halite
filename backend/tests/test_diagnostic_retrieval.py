@@ -99,6 +99,11 @@ class TestAssetHistoryContext:
         history = asset_history_context(gr, a1_id, limit=1)
         assert len(history) == 1
 
+    def test_unknown_asset_returns_empty(self, repo):
+        gr, _, _ = repo
+        history = asset_history_context(gr, "not-a-real-asset-id", limit=30)
+        assert history == []
+
 
 # ---------------------------------------------------------------------------
 # Tests: similar_symptom_records
