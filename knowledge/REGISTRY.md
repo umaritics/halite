@@ -15,7 +15,7 @@ updated: 2026-10-16
 | Conflict engine | Usman | `backend/services/conflict_engine.py` | [modules/conflict_engine.md](context/modules/conflict_engine.md) | [FLOW-conflict-review.md](flows/FLOW-conflict-review.md) |
 | Maintenance APIs (assets/history/review/ingest) | Usman | `backend/api/routes/maintenance.py`, `backend/agents/maintenance_agent.py` | [modules/maintenance_api.md](context/modules/maintenance_api.md) | FLOW-ingest, FLOW-conflict-review |
 | App wiring / health | Usman | `backend/main.py`, `backend/config.py` | [modules/devops.md](context/modules/devops.md) | FLOW-ci |
-| Frontend maintenance UX | Shahmeer | `frontend/src/pages/*`, `frontend/src/api/client.js` | [modules/frontend.md](context/modules/frontend.md) | FLOW-diagnose, FLOW-conflict-review |
+| Frontend maintenance UX | Shahmeer | `frontend/src/pages/*`, `frontend/src/utils/*`, `frontend/src/api/client.js`, `frontend/.env.development` | [modules/frontend.md](context/modules/frontend.md) | FLOW-diagnose, FLOW-conflict-review |
 | CI / Compose | Usman | `.github/workflows/ci.yml`, `docker-compose.yml` | modules/devops.md | [FLOW-ci.md](flows/FLOW-ci.md) |
 | Shared staging deploy / ops | Umar + Usman | `.github/workflows/deploy-staging.yml`, `fetch-staging-logs.yml`, `docker-compose.vm.yml`, `backend/api/routes/ops.py` | [modules/remote_backend.md](context/modules/remote_backend.md) | [FLOW-deploy.md](flows/FLOW-deploy.md) |
 | Domain registry | shared (freeze) | `backend/domains/*` | [03_architecture.md](context/03_architecture.md) | — |

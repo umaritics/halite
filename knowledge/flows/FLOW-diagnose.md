@@ -32,6 +32,21 @@ Technician (UI) → Frontend → `POST /api/maintenance/diagnose` → retrieval 
 | Groq down, no cache | HTTP 503 with clear message |
 | Model invents ID | Citation validator rejects/flags |
 
+## UI states (Diagnostics.jsx)
+
+| Response | UI |
+| --- | --- |
+| 200 with ranking + explanation | ranked checks (with per-check record ids), analysis, citation status, evidence cards, decision-support notice |
+| 200, ranking but empty `explanation` | ranking + "No written explanation returned" notice (no Analysis, no citations) |
+| 200, no ranking and no evidence | "Insufficient evidence"; ranking and narrative withheld |
+| 404 | "No service history for this aircraft" (no retry) |
+| 422 | "Check the request" with flattened field messages |
+| 429 / 5xx / network | explicit message + Try again |
+| 503 | "Diagnostic model unavailable" + backend reason; no diagnosis shown |
+
+Note: with the model unavailable, an unknown asset also returns 503 (the live-model check runs before the history check).
+Evidence/record ids open `/app/asset-history/<asset uuid>#<record_id>`; the page scrolls to and marks that record.
+
 ## Dependency graph
 
 ```mermaid
@@ -65,3 +80,5 @@ flowchart TB
 - `diagnostics.py` → `diagnostic_retrieval.py` → `queries.py` → Neo4j
 - `diagnostics.py` → `groq_service.py` + diag cache
 - UI evidence click → history/record routes (`maintenance.py`)
+- `Diagnostics.jsx` → `utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split)
+- `AssetHistory.jsx` reads `#record_id` and scrolls to `record-<id>`
