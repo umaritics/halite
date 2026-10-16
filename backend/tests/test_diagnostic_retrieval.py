@@ -17,6 +17,7 @@ from services.diagnostic_retrieval import (
     similar_symptom_records,
     resolution_outcomes,
     build_diagnostic_context,
+    rank_diagnostic_checks,
 )
 
 
@@ -219,3 +220,72 @@ class TestBuildDiagnosticContext:
         sz = ctx["context_size"]
         assert sz["asset_records"] == len(ctx["asset_history"])
         assert sz["fleet_records"] == len(ctx["fleet_matches"])
+
+
+# ---------------------------------------------------------------------------
+# Tests: rank_diagnostic_checks (U3)
+# ---------------------------------------------------------------------------
+
+class TestRankDiagnosticChecks:
+    def test_ranks_have_provenance(self, repo):
+        gr, a1_id, _ = repo
+        ctx = build_diagnostic_context(gr, a1_id, "pump noise")
+        ranked = rank_diagnostic_checks(ctx)
+        assert ranked
+        for item in ranked:
+            assert item["part_name"]
+            assert item["rank"] >= 1
+            assert item["evidence_record_ids"]
+            assert item["sources"]
+            assert item["evidence_record_ids"] == sorted(item["evidence_record_ids"])
+
+    def test_stable_tie_break_by_part_name(self):
+        ctx = {
+            "asset_history": [
+                {
+                    "part_name": "BRAKE",
+                    "record_id": "B1",
+                    "is_superseded": False,
+                },
+                {
+                    "part_name": "ACTUATOR",
+                    "record_id": "A1",
+                    "is_superseded": False,
+                },
+            ],
+            "fleet_matches": [],
+        }
+        # Equal recency slots would differ; force equal by single-slot each via
+        # identical structure — both get weight 0.4 * 1/(i+1). Different i →
+        # different scores. Build equal scores with two fleet-only parts:
+        ctx = {
+            "asset_history": [],
+            "fleet_matches": [
+                {"part_name": "ZEBRA", "record_id": "Z1", "score": 0.5, "is_superseded": False},
+                {"part_name": "ALPHA", "record_id": "A1", "score": 0.5, "is_superseded": False},
+            ],
+        }
+        ranked = rank_diagnostic_checks(ctx)
+        assert [r["part_name"] for r in ranked] == ["ALPHA", "ZEBRA"]
+        assert ranked[0]["rank"] == 1
+        assert ranked[1]["rank"] == 2
+
+    def test_deterministic_across_calls(self, repo):
+        gr, a1_id, _ = repo
+        ctx = build_diagnostic_context(gr, a1_id, "hydraulic pump")
+        a = rank_diagnostic_checks(ctx)
+        b = rank_diagnostic_checks(ctx)
+        assert [r["part_name"] for r in a] == [r["part_name"] for r in b]
+        assert [r["score"] for r in a] == [r["score"] for r in b]
+
+    def test_skips_blank_part_names(self):
+        ctx = {
+            "asset_history": [
+                {"part_name": "", "record_id": "X1", "is_superseded": False},
+                {"part_name": "UNKNOWN", "record_id": "X2", "is_superseded": False},
+                {"part_name": "PUMP", "record_id": "X3", "is_superseded": False},
+            ],
+            "fleet_matches": [],
+        }
+        ranked = rank_diagnostic_checks(ctx)
+        assert [r["part_name"] for r in ranked] == ["PUMP"]

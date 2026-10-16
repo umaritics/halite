@@ -30,12 +30,15 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 | `similar_symptom_records` | Lexical / field overlap style similarity (not proven embedding index) |
 | `resolution_outcomes` | Follow-on outcomes for candidate IDs |
 | `build_diagnostic_context` | Assembles context for diagnose |
+| `rank_diagnostic_checks` | Deterministic part ranking + stable tie-break (U3) |
 
 ## Ranking honesty (Mid-I)
 
 - Current approach is **case-based / heuristic exploratory ranking**, not a trained predictive fault model.
 - Conflict-detection F1 must **not** be reported as diagnostic accuracy.
 - Scores are ranking aids, **not** calibrated probabilities.
+- Weights: `RANK_WEIGHT_ASSET_HISTORY=0.4`, `RANK_WEIGHT_FLEET_MATCH=0.6`, `RANK_SUPERSEDED_PENALTY=0.3`.
+- Tie-break: score DESC → evidence_count DESC → part_name ASC. Evidence IDs and sources sorted.
 
 ## LLM boundary
 
