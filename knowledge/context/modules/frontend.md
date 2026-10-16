@@ -3,7 +3,7 @@ id: mod-frontend
 title: Frontend maintenance UX
 status: active
 owners: [Shahmeer]
-updated: 2026-10-16
+updated: 2026-10-17
 ---
 
 # Module: Frontend (maintenance)
@@ -39,6 +39,9 @@ and unknown paths redirect to `/app/assets`.
 - Diagnose request `{asset_id (UUID), symptom_text}`; fields read: `ranked_checks[]` (`part_name`, `evidence_count`, `sources`,
   `evidence_record_ids`), `evidence[]`, `rare_cases[]`, `explanation`, `context_size`, `citation_validation`
   (`valid_ids`, `invalid_ids`, `all_valid`), `warnings`. Frozen field list: `docs/mid1/12_u4_u5_diagnostics_handoff.md`.
+- Copilot turn carries optional asset/session IDs, a bounded message, and the
+  current case state. The page defaults to fleet-wide chat and retains the
+  one-shot UI under **Quick diagnose**.
 - Review queue rows carry `classification_label`, `classification_rationale`, `confidence`, `candidates_considered`, `history_size`.
 - `GET /maintenance/records/{id}` re-runs the conflict engine (a model call) each time it is viewed.
 
@@ -50,6 +53,8 @@ and unknown paths redirect to `/app/assets`.
 | "Citations verified" only when `all_valid` and no invalid IDs; wording says IDs exist, not that statements are supported | `Diagnostics.jsx` |
 | Ranking is labelled as historical frequency, never a probability; decision-support notice on every result | `Diagnostics.jsx` |
 | Missing model output is stated ("No written explanation returned"), not silently omitted | `Diagnostics.jsx` |
+| Copilot `reply:null` is a visible model-unavailable state while deterministic ranking/evidence remain visible | `Diagnostics.jsx` |
+| Copilot sessions use guarded `localStorage`; storage failure does not disable the page | `Diagnostics.jsx` |
 | **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
@@ -62,7 +67,9 @@ and unknown paths redirect to `/app/assets`.
 - Service Records: loads **one aircraft at a time**: 2 page-initiated calls on first load, +1 per aircraft switch
   ([DEC-20261016-service-records-per-aircraft](../../decisions/DEC-20261016-service-records-per-aircraft.md)).
   The app shell adds one `review-queue` call for the sidebar badge on every page, then polls every 30 s.
-- Diagnostics: fresh diagnoses call the model and can be slow; the UI sets no request timeout.
+- Diagnostics: fresh diagnoses and copilot turns call the model and can be slow;
+  the UI sets no request timeout. Copilot state is bounded by backend list and
+  message limits.
 
 ## Environment
 

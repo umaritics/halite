@@ -3,7 +3,7 @@ id: decisions-index
 title: Architecture / process decisions
 status: active
 owners: [all]
-updated: 2026-10-16
+updated: 2026-10-17
 ---
 
 # Decisions index
@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261017-diagnostic-copilot-scope](DEC-20261017-diagnostic-copilot-scope.md) | Diagnostic copilot cross-owner scope waiver | accepted | Umar, Shahmeer, Usman |
 | [DEC-20261016-main-only-staging-release](DEC-20261016-main-only-staging-release.md) | Main-only, CI-gated staging releases | accepted | Umar, Usman |
 | [DEC-20261016-frontend-reflects-backend-outputs](DEC-20261016-frontend-reflects-backend-outputs.md) | Frontend only adds to, never hides or alters, backend outputs | accepted | Shahmeer |
 | [DEC-20261016-service-records-per-aircraft](DEC-20261016-service-records-per-aircraft.md) | Service Records loads one aircraft at a time | accepted | Shahmeer |

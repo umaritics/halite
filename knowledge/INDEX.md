@@ -3,7 +3,7 @@ id: technical-index
 title: Topic and path index
 status: active
 owners: [all]
-updated: 2026-10-16
+updated: 2026-10-17
 ---
 
 # Technical index
@@ -21,7 +21,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | Umar, Shahmeer, Usman, ownership | context/02_ownership_mid1.md |
 | DomainAdapter, registry | context/03_architecture.md |
 | Asset, ServiceRecord, ABOUT, PRECEDED_BY, SUPERSEDES | context/04_data_and_graph.md |
-| diagnose, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py`, docs/mid1/08–13 |
+| diagnose, copilot, multi-turn, case_state, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py`, docs/mid1/08–13, docs/mid1/17_diagnostic_copilot_evidence.md |
 | mid1 umar audit, U1–U5 | docs/mid1/08_umar_progress.md (+ 09–13 handoffs) |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
 | conflict, needs_review, confidence gate | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, docs/mid1/16_usman_conflict_score_backfill_handoff.md |

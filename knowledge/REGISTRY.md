@@ -3,14 +3,14 @@ id: technical-registry
 title: Module registry (code ↔ ownership ↔ docs)
 status: active
 owners: [all]
-updated: 2026-10-16
+updated: 2026-10-17
 ---
 
 # Module registry
 
 | Module | Primary owner (Mid-I) | Primary code | Context | Flow |
 | --- | --- | --- | --- | --- |
-| Diagnostics retrieval & ranking | Umar | `backend/services/diagnostic_retrieval.py`, `backend/api/routes/diagnostics.py` | [modules/diagnostics.md](context/modules/diagnostics.md) | [FLOW-diagnose.md](flows/FLOW-diagnose.md) |
+| Diagnostics retrieval, ranking & copilot | Umar (cross-owner waiver for copilot) | `backend/services/diagnostic_retrieval.py`, `backend/api/routes/diagnostics.py`, `backend/services/groq_service.py` | [modules/diagnostics.md](context/modules/diagnostics.md) | [FLOW-diagnose.md](flows/FLOW-diagnose.md) |
 | Graph schema & queries | Umar | `backend/graph/schema.py`, `backend/graph/queries.py`, `backend/graph/neo4j_client.py` | [04_data_and_graph.md](context/04_data_and_graph.md) | FLOW-diagnose, FLOW-ingest |
 | Conflict engine | Usman | `backend/services/conflict_engine.py` | [modules/conflict_engine.md](context/modules/conflict_engine.md) | [FLOW-conflict-review.md](flows/FLOW-conflict-review.md) |
 | Maintenance APIs (assets/history/review/ingest) | Usman | `backend/api/routes/maintenance.py`, `backend/agents/maintenance_agent.py` | [modules/maintenance_api.md](context/modules/maintenance_api.md) | FLOW-ingest, FLOW-conflict-review |
@@ -25,7 +25,7 @@ updated: 2026-10-16
 
 | Contract | Owner | Consumers |
 | --- | --- | --- |
-| Diagnose request/response JSON | Umar | Shahmeer UI, tests |
+| Diagnose + copilot request/response JSON | Umar | Shahmeer UI, tests |
 | Maintenance/review JSON | Usman | Shahmeer UI, tests |
 | Frontend Axios adapter (`client.js`) | Shahmeer | All UI pages |
 | Router registration (`main.py`) | Usman | All backend routes |
