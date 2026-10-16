@@ -29,6 +29,7 @@ export default function Diagnostics() {
   const [submitted, setSubmitted] = useState(null);
   const [error, setError] = useState(null);
   const [rareExpanded, setRareExpanded] = useState(false);
+  const [expandedIds, setExpandedIds] = useState({});
 
   useEffect(() => {
     maintenanceAPI.assets()
@@ -47,6 +48,7 @@ export default function Diagnostics() {
     setError(null);
     setRareExpanded(false);
     setSubmitted({ asset, symptom: symptomText });
+    setExpandedIds({});
     try {
       const res = await maintenanceAPI.diagnose(asset.id, symptomText);
       setResult(res.data);
@@ -261,6 +263,8 @@ export default function Diagnostics() {
               fleet-wide matches across{' '}
               <span className="text-accent font-medium">{result.context_size?.fleet_assets ?? 0}</span>{' '}
               assets.
+              {typeof result.context_size?.wall_clock_s === 'number' &&
+                ` Server time ${result.context_size.wall_clock_s.toFixed(1)} s.`}
             </p>
 
             {/* Insufficient evidence: never imply a conclusion */}
@@ -305,6 +309,14 @@ export default function Diagnostics() {
                             <span className="font-sans text-xs text-secondary">
                               seen in {check.evidence_count} prior case{check.evidence_count !== 1 ? 's' : ''}
                             </span>
+                            {typeof check.score === 'number' && (
+                              <span
+                                className="font-sans text-xs text-secondary"
+                                title="Ordering weight computed from historical frequency. It is a rank score, not a probability."
+                              >
+                                rank score {check.score.toFixed(2)}
+                              </span>
+                            )}
                           </div>
                           <p className="mt-0.5 font-sans text-xs text-secondary">
                             sources: {(check.sources ?? []).join(', ') || 'n/a'}
@@ -312,7 +324,7 @@ export default function Diagnostics() {
                           {(check.evidence_record_ids ?? []).length > 0 && (
                             <p className="mt-0.5 font-sans text-xs text-secondary">
                               records:{' '}
-                              {check.evidence_record_ids.slice(0, MAX_IDS_PER_CHECK).map((rid, k) => (
+                              {(expandedIds[i] ? check.evidence_record_ids : check.evidence_record_ids.slice(0, MAX_IDS_PER_CHECK)).map((rid, k) => (
                                 <span key={rid}>
                                   {k > 0 && ', '}
                                   {evidenceById[rid] ? (
@@ -328,8 +340,17 @@ export default function Diagnostics() {
                                   )}
                                 </span>
                               ))}
-                              {check.evidence_record_ids.length > MAX_IDS_PER_CHECK &&
-                                ` +${check.evidence_record_ids.length - MAX_IDS_PER_CHECK} more`}
+                              {check.evidence_record_ids.length > MAX_IDS_PER_CHECK && (
+                                <button
+                                  type="button"
+                                  className="ml-1 text-accent hover:underline"
+                                  onClick={() => setExpandedIds(s => ({ ...s, [i]: !s[i] }))}
+                                >
+                                  {expandedIds[i]
+                                    ? 'show fewer'
+                                    : `+${check.evidence_record_ids.length - MAX_IDS_PER_CHECK} more`}
+                                </button>
+                              )}
                             </p>
                           )}
                         </div>
@@ -352,10 +373,16 @@ export default function Diagnostics() {
               </div>
             )}
 
-            {/* LLM explanation: withheld when there is nothing for it to be grounded in */}
-            {explanation?.text && !insufficientEvidence && (
+            {/* The model's text is always shown when the backend returns it. When there are no
+                supporting records it is labelled as unsupported rather than hidden. */}
+            {explanation?.text && (
               <section className="halite-card p-6">
                 <h3 className="font-brand text-primary mb-3">Analysis</h3>
+                {insufficientEvidence && (
+                  <p id="unsupported-analysis" className="mb-2 font-sans text-xs text-amber-400">
+                    No supporting records were found. The text below was returned by the model and is not backed by retrieved evidence.
+                  </p>
+                )}
                 <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
                   {splitUnverified(explanation.text).map((seg, k) =>
                     seg.flagged ? (

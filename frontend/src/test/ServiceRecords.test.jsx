@@ -273,3 +273,30 @@ describe('ServiceRecords states', () => {
     expect(screen.queryByText('WING')).toBeNull();
   });
 });
+
+describe('ServiceRecords shows the JASC code the backend returns', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('shows JASC next to the part when present and nothing when absent', async () => {
+    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 2 }] });
+    api.assetHistory.mockResolvedValue({
+      data: {
+        asset_id: 'a',
+        records: [
+          { record_id: 'R1', occurred_at: '2025-01-02T00:00:00Z', status: 'accepted', part_name: 'ENGINE', jasc_code: '7200' },
+          { record_id: 'R2', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'WING' },
+        ],
+      },
+    });
+    render(
+      <MemoryRouter>
+        <ServiceRecords />
+      </MemoryRouter>
+    );
+
+    await screen.findByText('JASC 7200');
+    expect(screen.getAllByText(/JASC/)).toHaveLength(1);
+  });
+});

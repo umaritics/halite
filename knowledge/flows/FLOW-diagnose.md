@@ -36,9 +36,9 @@ Technician (UI) → Frontend → `POST /api/maintenance/diagnose` → retrieval 
 
 | Response | UI |
 | --- | --- |
-| 200 with ranking + explanation | ranked checks (with per-check record ids), analysis, citation status, evidence cards, decision-support notice |
+| 200 with ranking + explanation | ranked checks (rank score, all record ids expandable), analysis, citation status, evidence cards, server time, decision-support notice |
 | 200, ranking but empty `explanation` | ranking + "No written explanation returned" notice (no Analysis, no citations) |
-| 200, no ranking and no evidence | "Insufficient evidence"; ranking and narrative withheld |
+| 200, no ranking and no evidence | "Insufficient evidence" banner; any model text returned is still shown, labelled as not backed by retrieved evidence |
 | 404 | "No service history for this aircraft" (no retry) |
 | 422 | "Check the request" with flattened field messages |
 | 429 / 5xx / network | explicit message + Try again |

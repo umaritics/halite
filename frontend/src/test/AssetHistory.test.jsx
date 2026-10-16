@@ -156,3 +156,55 @@ describe('AssetHistory honesty and failure states', () => {
     await screen.findByText('No records for this asset yet.');
   });
 });
+
+describe('AssetHistory shows the conflict-engine and ingest fields the backend returns', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  it('shows confidence, JASC code and source on each record', async () => {
+    client.maintenanceAPI.assetHistory.mockResolvedValue({
+      data: {
+        count: 1,
+        records: [{
+          id: 'u', record_id: 'R1', asset_key: '813SK', occurred_at: '2025-01-01T00:00:00Z', status: 'auto_accepted',
+          part_name: 'FRAME', text: 'cracked', confidence: 0.62, jasc_code: '5240', source: 'FAA SDR',
+        }],
+      },
+    });
+    renderAt('/app/asset-history/813SK');
+
+    await screen.findByText('FRAME');
+    expect(screen.getByText('0.62')).toBeDefined();
+    expect(screen.getByText('JASC 5240')).toBeDefined();
+    expect(screen.getByText('Source: FAA SDR')).toBeDefined();
+  });
+
+  it('shows nothing extra for fields the backend did not send', async () => {
+    client.maintenanceAPI.assetHistory.mockResolvedValue({
+      data: {
+        count: 1,
+        records: [{ id: 'u', record_id: 'R1', asset_key: '813SK', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'PUMP' }],
+      },
+    });
+    renderAt('/app/asset-history/813SK');
+
+    await screen.findByText('PUMP');
+    expect(screen.queryByText(/JASC/)).toBeNull();
+    expect(screen.queryByText(/Source:/)).toBeNull();
+    expect(screen.queryByText('Conf')).toBeNull();
+  });
+
+  it('shows a confidence of exactly 1 as returned (no hiding of an unscored corpus)', async () => {
+    client.maintenanceAPI.assetHistory.mockResolvedValue({
+      data: {
+        count: 1,
+        records: [{ id: 'u', record_id: 'R1', asset_key: '813SK', occurred_at: '2025-01-01T00:00:00Z', status: 'auto_accepted', part_name: 'PUMP', confidence: 1 }],
+      },
+    });
+    renderAt('/app/asset-history/813SK');
+    await screen.findByText('PUMP');
+    expect(screen.getByText('1.00')).toBeDefined();
+  });
+});
