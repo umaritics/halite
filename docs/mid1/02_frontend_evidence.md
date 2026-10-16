@@ -197,6 +197,8 @@ For **Umar** (diagnostics route):
   (3 of 3 symptoms; ranking present; `llm_mode=live`). The same merged code run locally returned a full explanation
   for 1 of 2 symptoms (the other returned 18 characters). Cause not established from outside; needs staging logs.
   See `logs/staging-measurements.txt`. If the demo runs on staging this removes the Analysis, citations and evidence cards.
+  **New lead (2026-10-16, via the Settings page after the next merge):** staging's pinned model is `openai/gpt-oss-20b`; the local stack uses
+  `openai/gpt-oss-120b`. A smaller reasoning model with the route's small token limit is a plausible cause of empty text; unconfirmed.
 
 For **Usman** (maintenance routes, tests, deployment):
 - `GET /maintenance/records/{id}` re-runs the conflict engine (an LLM call) on every view.

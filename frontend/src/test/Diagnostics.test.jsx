@@ -255,7 +255,7 @@ describe('Diagnostics', () => {
   });
 
   describe('response states', () => {
-    it('200 with no evidence: shows an insufficient-evidence state, not a ranking or analysis', async () => {
+    it('200 with no evidence: says so, and still shows the model text, labelled as unsupported (never hidden)', async () => {
       client.maintenanceAPI.diagnose.mockResolvedValue({
         data: {
           ranked_checks: [],
@@ -272,9 +272,11 @@ describe('Diagnostics', () => {
       await runDiagnostic();
 
       await waitFor(() => screen.getByText('Insufficient evidence'));
+      // No ranking exists to show, but nothing the backend returned is withheld.
       expect(screen.queryByText('Ranked Inspection Order')).toBeNull();
-      expect(screen.queryByText('Analysis')).toBeNull();
-      expect(screen.queryByText(/confident-sounding paragraph/)).toBeNull();
+      expect(screen.getByText(/confident-sounding paragraph/)).toBeDefined();
+      expect(screen.getByText(/not backed by retrieved evidence/i)).toBeDefined();
+      expect(screen.queryByText(/verified against the graph/)).toBeNull();
     });
 
     it('renders the warnings field and the citation-validation status', async () => {
@@ -388,6 +390,59 @@ describe('Diagnostics', () => {
       expect(text).toContain('ID4');
       expect(text).not.toContain('ID5');
       expect(text).toContain('+4 more');
+    });
+
+    it('shows each check\'s rank score, labelled as a rank score and not a probability', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue(
+        withChecks([
+          { part_name: 'DRAG ANGLE', evidence_count: 3, sources: ['asset_history'], score: 1.4784, rank: 1 },
+          { part_name: 'ANGLE', evidence_count: 17, sources: ['fleet_match'], score: 0.5888, rank: 2 },
+        ])
+      );
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Ranked Inspection Order'));
+
+      expect(screen.getByText('rank score 1.48')).toBeDefined();
+      expect(screen.getByText('rank score 0.59')).toBeDefined();
+      expect(screen.getByText('rank score 1.48')).toHaveAttribute('title', expect.stringMatching(/not a probability/i));
+      expect(screen.queryByText(/probability of/i)).toBeNull();
+    });
+
+    it('omits the rank score when the backend does not send one (no invented number)', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue(
+        withChecks([{ part_name: 'FRAME', evidence_count: 1, sources: ['asset_history'] }])
+      );
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Ranked Inspection Order'));
+      expect(screen.queryByText(/rank score/)).toBeNull();
+    });
+
+    it('shows the server time from context_size.wall_clock_s', async () => {
+      client.maintenanceAPI.diagnose.mockResolvedValue({
+        data: { ...mockResult, context_size: { asset_records: 30, fleet_records: 20, fleet_assets: 18, wall_clock_s: 2.79 } },
+      });
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText(/Server time 2\.8 s/));
+    });
+
+    it('lets the reader expand a check to see every record id, not just the first few', async () => {
+      const ids = Array.from({ length: 9 }, (_, i) => `ID${i}`);
+      client.maintenanceAPI.diagnose.mockResolvedValue(
+        withChecks([{ part_name: 'ANGLE', evidence_count: 9, sources: ['fleet_match'], evidence_record_ids: ids }])
+      );
+      renderPage();
+      await runDiagnostic();
+      await waitFor(() => screen.getByText('Ranked Inspection Order'));
+
+      expect(document.getElementById('ranked-checks-list').textContent).not.toContain('ID8');
+      fireEvent.click(screen.getByRole('button', { name: '+4 more' }));
+      expect(document.getElementById('ranked-checks-list').textContent).toContain('ID8');
+
+      fireEvent.click(screen.getByRole('button', { name: 'show fewer' }));
+      expect(document.getElementById('ranked-checks-list').textContent).not.toContain('ID8');
     });
 
     it('styles [UNVERIFIED:ID] markers as warnings', async () => {

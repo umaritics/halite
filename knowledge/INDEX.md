@@ -34,6 +34,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |
 | service records, fan-out, per-aircraft, N+1 (frontend) | decisions/DEC-20261016-service-records-per-aircraft.md, docs/mid1/10_perf_assets_api_handoff.md |
+| frontend shows backend fields (rank score, confidence, JASC, health flags), never hides | decisions/DEC-20261016-frontend-reflects-backend-outputs.md |
 | legacy software UI, domain lock, Settings reset removed | decisions/DEC-20261016-frontend-maintenance-only.md |
 | Usman audit, A1–A4 | decisions/DEC-20261016-usman-baseline.md |
 

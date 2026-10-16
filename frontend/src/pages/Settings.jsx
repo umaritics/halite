@@ -8,6 +8,20 @@ import BrandName from '../components/BrandName';
 // Mid-I: the software-only tools that used to live here (agent-context export and the
 // "Reset knowledge graph" action, which runs a full-graph DETACH DELETE) are no longer
 // exposed. A single click on that button would erase the loaded maintenance corpus.
+// A row for a /api/health field. Fields the backend did not send are not shown at all,
+// so a missing field is never presented as "false" or "no".
+function HealthRow({ label, value, warn = false, mono = false }) {
+  if (value === undefined || value === null) return null;
+  return (
+    <div className="flex justify-between items-center">
+      <dt className="text-secondary">{label}</dt>
+      <dd className={`${mono ? 'font-mono text-xs ' : ''}${warn ? 'text-amber-500' : 'text-accent'}`}>{value}</dd>
+    </div>
+  );
+}
+
+const yesNo = (v) => (typeof v === 'boolean' ? (v ? 'Yes' : 'No') : undefined);
+
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
   const [health, setHealth] = useState(null);
@@ -102,6 +116,21 @@ export default function Settings() {
                 <dt className="text-secondary">Confidence Threshold</dt>
                 <dd className="text-accent">{health.maint_threshold?.toFixed(2) || '0.50'}</dd>
               </div>
+              <HealthRow label="Corpus Loaded" value={yesNo(health.maintenance_corpus_loaded)} warn={health.maintenance_corpus_loaded === false} />
+              <HealthRow label="In-Memory Graph" value={yesNo(health.using_memory_graph)} warn={health.using_memory_graph === true} />
+              <HealthRow label="Neo4j Configured" value={yesNo(health.neo4j_configured)} warn={health.neo4j_configured === false} />
+              <HealthRow label="Groq Configured" value={yesNo(health.groq_configured)} warn={health.groq_configured === false} />
+              <HealthRow label="Demo Mode" value={yesNo(health.demo_mode)} warn={health.demo_mode === true} />
+              <HealthRow
+                label="Model Fallbacks Used"
+                value={typeof health.fallback_invocations === 'number' ? health.fallback_invocations : undefined}
+                warn={health.fallback_invocations > 0}
+              />
+              <HealthRow
+                label="Deployed Version"
+                value={health.git_sha && health.git_sha !== 'unknown' ? String(health.git_sha).slice(0, 8) : undefined}
+                mono
+              />
             </dl>
           ) : (
             <p className="mt-4 font-sans text-sm text-red-400">Backend not reachable. Start the API server.</p>

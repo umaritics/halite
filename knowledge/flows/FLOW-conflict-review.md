@@ -39,13 +39,18 @@ updated: 2026-10-16
   resolved (the history endpoint 404s on tail numbers).
 - A failed queue load is shown as a failure, not as an empty queue.
 - Label meanings shown to reviewers come from the engine prompt (`supersedes`, `partial_supersedes`, `contradicts`).
+- `AssetHistory.jsx` shows each record's `status`, `confidence`, `jasc_code` and `source` exactly as returned (confidence 1.00 on an
+  unscored corpus is shown, not hidden). It does not show which later record superseded one: the history API has no such field.
 
 ## Dependency graph
 
 ```mermaid
 flowchart TB
   RQ[ReviewQueue.jsx] --> API[client.js]
-  API --> M[maintenance.py review-queue]
+  AH[AssetHistory.jsx] --> API
+  RQ -. Open in asset history, by asset uuid .-> AH
+  RQ --> UT[utils/format.js, loadError.js]
+  API --> M[maintenance.py review-queue, records/id, assets, history]
   IN[ingest / records POST] --> M
   M --> CE[conflict_engine.py]
   CE --> GR[GraphRepository]

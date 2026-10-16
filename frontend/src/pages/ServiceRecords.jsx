@@ -230,7 +230,10 @@ export default function ServiceRecords() {
                     </div>
                     <div className="w-24 text-primary">{rec.tail_number}</div>
                     <div className="w-28 text-secondary">{formatDate(rec.occurred_at)}</div>
-                    <div className="flex-1 text-primary truncate">{rec.part_name}</div>
+                    <div className="flex-1 min-w-0 text-primary truncate">
+                      {rec.part_name}
+                      {rec.jasc_code ? <span className="ml-2 font-mono text-xs text-secondary">JASC {rec.jasc_code}</span> : null}
+                    </div>
                     <div className="w-32">
                       <ConfidenceBar confidence={rec.confidence} />
                     </div>
