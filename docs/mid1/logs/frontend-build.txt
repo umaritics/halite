@@ -1,0 +1,21 @@
+# Frontend production build — captured 2026-10-16 17:23 PKT
+# code SHA 1473e778e55c3840e83bc5234416a88f439256fc | command: npm run build
+
+
+> halite-frontend@0.1.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 851 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     1.30 kB │ gzip:   0.60 kB
+dist/assets/index-BRrL1HBV.css     35.47 kB │ gzip:   6.22 kB
+dist/assets/index-Bq0vKOL7.js   1,678.09 kB │ gzip: 464.45 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.61s

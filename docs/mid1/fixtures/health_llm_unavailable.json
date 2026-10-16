@@ -1,0 +1,12 @@
+{
+  "note": "health payload while the model is unavailable",
+  "response": {
+    "graph_mode": "neo4j",
+    "llm_mode": "fallback",
+    "groq_configured": false,
+    "using_memory_graph": false,
+    "maintenance_corpus_loaded": true,
+    "maintenance_record_count": 2079,
+    "model": "openai/gpt-oss-120b"
+  }
+}

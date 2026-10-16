@@ -1,0 +1,12 @@
+{
+  "endpoint": "POST /api/maintenance/diagnose",
+  "scenario": "backend started with GROQ_API_KEY empty; symptom not in cache",
+  "request": {
+    "asset_id": "92bdb741-42cb-4ccb-a65f-6ed5fbb7d1a4",
+    "symptom_text": "intermittent chime from forward galley panel during taxi"
+  },
+  "http_status": 503,
+  "response": {
+    "detail": "Groq LLM is not configured (is_live=False). Cannot produce a diagnostic without a live model. Set GROQ_API_KEY in .env and restart."
+  }
+}
