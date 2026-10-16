@@ -1,24 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { maintenanceAPI } from '../api/client';
 import StatusChip from '../components/StatusChip';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { formatDate, dateValue } from '../utils/format';
+import { describeLoadError } from '../utils/loadError';
+
+// A record deep link looks like /app/asset-history/<asset>#<record_id>. The page
+// scrolls to that record and marks it, so "open the cited record" lands on the
+// record itself and not just somewhere in a long timeline.
+function recordIdFromHash(hash) {
+  if (!hash || hash.length < 2) return '';
+  try {
+    return decodeURIComponent(hash.slice(1));
+  } catch {
+    return hash.slice(1);
+  }
+}
+
+function BackLink() {
+  return (
+    <Link to="/app/assets" className="inline-flex items-center gap-2 text-accent hover:underline mb-4 font-sans text-sm font-medium">
+      <ArrowLeftIcon className="h-4 w-4" /> Back to Assets
+    </Link>
+  );
+}
 
 export default function AssetHistory() {
   const { assetId } = useParams();
+  const { hash } = useLocation();
+  const linkedRecordId = recordIdFromHash(hash);
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
     maintenanceAPI.assetHistory(assetId)
-      .then(res => setData(res.data))
-      .catch(err => console.error(err))
-      .finally(() => setLoading(false));
-  }, [assetId]);
+      .then(res => { if (!cancelled) setData(res.data); })
+      .catch(err => {
+        if (cancelled) return;
+        console.error(err);
+        setData(null);
+        setError(describeLoadError(err));
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [assetId, attempt]);
+
+  // Oldest first; records without a usable date go last instead of scrambling the order.
+  const records = useMemo(
+    () => [...(data?.records ?? [])].sort((a, b) => dateValue(a.occurred_at) - dateValue(b.occurred_at)),
+    [data]
+  );
+
+  const linkedFound = Boolean(linkedRecordId) && records.some(r => r.record_id === linkedRecordId);
+
+  // Wait for loading to finish: while the skeleton is showing the cards are not in the DOM yet.
+  useEffect(() => {
+    if (loading || !linkedFound) return;
+    const el = document.getElementById(`record-${linkedRecordId}`);
+    if (el && typeof el.scrollIntoView === 'function') {
+      // Instant jump: on a long history a smooth scroll is slow and can be caught mid-animation.
+      el.scrollIntoView({ block: 'center' });
+    }
+  }, [loading, linkedFound, linkedRecordId]);
 
   if (loading) {
     return (
-      <div className="flex h-full flex-col p-6">
+      <div className="flex h-full flex-col p-6" role="status" aria-label="Loading service history">
         <div className="h-8 w-32 bg-surface-dark/10 animate-pulse rounded mb-4"></div>
         <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
         <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
@@ -27,19 +81,40 @@ export default function AssetHistory() {
     );
   }
 
-  if (!data || !data.records || data.records.length === 0) {
+  if (error) {
+    const notFound = error.kind === 'not-found';
     return (
       <div className="flex h-full flex-col p-6">
-        <Link to="/app/assets" className="inline-flex items-center gap-2 text-accent hover:underline mb-4 font-sans text-sm font-medium">
-          <ArrowLeftIcon className="h-4 w-4" /> Back to Assets
-        </Link>
+        <BackLink />
+        <div role="alert" className="halite-card border border-red-500/30 bg-red-500/5 p-4 max-w-xl">
+          <p className="font-sans text-sm font-medium text-red-400">
+            {notFound ? 'Aircraft not found' : 'Could not load service history'}
+          </p>
+          <p className="mt-1 font-sans text-sm text-red-300">
+            {notFound
+              ? 'No aircraft with this identifier exists in the loaded corpus. Go back and pick one from the list.'
+              : error.message}
+          </p>
+          {!notFound && (
+            <button type="button" onClick={() => setAttempt(n => n + 1)} className="halite-btn mt-3 text-sm">
+              Try again
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (records.length === 0) {
+    return (
+      <div className="flex h-full flex-col p-6">
+        <BackLink />
         <p className="font-sans text-secondary">No records for this asset yet.</p>
       </div>
     );
   }
 
-  const tailNumber = data.records[0]?.asset_key || assetId;
-  const records = [...data.records].sort((a, b) => new Date(a.occurred_at) - new Date(b.occurred_at));
+  const tailNumber = records[0]?.asset_key || assetId;
 
   return (
     <div className="flex h-full flex-col">
@@ -49,31 +124,49 @@ export default function AssetHistory() {
             <ArrowLeftIcon className="h-4 w-4" /> Back to Assets
           </Link>
           <h2 className="font-brand text-xl text-primary">{tailNumber}</h2>
-          <p className="font-sans text-sm text-secondary">{data.count} service records</p>
+          <p className="font-sans text-sm text-secondary">{data.count ?? records.length} service records</p>
         </div>
       </header>
+
+      {linkedRecordId && !linkedFound && (
+        <div role="status" className="border-b border-amber-500/20 bg-amber-500/5 px-6 py-2 font-sans text-sm text-amber-400">
+          Record <span className="font-mono">{linkedRecordId}</span> is not part of this aircraft&apos;s history.
+        </div>
+      )}
 
       <div className="flex-1 overflow-y-auto p-6 relative">
         <div className="absolute left-10 top-6 bottom-6 w-[2px] bg-accent/20 hidden sm:block"></div>
         <div className="space-y-6">
           {records.map((rec) => {
             const isSuperseded = rec.status === 'superseded';
-            // Parse supersede target/rationale from text if needed, 
-            // since API doesn't seem to have a dedicated rationale field on history. 
-            // The instruction says "Superseded by {record_id} — {rationale}".
-            // We will just show a placeholder if we don't have it explicitly, or check if it's passed somehow.
+            const isLinked = linkedFound && rec.record_id === linkedRecordId;
             return (
               <div key={rec.id || rec.record_id} className="relative flex items-start gap-4 sm:pl-12">
                 <div className="absolute left-9 -ml-[5px] mt-1.5 h-[10px] w-[10px] rounded-full bg-accent ring-4 ring-page hidden sm:block"></div>
-                <div className={`halite-card p-4 flex-1 ${isSuperseded ? 'opacity-50' : ''}`}>
+                <div
+                  id={`record-${rec.record_id}`}
+                  data-linked={isLinked ? 'true' : undefined}
+                  className={`halite-card p-4 flex-1 ${isSuperseded ? 'opacity-50' : ''} ${
+                    isLinked ? 'ring-2 ring-accent' : ''
+                  }`}
+                >
                   <div className="flex justify-between items-start mb-2">
-                    <span className="eyebrow">{new Date(rec.occurred_at).toLocaleDateString()}</span>
-                    <StatusChip status={rec.status} />
+                    <span className="eyebrow">{formatDate(rec.occurred_at)}</span>
+                    <div className="flex items-center gap-2">
+                      {isLinked && (
+                        <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-black">
+                          Linked record
+                        </span>
+                      )}
+                      <StatusChip status={rec.status} />
+                    </div>
                   </div>
-                  
+
                   {isSuperseded && (
                     <div className="mb-3 font-sans text-sm text-accent bg-accent/10 p-2 rounded border border-accent/20">
-                      Superseded by {rec.superseding_record || 'Unknown'} — {rec.supersede_rationale || 'Previous record invalidated'}
+                      {/* Only text the backend actually supplied is shown; nothing is filled in. */}
+                      {`Superseded by ${rec.superseding_record || 'a later record'}`}
+                      {rec.supersede_rationale ? ` — ${rec.supersede_rationale}` : '.'}
                     </div>
                   )}
 

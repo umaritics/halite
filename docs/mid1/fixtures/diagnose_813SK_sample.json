@@ -1,0 +1,167 @@
+{
+  "request": {
+    "asset_id": "92bdb741-42cb-4ccb-a65f-6ed5fbb7d1a4",
+    "symptom_text": "crack found on drag angle during inspection"
+  },
+  "response": {
+    "asset_id": "92bdb741-42cb-4ccb-a65f-6ed5fbb7d1a4",
+    "symptom_text": "crack found on drag angle during inspection",
+    "ranked_checks": [
+      {
+        "part_name": "DRAG ANGLE",
+        "score": 1.4784,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "SWIA2025122876590",
+          "SWIA2026070676519",
+          "SWIA2025112576494"
+        ],
+        "sources": [
+          "asset_history",
+          "fleet_match"
+        ],
+        "rank": 1
+      },
+      {
+        "part_name": "ANGLE",
+        "score": 0.5888,
+        "evidence_count": 17,
+        "evidence_record_ids": [
+          "AALA202504164624",
+          "AALA202511175408",
+          "AALA202511256907",
+          "AALA202504283198",
+          "AALA202509222592",
+          "AALA202504287459",
+          "AALA202504285800",
+          "AALA202512095087",
+          "AALA202512096857",
+          "AALA202510075829",
+          "AALA202505138765",
+          "AALA202502256706",
+          "AALA202504286335",
+          "AALA202509221988",
+          "AALA202504282827",
+          "AALA202510078254",
+          "VNAA202504170039"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 2
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "score": 0.2164,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "SWIA2026070606541",
+          "SWIA2025120676586",
+          "SWIA2025120576544",
+          "SWIA2026070676504"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 3
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.2,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122076513"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 4
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1779,
+        "evidence_count": 5,
+        "evidence_record_ids": [
+          "SWIA2026070676558",
+          "SWIA2025120676529",
+          "SWIA2026070676497",
+          "SWIA2025120576568",
+          "SWIA2025112876585"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5
+      }
+    ],
+    "evidence": [
+      {
+        "record_id": "SWIA2025122076513",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-20",
+        "part_name": "FRAME",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025112576494",
+        "asset_id": "813SK",
+        "occurred_at": "2025-11-25",
+        "part_name": "DRAG ANGLE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2026070676558",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-13",
+        "part_name": "STRINGER",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2025120676586",
+        "asset_id": "813SK",
+        "occurred_at": "2025-12-06",
+        "part_name": "STRINGER SPLICE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      },
+      {
+        "record_id": "SWIA2026070676519",
+        "asset_id": "813SK",
+        "occurred_at": "2025-11-25",
+        "part_name": "DRAG ANGLE",
+        "status": "auto_accepted",
+        "is_superseded": false
+      }
+    ],
+    "rare_cases": [],
+    "explanation": "{\n  \"explanation\": \"The ranking reflects how directly each component is linked to the observed crack on the drag angle. 1) DRAG ANGLE is top because three fleet records explicitly describe cracks in drag angles (SWIA2025122876590, SWIA2026070676519, SWIA2025112576494). These matches are active and mention removal or damage, making them the strongest evidence. 2) ANGLE is second with a higher evidence count (17) but the cited records (AALA202504164624, AALA202511175408) refer to corrosion or cracks in general angles rather than the specific drag angle, so the relevance is slightly lower. 3) STRINGER SPLICE appears third; its four records (SWIA2026070606541, SWIA2025120676586, SWIA2025120576544) involve splice issues, which can affect drag angle integrity but are less directly tied to a crack. 4) FRAME is fourth with a single record (SWIA2025122076513) that mentions a frame issue; it is less specific to the drag angle symptom. 5) STRINGER is fifth; its five records (SWIA2026070676558, SWIA2025120676529, SWIA2026070676497) describe stringer problems that may indirectly influence the drag angle but provide the weakest direct correlation.\",\n  \"rare_cases\": [\n    \"SWIA2025122876590\",\n    \"SWIA2026070676519\",\n    \"SWIA2025112576494\",\n    \"AALA202504164624\"\n  ],\n  \"warnings\": [\n    \"Record SWIA2025122876590 (DRAG ANGLE) was previously marked no_action;",
+    "context_size": {
+      "asset_records": 30,
+      "fleet_records": 20,
+      "fleet_assets": 9,
+      "wall_clock_s": 2.94
+    },
+    "citation_validation": {
+      "valid_ids": [
+        "SWIA2025122076513",
+        "SWIA2025112576494",
+        "SWIA2026070676558",
+        "SWIA2025120676586",
+        "SWIA2026070676519",
+        "AALA202504164624",
+        "AALA202511175408",
+        "SWIA2025120576544",
+        "SWIA2025120676529",
+        "SWIA2026070676497",
+        "SWIA2025122876590",
+        "SWIA2026070606541"
+      ],
+      "invalid_ids": [],
+      "all_valid": true
+    },
+    "warnings": []
+  }
+}

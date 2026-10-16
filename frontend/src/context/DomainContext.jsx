@@ -1,44 +1,25 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { domainsAPI } from '../api/client';
+import React, { createContext, useContext } from 'react';
 
 export const DomainContext = createContext();
 
-const FALLBACK_DOMAINS = [
-  { key: 'software', display_name: 'Software Engineering' },
-  { key: 'maintenance', display_name: 'Maintenance / Field Service' }
-];
+// Mid-I scope: Halite is maintenance-only. The software-domain code is kept in the
+// repository but is not reachable from the UI, so the active domain is fixed here.
+// Any value left in localStorage by the old domain switcher is deliberately ignored.
+export const ACTIVE_DOMAIN = 'maintenance';
+
+const NO_DOMAIN_SWITCHING = () => {};
 
 export function DomainProvider({ children }) {
-  const [domain, setDomainState] = useState(() => {
-    return localStorage.getItem('halite.domain') || 'software';
-  });
-  const [domains, setDomains] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    domainsAPI.list()
-      .then(res => {
-        setDomains(res.data);
-        setError(false);
-      })
-      .catch(err => {
-        console.error('Failed to fetch domains', err);
-        setDomains(FALLBACK_DOMAINS);
-        setError(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  const setDomain = (newDomain) => {
-    setDomainState(newDomain);
-    localStorage.setItem('halite.domain', newDomain);
-  };
-
   return (
-    <DomainContext.Provider value={{ domain, setDomain, domains, loading, error }}>
+    <DomainContext.Provider
+      value={{
+        domain: ACTIVE_DOMAIN,
+        setDomain: NO_DOMAIN_SWITCHING,
+        domains: [],
+        loading: false,
+        error: false,
+      }}
+    >
       {children}
     </DomainContext.Provider>
   );

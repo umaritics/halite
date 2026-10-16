@@ -1,0 +1,12 @@
+{
+  "endpoint": "POST /api/maintenance/diagnose",
+  "scenario": "asset_id that does not exist (model available)",
+  "request": {
+    "asset_id": "ZZ999",
+    "symptom_text": "hydraulic leak"
+  },
+  "http_status": 404,
+  "response": {
+    "detail": "No history found for asset_id=ZZ999. Check the ID or ensure the corpus is ingested."
+  }
+}

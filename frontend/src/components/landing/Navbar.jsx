@@ -7,7 +7,7 @@ import HaliteLogo from '../HaliteLogo';
 const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Features', href: '#features' },
-  { label: 'Decisions', to: '/app/decisions' },
+  { label: 'Diagnostics', to: '/app/diagnostics' },
   { label: 'Graph', to: '/app/graph' },
   { label: 'Docs', href: '#how-it-works' },
 ];
@@ -58,8 +58,8 @@ export default function Navbar() {
         >
           {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
-        <Link to="/app/chat" className="halite-btn-outline text-sm">
-          Get Demo
+        <Link to="/app/assets" className="halite-btn-outline text-sm">
+          Open Workspace
         </Link>
       </div>
     </nav>

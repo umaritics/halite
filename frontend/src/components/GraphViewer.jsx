@@ -208,9 +208,11 @@ export function GraphSidePanel({ node, onClose, onChatAbout }) {
         )}
       </div>
 
-      <button onClick={() => onChatAbout?.(node)} className="halite-btn-primary mt-4 w-full text-sm">
-        Chat about this
-      </button>
+      {onChatAbout && (
+        <button onClick={() => onChatAbout(node)} className="halite-btn-primary mt-4 w-full text-sm">
+          Chat about this
+        </button>
+      )}
     </div>
   );
 }

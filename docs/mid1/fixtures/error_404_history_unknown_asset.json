@@ -1,0 +1,8 @@
+{
+  "endpoint": "GET /api/maintenance/assets/{asset_id}/history",
+  "scenario": "unknown asset id (also: tail numbers 404 - the endpoint is keyed by UUID)",
+  "http_status": 404,
+  "response": {
+    "detail": "Asset 'NOPE' not found"
+  }
+}
