@@ -3,6 +3,13 @@
 Read this folder for **dated Mid-I progress, audits, and partner handoffs**.  
 Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Universal agent rules: [`AGENTS.md`](../../AGENTS.md).
 
+## How to use (reduce ambiguity)
+
+1. Start with the **owner audit** for the person whose code you will touch.  
+2. Open linked **knowledge** modules before editing.  
+3. Treat **PASS** only when a command/test/staging observation is recorded.  
+4. Do not “fix” another owner’s files without a handoff DEC.
+
 ## Index
 
 | Doc | Owner | Purpose |
@@ -11,14 +18,27 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [05_usman_final_audit.md](05_usman_final_audit.md) | Usman | A1–A4 audit verdicts |
 | [06_frontend_review_queue_handoff.md](06_frontend_review_queue_handoff.md) | Usman → Shahmeer | Frontend CI test mock handoff |
 | [07_usman_release_readiness.md](07_usman_release_readiness.md) | Usman | Release readiness / blockers |
-| [08_umar_progress.md](08_umar_progress.md) | Umar | Umar Mid-I progress + next steps + partner notes |
-| [09_frontend_shared_api.md](09_frontend_shared_api.md) | Umar (team) | Why frontend must use shared staging API |
-| [10_perf_assets_api_handoff.md](10_perf_assets_api_handoff.md) | Shahmeer + Usman | Slow loads: N+1 assets/history — no Redis first |
-| [11_u2_real_data_retrieval.md](11_u2_real_data_retrieval.md) | Umar | U2 staging Neo4j retrieval proof + bounded queries |
-| [12_u4_u5_diagnostics_handoff.md](12_u4_u5_diagnostics_handoff.md) | Umar → Shahmeer | Citation/LLM boundary + diagnose test fixtures |
+| [08_umar_progress.md](08_umar_progress.md) | Umar | **Umar final Mid-I audit** (U1–U5 + CD + open team work) |
+| [09_frontend_shared_api.md](09_frontend_shared_api.md) | Umar (team) | Vite → staging; ECONNREFUSED root cause |
+| [10_perf_assets_api_handoff.md](10_perf_assets_api_handoff.md) | Shahmeer + Usman | Assets N+1 + history fan-out; no Redis first |
+| [11_u2_real_data_retrieval.md](11_u2_real_data_retrieval.md) | Umar | U2 staging Neo4j retrieval proof + bounds |
+| [12_u4_u5_diagnostics_handoff.md](12_u4_u5_diagnostics_handoff.md) | Umar → Shahmeer | Citation/LLM boundary + diagnose UI contract |
+| [13_u3_deterministic_ranking.md](13_u3_deterministic_ranking.md) | Umar | U3 ranking weights, tie-break, schema |
 
 ## Partner agents — start here
 
-1. `08_umar_progress.md` — what is done, what is open, who owns next work  
-2. `09_frontend_shared_api.md` — if `npm run dev` shows `ECONNREFUSED` on `/api/*`  
-3. `knowledge/context/modules/remote_backend.md` — staging URLs, logs, CD  
+| Role | Read first |
+| --- | --- |
+| Any agent | [`08_umar_progress.md`](08_umar_progress.md) + [`knowledge/README.md`](../../knowledge/README.md) |
+| Frontend / Vite broken | [`09`](09_frontend_shared_api.md) then [`10`](10_perf_assets_api_handoff.md) |
+| Diagnostics UI | [`12`](12_u4_u5_diagnostics_handoff.md) + [`13`](13_u3_deterministic_ranking.md) |
+| Staging / CD / logs | [`knowledge/context/modules/remote_backend.md`](../../knowledge/context/modules/remote_backend.md) |
+| Usman reconciliation | [`05`](05_usman_final_audit.md) + note staging corpus now live (Umar U2) |
+
+## Branch map
+
+| Branch | Owner focus |
+| --- | --- |
+| `usman` | A1–A4 maintenance/conflict/CI evidence |
+| `umar/mid1-graph-diagnostics` | U1–U5 diagnostics + staging CD unblock |
+| Shahmeer frontend branch | CI mock + UI + perf load patterns |

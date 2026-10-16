@@ -3,40 +3,51 @@
 Owner for fix: **Shahmeer** (frontend load patterns) + **Usman** (maintenance list APIs)  
 Diagnosed by: Umar  
 Date: 2026-10-16  
-Status: diagnosis only — **do not treat Redis as the first fix**
+Status: **diagnosis + proposed fix only** — not implemented on Umar branch  
+Knowledge: [`remote_backend.md`](../../knowledge/context/modules/remote_backend.md), [`modules/frontend.md`](../../knowledge/context/modules/frontend.md), Usman maintenance ownership in [`02_ownership_mid1.md`](../../knowledge/context/02_ownership_mid1.md)
+
+## Verdict for agents
+
+| Question | Answer |
+| --- | --- |
+| Is Redis required for Mid-I? | **No** |
+| Primary bottleneck? | **Backend N+1** on `GET /api/maintenance/assets` |
+| Secondary bottleneck? | **Frontend fan-out** of all asset histories on Service Records |
+| Diagnose ~16s? | Mostly **Groq + retrieval**, separate from assets list; see [`11`](11_u2_real_data_retrieval.md) |
 
 ## Symptom
 
-With frontend pointed at shared staging (`VITE_API_URL=…/halite-api/api`), pages feel very slow / sometimes hang. Local Vite proxy errors are unrelated; this is **API work + round-trips** against Neo4j/Aura over the internet.
+With frontend correctly pointed at staging ([`09`](09_frontend_shared_api.md)), Assets / Service Records / Diagnostics dropdowns feel broken (tens of seconds to minutes). Local `ECONNREFUSED` is a different bug.
 
-## Timed staging endpoints (from laptop → VM)
+## Timed staging endpoints (laptop → VM → Aura)
 
-| Endpoint | Approx | Notes |
+Order of magnitude from 2026-10-16 probes (exact ms vary with Aura):
+
+| Endpoint | Approx | Severity |
 | --- | --- | --- |
-| `GET /api/health` | ~3–4 s | Cold/TLS + Aura health work; acceptable for occasional call |
-| `GET /api/domains` | ~0.6 s | Fine |
-| `GET /api/alerts` | ~1 s | Fine |
-| `GET /api/maintenance/assets` | **tens of seconds** (often ~30–90s+) | **Primary bottleneck** |
-| `GET /api/maintenance/review-queue` | depends on queue size | Usually smaller than assets |
-| `GET /api/graph/overview` | can be large | Legacy software graph; Mid-I should avoid on critical path |
+| `GET /api/health` | ~3–4 s | Acceptable cold |
+| `GET /api/domains` | ~0.6 s | OK |
+| `GET /api/alerts` | ~1 s | OK |
+| `GET /api/maintenance/assets` | **~30–90s+** | **Primary** |
+| `GET /api/maintenance/assets/{id}/history` (single) | ~1 s for 153 rows | OK when called once |
+| `GET /api/maintenance/review-queue` | depends on queue | Usually OK |
+| `POST /api/maintenance/diagnose` | ~15–20 s | Groq-bound; not this handoff |
 
-Exact numbers vary with Aura latency; order of magnitude is what matters.
-
-## Root causes (confirmed in code)
-
-### 1. Backend N+1 on `GET /api/maintenance/assets` (Usman-owned route)
+## Root cause 1 — Backend N+1 (Usman-owned)
 
 File: `backend/api/routes/maintenance.py` → `list_assets`
 
-For **every** asset (~118), the handler does:
+For **each** of ~118 assets:
 
 ```python
 count = len(graph_repo.list_asset_history(asset["id"], limit=9999))
 ```
 
-That means ~118 Neo4j queries, each returning up to 9999 full `ServiceRecord` nodes, just to compute a count. With 2079 corpus records this is catastrophic over Aura.
+≈ 118 Neo4j round-trips; each materializes up to 9999 full `ServiceRecord` nodes **only to count**. With 2079 corpus rows over Aura RTT, this is catastrophic.
 
-**Correct shape:** one Cypher aggregation, e.g.
+### Proposed fix (Usman)
+
+One aggregation query, e.g.:
 
 ```cypher
 MATCH (a:Asset)
@@ -45,59 +56,75 @@ RETURN a, count(sr) AS record_count
 ORDER BY a.tail_number
 ```
 
-No Redis required for this.
+Expose via `GraphRepository.list_assets_with_counts()` (or equivalent). Do not call `list_asset_history` inside a Python loop.
 
-### 2. Frontend fan-out on Service Records page (Shahmeer-owned)
+### Acceptance
 
-File: `frontend/src/pages/ServiceRecords.jsx`
+| Metric | Target |
+| --- | --- |
+| Staging `GET /api/maintenance/assets` | **&lt; 2–3 s** with ~2k records |
+| Neo4j queries per request | **1** (or small constant) |
+
+## Root cause 2 — Frontend history fan-out (Shahmeer-owned)
+
+File: `frontend/src/pages/ServiceRecords.jsx` (pattern as of Mid-I)
 
 On mount:
 
-1. `maintenanceAPI.assets()` (already slow — see above)
-2. Then `Promise.all(assets.map(a => maintenanceAPI.assetHistory(a.id)))`  
-   → **~118 more history requests** (each up to 200 records)
+1. `maintenanceAPI.assets()` (already slow)  
+2. `Promise.all(assets.map(a => maintenanceAPI.assetHistory(a.id)))` → **~118** history calls × up to 200 records
 
-So one page load can mean **1 + 118** heavy API calls. That will feel broken on staging even after assets is fixed, until this page is redesigned.
+Even after assets is fixed, this page remains unusable until redesigned.
 
-**Correct shape (frontend):**
+### Proposed fix (Shahmeer ± Usman)
 
-- Do **not** load all fleet history client-side.
-- Prefer a single paginated list endpoint (Usman adds `GET /api/maintenance/service-records?limit=&offset=&status=`) **or**
-- Load history only for the selected asset (same pattern as Assets → AssetHistory).
+**Preferred A:** selected-asset history only (same UX as Assets → detail).  
+**Preferred B:** Usman adds `GET /api/maintenance/service-records?limit=&offset=&status=` and UI pages that.
 
-### 3. Latency amplifier (environment, not a new product)
+Acceptance: Service Records initial load ≤ **2** API calls.
 
-Staging is VM + Aura (remote). Each chatty request costs ~0.5–3 s RTT. Chatty designs that are “ok” on localhost become unusable. Optimization priority: **fewer/heavier-correct queries**, not Redis first.
+## Root cause 3 — Environment amplifier
 
-### 4. App shell noise (Shahmeer)
+Staging = VM + Aura. Each chatty call costs ~0.5–3 s RTT. Designs that feel fine on localhost MemoryGraph fail on staging. Optimize **query shape**, not cache layer first.
 
-`App.jsx` polls/fetches alerts; `DomainContext` loads domains on every app load. Those are minor vs assets/history, but Mid-I UI should avoid loading software-domain graph overview on maintenance paths.
+## Root cause 4 — App shell noise (minor)
 
-## Is Redis needed?
+`App.jsx` alerts polling; `DomainContext` domains fetch. Small vs assets. Avoid loading software `graph/overview` on maintenance Mid-I paths.
 
-**Not for Mid-I.** Redis helps cache repeated identical reads under load, but:
+## Why not Redis first
 
-- Current slowness is **algorithmic N+1**, not missing a cache layer.
-- Caching a wrong/slow assets response would still be wrong architecture.
-- After a single aggregated Cypher + paginated records API, Redis is optional later (FYP-II SaaS), not a Mid-I gate.
+| Argument | Response |
+| --- | --- |
+| “Cache assets for 60s” | Caches a **wrong** expensive computation; still N+1 on miss |
+| “Cache history pages” | Does not fix 118 parallel first loads |
+| Mid-I rubric | Needs correct APIs + honest latency, not infra sprawl |
+| FYP-II | Redis/CDN optional after correct queries |
 
-## Proposed ownership split
+## Ownership split
 
 | Work | Owner | Acceptance |
 | --- | --- | --- |
-| Replace assets count loop with one Cypher `count(sr)` query | **Usman** | `GET /assets` returns in **&lt; 2–3 s** on staging with 2k records |
-| Stop ServiceRecords from fetching all histories; use paginated API or selected-asset history | **Shahmeer** (+ Usman if new list endpoint) | Service Records page does **≤ 2** API calls on load |
-| Keep Diagnostics/Assets using slim assets list (id, tail, count only) | **Shahmeer** | Diagnostics asset dropdown usable without multi-minute wait |
-| Optional: slim JSON (omit huge unused fields) | Usman | Response size reasonable |
+| Aggregated assets Cypher | **Usman** | assets &lt; 2–3 s on staging |
+| Stop all-history fan-out | **Shahmeer** | ≤ 2 calls on Service Records load |
+| Diagnostics dropdown uses slim assets | **Shahmeer** | Usable without multi-minute wait |
+| Optional slim JSON fields | Usman | Smaller payloads |
 
-## Out of scope for this handoff
+## Out of scope
 
 - Redis / CDN / Cloudflare  
-- Rebuilding conflict engine  
-- Diagnostic ranking changes (Umar U2–U5)
+- Conflict engine changes  
+- Diagnostic ranking / citation (Umar U2–U5 — already done)
+
+## Agent checklist before “optimizing”
+
+1. Confirm frontend hits staging ([`09`](09_frontend_shared_api.md)).  
+2. Time `GET /maintenance/assets` alone vs full page.  
+3. If assets alone is ~30s+, fix Usman N+1 first.  
+4. If assets is fast but Service Records still slow, fix Shahmeer fan-out.  
+5. Do not open a Redis ticket for Mid-I.
 
 ## Related
 
-- Staging guide: `docs/mid1/09_frontend_shared_api.md`  
-- Umar progress: `docs/mid1/08_umar_progress.md`  
-- Remote backend: `knowledge/context/modules/remote_backend.md`
+- Umar audit: [`08_umar_progress.md`](08_umar_progress.md)  
+- Staging guide: [`09_frontend_shared_api.md`](09_frontend_shared_api.md)  
+- Diagnose latency context: [`11_u2_real_data_retrieval.md`](11_u2_real_data_retrieval.md)
