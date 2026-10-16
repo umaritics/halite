@@ -1,0 +1,57 @@
+name: Fetch staging backend logs
+
+# Partners without SSH:
+#   1) Prefer: GET /api/ops/logs with header X-Ops-Token (see remote_backend.md)
+#   2) Or: Actions → this workflow → Run workflow → download artifact "staging-backend-logs"
+
+on:
+  workflow_dispatch:
+    inputs:
+      lines:
+        description: "Docker log lines to capture"
+        required: false
+        default: "300"
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-logs:
+    name: Pull docker logs from VM
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Check deploy secrets
+        env:
+          VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
+          VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+        run: |
+          if [ -z "$VM_SSH_HOST" ] || [ -z "$VM_SSH_USER" ] || [ -z "$VM_SSH_KEY" ]; then
+            echo "::error::Need VM_SSH_HOST, VM_SSH_USER, VM_SSH_KEY"
+            exit 1
+          fi
+
+      - name: Fetch logs over SSH
+        env:
+          VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
+          VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+          LINES: ${{ github.event.inputs.lines || 300 }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh staging-logs
+          printf '%s\n' "$VM_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$VM_SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh -o StrictHostKeyChecking=accept-new \
+            "$VM_SSH_USER@$VM_SSH_HOST" \
+            "docker logs --tail $LINES halite-api 2>&1; echo; curl -fsS http://127.0.0.1:8002/api/ops/version || true" \
+            > staging-logs/halite-api.log
+          wc -l staging-logs/halite-api.log
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: staging-backend-logs
+          path: staging-logs/**
+          retention-days: 7

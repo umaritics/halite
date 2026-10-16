@@ -23,6 +23,11 @@ class Settings(BaseSettings):
     DEMO_MODE: bool = True
     MAX_UPLOAD_MB: int = 10
 
+    # Shared staging ops (partners use /api/ops/*; never commit the real token)
+    OPS_TOKEN: str = ""
+    GIT_SHA: str = "unknown"
+    DEPLOYED_AT: str = ""
+
     # Maintenance domain settings
     MAINT_CONFIDENCE_THRESHOLD: float = 0.50  # Re-calibrated via evaluate_conflict_detection.py
     MAINT_DATA_DIR: str = "data"              # Base data directory (raw/ and processed/ beneath)

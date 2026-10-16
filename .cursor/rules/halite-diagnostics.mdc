@@ -1,0 +1,15 @@
+﻿---
+description: Umar-owned diagnostics / graph retrieval constraints
+globs: backend/services/diagnostic_retrieval.py,backend/api/routes/diagnostics.py,backend/graph/**/*.py,backend/tests/test_diagnostic*.py
+alwaysApply: false
+---
+
+# Diagnostics & graph rules
+
+- Read `knowledge/context/modules/diagnostics.md` and `knowledge/flows/FLOW-diagnose.md` before editing.
+- Label ranking as heuristic/case-based — never as calibrated fault probabilities or conflict F1.
+- Preserve citation validation; never weaken it for demos.
+- Fail loud when Groq is unavailable and no valid diag cache exists (controlled 503).
+- Coordinate any diagnose JSON field rename with Shahmeer; record a DEC if the contract changes.
+- Prefer bounded Neo4j queries; no fabricated graph edges.
+- After changes: update the diagnostics module note and FLOW-diagnose dependency graph if edges changed.
