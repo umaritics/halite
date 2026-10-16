@@ -1,0 +1,23 @@
+{
+  "endpoint": "POST /api/maintenance/diagnose",
+  "scenario": "request missing symptom_text",
+  "request": {
+    "asset_id": "x"
+  },
+  "http_status": 422,
+  "response": {
+    "detail": [
+      {
+        "type": "missing",
+        "loc": [
+          "body",
+          "symptom_text"
+        ],
+        "msg": "Field required",
+        "input": {
+          "asset_id": "x"
+        }
+      }
+    ]
+  }
+}

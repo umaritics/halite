@@ -1,0 +1,30 @@
+# Route smoke test (blueprint T01 / T16) — captured 2026-10-16 against live backend
+# code SHA 1473e778e55c3840e83bc5234416a88f439256fc | graph_mode=neo4j llm_mode=live records=2079
+# Method: in-page SPA navigation (history.pushState + popstate) in the Claude desktop
+#         Browser pane at 1280x800, with console.error / window.onerror / unhandledrejection
+#         recorders installed. Sidebar for every row:
+#         Assets, Service Records, Diagnostics, Review Queue, Ingest, Knowledge Graph, Settings
+
+requested                                   landed                                      heading
+/app                                        /app/assets                                 Assets
+/app/assets                                 /app/assets                                 Assets
+/app/records                                /app/records                                Service Records
+/app/diagnostics                            /app/diagnostics                            Diagnostics
+/app/review-queue                           /app/review-queue                           Review Queue (9)
+/app/maintenance-ingest                     /app/maintenance-ingest                     Maintenance Ingest
+/app/settings                               /app/settings                               Settings
+/app/graph                                  /app/graph                                  Knowledge Graph
+/app/chat            (legacy software)      /app/assets  (redirect)                     Assets
+/app/decisions       (legacy software)      /app/assets  (redirect)                     Assets
+/app/ingest          (legacy software)      /app/assets  (redirect)                     Assets
+/app/alerts          (legacy software)      /app/assets  (redirect)                     Assets
+/app/no-such-page    (unknown)              /app/assets  (redirect)                     Assets
+/app/asset-history/92bdb741-...#SWIA2025122076513   (same, hash kept)                   813SK
+
+App shell rendered on all 14 rows. Dropped software screens never appear in the sidebar.
+
+Console during the combined run: 1 React warning (non-fatal):
+  "A component is changing an uncontrolled input to be controlled ..."
+Re-running each route individually (records, maintenance-ingest, graph, assets, settings,
+diagnostics, review-queue, asset-history): 0 console errors, 0 unhandled rejections.
+The warning was not reproduced per-route; source not identified.

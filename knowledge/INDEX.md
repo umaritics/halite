@@ -32,7 +32,9 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | staging, remote VM, deploy, OPS_TOKEN, ops/logs | context/modules/remote_backend.md, flows/FLOW-deploy.md |
 | Mid-I progress, partner handoff | docs/mid1/README.md, docs/mid1/08_umar_progress.md |
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
-| review queue UI | context/modules/frontend.md |
+| review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |
+| service records, fan-out, per-aircraft, N+1 (frontend) | decisions/DEC-20261016-service-records-per-aircraft.md, docs/mid1/10_perf_assets_api_handoff.md |
+| legacy software UI, domain lock, Settings reset removed | decisions/DEC-20261016-frontend-maintenance-only.md |
 | Usman audit, A1–A4 | decisions/DEC-20261016-usman-baseline.md |
 
 ## Code path → docs

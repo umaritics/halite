@@ -1,0 +1,41 @@
+# Staging measurements — 2026-10-16 (Service Records fan-out, handoff docs/mid1/10)
+# Frontend: PRODUCTION build (no React StrictMode double effects) with
+#   VITE_API_URL=https://dev1.corp.curatech.pk/halite-api/api, served by `vite preview` on :5173,
+#   in the Claude desktop Browser pane. Timings from the browser Performance API (resource timing).
+# Staging /api/health at the time: graph_mode=neo4j, llm_mode=live, maintenance_record_count=2079,
+#   git_sha=b14c8eca972b69ff42c8fb76a6210a616191f8da, using_memory_graph=false.
+
+## curl, laptop -> staging
+GET /api/health                       200   3.2 s   (cold)
+GET /api/maintenance/assets           200   0.99 s  118 assets, 28,159 bytes
+
+## Service Records, cold load of /app/records (813SK default, 153 records)
+GET /maintenance/assets                         688 ms   page
+GET /maintenance/review-queue                   430 ms   app shell (sidebar badge; every page)
+GET /maintenance/assets/<uuid>/history         1221 ms   page (one aircraft only)
+=> page-initiated calls: 2 | calls in network tab: 3 | records on screen ~2 s after load
+(previous behaviour: 1 assets call + 118 history calls)
+
+## Switch aircraft to 173US
+calls added: 1  (GET /maintenance/assets/<uuid>/history, 926 ms) | URL becomes /app/records?asset=<uuid> | "71 records for 173US"
+
+## Diagnostics page load (staging)
+GET /maintenance/assets 923 ms | GET /maintenance/review-queue 667 ms (shell)
+
+## Diagnose, 813SK "crack found on drag angle during inspection" (through the UI)
+POST /maintenance/diagnose 4561 ms (5.0 s to result). Ranked checks rendered, each with its record ids; "+12 more" on ANGLE.
+
+## Observation: staging diagnose returns no explanation (NOT explained; owner Umar/Usman)
+Fresh symptoms, 813SK, via curl (explanation chars / evidence / valid citations / ranked checks):
+  "crack found on drag angle during inspection"                          0 / 0 / 0 / 10   (0.7 s: cached)
+  "crack found on the drag angle during an inspection of the vertical stab"  0 / 0 / 0 / 10   (4.8 s)
+  "door damper pressure low during base maintenance"                     0 / 0 / 0 / 10   (4.6 s)
+Same merged code run LOCALLY (Neo4j docker, own Groq key), 813SK:
+  "crack found on the drag angle during an inspection of the vertical stab"  1309 / 10 / 13 / 10  (4.2 s)
+  "door damper pressure low during base maintenance"                          18 / 0 / 0 / 10  (3.1 s)
+Both report llm_mode=live. Staging logs (GET /api/ops/logs, needs token) were not available to me.
+UI behaviour: ranking shown; "No written explanation returned" notice; no Analysis/citations/evidence cards.
+
+## Note: asset UUIDs differ between environments
+813SK: staging aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb | local Neo4j 92bdb741-42cb-4ccb-a65f-6ed5fbb7d1a4
+Deep links containing a UUID are environment-specific; FAA record ids (SWIA..., AALA...) are the same.

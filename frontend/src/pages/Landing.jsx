@@ -8,8 +8,8 @@ import { useTheme } from '../context/ThemeContext';
 
 const features = [
   {
-    title: 'Knowledge Graph',
-    body: 'Every component, decision, and file is a node. Relationships are first-class citizens.',
+    title: 'Asset Knowledge Graph',
+    body: 'Assets, service records and components are nodes. Every record keeps its date and its original report ID.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8" aria-hidden="true">
         <circle cx="6" cy="6" r="2.5" stroke="#E8650A" strokeWidth="1.5" />
@@ -22,8 +22,8 @@ const features = [
     ),
   },
   {
-    title: 'Ask Your Codebase',
-    body: 'Chat interface grounded in your project\'s actual architecture, not generic AI guesses.',
+    title: 'Evidence-Linked Diagnostics',
+    body: 'Describe a symptom and get ranked investigation checks, each tied to the historical records that support it.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8" aria-hidden="true">
         <path
@@ -38,8 +38,8 @@ const features = [
     ),
   },
   {
-    title: 'Decision Invalidation',
-    body: 'When code changes, Halite flags every architectural decision that may no longer hold.',
+    title: 'Correction-Aware Review',
+    body: 'When a later report corrects an earlier one, Halite flags it and scores its confidence. Uncertain cases go to a human reviewer.',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8" aria-hidden="true">
         <path
@@ -59,22 +59,22 @@ const steps = [
   {
     num: '1',
     label: 'Ingest',
-    desc: 'Connect your repo, docs, and meeting transcripts.',
+    desc: 'Load FAA Service Difficulty Reports into the graph.',
   },
   {
     num: '2',
     label: 'Map',
-    desc: 'Halite builds a live knowledge graph of all components and decisions.',
+    desc: 'Records link to their asset and component in dated order.',
   },
   {
     num: '3',
-    label: 'Query',
-    desc: 'Ask questions in plain language. Get answers with citations.',
+    label: 'Diagnose',
+    desc: 'Describe a symptom. Get ranked checks with cited source records.',
   },
   {
     num: '4',
-    label: 'Monitor',
-    desc: 'Receive alerts when decisions become stale after code changes.',
+    label: 'Review',
+    desc: 'Uncertain corrections are routed to a human review queue.',
   },
 ];
 
@@ -90,32 +90,33 @@ export default function Landing() {
       <section className="relative z-10 flex min-h-screen items-center px-6 pt-14">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-2">
           <div id="about">
-            <p className="eyebrow">INSTITUTIONAL MEMORY FOR SOFTWARE TEAMS</p>
+            <p className="eyebrow">MAINTENANCE DIAGNOSTICS AND ASSET INTELLIGENCE</p>
             <h1 className="font-brand mt-4 text-[56px] leading-[1.1] text-primary">
-              Your codebase has a memory. Now it speaks.
+              Years of service records. One traceable place to start.
             </h1>
             <p className="mt-6 font-sans text-base text-secondary">
-              Halite captures every architectural decision, component dependency, and
-              reasoning thread — and surfaces them the moment your team needs them.
+              Halite links aircraft service reports into a knowledge graph, flags records
+              that later reports corrected, and ranks what to investigate next, with every
+              suggestion tied back to its source record.
             </p>
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                to="/app/chat"
+                to="/app/assets"
                 className="rounded-md bg-accent px-7 py-3 font-sans text-sm font-medium text-black transition hover:bg-accent-hover"
               >
-                Request Demo
+                Open the Workspace
               </Link>
               <Link
-                to="/app/graph"
+                to="/app/diagnostics"
                 className={`rounded-md border px-7 py-3 font-sans text-sm font-medium transition hover:border-accent hover:text-accent ${
                   isDark ? 'border-[#333333] text-[#F5F5F5]' : 'border-[#BBBBBB] text-[#0A0A0A]'
                 }`}
               >
-                Explore the Graph
+                Run a Diagnostic
               </Link>
             </div>
             <p className="mt-6 font-sans text-xs text-[#555555]">
-              ✦ No setup required · ✦ Works with any repo · ✦ AI-native from day one
+              ✦ Built on FAA Service Difficulty Reports · ✦ Cited record IDs verified against the graph · ✦ Decision support, not a repair authority
             </p>
           </div>
           <div className="flex justify-center">
@@ -129,7 +130,7 @@ export default function Landing() {
         <div className="mx-auto max-w-6xl">
           <p className="eyebrow">WHAT HALITE DOES</p>
           <h2 className="font-brand mt-3 text-[40px] text-primary">
-            Every decision. Every reason. Always findable.
+            Every suggestion. Every source. Always traceable.
           </h2>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
             {features.map((f) => (
@@ -152,7 +153,7 @@ export default function Landing() {
       >
         <div id="how-it-works" className="mx-auto max-w-6xl">
           <h2 className="font-brand text-[36px] text-primary">
-            From commit to institutional memory in seconds.
+            From service report to traceable evidence.
           </h2>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step) => (
@@ -179,13 +180,14 @@ export default function Landing() {
           See <BrandName className="text-accent" /> in action.
         </h2>
         <p className="mx-auto mt-4 max-w-lg font-sans text-base text-secondary">
-          Upload a document or connect your repo to try a live demo.
+          Open an asset, describe a symptom, and follow each citation back to its source record.
+          Approved maintenance documentation and qualified personnel remain authoritative.
         </p>
         <Link
-          to="/app/chat"
+          to="/app/assets"
           className="mt-8 inline-block rounded-lg bg-accent px-10 py-4 font-sans text-lg font-medium text-black transition hover:bg-accent-hover"
         >
-          Start Free Demo →
+          Open the Workspace →
         </Link>
       </section>
 

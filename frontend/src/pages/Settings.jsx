@@ -1,73 +1,26 @@
 import { useEffect, useState } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../context/ThemeContext';
-import { healthAPI, graphAPI } from '../api/client';
+import { healthAPI } from '../api/client';
 import HaliteLogo from '../components/HaliteLogo';
 import BrandName from '../components/BrandName';
 
+// Mid-I: the software-only tools that used to live here (agent-context export and the
+// "Reset knowledge graph" action, which runs a full-graph DETACH DELETE) are no longer
+// exposed. A single click on that button would erase the loaded maintenance corpus.
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
   const [health, setHealth] = useState(null);
-  const [exporting, setExporting] = useState(false);
-  const [resetting, setResetting] = useState(false);
-  const [exportMessage, setExportMessage] = useState(null);
-  const [resetMessage, setResetMessage] = useState(null);
 
   useEffect(() => {
     healthAPI.check().then(({ data }) => setHealth(data)).catch(() => setHealth(null));
   }, []);
 
-  const handleExportContext = async () => {
-    setExporting(true);
-    setExportMessage(null);
-    try {
-      const { data } = await graphAPI.exportContext();
-      const stamp = new Date().toISOString().slice(0, 10);
-      const blob = new Blob([data], { type: 'text/markdown;charset=utf-8' });
-      const href = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = href;
-      link.download = `halite-agent-context-${stamp}.md`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(href);
-      setExportMessage('Context exported. Give this markdown file to the IDE agent before it scans the repo.');
-    } catch (err) {
-      setExportMessage(err.message || 'Export failed');
-    } finally {
-      setExporting(false);
-    }
-  };
-
-  const handleResetGraph = async () => {
-    const confirmed = window.confirm(
-      'This wipes the knowledge graph for a clean benchmark run and does not restore demo seed data. Continue?'
-    );
-    if (!confirmed) return;
-    setResetting(true);
-    setResetMessage(null);
-    try {
-      const { data } = await graphAPI.reset(false);
-      setResetMessage(
-        data.seeded
-          ? `Graph reset (${data.mode}). Demo seed restored.`
-          : `Graph reset (${data.mode}). Graph is now empty for benchmark ingest. Re-upload the transcript and re-run Gitea sync.`
-      );
-      const healthRes = await healthAPI.check().catch(() => null);
-      if (healthRes?.data) setHealth(healthRes.data);
-    } catch (err) {
-      setResetMessage(err.message || 'Reset failed');
-    } finally {
-      setResetting(false);
-    }
-  };
-
   return (
     <div className="h-full overflow-y-auto">
       <header className="border-b border-theme px-6 py-4">
         <h2 className="font-brand text-xl text-primary">Settings</h2>
-        <p className="font-sans text-sm text-secondary">Appearance and system configuration</p>
+        <p className="font-sans text-sm text-secondary">Appearance and system status</p>
       </header>
 
       <div className="mx-auto max-w-2xl space-y-6 p-6">
@@ -156,48 +109,15 @@ export default function Settings() {
         </section>
 
         <section className="halite-card p-6">
-          <h3 className="font-brand text-primary">Agent context export</h3>
-          <p className="mt-2 font-sans text-sm text-secondary">
-            Download a compact markdown snapshot of the current graph so IDE agents can start with project memory and
-            verify fewer files.
-          </p>
-          <button
-            onClick={handleExportContext}
-            disabled={exporting}
-            className="halite-btn-primary mt-4 text-sm disabled:opacity-60"
-          >
-            {exporting ? 'Exporting…' : 'Export agent context (.md)'}
-          </button>
-          {exportMessage && (
-            <p className="mt-3 font-sans text-sm text-accent">{exportMessage}</p>
-          )}
-        </section>
-
-        <section className="halite-card p-6">
-          <h3 className="font-brand text-primary">Demo graph</h3>
-          <p className="mt-2 font-sans text-sm text-secondary">
-            Wipe all nodes for a clean benchmark run. This no longer restores the seeded JWT / PostgreSQL demo data.
-            Re-upload the transcript and re-run Gitea sync after resetting.
-          </p>
-          <button
-            onClick={handleResetGraph}
-            disabled={resetting}
-            className="halite-btn mt-4 text-sm text-red-400 ring-1 ring-red-500/30 hover:bg-red-500/10 disabled:opacity-60"
-          >
-            {resetting ? 'Resetting…' : 'Reset knowledge graph'}
-          </button>
-          {resetMessage && (
-            <p className="mt-3 font-sans text-sm text-accent">{resetMessage}</p>
-          )}
-        </section>
-
-        <section className="halite-card p-6">
           <h3 className="font-brand text-primary">
             About <BrandName className="text-accent" />
           </h3>
           <p className="mt-2 font-sans text-sm text-secondary">
-            <BrandName className="text-accent" /> is a living knowledge graph for software project reasoning, decisions, and
-            institutional memory. Built for FAST NUCES FYP — capturing the &quot;why&quot; behind your codebase.
+            <BrandName className="text-accent" /> turns historical maintenance service records into an
+            evidence-aware knowledge graph: it ranks what to investigate next, links each suggestion to
+            its source records, and flags records that later reports corrected. It is decision support
+            only. Approved maintenance documentation and qualified personnel remain authoritative.
+            Built for FAST NUCES FYP.
           </p>
         </section>
       </div>

@@ -1,0 +1,31 @@
+{
+  "status": "ok",
+  "app": "Halite",
+  "demo_mode": false,
+  "neo4j_configured": true,
+  "using_memory_graph": false,
+  "groq_configured": true,
+  "graph_mode": "neo4j",
+  "llm_mode": "live",
+  "model": "openai/gpt-oss-120b",
+  "maint_threshold": 0.5,
+  "domains": [
+    {
+      "key": "software",
+      "display_name": "Software Engineering",
+      "subject_label": "Component",
+      "record_label": "Decision",
+      "is_default": true
+    },
+    {
+      "key": "maintenance",
+      "display_name": "Maintenance / Field Service",
+      "subject_label": "Asset",
+      "record_label": "ServiceRecord",
+      "is_default": false
+    }
+  ],
+  "maintenance_corpus_loaded": true,
+  "maintenance_record_count": 2079,
+  "fallback_invocations": 0
+}

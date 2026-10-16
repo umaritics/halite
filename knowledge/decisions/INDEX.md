@@ -13,6 +13,9 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
 | [DEC-20261016-main-only-staging-release](DEC-20261016-main-only-staging-release.md) | Main-only, CI-gated staging releases | accepted | Umar, Usman |
+| [DEC-20261016-service-records-per-aircraft](DEC-20261016-service-records-per-aircraft.md) | Service Records loads one aircraft at a time | accepted | Shahmeer |
+| [DEC-20261016-review-actions-server-confirmed](DEC-20261016-review-actions-server-confirmed.md) | Review Accept/Reject wait for the server; no bare-key shortcuts | accepted | Shahmeer |
+| [DEC-20261016-frontend-maintenance-only](DEC-20261016-frontend-maintenance-only.md) | Frontend is maintenance-only; legacy software UI unreachable | accepted | Shahmeer |
 | [DEC-20261016-shared-staging-cd](DEC-20261016-shared-staging-cd.md) | Centralized staging API + Actions CD | accepted | Umar, Usman |
 | [DEC-20261016-knowledge-rename](DEC-20261016-knowledge-rename.md) | Move bank to top-level `knowledge/` | accepted | Umar |
 | [DEC-20261016-context-bank](DEC-20261016-context-bank.md) | Adopt knowledge bank + agent protocol | accepted | all |
