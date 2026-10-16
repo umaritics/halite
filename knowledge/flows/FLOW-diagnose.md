@@ -20,7 +20,7 @@ Technician (UI) → Frontend → `POST /api/maintenance/diagnose` → retrieval 
 4. Backend loads/builds diagnostic context from Neo4j (bounded history + similar records).
 5. Ranker orders investigative checks with evidence record IDs.
 6. LLM (or cache) produces explanation constrained to retrieved IDs.
-7. `_validate_citations` confirms/flags IDs.
+7. `validate_citations` (`services/citation_validation.py`) confirms/flags IDs.
 8. UI shows ranked list, explanation, warnings, citation status; user opens a cited record.
 
 ## Failure modes
