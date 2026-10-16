@@ -154,8 +154,7 @@ def _build_test_app():
     def health():
         is_memory = graph_repo.is_memory
         llm_is_live = groq_service.is_live
-        records = graph_repo.list_service_records()
-        maint_count = len(records)
+        maint_count = graph_repo.count_service_records()
         return {
             "status": "ok",
             "app": "Halite",

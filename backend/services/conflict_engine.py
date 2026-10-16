@@ -453,6 +453,15 @@ def process_record(
     history_size = len(graph_repo.list_asset_history(asset["id"]))
 
     if not candidates:
+        if not dry_run:
+            graph_repo.update_service_record(record_id, {
+                "status": "auto_accepted",
+                "confidence": 0.0,
+                "history_size": history_size,
+                "candidates_considered": 0,
+                "classification_label": None,
+                "classification_rationale": None,
+            })
         return {
             "record_id": record_id,
             "candidates_considered": 0,

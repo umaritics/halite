@@ -399,3 +399,25 @@ class TestProcessRecord:
         result = process_record(repo, groq, adapter, "LONE001", allow_stub=True)
         assert result["candidates_considered"] == 0
         assert result["route"] == "auto_accepted"
+        stored = repo.get_service_record("LONE001")
+        assert stored["status"] == "auto_accepted"
+        assert stored["confidence"] == 0.0
+        assert stored["candidates_considered"] == 0
+
+    def test_no_candidates_dry_run_does_not_persist_score(self):
+        from services.conflict_engine import process_record
+        repo = _make_repo()
+        adapter = MaintenanceDomainAdapter()
+        asset = repo.find_or_create_asset("NDRY", {})
+        repo.create_service_record({"record_id": "DRY001", "asset_key": "NDRY",
+                                    "occurred_at": "2025-01-01", "text": "only record",
+                                    "status": "auto_accepted", "confidence": 1.0})
+        repo.link_record_about_asset("DRY001", asset["id"])
+
+        result = process_record(
+            repo, StubGroqLive(), adapter, "DRY001", allow_stub=True, dry_run=True
+        )
+
+        assert result["confidence"] == 0.0
+        stored = repo.get_service_record("DRY001")
+        assert stored["confidence"] == 1.0

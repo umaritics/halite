@@ -20,6 +20,11 @@ updated: 2026-10-16
 ## Failure / safety
 
 - LLM unavailable during conflict processing must not silently invent supersessions.
+- The bulk conflict-score backfill exits before processing unless Groq is live;
+  it invokes the engine with `allow_stub=False`.
+- A record with no older candidate is persisted as scored with confidence
+  `0.0`; resume mode skips any record that is no longer an untouched ingest
+  placeholder.
 - Do not destroy source records on reject.
 - Seeded demo queue items must not be mislabeled as adjudicated diagnoses.
 

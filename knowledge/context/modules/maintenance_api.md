@@ -32,6 +32,14 @@ contracts under `/api/maintenance`.
 memory implementation counts `ABOUT` edges in one pass. The route must not
 load each asset's full history to calculate a count.
 
+`/api/health` uses `GraphRepository.count_service_records()`. Neo4j executes
+`MATCH (sr:ServiceRecord) RETURN count(sr)` and memory mode counts nodes without
+building record dictionaries. The health response fields remain unchanged.
+
+Duplicate ingestion retries re-run the idempotent `ABOUT` link operation. This
+repairs a record node left orphaned by interruption between node creation and
+relationship creation without duplicating an existing relationship.
+
 Mid-I staging target: one graph query (or a small constant) and less than
 2–3 seconds for the approximately 2,079-record corpus. Redis is not part of
 this fix; correct query shape comes first.

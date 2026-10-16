@@ -93,6 +93,19 @@ class TestHealthMaintenance:
         assert data["maintenance_corpus_loaded"] is False
         assert data["maintenance_record_count"] == 0
 
+    def test_health_uses_count_query_not_record_materialization(self, client, monkeypatch):
+        repo = client.app.state.graph_repo
+        monkeypatch.setattr(
+            repo,
+            "list_service_records",
+            lambda *args, **kwargs: pytest.fail("health must not materialize records"),
+        )
+
+        resp = client.get("/api/health")
+
+        assert resp.status_code == 200
+        assert resp.json()["maintenance_record_count"] == 0
+
 
 # ---------------------------------------------------------------------------
 # /api/maintenance/assets — empty state

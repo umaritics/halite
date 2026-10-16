@@ -161,6 +161,10 @@ class MaintenanceAgent(BaseAgent):
             existing_sr = self.graph_repo.get_service_record(record_id)
             if existing_sr is not None:
                 duplicates_skipped += 1
+                # A prior ingest can be interrupted after node creation but before
+                # relationship creation. MERGE (and the memory equivalent) makes
+                # this retry repair safe and idempotent.
+                self.graph_repo.link_record_about_asset(record_id, asset_id)
                 # Still need to update asset_latest for chaining consistency
                 self._update_asset_latest(asset_latest, asset_id, occurred_at,
                                          raw.get("SubmissionDate", ""), record_id)
