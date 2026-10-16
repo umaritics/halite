@@ -61,6 +61,7 @@ export const maintenanceAPI = {
   accept: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/accept`, { note }),
   reject: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/reject`, { note }),
   diagnose: (assetId, symptomText) => api.post('/maintenance/diagnose', { asset_id: assetId, symptom_text: symptomText }),
+  copilotTurn: (payload) => api.post('/maintenance/copilot/turn', payload),
   chat: (message, assetId, history) => api.post('/maintenance/chat', { message, asset_id: assetId, history }),
 };
 

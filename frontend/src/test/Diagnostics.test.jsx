@@ -8,7 +8,8 @@ import * as client from '../api/client';
 vi.mock('../api/client', () => ({
   maintenanceAPI: {
     assets: vi.fn(),
-    diagnose: vi.fn()
+    diagnose: vi.fn(),
+    copilotTurn: vi.fn()
   }
 }));
 
@@ -32,12 +33,15 @@ const mockResult = {
   context_size: { asset_records: 30, fleet_records: 20, fleet_assets: 18 }
 };
 
-const renderPage = () =>
-  render(
+const renderPage = () => {
+  const rendered = render(
     <MemoryRouter>
       <Diagnostics />
     </MemoryRouter>
   );
+  fireEvent.click(screen.getByRole('tab', { name: /quick diagnose/i }));
+  return rendered;
+};
 
 // Pick the first asset, type a symptom and press "Run diagnostic".
 async function runDiagnostic(symptom = 'crack at drag angle') {
@@ -403,9 +407,9 @@ describe('Diagnostics', () => {
       await runDiagnostic();
       await waitFor(() => screen.getByText('Ranked Inspection Order'));
 
-      expect(screen.getByText('rank score 1.48')).toBeDefined();
-      expect(screen.getByText('rank score 0.59')).toBeDefined();
-      expect(screen.getByText('rank score 1.48')).toHaveAttribute('title', expect.stringMatching(/not a probability/i));
+      expect(screen.getByText('evidence score (heuristic) 1.48')).toBeDefined();
+      expect(screen.getByText('evidence score (heuristic) 0.59')).toBeDefined();
+      expect(screen.getByText('evidence score (heuristic) 1.48')).toHaveAttribute('title', expect.stringMatching(/not a probability/i));
       expect(screen.queryByText(/probability of/i)).toBeNull();
     });
 
@@ -416,7 +420,7 @@ describe('Diagnostics', () => {
       renderPage();
       await runDiagnostic();
       await waitFor(() => screen.getByText('Ranked Inspection Order'));
-      expect(screen.queryByText(/rank score/)).toBeNull();
+      expect(screen.queryByText(/evidence score/)).toBeNull();
     });
 
     it('shows the server time from context_size.wall_clock_s', async () => {

@@ -17,7 +17,7 @@ const MAX_IDS_PER_CHECK = 5;
 // rate limit, server error, network error, insufficient evidence). The page never
 // fills a gap with invented content.
 
-export default function Diagnostics() {
+function QuickDiagnose() {
   const navigate = useNavigate();
   const [assets, setAssets] = useState([]);
   const [assetSearch, setAssetSearch] = useState('');
@@ -312,9 +312,9 @@ export default function Diagnostics() {
                             {typeof check.score === 'number' && (
                               <span
                                 className="font-sans text-xs text-secondary"
-                                title="Ordering weight computed from historical frequency. It is a rank score, not a probability."
+                                title="Heuristic ordering weight from historical evidence. It is not a probability or calibrated confidence."
                               >
-                                rank score {check.score.toFixed(2)}
+                                evidence score (heuristic) {check.score.toFixed(2)}
                               </span>
                             )}
                           </div>
@@ -508,6 +508,378 @@ export default function Diagnostics() {
             </p>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+const SESSION_KEY = 'halite-diagnostic-copilot-sessions';
+const EMPTY_CASE = {
+  symptoms: [],
+  observations: [],
+  checks_done: [],
+  ruled_out: [],
+  open_questions: [],
+};
+
+function loadSessions() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SESSION_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function storeSessions(sessions) {
+  try {
+    window.localStorage.setItem(SESSION_KEY, JSON.stringify(sessions));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function copilotError(err) {
+  const described = describeDiagnosticError(err);
+  if (err?.response?.status === 404) {
+    return { ...described, title: 'Unknown aircraft', message: 'The selected aircraft no longer exists in the loaded corpus.' };
+  }
+  return described;
+}
+
+function movementFor(partName, delta = {}) {
+  if ((delta.new ?? []).some(item => item.part_name === partName)) return 'new';
+  if ((delta.moved_up ?? []).some(item => item.part_name === partName)) return 'moved up';
+  if ((delta.moved_down ?? []).some(item => item.part_name === partName)) return 'moved down';
+  return null;
+}
+
+function Copilot() {
+  const navigate = useNavigate();
+  const [assets, setAssets] = useState([]);
+  const [assetId, setAssetId] = useState('');
+  const [message, setMessage] = useState('');
+  const [thread, setThread] = useState([]);
+  const [caseState, setCaseState] = useState(EMPTY_CASE);
+  const [sessionId, setSessionId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [failedTurn, setFailedTurn] = useState(null);
+  const [sessions, setSessions] = useState(loadSessions);
+  const [storageWarning, setStorageWarning] = useState('');
+
+  useEffect(() => {
+    maintenanceAPI.assets().then(res => setAssets(res.data)).catch(() => {});
+  }, []);
+
+  const latest = [...thread].reverse().find(item => item.role === 'assistant')?.response;
+
+  const persist = (nextSessions) => {
+    setSessions(nextSessions);
+    if (!storeSessions(nextSessions)) {
+      setStorageWarning('Session storage is unavailable. This investigation still works, but cannot be saved locally.');
+    }
+  };
+
+  const sendTurn = async (turnMessage, options = {}) => {
+    const text = turnMessage.trim();
+    if (!text || loading) return;
+    const stateForTurn = options.caseState ?? caseState;
+    if (!options.retry) setThread(items => [...items, { role: 'user', content: text }]);
+    setLoading(true);
+    setError(null);
+    setFailedTurn(null);
+    try {
+      const response = await maintenanceAPI.copilotTurn({
+        ...(sessionId ? { session_id: sessionId } : {}),
+        ...(assetId ? { asset_id: assetId } : {}),
+        message: text,
+        case_state: stateForTurn,
+      });
+      const data = response.data;
+      setSessionId(data.session_id);
+      setCaseState(data.case_state ?? stateForTurn);
+      setThread(items => [...items, { role: 'assistant', response: data, content: data.reply }]);
+      setMessage('');
+    } catch (requestError) {
+      setError(copilotError(requestError));
+      setFailedTurn({ message: text, caseState: stateForTurn });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const submit = (event) => {
+    event.preventDefault();
+    sendTurn(message);
+  };
+
+  const newInvestigation = () => {
+    setThread([]);
+    setCaseState(EMPTY_CASE);
+    setSessionId(null);
+    setMessage('');
+    setError(null);
+    setFailedTurn(null);
+    setAssetId('');
+  };
+
+  const saveSession = () => {
+    if (!thread.length) return;
+    const id = sessionId || `local-${Date.now()}`;
+    const firstMessage = thread.find(item => item.role === 'user')?.content || 'Investigation';
+    const snapshot = {
+      id,
+      title: firstMessage.slice(0, 48),
+      savedAt: new Date().toISOString(),
+      assetId,
+      thread,
+      caseState,
+    };
+    persist([snapshot, ...sessions.filter(item => item.id !== id)]);
+    setSessionId(id);
+  };
+
+  const resumeSession = (saved) => {
+    setSessionId(saved.id);
+    setAssetId(saved.assetId || '');
+    setThread(Array.isArray(saved.thread) ? saved.thread : []);
+    setCaseState(saved.caseState || EMPTY_CASE);
+    setError(null);
+  };
+
+  const deleteSession = (id) => {
+    persist(sessions.filter(item => item.id !== id));
+    if (sessionId === id) newInvestigation();
+  };
+
+  const updateCaseAndRerun = (field, value) => {
+    const next = {
+      ...caseState,
+      [field]: [...new Set([...(caseState[field] ?? []), value])],
+    };
+    setCaseState(next);
+    sendTurn(`Case update: ${field === 'checks_done' ? 'check completed' : 'ruled out'} ${value}.`, { caseState: next });
+  };
+
+  const removeCaseFact = (field, value) => {
+    setCaseState(current => ({
+      ...current,
+      [field]: (current[field] ?? []).filter(item => item !== value),
+    }));
+  };
+
+  const openRecord = (record) => {
+    const uuid = assets.find(asset => asset.tail_number === record.asset_id)?.id || record.asset_id;
+    navigate(`/app/asset-history/${uuid}#${record.record_id}`);
+  };
+
+  return (
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
+      <div className="space-y-4">
+        <div className="halite-card flex flex-wrap items-end gap-3 p-4">
+          <label className="min-w-48 flex-1 font-sans text-sm text-primary">
+            Aircraft filter
+            <select
+              aria-label="Aircraft filter"
+              value={assetId}
+              onChange={event => setAssetId(event.target.value)}
+              className="halite-input mt-1 w-full"
+            >
+              <option value="">All fleet</option>
+              {assets.map(asset => (
+                <option key={asset.id} value={asset.id}>{asset.tail_number}</option>
+              ))}
+            </select>
+          </label>
+          <button type="button" onClick={newInvestigation} className="halite-btn text-sm">New investigation</button>
+          <button type="button" onClick={saveSession} disabled={!thread.length} className="halite-btn text-sm disabled:opacity-50">Save session</button>
+        </div>
+
+        <section aria-label="Diagnostic conversation" className="halite-card min-h-80 space-y-4 p-5">
+          {thread.length === 0 && (
+            <div className="py-12 text-center">
+              <h3 className="font-brand text-lg text-primary">Start an evidence-grounded investigation</h3>
+              <p className="mt-2 font-sans text-sm text-secondary">Describe a symptom, observation, completed check, or ask about a service record.</p>
+            </div>
+          )}
+          {thread.map((turn, index) => turn.role === 'user' ? (
+            <div key={index} className="ml-auto max-w-[85%] rounded-xl bg-accent/10 p-3 font-sans text-sm text-primary">
+              {turn.content}
+            </div>
+          ) : (
+            <article key={index} className="space-y-3 rounded-xl border border-theme bg-surface p-4">
+              {turn.response.llm_status === 'unavailable' || !turn.content ? (
+                <div role="alert" className="rounded border border-amber-500/30 bg-amber-500/5 p-3">
+                  <p className="font-sans text-sm font-medium text-amber-400">Language model unavailable</p>
+                  <p className="font-sans text-xs text-primary">No narrative was invented. Deterministic ranking and evidence are still shown below.</p>
+                </div>
+              ) : (
+                <p className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-primary">
+                  {splitUnverified(turn.content).map((segment, partIndex) => segment.flagged ? (
+                    <mark key={partIndex} data-unverified="true" className="bg-amber-500/20 text-amber-400">{segment.text}</mark>
+                  ) : <Fragment key={partIndex}>{segment.text}</Fragment>)}
+                </p>
+              )}
+
+              {(turn.response.warnings ?? []).length > 0 && (
+                <ul className="list-disc pl-5 font-sans text-xs text-amber-400">
+                  {turn.response.warnings.map(warning => <li key={warning}>{warning}</li>)}
+                </ul>
+              )}
+
+              {(turn.response.ranked_checks ?? []).length > 0 && (
+                <div>
+                  <h4 className="eyebrow mb-2">Ranked checks</h4>
+                  <ol className="space-y-2">
+                    {turn.response.ranked_checks.map(check => {
+                      const movement = movementFor(check.part_name, turn.response.ranking_delta);
+                      return (
+                        <li key={check.part_name} className="rounded border border-theme p-2">
+                          <div className="flex flex-wrap items-center gap-2 font-sans text-sm text-primary">
+                            <span>{check.rank}. {check.part_name}</span>
+                            {movement && <span className="rounded bg-accent/10 px-1.5 text-xs text-accent">{movement}</span>}
+                            <span className="text-xs text-secondary">evidence score (heuristic) {Number(check.score).toFixed(2)}</span>
+                          </div>
+                          <div className="mt-1 flex flex-wrap gap-2">
+                            {(check.evidence_record_ids ?? []).map(recordId => {
+                              const record = (turn.response.evidence ?? []).find(item => item.record_id === recordId);
+                              return record ? (
+                                <button key={recordId} type="button" onClick={() => openRecord(record)} className="font-mono text-xs text-accent hover:underline">{recordId}</button>
+                              ) : <span key={recordId} className="font-mono text-xs text-secondary">{recordId}</span>;
+                            })}
+                          </div>
+                          {index === thread.length - 1 && (
+                            <div className="mt-2 flex gap-2">
+                              <button type="button" onClick={() => updateCaseAndRerun('checks_done', check.part_name)} className="halite-btn text-xs">Mark done</button>
+                              <button type="button" onClick={() => updateCaseAndRerun('ruled_out', check.part_name)} className="halite-btn text-xs">Rule out</button>
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              )}
+
+              {(turn.response.evidence ?? []).length > 0 && (
+                <div>
+                  <h4 className="eyebrow mb-2">Evidence</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {turn.response.evidence.map(record => (
+                      <button
+                        key={record.record_id}
+                        type="button"
+                        onClick={() => openRecord(record)}
+                        className={`rounded border px-2 py-1 font-mono text-xs ${record.is_superseded ? 'border-amber-500/40 text-amber-400' : 'border-theme text-accent'}`}
+                      >
+                        {record.record_id}{record.is_superseded ? ' · superseded' : ''}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <p className="font-sans text-xs text-secondary">
+                {(turn.response.citation_validation?.invalid_ids ?? []).length > 0
+                  ? `Unverified IDs: ${turn.response.citation_validation.invalid_ids.join(', ')}`
+                  : (turn.response.citation_validation?.valid_ids ?? []).length > 0
+                    ? `Verified record IDs: ${turn.response.citation_validation.valid_ids.join(', ')}`
+                    : 'No record IDs cited in the narrative.'}
+              </p>
+            </article>
+          ))}
+          {loading && <div role="status" className="font-sans text-sm text-secondary">Retrieving and reranking the accumulated case…</div>}
+        </section>
+
+        {error && (
+          <div role="alert" className="halite-card border border-red-500/30 bg-red-500/5 p-4">
+            <p className="font-sans text-sm font-medium text-red-400">{error.title}</p>
+            <p className="font-sans text-sm text-primary">{error.message}</p>
+            {error.detail && <p className="mt-1 font-mono text-xs text-secondary">{error.detail}</p>}
+            {error.retryable && failedTurn && (
+              <button type="button" onClick={() => sendTurn(failedTurn.message, { retry: true, caseState: failedTurn.caseState })} className="halite-btn mt-2 text-sm">Try again</button>
+            )}
+          </div>
+        )}
+
+        <form onSubmit={submit} className="halite-card p-4">
+          <label htmlFor="copilot-message" className="eyebrow">Message</label>
+          <textarea
+            id="copilot-message"
+            maxLength={4000}
+            value={message}
+            onChange={event => setMessage(event.target.value)}
+            placeholder="e.g. crack found on drag angle during inspection"
+            className="halite-input mt-1 w-full resize-none"
+            rows={3}
+          />
+          <button type="submit" disabled={!message.trim() || loading} className="halite-btn-primary mt-3 disabled:opacity-50">Send</button>
+        </form>
+        <p className="font-sans text-xs text-secondary">Decision support only. Evidence scores are heuristic rankings, not probabilities or confidence.</p>
+      </div>
+
+      <aside className="space-y-4">
+        <section className="halite-card p-4">
+          <h3 className="font-brand text-primary">Case state</h3>
+          {['symptoms', 'observations', 'checks_done', 'ruled_out'].map(field => (
+            <div key={field} className="mt-3">
+              <h4 className="eyebrow">{field.replace('_', ' ')}</h4>
+              {(caseState[field] ?? []).length === 0 ? (
+                <p className="font-sans text-xs text-secondary">None</p>
+              ) : (
+                <ul className="space-y-1">
+                  {caseState[field].map(value => (
+                    <li key={value} className="flex items-start justify-between gap-2 font-sans text-xs text-primary">
+                      <span>{value}</span>
+                      <button type="button" aria-label={`Remove ${value}`} onClick={() => removeCaseFact(field, value)} className="text-secondary hover:text-red-400">×</button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </section>
+
+        <section className="halite-card p-4">
+          <h3 className="font-brand text-primary">Saved sessions</h3>
+          {storageWarning && <p role="status" className="mt-2 font-sans text-xs text-amber-400">{storageWarning}</p>}
+          {sessions.length === 0 ? <p className="mt-2 font-sans text-xs text-secondary">No saved sessions.</p> : (
+            <ul className="mt-2 space-y-2">
+              {sessions.map(saved => (
+                <li key={saved.id} className="rounded border border-theme p-2">
+                  <button type="button" onClick={() => resumeSession(saved)} className="block w-full text-left font-sans text-xs text-accent">{saved.title}</button>
+                  <button type="button" aria-label={`Delete ${saved.title}`} onClick={() => deleteSession(saved.id)} className="mt-1 font-sans text-xs text-red-400">Delete</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </aside>
+    </div>
+  );
+}
+
+export default function Diagnostics() {
+  const [tab, setTab] = useState('copilot');
+  return (
+    <div className="h-full overflow-y-auto">
+      <header className="border-b border-theme px-6 py-4">
+        <div className="flex items-center gap-3">
+          <MagnifyingGlassIcon className="h-5 w-5 text-accent" />
+          <div>
+            <h2 className="font-brand text-xl text-primary">Diagnostics</h2>
+            <p className="font-sans text-sm text-secondary">Multi-turn, graph-grounded maintenance investigation</p>
+          </div>
+        </div>
+        <div role="tablist" className="mt-4 flex gap-2">
+          <button role="tab" aria-selected={tab === 'copilot'} onClick={() => setTab('copilot')} className="halite-btn text-sm">Copilot</button>
+          <button role="tab" aria-selected={tab === 'quick'} onClick={() => setTab('quick')} className="halite-btn text-sm">Quick diagnose</button>
+        </div>
+      </header>
+      <div className="mx-auto max-w-6xl p-6">
+        {tab === 'copilot' ? <Copilot /> : <QuickDiagnose />}
       </div>
     </div>
   );
