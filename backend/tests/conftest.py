@@ -140,8 +140,10 @@ def _build_test_app():
 
     # Maintenance domain routes
     from api.routes.maintenance import domains_router, router as maintenance_router
+    from api.routes.diagnostics import router as diagnostics_router
     from api.routes.ops import router as ops_router
     app.include_router(maintenance_router, prefix="/api")
+    app.include_router(diagnostics_router, prefix="/api")
     app.include_router(domains_router, prefix="/api")
     app.include_router(ops_router, prefix="/api")
 

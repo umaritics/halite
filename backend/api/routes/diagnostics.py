@@ -28,6 +28,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from api.deps import get_graph_repo, get_groq_service, get_settings
+from services.citation_validation import validate_citations
 from services.diagnostic_retrieval import (
     build_diagnostic_context,
     rank_diagnostic_checks,
@@ -88,37 +89,6 @@ def _save_cache(cache: dict) -> None:
             json.dump(cache, f, indent=2)
     except Exception as e:
         logger.error("Failed to write diag cache: %s", e)
-
-
-# ---------------------------------------------------------------------------
-# Citation validation
-# ---------------------------------------------------------------------------
-
-# Pattern: uppercase letters+digits sequences that look like FAA SDR IDs
-_RECORD_ID_RE = re.compile(r"\b([A-Z]{2,6}[\d]{6,})\b")
-
-
-def _validate_citations(text: str, graph_repo) -> dict:
-    """
-    Extract all record-ID-like tokens from LLM output and verify each exists
-    in the graph. Returns {valid: [...], invalid: [...], flagged_text: str}.
-    """
-    found = list(set(_RECORD_ID_RE.findall(text)))
-    valid = []
-    invalid = []
-    for rid in found:
-        rec = graph_repo.get_service_record(rid)
-        if rec:
-            valid.append(rid)
-        else:
-            invalid.append(rid)
-
-    # Build flagged version: mark invalid IDs
-    flagged = text
-    for rid in invalid:
-        flagged = flagged.replace(rid, f"[UNVERIFIED:{rid}]")
-
-    return {"valid": valid, "invalid": invalid, "flagged_text": flagged}
 
 
 def _build_prompt(context: dict, ranked: list[dict]) -> str:
@@ -244,7 +214,7 @@ def diagnose(
 
     # 7. Citation validation — mandatory
     explanation_text = llm_json.get("explanation", raw_llm)
-    citation_result = _validate_citations(explanation_text, graph_repo)
+    citation_result = validate_citations(explanation_text, graph_repo)
 
     # 8. Collect evidence records
     all_cited_ids = citation_result["valid"]
@@ -369,7 +339,7 @@ def maint_chat(
         max_tokens=800,
     )
 
-    citation_result = _validate_citations(raw, graph_repo)
+    citation_result = validate_citations(raw, graph_repo)
 
     return {
         "reply":       citation_result["flagged_text"],

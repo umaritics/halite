@@ -21,15 +21,20 @@ Baseline: branched from `usman` @ `b949de4` via `feat/mid1/graph-diagnostics` @ 
 | Dedicated deploy SSH key | GitHub secret `VM_SSH_KEY` — not personal SSH key |
 | **U2** real-data retrieval | Staging: 813SK history 153; diagnose 200 + citations; unknown/empty → 404; Cypher LIMIT on recent history + fleet scan |
 | **U3** deterministic ranking | `rank_diagnostic_checks` in `diagnostic_retrieval.py`; tie-break score→evidence_count→part_name |
+| **U4** citation / LLM boundary | FAA-shaped extract; invented IDs → UNVERIFIED; diagnose 503 without live Groq |
+| **U5** diagnose tests + handoff | `test_api_diagnostics.py`, `test_citation_validation.py`; see `12_u4_u5_diagnostics_handoff.md` |
 
-## In progress / next (Umar)
+## Packages (Umar Mid-I)
 
-| Package | Status | Next action |
+| Package | Status | Evidence |
 | --- | --- | --- |
-| **U2** Real-data graph retrieval | **Done** | Staging proof + bounds — `docs/mid1/11_u2_real_data_retrieval.md` |
-| **U3** Deterministic ranking | **Done** | `rank_diagnostic_checks` + stable tie-break + documented weights |
-| **U4** Citation validation / LLM boundary | Next | Real FAA ID tests; 503 when no Groq/cache; no invented IDs |
-| **U5** Diagnostic backend tests + handoff | Pending | Route tests + fixtures for Shahmeer |
+| **U1** Diagnostics audit | **Done** | `knowledge/context/modules/diagnostics_u1_audit.md` |
+| **U2** Real-data graph retrieval | **Done** | `docs/mid1/11_u2_real_data_retrieval.md` |
+| **U3** Deterministic ranking | **Done** | `rank_diagnostic_checks` + stable tie-break |
+| **U4** Citation validation / LLM boundary | **Done** | `citation_validation.py` + 503/flagging tests |
+| **U5** Diagnostic backend tests + handoff | **Done** | `test_api_diagnostics.py` + `12_u4_u5_diagnostics_handoff.md` |
+
+Umar core Mid-I packages complete on `umar/mid1-graph-diagnostics`. Remaining team work: Shahmeer assets N+1 + Diagnostics UI; Usman CD/A1 reconciliation.
 
 ## Open for other partners (agents: read this)
 

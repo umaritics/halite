@@ -44,7 +44,8 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 
 - Live Groq required for fresh diagnose unless a valid diag cache hit exists.
 - Missing live model → controlled **503** (or clear cache path), never silent fake diagnosis.
-- Citations: only IDs present in retrieved context may be confirmed; fabricated IDs flagged/dropped.
+- Citations: `services/citation_validation.py` — FAA-shaped tokens verified against graph; fabricated IDs → `[UNVERIFIED:…]` and `citation_validation.invalid_ids`.
+- Tests: `test_citation_validation.py`, `test_api_diagnostics.py`. Handoff: [docs/mid1/12_u4_u5_diagnostics_handoff.md](../../../docs/mid1/12_u4_u5_diagnostics_handoff.md).
 
 ## Contract freeze (diagnose)
 

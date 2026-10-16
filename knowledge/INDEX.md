@@ -20,7 +20,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | Umar, Shahmeer, Usman, ownership | context/02_ownership_mid1.md |
 | DomainAdapter, registry | context/03_architecture.md |
 | Asset, ServiceRecord, ABOUT, PRECEDED_BY, SUPERSEDES | context/04_data_and_graph.md |
-| diagnose, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md |
+| diagnose, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py` |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
 | conflict, needs_review, confidence gate | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md |
 | ingest, SDR, FAA corpus | flows/FLOW-ingest.md |
