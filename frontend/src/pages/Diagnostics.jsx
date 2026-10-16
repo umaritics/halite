@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { maintenanceAPI } from '../api/client';
+import { describeDiagnosticError, extractExplanation } from '../utils/diagnostics';
 
 // G4: Diagnostic chat page
 // Layout:
@@ -9,6 +10,10 @@ import { maintenanceAPI } from '../api/client';
 //   - Symptom textarea
 //   - Response panel: ranked_checks, evidence, rare_cases
 //   - Context transparency line
+//
+// Every non-success outcome is shown explicitly (model unavailable, no history,
+// rate limit, server error, network error, insufficient evidence). The page never
+// fills a gap with invented content.
 
 export default function Diagnostics() {
   const navigate = useNavigate();
@@ -19,6 +24,7 @@ export default function Diagnostics() {
   const [symptom, setSymptom] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [submitted, setSubmitted] = useState(null);
   const [error, setError] = useState(null);
   const [rareExpanded, setRareExpanded] = useState(false);
 
@@ -32,23 +38,53 @@ export default function Diagnostics() {
     a.tail_number.toLowerCase().includes(assetSearch.toLowerCase())
   );
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!selectedAsset || !symptom.trim()) return;
+  const runDiagnostic = async (asset, symptomText) => {
+    if (loading) return;
     setLoading(true);
     setResult(null);
     setError(null);
     setRareExpanded(false);
+    setSubmitted({ asset, symptom: symptomText });
     try {
-      const res = await maintenanceAPI.diagnose(selectedAsset.id, symptom.trim());
+      const res = await maintenanceAPI.diagnose(asset.id, symptomText);
       setResult(res.data);
     } catch (err) {
-      const msg = err.response?.data?.detail || err.message || 'Diagnostic failed';
-      setError(msg);
+      setError(describeDiagnosticError(err));
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedAsset || !symptom.trim()) return;
+    runDiagnostic(selectedAsset, symptom.trim());
+  };
+
+  const handleRetry = () => {
+    if (submitted) runDiagnostic(submitted.asset, submitted.symptom);
+  };
+
+  const handleClear = () => {
+    setSymptom('');
+    setResult(null);
+    setError(null);
+    setSubmitted(null);
+    setRareExpanded(false);
+  };
+
+  // Tolerate absent optional fields in the response.
+  const rankedChecks = result?.ranked_checks ?? [];
+  const evidence = result?.evidence ?? [];
+  const rareCases = result?.rare_cases ?? [];
+  const insufficientEvidence = Boolean(result) && rankedChecks.length === 0 && evidence.length === 0;
+
+  const explanation = result ? extractExplanation(result.explanation) : null;
+  const warnings = result
+    ? [...new Set([...(result.warnings ?? []), ...(explanation?.warnings ?? [])])]
+    : [];
+  const validIds = result?.citation_validation?.valid_ids ?? [];
+  const invalidIds = result?.citation_validation?.invalid_ids ?? [];
 
   return (
     <div className="h-full overflow-y-auto">
@@ -131,28 +167,58 @@ export default function Diagnostics() {
               placeholder="e.g. slide light will not extinguish at door 1R"
               className="halite-input w-full resize-none"
             />
+            {!selectedAsset && symptom.trim() && (
+              <p className="mt-1 font-sans text-xs text-amber-400">Select an aircraft to run the diagnostic.</p>
+            )}
           </div>
 
-          <button
-            id="diagnose-submit-btn"
-            type="submit"
-            disabled={!selectedAsset || !symptom.trim() || loading}
-            className="halite-btn-primary disabled:opacity-50"
-          >
-            {loading ? 'Analysing…' : 'Run diagnostic'}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              id="diagnose-submit-btn"
+              type="submit"
+              disabled={!selectedAsset || !symptom.trim() || loading}
+              className="halite-btn-primary disabled:opacity-50"
+            >
+              {loading ? 'Analysing…' : 'Run diagnostic'}
+            </button>
+            {(symptom || result || error) && (
+              <button
+                id="diagnose-clear-btn"
+                type="button"
+                onClick={handleClear}
+                disabled={loading}
+                className="halite-btn text-sm disabled:opacity-50"
+              >
+                Clear
+              </button>
+            )}
+          </div>
         </form>
 
         {/* Error state */}
-        {error && (
-          <div className="halite-card border border-red-500/30 bg-red-500/5 p-4">
-            <p className="font-sans text-sm text-red-400">{error}</p>
+        {error && !loading && (
+          <div role="alert" className="halite-card border border-red-500/30 bg-red-500/5 p-4">
+            <p className="font-sans text-sm font-medium text-red-400">{error.title}</p>
+            <p className="mt-1 font-sans text-sm text-red-300">{error.message}</p>
+            {error.detail && (
+              <p className="mt-2 font-mono text-xs text-secondary break-words">Details: {error.detail}</p>
+            )}
+            {error.retryable && submitted && (
+              <button
+                id="diagnose-retry-btn"
+                type="button"
+                onClick={handleRetry}
+                className="halite-btn mt-3 text-sm"
+              >
+                Try again
+              </button>
+            )}
           </div>
         )}
 
         {/* Loading state */}
         {loading && (
-          <div className="halite-card p-8 text-center">
+          <div role="status" className="halite-card p-8 text-center">
             <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-accent border-t-transparent" />
             <p className="mt-3 font-sans text-sm text-secondary">
               Querying graph and fleet records…
@@ -163,6 +229,14 @@ export default function Diagnostics() {
         {/* Result panel */}
         {result && !loading && (
           <>
+            {/* Which asset and symptom this answer belongs to */}
+            {submitted && (
+              <p className="font-sans text-xs text-secondary px-1">
+                Diagnosis for <span className="text-primary font-medium">{submitted.asset.tail_number}</span>
+                {' — '}&ldquo;{submitted.symptom}&rdquo;
+              </p>
+            )}
+
             {/* Context transparency line */}
             <p className="font-sans text-xs text-secondary px-1">
               Answered from{' '}
@@ -174,56 +248,86 @@ export default function Diagnostics() {
               assets.
             </p>
 
-            {/* 1. Ranked checks */}
-            <section className="halite-card p-6">
-              <h3 className="font-brand text-primary mb-4">Ranked Inspection Order</h3>
-              {result.ranked_checks.length === 0 ? (
-                <p className="font-sans text-sm text-secondary">No ranked components found.</p>
-              ) : (
-                <ol id="ranked-checks-list" className="space-y-3">
-                  {result.ranked_checks.map((check, i) => (
-                    <li key={check.part_name} className="flex items-start gap-4">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-bold text-accent">
-                        {i + 1}
-                      </span>
-                      <div className="flex-1">
-                        <div className="flex items-baseline gap-3">
-                          <span className="font-sans font-medium text-primary">{check.part_name}</span>
-                          <span className="font-sans text-xs text-secondary">
-                            seen in {check.evidence_count} prior case{check.evidence_count !== 1 ? 's' : ''}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 font-sans text-xs text-secondary">
-                          sources: {check.sources.join(', ')}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </section>
-
-            {/* LLM explanation */}
-            {result.explanation && (
-              <section className="halite-card p-6">
-                <h3 className="font-brand text-primary mb-3">Analysis</h3>
-                <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
-                  {result.explanation}
+            {/* Insufficient evidence: never imply a conclusion */}
+            {insufficientEvidence && (
+              <div id="insufficient-evidence" role="status" className="halite-card border border-amber-500/30 bg-amber-500/5 p-5">
+                <p className="font-sans text-sm font-medium text-amber-400">Insufficient evidence</p>
+                <p className="mt-1 font-sans text-sm text-primary">
+                  Halite found no supporting service records for this symptom, on this aircraft or across the fleet,
+                  so it is not offering an inspection order. Try describing the symptom differently, or choose another aircraft.
                 </p>
-                {result.citation_validation?.invalid_ids?.length > 0 && (
-                  <p className="mt-2 font-sans text-xs text-amber-400">
-                    ⚠ {result.citation_validation.invalid_ids.length} unverified ID(s) were flagged and marked [UNVERIFIED].
-                  </p>
+              </div>
+            )}
+
+            {/* Warnings reported by the diagnostic service */}
+            {warnings.length > 0 && (
+              <section id="diagnostic-warnings" role="status" className="halite-card border border-amber-500/30 bg-amber-500/5 p-4">
+                <h3 className="font-sans text-sm font-medium text-amber-400">Warnings</h3>
+                <ul className="mt-2 list-disc space-y-1 pl-5 font-sans text-sm text-primary">
+                  {warnings.map((w, i) => (
+                    <li key={`${i}-${w}`}>{w}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* 1. Ranked checks */}
+            {!insufficientEvidence && (
+              <section className="halite-card p-6">
+                <h3 className="font-brand text-primary mb-4">Ranked Inspection Order</h3>
+                {rankedChecks.length === 0 ? (
+                  <p className="font-sans text-sm text-secondary">No ranked components found.</p>
+                ) : (
+                  <ol id="ranked-checks-list" className="space-y-3">
+                    {rankedChecks.map((check, i) => (
+                      <li key={`${check.part_name}-${i}`} className="flex items-start gap-4">
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-bold text-accent">
+                          {i + 1}
+                        </span>
+                        <div className="flex-1">
+                          <div className="flex items-baseline gap-3">
+                            <span className="font-sans font-medium text-primary">{check.part_name}</span>
+                            <span className="font-sans text-xs text-secondary">
+                              seen in {check.evidence_count} prior case{check.evidence_count !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 font-sans text-xs text-secondary">
+                            sources: {(check.sources ?? []).join(', ') || 'n/a'}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
                 )}
               </section>
             )}
 
+            {/* LLM explanation: withheld when there is nothing for it to be grounded in */}
+            {explanation?.text && !insufficientEvidence && (
+              <section className="halite-card p-6">
+                <h3 className="font-brand text-primary mb-3">Analysis</h3>
+                <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
+                  {explanation.text}
+                </p>
+                {invalidIds.length > 0 ? (
+                  <p className="mt-2 font-sans text-xs text-amber-400">
+                    ⚠ {invalidIds.length} unverified ID(s) were flagged and marked [UNVERIFIED].
+                  </p>
+                ) : validIds.length > 0 ? (
+                  <p id="citation-status" className="mt-2 font-sans text-xs text-secondary">
+                    ✓ {validIds.length} cited record ID{validIds.length !== 1 ? 's' : ''} verified against the graph.
+                    This confirms the records exist, not that every statement is supported by them.
+                  </p>
+                ) : null}
+              </section>
+            )}
+
             {/* 2. Evidence cards */}
-            {result.evidence?.length > 0 && (
+            {evidence.length > 0 && (
               <section className="halite-card p-6">
                 <h3 className="font-brand text-primary mb-4">Evidence Records</h3>
                 <div id="evidence-cards" className="space-y-3">
-                  {result.evidence.map(ev => (
+                  {evidence.map(ev => (
                     <div
                       key={ev.record_id}
                       className={`rounded-lg border p-3 ${
@@ -258,7 +362,7 @@ export default function Diagnostics() {
             )}
 
             {/* 3. Rare prior cases (collapsed) */}
-            {result.rare_cases?.length > 0 && (
+            {rareCases.length > 0 && (
               <section className="halite-card overflow-hidden">
                 <button
                   id="rare-cases-toggle"
@@ -268,7 +372,7 @@ export default function Diagnostics() {
                   <span className="font-brand text-primary">
                     Uncommon —{' '}
                     <span className="font-sans text-sm text-secondary">
-                      {result.rare_cases.length} occurrence{result.rare_cases.length !== 1 ? 's' : ''} in the corpus
+                      {rareCases.length} occurrence{rareCases.length !== 1 ? 's' : ''} in the corpus
                     </span>
                   </span>
                   {rareExpanded
@@ -277,7 +381,7 @@ export default function Diagnostics() {
                 </button>
                 {rareExpanded && (
                   <div className="border-t border-theme px-6 py-4 space-y-3">
-                    {result.rare_cases.map(rc => (
+                    {rareCases.map(rc => (
                       <div key={rc.record_id} className="rounded-lg border border-accent/20 bg-accent/5 p-3">
                         <p className="font-sans text-sm font-medium text-accent">{rc.record_id}</p>
                         <p className="mt-1 font-sans text-xs text-secondary">
@@ -292,6 +396,11 @@ export default function Diagnostics() {
                 )}
               </section>
             )}
+
+            <p id="safety-notice" className="px-1 font-sans text-xs text-secondary">
+              Decision support only. This ranking reflects how often components appear in historical records,
+              not a calibrated probability. Approved maintenance documentation and qualified personnel remain authoritative.
+            </p>
           </>
         )}
 
