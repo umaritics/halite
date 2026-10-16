@@ -76,9 +76,11 @@ def test_graph_overview_returns_structure(client):
 # ---------------------------------------------------------------------------
 
 def test_ingest_document_creates_decision(client):
+    # Fixture lives next to other Mid-I samples — do not depend on docs/ layout
+    # (sample was archived under docs/obsolete/ during Mid-I docs cleanup).
     sample_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "docs",
+        os.path.dirname(os.path.abspath(__file__)),
+        "fixtures",
         "sample_meeting_transcript.txt",
     )
     assert os.path.exists(sample_path), f"Sample file not found: {sample_path}"
