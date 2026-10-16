@@ -10,6 +10,15 @@ from __future__ import annotations
 import re
 from typing import Optional
 
+# Mid-I FAA corpus is ~2k records. Cap fleet scan so Neo4j always has a LIMIT
+# and Python scoring cannot grow unbounded if the graph grows later.
+FLEET_SCAN_CAP = 2500
+
+# Documented heuristic weights for rank_diagnostic_checks (not calibrated probs).
+RANK_WEIGHT_ASSET_HISTORY = 0.4
+RANK_WEIGHT_FLEET_MATCH = 0.6
+RANK_SUPERSEDED_PENALTY = 0.3
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -47,11 +56,15 @@ def asset_history_context(graph_repo, asset_id: str, limit: int = 30, exclude_sy
       record_id, asset_id, occurred_at, part_name, jasc_code, text,
       status, is_superseded, superseded_by (record_id | None)
     """
-    history = graph_repo.list_asset_history(asset_id, limit=200)
-    # Sort newest first
-    history.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
+    # Fetch newest-first with the same limit we return (bounded Cypher LIMIT).
+    # Over-fetch slightly when excluding DEMO* so the visible window still fills.
+    fetch_limit = limit + 20 if exclude_synthetic else limit
+    history = graph_repo.list_asset_history_recent(asset_id, limit=fetch_limit)
     if exclude_synthetic:
-        history = [r for r in history if not str(r.get("record_id", r.get("id", ""))).startswith("DEMO")]
+        history = [
+            r for r in history
+            if not str(r.get("record_id", r.get("id", ""))).startswith("DEMO")
+        ]
 
     results = []
     for rec in history[:limit]:
@@ -95,8 +108,8 @@ def similar_symptom_records(
 
     Returns list sorted descending by score.
     """
-    # Collect all records across all assets
-    all_records = graph_repo.list_service_records()
+    # Bounded fleet scan (newest-first LIMIT in Neo4j / memory store).
+    all_records = graph_repo.list_service_records(limit=FLEET_SCAN_CAP)
 
     scored = []
     norm_jasc = _normalise(jasc_code) if jasc_code else ""
@@ -144,7 +157,8 @@ def similar_symptom_records(
             "confidence":    rec.get("confidence"),
         })
 
-    scored.sort(key=lambda x: x["score"], reverse=True)
+    # Deterministic: score DESC, then record_id ASC for equal scores.
+    scored.sort(key=lambda x: (-x["score"], str(x["record_id"])))
     return scored[:limit]
 
 
@@ -157,9 +171,24 @@ def resolution_outcomes(graph_repo, record_ids: list[str]) -> list[dict]:
     Superseded resolutions are labelled explicitly — they must not be silently
     presented as positive evidence.
     """
+    if not record_ids:
+        return []
+
+    by_id: dict[str, dict] = {}
+    if hasattr(graph_repo, "get_service_records_by_ids"):
+        for rec in graph_repo.get_service_records_by_ids(record_ids):
+            rid = str(rec.get("record_id", rec.get("id", "")))
+            if rid:
+                by_id[rid] = rec
+    else:
+        for rid in record_ids:
+            rec = graph_repo.get_service_record(rid)
+            if rec is not None:
+                by_id[str(rid)] = rec
+
     results = []
     for rid in record_ids:
-        rec = graph_repo.get_service_record(rid)
+        rec = by_id.get(str(rid))
         if rec is None:
             continue
         is_sup = _record_is_superseded(rec)
@@ -241,3 +270,79 @@ def build_diagnostic_context(
             "fleet_assets":  fleet_assets,
         },
     }
+
+
+def rank_diagnostic_checks(context: dict) -> list[dict]:
+    """
+    Deterministic inspection ranking from graph context (no LLM).
+
+    Signals (heuristic, not calibrated probabilities):
+      - Asset history: recency 1/(i+1) × RANK_WEIGHT_ASSET_HISTORY;
+        superseded records × RANK_SUPERSEDED_PENALTY.
+      - Fleet matches: similarity score × RANK_WEIGHT_FLEET_MATCH;
+        same superseded penalty.
+
+    Tie-break (stable across runs / Python versions):
+      1. score DESC
+      2. evidence_count DESC
+      3. part_name ASC
+
+    Each item: part_name, score, evidence_count, evidence_record_ids (sorted),
+    sources, rank (1-based).
+    """
+    component_scores: dict[str, dict] = {}
+
+    def _add(part: str, weight: float, source: str, record_id: str) -> None:
+        if not part or part.upper().strip() in ("UNKNOWN", ""):
+            return
+        key = part.upper().strip()
+        if key not in component_scores:
+            component_scores[key] = {
+                "part_name": key,
+                "score": 0.0,
+                "evidence_count": 0,
+                "evidence_record_ids": [],
+                "sources": [],
+            }
+        bucket = component_scores[key]
+        bucket["score"] += weight
+        if record_id and record_id not in bucket["evidence_record_ids"]:
+            bucket["evidence_count"] += 1
+            bucket["evidence_record_ids"].append(record_id)
+        if source not in bucket["sources"]:
+            bucket["sources"].append(source)
+
+    for i, rec in enumerate(context.get("asset_history") or []):
+        recency_weight = 1.0 / (i + 1)
+        superseded_penalty = (
+            RANK_SUPERSEDED_PENALTY if rec.get("is_superseded") else 1.0
+        )
+        _add(
+            rec.get("part_name", ""),
+            recency_weight * superseded_penalty * RANK_WEIGHT_ASSET_HISTORY,
+            "asset_history",
+            rec.get("record_id", ""),
+        )
+
+    for rec in context.get("fleet_matches") or []:
+        fleet_score = float(rec.get("score") or 0.1)
+        superseded_penalty = (
+            RANK_SUPERSEDED_PENALTY if rec.get("is_superseded") else 1.0
+        )
+        _add(
+            rec.get("part_name", ""),
+            fleet_score * superseded_penalty * RANK_WEIGHT_FLEET_MATCH,
+            "fleet_match",
+            rec.get("record_id", ""),
+        )
+
+    ranked = sorted(
+        component_scores.values(),
+        key=lambda x: (-x["score"], -x["evidence_count"], x["part_name"]),
+    )
+    for i, item in enumerate(ranked):
+        item["rank"] = i + 1
+        item["score"] = round(item["score"], 4)
+        item["evidence_record_ids"] = sorted(item["evidence_record_ids"])
+        item["sources"] = sorted(item["sources"])
+    return ranked

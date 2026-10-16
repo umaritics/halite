@@ -1,0 +1,21 @@
+﻿---
+description: Halite knowledge bank — read/update protocol for all work
+alwaysApply: true
+---
+
+# Knowledge bank protocol
+
+Before substantive code or architecture changes:
+
+1. Read `AGENTS.md`, then `knowledge/README.md` (router).
+2. Open the matching **context** + **flow** from the router/INDEX for the area you will touch.
+3. Check `knowledge/decisions/INDEX.md` for constraints.
+
+After you change behavior, contracts, ownership, or deferred scope:
+
+1. Update the relevant `knowledge/context/**` or `knowledge/flows/**` note (keep hubs short; link detail).
+2. If you made a non-obvious choice, add `knowledge/decisions/DEC-YYYYMMDD-slug.md` and index it.
+3. Refresh `knowledge/REGISTRY.md` / `knowledge/INDEX.md` if files or keywords moved.
+4. Do **not** treat `docs/obsolete/**` as current product truth.
+
+Mid-I ownership: Umar=graph/diagnostics; Usman=ingest/conflict/CI; Shahmeer=React/`client.js`. Do not edit another owner’s files without an explicit handoff note in `knowledge/decisions/`.

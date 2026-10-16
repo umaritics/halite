@@ -794,6 +794,23 @@ class GraphRepository:
             {"rid": record_id, "aid": asset_id},
         )
 
+    def list_assets_with_counts(self) -> list[dict]:
+        """Return every Asset with its ServiceRecord count in one graph query."""
+        if self.is_memory:
+            return self.store.list_assets_with_counts()
+        rows = self.store.run_query(
+            """
+            MATCH (a:Asset)
+            OPTIONAL MATCH (sr:ServiceRecord)-[:ABOUT]->(a)
+            RETURN a, count(sr) AS record_count
+            ORDER BY a.tail_number
+            """
+        )
+        return [
+            {**dict(row["a"]), "record_count": int(row["record_count"])}
+            for row in rows
+        ]
+
     def list_asset_history(self, asset_id: str, limit: int = 50) -> list[dict]:
         """Return ServiceRecords for an asset ordered ascending by occurred_at."""
         if self.is_memory:
@@ -806,6 +823,37 @@ class GraphRepository:
             LIMIT $limit
             """,
             {"aid": asset_id, "limit": limit},
+        )
+        return [dict(r["sr"]) for r in rows]
+
+    def list_asset_history_recent(self, asset_id: str, limit: int = 30) -> list[dict]:
+        """Newest-first ServiceRecords for an asset (diagnostic context)."""
+        if self.is_memory:
+            return self.store.list_asset_history_recent(asset_id, limit)
+        rows = self.store.run_query(
+            """
+            MATCH (sr:ServiceRecord)-[:ABOUT]->(a:Asset {id: $aid})
+            RETURN sr
+            ORDER BY sr.occurred_at DESC
+            LIMIT $limit
+            """,
+            {"aid": asset_id, "limit": limit},
+        )
+        return [dict(r["sr"]) for r in rows]
+
+    def get_service_records_by_ids(self, record_ids: list[str]) -> list[dict]:
+        """Batch fetch ServiceRecords by record_id (order not guaranteed)."""
+        if not record_ids:
+            return []
+        if self.is_memory:
+            return self.store.get_service_records_by_ids(record_ids)
+        rows = self.store.run_query(
+            """
+            MATCH (sr:ServiceRecord)
+            WHERE sr.record_id IN $ids
+            RETURN sr
+            """,
+            {"ids": list(record_ids)},
         )
         return [dict(r["sr"]) for r in rows]
 
@@ -848,11 +896,17 @@ class GraphRepository:
         )
 
     def list_service_records(
-        self, status: str | None = None, asset_id: str | None = None
+        self,
+        status: str | None = None,
+        asset_id: str | None = None,
+        limit: int | None = None,
     ) -> list[dict]:
-        """List ServiceRecords, optionally filtered by status and/or asset_id."""
+        """List ServiceRecords, optionally filtered by status and/or asset_id.
+
+        When ``limit`` is set, Cypher applies LIMIT (newest-first by occurred_at).
+        """
         if self.is_memory:
-            return self.store.list_service_records(status, asset_id)
+            return self.store.list_service_records(status, asset_id, limit=limit)
         where_clauses = []
         params: dict = {}
         if status:
@@ -867,12 +921,17 @@ class GraphRepository:
             if asset_id
             else "MATCH (sr:ServiceRecord)"
         )
+        limit_clause = ""
+        if limit is not None:
+            params["limit"] = int(limit)
+            limit_clause = "LIMIT $limit"
         rows = self.store.run_query(
             f"""
             {match}
             {where}
             RETURN sr
             ORDER BY sr.occurred_at DESC
+            {limit_clause}
             """,
             params,
         )

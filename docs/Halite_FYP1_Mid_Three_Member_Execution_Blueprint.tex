@@ -1,0 +1,897 @@
+\documentclass[11pt,a4paper,oneside]{report}
+% HALITE: FYP-I MID -- THREE-MEMBER ENGINEERING EXECUTION BLUEPRINT
+% Compiler: pdfLaTeX | Self-contained | No external assets
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry,graphicx,booktabs,longtable,tabularx,array}
+\usepackage[table]{xcolor}
+\usepackage{enumitem,microtype,multicol,amsmath,amssymb}
+\usepackage{tikz,tcolorbox}
+\usepackage{fancyhdr,titlesec,hyperref,listings,float,lastpage}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc}
+\tcbuselibrary{breakable,skins}
+\geometry{left=1.20in,right=0.83in,top=0.95in,bottom=0.85in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\emergencystretch=4em
+\sloppy
+\definecolor{ink}{HTML}{193249}
+\definecolor{sea}{HTML}{1B6D85}
+\definecolor{green}{HTML}{17745F}
+\definecolor{gold}{HTML}{9B6929}
+\definecolor{muted}{HTML}{5A6876}
+\definecolor{light}{HTML}{F0F5F8}
+\definecolor{rulec}{HTML}{D9E4EA}
+\hypersetup{colorlinks=true,linkcolor=sea,urlcolor=sea,pdftitle={Halite FYP-I Mid Execution Blueprint},pdfauthor={Halite FYP Team}}
+\titleformat{\chapter}{\normalfont\sffamily\bfseries\color{ink}\LARGE}{\thechapter}{.7em}{}
+\titleformat{\section}{\normalfont\sffamily\bfseries\color{ink}\large}{\thesection}{.65em}{}
+\titleformat{\subsection}{\normalfont\sffamily\bfseries\color{sea}\normalsize}{\thesubsection}{.65em}{}
+\titlespacing*{\chapter}{0pt}{-8pt}{17pt}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\sffamily\footnotesize HALITE / FYP-I MID}
+\fancyhead[R]{\sffamily\footnotesize ENGINEERING BLUEPRINT}
+\fancyfoot[R]{\sffamily\footnotesize \thepage/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{.3pt}
+\setlength{\headheight}{14pt}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\renewcommand{\arraystretch}{1.22}
+\setlength{\tabcolsep}{4pt}
+\setlist[itemize]{leftmargin=*,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=*,itemsep=3pt,topsep=3pt}
+\lstdefinestyle{code}{basicstyle=\ttfamily\scriptsize,breaklines=true,breakatwhitespace=false,columns=fullflexible,backgroundcolor=\color{light},frame=single,rulecolor=\color{rulec},showstringspaces=false,keepspaces=true,tabsize=2}
+\lstset{style=code}
+\newtcolorbox{notice}[1][]{enhanced,breakable,colback=light,colframe=rulec,boxrule=.55pt,arc=2mm,left=9pt,right=9pt,top=8pt,bottom=8pt,#1}
+\newcommand{\task}[1]{\item[$\square$] #1}
+\newcommand{\file}[1]{\path{#1}}
+\newcommand{\lead}[1]{\textbf{#1}}
+\begin{document}
+\begin{titlepage}
+\begin{center}
+\vspace*{0.55in}
+{\sffamily\color{sea}\fontsize{17}{20}\selectfont ENGINEERING HANDOFF / ITERATION 1}\par
+\vspace{.30in}
+{\sffamily\bfseries\color{ink}\fontsize{37}{42}\selectfont HALITE}\par
+\vspace{.24in}
+{\sffamily\bfseries\fontsize{23}{29}\selectfont FYP-I MID\par}\vspace{.13in}
+{\sffamily\bfseries\fontsize{18}{23}\selectfont THREE-MEMBER EXECUTION BLUEPRINT\par}
+\vspace{.27in}
+{\sffamily\color{muted}\large Maintenance Diagnostics, Knowledge Graph, Conflict Intelligence, CI/CD}\par
+\vspace{.5in}
+\rule{\textwidth}{1pt}\par\vspace{.28in}
+{\large \textbf{One shared reference for the team and AI coding agents}}\par
+\vspace{.22in}
+\begin{tabular}{ll}
+\textbf{Shahmeer Atif} & 23I-0711 -- Frontend / UX / API integration\\
+\textbf{Muhammad Umar} & 23I-0782 -- Graph / diagnostic retrieval / ranking\\
+\textbf{Muhammad Usman Al Haq} & 23I-0585 -- Data / conflict / testing / DevOps\\
+\end{tabular}
+\vfill
+{\bfseries Supervisor:} Syed Muhammad Saad Salman\par
+\vspace{.16in}
+FAST School of Computing, NUCES Islamabad\par
+\vspace{.2in}
+{\bfseries Mid-I announced window: 12--16 October 2026}\par
+\vspace{.12in}
+{\small Version 1.0 -- 15 October 2026 -- Working implementation contract}\par
+\end{center}
+\end{titlepage}
+\hypersetup{pageanchor=false}\pagenumbering{roman}
+\chapter*{Read This First}\addcontentsline{toc}{chapter}{Read This First}
+\begin{notice}
+\textbf{This is a work order, not an implementation-complete report.} It specifies what to audit, preserve, modify, test and deliver. Do not mark tasks complete simply because an AI agent says it wrote the code. Completion requires an executed test, a working integration, and independently reviewed evidence.
+\end{notice}
+\textbf{Deadline rule.} The FYP Committee's message sets Week 9 at \textbf{12--16 October 2026}. A separately mentioned 19 October date is \emph{not} treated as an automatic extension. Confirm a different date with the supervisor in writing. Target a frozen, demonstrated version by 16 October if possible.
+
+\textbf{Repository rule.} The supplied archive \file{Halite (FYP).zip} includes a large \file{.git} directory, a Windows virtual environment, installed packages, an existing React/Vite frontend, a FastAPI backend, Neo4j-related services, and tests. \emph{Never} overwrite the working project with a scaffold generated from scratch. Work from the actual repository and inspect its current branch before making changes.
+
+\textbf{Scope rule.} Maintenance diagnostics is the focus. Software-domain features and MCP work are dropped from the \emph{product scope}, but their legacy files should be isolated or disabled safely; do not delete broad shared infrastructure without tests.
+
+\textbf{Source of truth hierarchy:} (1) working source and executed tests; (2) Mid-I assessment instructions; (3) approved project scope and source-derived documentation; (4) this execution plan; (5) agent-generated suggestions. When these conflict, record the discrepancy and obtain team approval.
+
+\textbf{Confidence statements.} Existing POC benchmarks concern conflict detection, not proven diagnostic accuracy. A case-based exploratory diagnostic ranker is already present. Do not promise an experimentally validated diagnosis model at Mid-I.
+
+\vspace{.3cm}
+\tableofcontents\clearpage
+\clearpage\hypersetup{pageanchor=true}\pagenumbering{arabic}
+
+\chapter{Mission, Scope and Acceptance Gate}
+\section{What the Team Must Show}
+The deliverable is \textbf{one working vertical slice}, not three disconnected demos. A technician chooses a real maintenance asset; inspects dated records; enters a symptom; receives a graph-grounded, evidence-linked diagnostic investigation response; can open source evidence; and sees at least one real historical correction or conflict example. The same commit must have test evidence and a meaningful GitHub CI workflow.
+
+\section{Mandatory Product Workflow}
+\begin{enumerate}
+\item Load Halite's maintenance-only UI; identify the demo dataset and runtime mode.
+\item Open Assets; choose a known asset from the \emph{actual loaded corpus}.
+\item Inspect its dated ServiceRecord timeline and original record identifiers.
+\item Open Diagnostics with the selected asset; enter a descriptive symptom.
+\item Send a real POST request to the existing diagnosis endpoint; show loading, error and success states.
+\item Show ranked investigative checks, supporting record identifiers, explanation and citation-validation status.
+\item Open at least one cited record in the real source/history interface.
+\item Open a real conflict/review example and explain whether it is an allegation, a correction, or an adjudicated relationship.
+\item Show GitHub PR/branch evidence and automatic tests; demonstrate healthy running services.
+\item Demonstrate a failure case (unknown asset, no data, missing live LLM, or model rate limit) without misleading generated output.
+\end{enumerate}
+
+\section{Non-Goals for Mid-I}
+\begin{itemize}
+\item No new PostgreSQL/SaaS multi-tenancy migration at this stage unless already implemented.
+\item No complete Technician Academy, predictive maintenance model, inventory forecasting, or large-scale model training.
+\item No full UI redesign that delays integration or changes existing API contracts without agreement.
+\item No reimplementation of a functioning conflict engine simply to use a different library.
+\item No silent switch to in-memory demo data or hardcoded AI output when claiming real-data functionality.
+\end{itemize}
+
+\section{Exit Definition (All Required)}
+\begin{notice}
+\textbf{MID-I PASS GATE}\par
+A. A functional app with real asset and graph history.\par
+B. Diagnosis API succeeds with the verified live-model path or reports a clearly explained limitation.\par
+C. At least one valid source evidence link opens a real record.\par
+D. Existing conflict workflow is visible and testable.\par
+E. Automated backend tests and frontend tests/build run in GitHub Actions.\par
+F. Repository tag/commit, setup instructions, tests, evidence and owner contributions are documented.\par
+G. Every member can defend their own code and explain an integration failure case.
+\end{notice}
+
+\chapter{What Already Exists: Verified Archive Inventory}
+\section{Repository Technology and Structure}
+Inspection of the supplied ZIP found the following actual project components. This is file existence and code-structure evidence, \emph{not} proof that every endpoint currently passes integration tests or is deployed.
+\begin{itemize}
+\item \textbf{Frontend:} React 18, Vite 5, JavaScript/JSX, Tailwind, Axios, Vitest and Testing Library.
+\item \textbf{Backend:} Python FastAPI, Pydantic, graph repository, Groq wrapper, maintenance services and PyTest tests.
+\item \textbf{Graph:} Neo4j graph client, graph queries and an in-memory fallback mode.
+\item \textbf{Operational assets:} Docker Compose, backend Dockerfile, environment example files, README, scripts and demo documentation.
+\end{itemize}
+
+\section{Existing Maintenance Paths: Do Not Duplicate}
+\begin{longtable}{P{5.8cm}P{6.3cm}}
+\caption{Source File Inventory and Role}\\\toprule
+\textbf{Existing path} & \textbf{Current role / instruction}\\\midrule\endfirsthead
+\toprule\textbf{Existing path} & \textbf{Current role / instruction}\\\midrule\endhead
+\file{frontend/src/App.jsx} & App routing includes both legacy software screens and maintenance screens; Shahmeer adapts navigation, carefully.\\
+\file{frontend/src/pages/Diagnostics.jsx} & Existing diagnostics screen; Shahmeer enhances rather than replaces.\\
+\file{frontend/src/pages/Assets.jsx} & Asset search/list; Shahmeer verifies it works with real corpus.\\
+\file{frontend/src/pages/AssetHistory.jsx} & Asset history; Shahmeer makes record navigation dependable.\\
+\file{frontend/src/pages/ServiceRecords.jsx} & Record search/view; Shahmeer uses it for cited evidence.\\
+\file{frontend/src/pages/ReviewQueue.jsx} & Existing reviewer UI; Shahmeer owns UI, Usman owns API.\\
+\file{frontend/src/components/Sidebar.jsx} & Navigation; Shahmeer removes obsolete visible domains.\\
+\file{frontend/src/api/client.js} & Existing Axios helpers for maintenance diagnosis, assets, conflict review; Shahmeer owns frontend API changes.\\
+\file{frontend/src/test/Diagnostics.test.jsx} & Existing Vitest diagnostic tests; Shahmeer extends them.\\
+\file{backend/main.py} & FastAPI app and router wiring, health endpoint; Usman is integration owner.\\
+\file{backend/api/routes/maintenance.py} & Asset, record, ingest and review APIs; Usman owns.\\
+\file{backend/api/routes/diagnostics.py} & Diagnose and maintenance chat routes; Umar owns.\\
+\file{backend/services/diagnostic_retrieval.py} & Current graph-grounded historical retrieval; Umar owns.\\
+\file{backend/graph/queries.py} & Neo4j graph queries; Umar owns.\\
+\file{backend/graph/schema.py} & Graph schema; Umar owns.\\
+\file{backend/services/conflict_engine.py} & Conflict candidate selection, classification and routing; Usman owns.\\
+\file{backend/agents/maintenance_agent.py} & Maintenance ingestion/processing service; Usman owns.\\
+\file{backend/tests/test_diagnostic_retrieval.py} & Existing backend diagnostic tests; Umar extends.\\
+\file{backend/tests/test_api_maintenance.py} & Existing maintenance API tests; Usman extends.\\
+\file{backend/tests/test_conflict_engine.py} & Existing conflict tests; Usman maintains.\\
+\file{docker-compose.yml} & Local Neo4j/backend services; Usman owns deployment file.\\
+\file{README.md} & Old README still markets software-team decisions; Usman updates setup text with member review.\\
+\bottomrule
+\end{longtable}
+
+\section{Existing Routes and Response Reality}
+The backend declares \file{POST /api/maintenance/diagnose}, \file{POST /api/maintenance/chat}, \file{GET /api/maintenance/assets}, \file{GET /api/maintenance/assets/{asset_id}/history}, \file{GET /api/maintenance/records/{record_id}}, and review-queue endpoints. The frontend helper layer already calls these endpoints. In the current code, \file{/diagnose} takes \file{asset_id} and \file{symptom_text}; its result contains \file{ranked_checks}, \file{evidence}, \file{rare_cases}, \file{explanation}, \file{context_size}, \file{citation_validation}, and \file{warnings}.
+
+\textbf{Do not assume:} that session persistence, tenant authentication, full semantic-vector retrieval, or production-ready multi-tenant SaaS is already implemented. These are later-phase commitments in the master report. Current code must be characterized accurately.
+
+\section{Critical Discovery: Real Neo4j vs Demo Mode}
+\file{backend/main.py} can fall back to an in-memory graph, and \file{/api/health} reports \file{graph_mode}, \file{using_memory_graph}, \file{maintenance_corpus_loaded}, \file{maintenance_record_count}, and model availability. \textbf{A healthy HTTP status does not establish a healthy real maintenance demonstration.} The gate requires the right runtime mode, corpus presence and functioning record queries.
+
+The current diagnostic route normally raises HTTP 503 when the live model is not available and there is no applicable cached result. The team must demonstrate or disclose this dependency, preserve controlled failure behavior, and avoid presenting mock text as a live diagnosis.
+
+\section{Pre-existing Technical Risks to Audit}
+\begin{enumerate}
+\item \textbf{Legacy UI:} App routes, Sidebar and README still reference Chat, Decisions, Gitea and other dropped software-oriented product features. Hide or safely retire their navigation, preserving shared dependencies until tested.
+\item \textbf{No GitHub Actions workflow observed in archived source inventory:} create an actual \file{.github/workflows/ci.yml} and verify a workflow run on GitHub. Local tests alone are not CI/CD.
+\item \textbf{Environmental secrets:} supplied ZIP includes \file{backend/.env}; do not commit, copy into agent prompts, display in screenshots, or expose real credentials. Audit Git tracking and rotate any credential that was exposed.
+\item \textbf{Citation validator:} current code verifies record ID existence and flags unmatched IDs. That does not automatically prove every natural-language statement is supported; be precise in claims.
+\item \textbf{Evaluation threshold:} historical materials describe a very small tuning sample and confidence-threshold bottleneck. Do not advertise a newly validated confidence model at Mid-I.
+\item \textbf{Data counts:} source documents contain differing corpus summaries; use the count returned by the runtime and label POC-reported figures separately.
+\end{enumerate}
+
+\chapter{Team Ownership and Zero-Overlap Rules}
+\section{Ownership Principle}
+\textbf{One file = one primary editor per sprint.} An agent may read any file, but may write only owned paths without a brief, logged handoff. Integration is done via agreed public API contracts, not by crossing into another member's modules.
+
+\begin{longtable}{P{2.2cm}P{4.3cm}P{5.6cm}}
+\caption{Exclusive Edit Responsibility}\\\toprule
+\textbf{Member} & \textbf{Edit ownership} & \textbf{Not allowed without handoff}\\\midrule\endfirsthead
+\toprule\textbf{Member} & \textbf{Edit ownership} & \textbf{Not allowed without handoff}\\\midrule\endhead
+Shahmeer & All \file{frontend/src/} pages, components, hooks, CSS and \file{frontend/src/api/client.js}; frontend tests. & No editing \file{backend/}, Docker, Python data/graph services, CI configuration.\\
+Umar & \file{backend/api/routes/diagnostics.py}; \file{backend/services/diagnostic_retrieval.py}; \file{backend/graph/}; diagnostic backend tests. & No editing frontend, \file{backend/main.py}, conflict engine, ingest/maintenance routes or workflow YAML.\\
+Usman & \file{backend/api/routes/maintenance.py}; \file{backend/services/conflict_engine.py}; \file{backend/agents/maintenance_agent.py}; \file{backend/main.py}; Docker/Compose; workflows; setup docs; maintenance/conflict tests. & No editing the diagnostic route or graph implementation without Umar's explicit request; no frontend changes without Shahmeer's approval.\\
+\bottomrule
+\end{longtable}
+
+\section{Shared Contracts: Controlled Owner}
+\begin{itemize}
+\item \textbf{Backend wire format owner: Umar} for diagnosis, \textbf{Usman} for maintenance/review. Shahmeer consumes the response contract and requests changes through a written issue.
+\item \textbf{Frontend Axios adapter owner: Shahmeer}. Only Shahmeer edits the shared \file{frontend/src/api/client.js}.
+\item \textbf{Backend application/router registration owner: Usman}. Other backend contributors make a short integration request rather than editing \file{backend/main.py}.
+\item \textbf{Graph schema owner: Umar}. Usman proposes required ingestion fields in an issue; Umar approves schema changes.
+\item \textbf{CI scripts owner: Usman}; each engineer owns the tests for their feature. A test failure is resolved by the feature owner.
+\item \textbf{Report source coordinator: Shahmeer}. Each member contributes evidence through separate files or agreed report sections, not simultaneous editing of the same document.
+\end{itemize}
+
+\section{Protected Files, Especially During Mid-I}
+Avoid simultaneous changes to \file{frontend/src/App.jsx}, \file{frontend/src/components/Sidebar.jsx}, \file{frontend/src/api/client.js}, \file{backend/main.py}, \file{backend/graph/queries.py}, and \file{docker-compose.yml}. These are integration hotspots. Their respective owners merge changes deliberately.
+
+\section{Branch Names}
+\begin{lstlisting}
+main                         # stable demonstration release
+develop                      # optional integration branch
+feat/mid1/frontend-diagnostics
+feat/mid1/graph-diagnostics
+feat/mid1/maintenance-devops
+fix/mid1/<brief-description>  # only after an owner is assigned
+\end{lstlisting}
+\textbf{No AI agent may independently create additional long-lived integration branches} or merge into \file{main} without the team release coordinator's approval.
+
+\chapter{Exact Interface Contract Freeze}
+\section{Freeze Window and Contract Changes}
+Before parallel implementation, the team records the endpoint, JSON field names, required types, status codes and at least one representative test response. Freeze this contract before new UI and backend work. Existing code is the \emph{current contract}; proposed changes must be versioned explicitly.
+
+\section{Existing Diagnose Request}
+\begin{lstlisting}
+POST /api/maintenance/diagnose
+Content-Type: application/json
+
+{
+  "asset_id": "<existing-asset-id>",
+  "symptom_text": "<actual-symptom-description>"
+}
+\end{lstlisting}
+\textbf{Do not} hardcode a tail number in business logic. A real selected asset from \file{/maintenance/assets} supplies the identifier. Some labels in the old demo use \file{813SK}; the team must verify a matching live asset exists before using it.
+
+\section{Existing Diagnose Response: Field Expectations}
+\begin{lstlisting}
+{
+  "asset_id": "<string>",
+  "symptom_text": "<string>",
+  "ranked_checks": [],
+  "evidence": [],
+  "rare_cases": [],
+  "explanation": "<string>",
+  "context_size": {},
+  "citation_validation": {
+    "valid_ids": [],
+    "invalid_ids": [],
+    "all_valid": true
+  },
+  "warnings": []
+}
+\end{lstlisting}
+This is the \emph{existing field-level contract}, not a promise of populated arrays or a complete type specification. Umar must inspect actual keys of \file{ranked_checks} and the graph repository's live response. Shahmeer must make the UI tolerant of absent optional fields and explicitly render error states. Never alter a response name unilaterally.
+
+\section{Other Existing Endpoints}
+\begin{longtable}{P{5.6cm}P{6.1cm}}
+\caption{Minimum Integration Endpoints}\\\toprule\textbf{Endpoint} & \textbf{Usage / owner}\\\midrule\endfirsthead\toprule\textbf{Endpoint} & \textbf{Usage / owner}\\\midrule\endhead
+\file{GET /api/maintenance/assets} & Asset picker / Usman backend; Shahmeer UI.\\
+\file{GET /api/maintenance/assets/{asset_id}/history} & History timeline / Usman backend; Shahmeer UI.\\
+\file{GET /api/maintenance/records/{record_id}} & Citation detail / Usman backend; Shahmeer UI.\\
+\file{POST /api/maintenance/diagnose} & Ranked diagnosis / Umar backend; Shahmeer UI.\\
+\file{POST /api/maintenance/chat} & Existing maintenance chat / Umar backend; optional for Mid-I.\\
+\file{GET /api/maintenance/review-queue} & Review queue / Usman backend; Shahmeer UI.\\
+\file{POST /api/maintenance/review-queue/{record_id}/accept} & Accept review / Usman backend.\\
+\file{POST /api/maintenance/review-queue/{record_id}/reject} & Reject review / Usman backend.\\
+\file{GET /api/health} & Runtime readiness / Usman.\\
+\bottomrule\end{longtable}
+
+\section{Error Response Agreement}
+\begin{itemize}
+\item \textbf{400/422}: missing or invalid input; UI shows validation message.
+\item \textbf{404}: asset/record absent; UI offers asset reselection.
+\item \textbf{503}: model/database required for that operation unavailable; UI does \emph{not} substitute a made-up diagnosis.
+\item \textbf{429/5xx}: external rate limit/backend failure; UI displays controlled retry information.
+\item \textbf{200 with empty evidence}: do not imply conclusive diagnosis; show insufficient-evidence state.
+\end{itemize}
+These are desired error-display behaviors. Usman and Umar should keep existing HTTP behavior unless a shared contract change is approved and regression tested.
+
+\section{Cross-Agent Integration Handshake}
+Umar delivers to Shahmeer: endpoint sample request, actual response fixture, nested \file{ranked_checks} schema, error examples and known LLM prerequisites. Usman delivers: asset/history/review fixtures and verified service health fields. Shahmeer confirms UI integration using both fixtures and a live call. Each handshake is attached to the relevant PR.
+
+\chapter{Shahmeer Atif: Frontend and Diagnostic Experience}
+\section{Domain and Exclusions}
+\textbf{Ownership:} maintenance-only React UX, asset browsing, diagnostic session layout, evidence presentation, route/navigation cleanup, Axios adapters, frontend tests and end-to-end manual walkthrough. No graph algorithm, LLM API or backend edits.
+
+\section{Work Package S1: POC Preservation and Cleanup}
+\textbf{Inspect:} \file{frontend/src/App.jsx}, \file{frontend/src/components/Sidebar.jsx}, \file{frontend/src/context/DomainContext.jsx}, and maintenance pages.\par
+\textbf{Tasks:}
+\begin{itemize}
+\task{Document current routes and identify software-domain routes to hide from navigation.}
+\task{Preserve working maintenance URLs (/app/assets, /app/diagnostics, /app/review-queue, etc.).}
+\task{Remove the confusing domain-switcher path from the Mid-I experience without breaking maintenance context.}
+\task{Make the main landing action open the maintenance workspace; test browser refresh and deep links.}
+\task{Ensure legacy software-only screens are not presented as proposed Halite maintenance features.}
+\end{itemize}
+\textbf{Acceptance:} Navigation contains only intentional maintenance destinations; frontend builds; maintenance deep links work.
+
+\section{Work Package S2: Asset List and History}
+\textbf{Edit:} \file{frontend/src/pages/Assets.jsx}, \file{frontend/src/pages/AssetHistory.jsx}, and relevant components.\par
+\begin{itemize}
+\task{Bind asset selection to \file{maintenanceAPI.assets()}, not static options.}
+\task{Show asset identifier, report count and useful metadata if returned.}
+\task{On selection, open history for the exact backend asset ID; never infer it from the UI label.}
+\task{Sort/display the timestamps and record IDs returned by the backend; display missing dates honestly.}
+\task{Make a source record clickable and route it to the existing record detail interface.}
+\task{Display loading, empty corpus, 404 and network-failure states.}
+\end{itemize}
+\textbf{Acceptance:} At least one real asset's history can be inspected; a known record ID matches the backend response.
+
+\section{Work Package S3: Diagnostic Workspace}
+\textbf{Edit:} \file{frontend/src/pages/Diagnostics.jsx}, plus self-owned components as needed.\par
+\begin{itemize}
+\task{Display a persistent selected-asset context for the current page.}
+\task{Provide symptom text input with clear button and validation.}
+\task{Invoke the existing \file{maintenanceAPI.diagnose(assetId,symptomText)} helper.}
+\task{Show a visible progress indicator during the request and prevent accidental duplicate submissions.}
+\task{Render returned \file{ranked_checks} using actual verified field names.}
+\task{Render the explanation separately from ranked checks; do not invent details or confidence levels.}
+\task{Render \file{warnings} and citation-validation status transparently.}
+\task{Show specific empty/no-history/model-unavailable states; do not hide backend errors.}
+\end{itemize}
+\textbf{Acceptance:} The UI performs a live end-to-end diagnostic request. A failed backend shows a recoverable message, not a fake success state.
+
+\section{Work Package S4: Evidence Navigation and Review UI}
+\textbf{Edit:} \file{frontend/src/pages/ServiceRecords.jsx}, \file{frontend/src/pages/ReviewQueue.jsx}, and front-owned components.\par
+\begin{itemize}
+\task{Make returned evidence record IDs open the record view.}
+\task{Display source metadata available from API (date, component, status).}
+\task{Distinguish superseded, pending-review and other states only when sourced from backend.}
+\task{Make existing review queue readable and non-misleading; accept/reject state follows server confirmation.}
+\task{Show helpful guidance for empty review queue.}
+\end{itemize}
+\textbf{Acceptance:} At least one diagnosis-to-evidence click and one review queue navigation action work without console errors.
+
+\section{Work Package S5: Frontend Quality and Tests}
+\begin{itemize}
+\task{Extend \file{frontend/src/test/Diagnostics.test.jsx} for loading/success/503/empty-evidence states.}
+\task{Extend Assets and ReviewQueue tests using mocked Axios responses.}
+\task{Run \file{npm test} and \file{npm run build}; record command results.}
+\task{Check overflow, clickable targets, broken imports and navigation refresh behavior.}
+\task{Capture screenshots for documented demonstration states.}
+\end{itemize}
+\textbf{Hand-off files:} UI screenshots, frontend test logs, exact routes, API integration notes, frontend PR link and a short demo script.
+
+\section{Shahmeer: Strict Do-Not-Touch List}
+\file{backend/api/}, \file{backend/graph/}, \file{backend/services/}, \file{backend/main.py}, \file{docker-compose.yml}, \file{.github/workflows/}. If an API field is missing, request the owner to modify the server and use a temporary local fixture in a test, not an unapproved backend rewrite.
+
+\chapter{Muhammad Umar: Graph, Retrieval and Ranking}
+\section{Domain and Exclusions}
+\textbf{Ownership:} Neo4j schema and graph queries; graph-backed diagnostic context; \file{/diagnose} and \file{/chat} route internals; candidate ranking; citation verification in diagnostic responses; diagnostic backend tests. Do not edit the React code, ingest/review API, Docker/CI or application router registration.
+
+\section{Work Package U1: Audit Existing Diagnostic Implementation}
+\textbf{Inspect:} \file{backend/services/diagnostic_retrieval.py}, \file{backend/api/routes/diagnostics.py}, \file{backend/graph/queries.py}, tests and demo documentation.\par
+\begin{itemize}
+\task{Write a short inventory of currently executed functions and their inputs/outputs.}
+\task{Identify the real graph query path for asset history and fleet matching.}
+\task{Record whether ranking currently uses word overlap, JASC/part matching, frequency/lift or any actual embedding index.}
+\task{Explicitly label methods that are not yet hybrid semantic-vector retrieval.}
+\task{Confirm the schema and data required by \file{ranked_checks}.}
+\task{Verify no POC reported result is being mislabeled as diagnostic accuracy.}
+\end{itemize}
+\textbf{Acceptance:} One-page technical state note with executed code references and actual test results.
+
+\section{Work Package U2: Real-Data Graph Retrieval}
+\begin{itemize}
+\task{Test history queries with an actual corpus-loaded Neo4j instance, not only the in-memory demo.}
+\task{Ensure asset-specific records are retrieved with record ID, date, component, text and status as available.}
+\task{Preserve existing recorded chronological relations; avoid fabricating graph edges.}
+\task{Use bounded record limits so queries remain responsive on dense assets.}
+\task{Confirm similarly described symptoms return source-backed records rather than model-created facts.}
+\task{Support the no-history scenario without uncontrolled exceptions.}
+\end{itemize}
+\textbf{Acceptance:} A reproducible query returns existing graph records and source identifiers; unknown asset returns controlled behavior.
+
+\section{Work Package U3: Deterministic Initial Fault Ranking}
+\begin{itemize}
+\task{Preserve the working current ranker unless a specific failing test requires change.}
+\task{Document scoring factors: symptom match, part/JASC context, same-asset versus fleet evidence, source state.}
+\task{Make ordering deterministic for equal scores (stable tie-breaking).}
+\task{Show explicit evidence for every ranked candidate.}
+\task{Mark superseded historical attempts rather than deleting them or treating them as verified causes.}
+\task{Do not call numerical ranking scores calibrated fault probabilities.}
+\end{itemize}
+\textbf{Acceptance:} Repeated identical requests against fixed fixtures give the same candidate order with provenance.
+
+\section{Work Package U4: Citation Validation and LLM Boundary}
+\begin{itemize}
+\task{Inspect existing \file{_validate_citations} and its regex assumptions; test real record identifiers.}
+\task{Prevent fabricated IDs being presented as confirmed evidence.}
+\task{Keep a visible diagnostic error if live Groq is unavailable and no valid cache exists.}
+\task{Use LLM only to explain structured evidence; do not invent a procedure or repair approval.}
+\task{Do not silently weaken validation to make a presentation look better.}
+\task{Coordinate any new response field with Shahmeer \emph{before} changing its name.}
+\end{itemize}
+\textbf{Acceptance:} A false record ID is rejected/flagged; a real ID resolves; a missing live-model dependency produces an explained failure.
+
+\section{Work Package U5: Diagnostic Backend Tests}
+\begin{itemize}
+\task{Run existing \file{test_diagnostic_retrieval.py} and relevant diagnostic route tests; capture baseline failures.}
+\task{Add positive case: matching history and deterministic ranked order.}
+\task{Add negative case: unknown asset or no relevant history.}
+\task{Add security/correctness case: invalid citation/reference.}
+\task{Add dependency case: model unavailable.}
+\task{Document which tests use mocks and which use real Neo4j.}
+\end{itemize}
+\textbf{Hand-off files:} diagnostic API fixture, response schema note, backend test logs, graph query explanation, benchmark caveat and PR link.
+
+\section{Umar: Explicitly Deferred Until After Mid-I}
+Training a new model, full vector-index architecture if not already working, statistically validated fault-probability calibration, broad component dependency graphs and advanced multi-turn session persistence. Stabilize \emph{what currently exists} first.
+
+\chapter{Muhammad Usman Al Haq: Data, Conflict and Delivery}
+\section{Domain and Exclusions}
+\textbf{Ownership:} maintenance asset/record/review routes; data ingestion; conflict engine; backend app wiring; environmental configuration; test infrastructure; GitHub Actions; Compose; deployment instructions; operations evidence. No unilateral changes to the diagnostic route or graph schema; no React page edits.
+
+\section{Work Package A1: Data and Environment Baseline}
+\begin{itemize}
+\task{Read \file{README.md}, \file{docs/maintenance_handoff.md}, \file{docs/maintenance_state_report.md}, \file{docker-compose.yml} and environment example.}
+\task{Verify graph can start on Docker and \file{DEMO_MODE=false} connects to the intended instance.}
+\task{Run \file{GET /api/health} and record graph mode, corpus loaded/count and model mode.}
+\task{Identify which data import command populates the maintenance corpus without unintended duplicate inserts.}
+\task{Select a documented real asset and conflict case for deterministic demo use.}
+\task{Verify credentials are excluded from Git history and do not appear in evidence screenshots.}
+\end{itemize}
+\textbf{Acceptance:} startup instructions reproduce graph, backend and meaningful maintenance records. No secrets embedded in code or commits.
+
+\section{Work Package A2: Maintenance APIs and Conflict Workflow}
+\begin{itemize}
+\task{Verify existing asset list, asset history and record detail endpoints.}
+\task{Run \file{test_api_maintenance.py}, \file{test_conflict_engine.py} and \file{test_maintenance_agent.py}.}
+\task{Confirm review queue returns documented classifications and source record references.}
+\task{Confirm accept/reject requests do not destroy original records or incorrectly claim adjudicated diagnoses.}
+\task{Test no-record, duplicate and invalid-input scenarios.}
+\task{Coordinate source/asset field expectations with Shahmeer and Umar.}
+\end{itemize}
+\textbf{Acceptance:} at least one real review case displays; accept/reject semantics are testable using safe seeded/test data, not by damaging the demo corpus.
+
+\section{Work Package A3: GitHub Actions and Repository Health}
+\begin{itemize}
+\task{Create \file{.github/workflows/ci.yml} and a meaningful workflow on pull request/push.}
+\task{Set up Python dependency install and PyTest execution from \file{backend/}.}
+\task{Set up frontend \file{npm ci}, \file{npm test}, and \file{npm run build} in CI.}
+\task{Ensure workflow fails when a test or build fails; do not mask exit codes.}
+\task{Configure safe test environment; do not upload real \file{.env} to GitHub.}
+\task{Capture a passing GitHub Actions run URL and PR evidence.}
+\task{Arrange controlled staging deployment with health/smoke verification; explain limitations if automated CD cannot be completed.}
+\end{itemize}
+\textbf{Acceptance:} one successful real hosted workflow after team integration. A YAML file alone does not satisfy the CI requirement.
+
+\section{Work Package A4: Backend Wiring and Documentation}
+\begin{itemize}
+\task{Own backend router imports/registration in \file{backend/main.py}; do not rename diagnostic endpoints without Umar approval.}
+\task{Update outdated README quick-start instructions to emphasize maintenance workflow and distinguish real/demonstration modes.}
+\task{Write \file{docs/mid1_setup.md}: requirements, environment-variable names, Docker startup, ingestion, backend/frontend run and health verification.}
+\task{Write \file{docs/mid1_test_evidence.md}: exact commands, pass/fail totals, CI URL, known limitations.}
+\task{Record deployment diagram and runtime dependencies for the university report.}
+\end{itemize}
+\textbf{Acceptance:} another member can reproduce the app from clean checkout using safe sample configuration.
+
+\section{Usman: Special Data and Threshold Caveats}
+Prior documentation describes the existing conflict engine as conservative and includes threshold-tuning concerns on a small test subset. Do not change \file{MAINT_CONFIDENCE_THRESHOLD} solely to produce auto-accepted results in the demo. If experimenting, record threshold, sample size and independent evaluation limitations. Preserve the historical \file{G0} negative result: the data does not validate broad component-dependency edge mining.
+
+\section{Usman: Deliverable Handoff}
+Runtime checklist, redacted environment configuration, startup and data import instructions, conflict/API test logs, GitHub Actions run, deployment URL if available, release tag, known failures and PR link.
+
+\chapter{Day-by-Day Integration Protocol}
+\section{Day 0: Contract Lock (Immediately)}
+\begin{enumerate}
+\item All three pull the same baseline commit and report SHA, current branch and working tree state.
+\item Usman confirms graph/data/runtime; Umar calls diagnosis API; Shahmeer inspects live UI.
+\item Agree response structures; add \file{docs/mid1_contract.md} through a single document owner.
+\item Assign feature branches and exact file ownership; freeze route renames.
+\item Write one 8--12 step demo scenario with a \emph{verified real} asset and record IDs.
+\end{enumerate}
+
+\section{Day 1: Parallel Development}
+\begin{longtable}{P{2.2cm}P{5cm}P{4.9cm}}
+\caption{Immediate Parallel Work}\\\toprule\textbf{Member} & \textbf{Implementation} & \textbf{Acceptance evidence}\\\midrule\endfirsthead\toprule\textbf{Member} & \textbf{Implementation} & \textbf{Acceptance evidence}\\\midrule\endhead
+Shahmeer & Navigation, assets, diagnostics/error states, evidence click-through. & Screenshots, Vitest results, successful frontend build.\\
+Umar & Verified graph/context retrieval, ranker stability, citations, diagnostic tests. & API JSON fixture, graph query proof, PyTest results.\\
+Usman & Dataset/health, asset/review routes, GitHub workflow, runbook, deployment. & Health payload, real review case, CI run, setup log.\\
+\bottomrule\end{longtable}
+
+\section{Day 2: Integrate Through Public Interfaces}
+\begin{enumerate}
+\item Usman merges the stable backend data/operations PR first if it modifies app setup.
+\item Umar merges diagnostic PR after rebasing onto the integration branch and running its focused tests.
+\item Shahmeer merges the UI PR after using actual integrated JSON responses.
+\item Run all backend/frontend tests and full app build, then perform the complete live scenario.
+\item Fix only release-blocking regressions; each owner fixes their own files.
+\end{enumerate}
+This is a suggested ordering. If there are no cross-file dependencies, independent PRs may merge in another order after green CI.
+
+\section{Day 3: Release and Rehearsal}
+\begin{itemize}
+\task{Freeze a release candidate and record commit SHA.}
+\task{Execute the positive diagnostic case, correction case and one failure case.}
+\task{Check \file{/api/health} is honest about runtime mode and corpus.}
+\task{Capture hosted CI run and deployment evidence.}
+\task{Produce screenshots, code ownership record and report appendices.}
+\task{Rehearse questions about the algorithms and the provenance of every shown source.}
+\end{itemize}
+
+\section{Late Deadline Condition}
+Any work on 17--19 October is \textbf{post-deadline polish unless an authorized later evaluation date is explicitly confirmed}. Do not schedule mandatory passing features after the 16 October announced window.
+
+\chapter{Git and AI Agent Collaboration Rules}
+\section{Safe Branch Routine}
+\begin{lstlisting}
+git status
+git switch main
+git pull --ff-only origin main
+git switch -c feat/mid1/<assigned-area>
+# Make ONLY the files assigned to this member.
+# Run focused tests; inspect git diff before committing.
+git add <only-owned-paths>
+git commit -m "mid1: <specific change>"
+git push -u origin feat/mid1/<assigned-area>
+# Open a reviewed pull request. Do not force-push shared branches.
+\end{lstlisting}
+If the team uses a \file{develop} integration branch, base feature branches on that branch and merge PRs into it; do not mix both policies. Only the release coordinator fast-forwards a verified commit into \file{main}.
+
+\section{What Every Agent Must Do Before Coding}
+\begin{enumerate}
+\item Inspect the actual code and tests in its ownership scope.
+\item Present a short plan listing exact files to modify and endpoint contracts touched.
+\item Run the existing relevant tests and note baseline failures.
+\item Check whether the desired functionality is already implemented.
+\item Identify dependencies owned by another member; request changes instead of editing their files.
+\item Make the smallest viable change; preserve backwards compatibility whenever possible.
+\item Write tests first or alongside each change; run them before asking for review.
+\end{enumerate}
+
+\section{What Every Agent Must Never Do}
+\begin{itemize}
+\item Never rewrite the project, change framework or create a separate project root.
+\item Never edit \file{.env} secrets into tracked files or print secret values.
+\item Never run destructive Neo4j wipes or reseed the only demo dataset without backup and user approval.
+\item Never delete tests or silence CI failures to obtain a green badge.
+\item Never change public API fields without a cross-team contract note and updated tests.
+\item Never switch to a mock graph while claiming live real-data success.
+\item Never force-push \file{main}/\file{develop} or merge unreviewed code.
+\item Never infer implementation success from AI-generated code; execute commands.
+\end{itemize}
+
+\section{PR Template (Use as Written)}
+\begin{lstlisting}
+TITLE: mid1: <feature or fix>
+OWNER: Shahmeer / Umar / Usman
+SCOPE: <one area only>
+FILES CHANGED: <paths>
+CONTRACT CHANGE: none / linked approved decision
+TEST COMMANDS: <commands actually executed>
+RESULTS: <pass/fail counts, failures if any>
+DEMO EVIDENCE: <screenshot, JSON, workflow URL>
+DEPENDENCIES: <other PRs>
+KNOWN LIMITATIONS: <factual limitations>
+REVIEWER: <member not author>
+\end{lstlisting}
+
+\section{Conflict Resolution Policy}
+If two PRs touch the same file, pause one and have its owner manually rebase and reconcile; do not allow agents to choose arbitrary conflict-marker branches. Run both feature tests after resolution. Shared conflict resolutions require a second human reviewer.
+
+\chapter{University Mid-I Deliverables and Evidence Map}
+\section{Rubric-Aligned Evidence}
+The supplied handbook's Mid-I table calls for project vision, existing-product research, use cases, SSD/SRS, test plan, software development plan, wireframes/screens, ethical/legal/DEI discussion, appropriate structure/behavior/data designs, algorithm design, implementation evidence, static checks, unit/system tests, CI/CD, deployment and setup instructions, and a working code demo. The supplied current assessment form also emphasizes a live core module, owner evidence and meaningful tests.
+
+\begin{longtable}{P{4.2cm}P{2.0cm}P{5.2cm}}
+\caption{Required Evidence Production}\\\toprule\textbf{Artifact / evidence} & \textbf{Lead} & \textbf{Evidence to provide}\\\midrule\endfirsthead\toprule\textbf{Artifact / evidence} & \textbf{Lead} & \textbf{Evidence to provide}\\\midrule\endhead
+Vision, problem and scope & Shahmeer & Maintenance-only scope, problem statement, modules, clear exclusions.\\
+R\&D and competitor comparison & Umar & Related approaches, research gap, baselines, clear CCP framing.\\
+Use case diagram, SSD, SRS & Shahmeer & UC asset lookup/diagnosis/evidence/review; FR/NFR with testable criteria.\\
+Domain model, components, layers & Umar & Executed architecture and correct graph/runtime boundary.\\
+Data/schema/ER or graph representation & Umar & Actual Existing graph schema and source IDs.\\
+Behavior/sequence/DFD & Shahmeer & Request to retrieval to ranking to UI, including error branches.\\
+Algorithm and pseudocode & Umar & Candidate retrieval/ranking/citation logic matching implementation.\\
+Implementation technical detail & All & Real files, functions, commit SHA, tests and screenshots per owner.\\
+Test plan, test cases, results & Usman & Unit, integration, negative case, actual pass/fail outputs.\\
+CI/CD branch/PR evidence & Usman & Hosted Actions logs, owners, reviewed PRs, release tag.\\
+Deployment/setup/tool manual & Usman & Reproducible steps, environment names, health verification.\\
+Ethics, privacy, AI disclosure & Shahmeer with all & Actual external AI usage, data/privacy and safety limits.\\
+Iteration status/action register & Shahmeer with all & Planned vs actual, justified deviations, feedback and corrections.\\
+Working demonstration & All & One connected scenario, explanation by each technical owner.\\
+\bottomrule\end{longtable}
+
+\section{Report Assembly Guidance}
+The supplied Mid-I report template's chapters include introduction; research; proposal feedback/iteration plan; requirements; design; iteration implementation; testing and early validation; project management evidence; remaining work; conclusion; and appendices. This execution blueprint \emph{does not replace that official report}. Each owner supplies verified facts to those chapters. Do not place this entire internal agent handoff document into the submission as if it were the implementation report.
+
+\section{Evidence Folder Layout (New, Proposed)}
+\begin{lstlisting}
+docs/mid1/
+  00_status_and_release.md
+  01_approved_contracts.md
+  02_frontend_evidence.md
+  03_graph_diagnostic_evidence.md
+  04_data_conflict_devops_evidence.md
+  05_tests_and_ci.md
+  06_demo_script.md
+  07_risks_and_disclosures.md
+  screenshots/        # redacted, real runtime only
+  fixtures/           # small sanitized sample JSON only
+\end{lstlisting}
+\textbf{Coordinator ownership:} Usman creates the directory scaffold and runtime/CI files; Shahmeer writes frontend/demo files; Umar writes diagnostic/graph files. Each document has a single editor.
+
+\chapter{Test Cases, Failure Cases and Acceptance Matrix}
+\begin{longtable}{P{1.2cm}P{4.4cm}P{2.1cm}P{3.8cm}}
+\caption{Mid-I End-to-End Acceptance Tests}\\\toprule\textbf{ID} & \textbf{Scenario} & \textbf{Owner} & \textbf{Expected result}\\\midrule\endfirsthead\toprule\textbf{ID} & \textbf{Scenario} & \textbf{Owner} & \textbf{Expected result}\\\midrule\endhead
+T01 & Frontend app opens maintenance workspace. & Shahmeer & No broken route or fatal console errors.\\
+T02 & API lists loaded maintenance assets. & Usman & Real identifiers, expected response shape.\\
+T03 & Selected asset history is displayed. & Shahmeer & Dated real records with IDs.\\
+T04 & Diagnosis request returns evidence. & Umar & Actual graph-backed result and ranking.\\
+T05 & Explanation cites a real record. & Umar & ID verified, source opens.\\
+T06 & Unknown asset request. & Umar & Controlled failure; no invented history.\\
+T07 & LLM is unavailable. & Umar + Shahmeer & Honest 503/recoverable UI or explicitly labeled cached result.\\
+T08 & Empty/ambiguous evidence. & Umar + Shahmeer & Uncertainty or clarification, not certainty.\\
+T09 & Review queue shows known case. & Usman & Real recorded classification.\\
+T10 & Review action on test case. & Usman & Persisted state and safe audit behavior.\\
+T11 & Frontend automated tests. & Shahmeer & Passing Vitest run/build.\\
+T12 & Backend automated tests. & Umar + Usman & Passing focused PyTest suite.\\
+T13 & Pull-request CI workflow. & Usman & Hosted GitHub checks actually run and pass.\\
+T14 & Real graph health. & Usman & \file{graph_mode=neo4j}; corpus present.\\
+T15 & Deployment/setup on clean machine. & Usman & Documented reproducible startup.\\
+T16 & Legacy screen isolation. & Shahmeer & Maintenance nav does not expose dropped domain.\\
+\bottomrule\end{longtable}
+
+\section{No-Mocking Rule for the Evaluator Demo}
+Mocks are acceptable in unit tests and front-end component tests. In the \textbf{live integrated demo}, the main asset/history/diagnosis/conflict path must be backed by actual running services and records. A prerecorded video is an explicit backup, not the primary proof of implementation.
+
+\section{Post-Integration Smoke Commands}
+Run these from the actual project root, with safe local environment configured:
+\begin{lstlisting}[language=bash]
+docker compose up -d neo4j
+# In a separate terminal:
+cd backend
+python -m pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+# In another terminal:
+cd frontend
+npm ci
+npm run dev
+# Checks, from correct project directories:
+python -m pytest -q
+npm test
+npm run build
+\end{lstlisting}
+\textbf{Qualification:} Commands are source README-based conventions, not verified to pass on this system or all operating systems. The team must run them, update platform-specific instructions and document missing environment variables. A live diagnosis also requires a functioning configured model or valid explicitly identified cached result.
+
+\chapter{Live Mid-I Demonstration Script and Defense Preparation}
+\section{Demo Order (Suggested 8--12 Minutes)}
+\begin{enumerate}
+\item \textbf{Shahmeer:} Introduce Halite as maintenance diagnostic support; navigate to Assets and show the real data-driven UI (about 1 minute).
+\item \textbf{Usman:} Show health fields, actual Neo4j runtime, corpus count and source provenance (about 1 minute).
+\item \textbf{Shahmeer:} Open a real asset and navigate its chronological history (about 1 minute).
+\item \textbf{Umar:} Explain selected symptom, candidate retrieval and deterministic scoring (about 1 minute).
+\item \textbf{Shahmeer:} Trigger live diagnostic query, show ranked checks, cited evidence and status (about 2 minutes).
+\item \textbf{Usman:} Show a real conflict/review case and safe failure policy (about 1 minute).
+\item \textbf{All:} Show a failing/empty case and explain why the system refuses to invent records (about 1 minute).
+\item \textbf{Usman:} Show GitHub branch/PR activity and successful Actions run (about 1 minute).
+\item \textbf{All:} Explain contribution split and remaining work; take questions.
+\end{enumerate}
+Times are suggested; adjust to the actual allotted evaluation duration.
+
+\section{Questions Shahmeer Must Answer}
+\begin{itemize}
+\item How do the Assets and Diagnostics pages obtain real data?
+\item What is the API contract, and how are 404/503/empty states handled?
+\item How does a user open and verify an evidence citation?
+\item How were legacy software-domain screens isolated without breaking the application?
+\item How do frontend tests verify the live API integration behavior?
+\end{itemize}
+
+\section{Questions Umar Must Answer}
+\begin{itemize}
+\item Why use Neo4j rather than only keyword search?
+\item Which current graph edges are documented and which causal edges are \emph{not} justified?
+\item Which ranker features are actually implemented, and how do they differ from a trained predictive model?
+\item What do the record citations prove and what do they not prove?
+\item How will diagnostics be evaluated separately from the previous conflict-detection F1?
+\end{itemize}
+
+\section{Questions Usman Must Answer}
+\begin{itemize}
+\item How were FAA maintenance records ingested and identified?
+\item What do \file{graph_mode}, \file{llm_mode} and corpus health mean?
+\item What are the conflict classes and why do uncertain cases require review?
+\item What exactly runs in GitHub Actions and what prevents a broken merge?
+\item How can another evaluator reproduce the working application safely?
+\end{itemize}
+
+\section{Adversarial Demo Cases}
+\begin{enumerate}
+\item User enters a symptom for an asset with no history: system does not invent a repair.
+\item A cited record was superseded: system displays its historical status.
+\item Live LLM is unavailable: request fails transparently or clearly identifies an appropriate cache path.
+\item A model mentions a fabricated source: validator flags/rejects the source.
+\item GitHub CI contains a broken test: pipeline should fail, not silently pass.
+\end{enumerate}
+
+\chapter{Risk Register and Release Freeze}
+\begin{longtable}{P{1.2cm}P{3.5cm}P{6.5cm}}
+\caption{Immediate Delivery Risks}\\\toprule\textbf{ID} & \textbf{Risk} & \textbf{Mitigation / owner}\\\midrule\endfirsthead\toprule\textbf{ID} & \textbf{Risk} & \textbf{Mitigation / owner}\\\midrule\endhead
+R1 & Too much new code in one day & Keep current stable routes, fix only blockers; all.\\
+R2 & Graph unavailable / demo fallback & Usman verifies Neo4j and health; Umar verifies queries.\\
+R3 & Live Groq key/rate unavailable & Umar verifies dependency and proper 503; Shahmeer error UI.\\
+R4 & Different API JSON assumptions & Contract freeze and real response fixture; all.\\
+R5 & Merge conflicts from AI agents & One owner per file, small PRs, no unapproved path changes.\\
+R6 & Untracked or exposed secrets & Usman audits Git and rotates compromised tokens.\\
+R7 & Wrong dataset/version & Usman records runtime count, asset/record IDs and fixture version.\\
+R8 & No hosted CI proof & Usman publishes working Actions run before release.\\
+R9 & Old software scope leaks into UI & Shahmeer isolates navigation, tests deep links.\\
+R10 & Misstated diagnostics performance & Umar separates POC conflict metrics from diagnostic evidence.\\
+R11 & Missing university artifacts & Each owner supplies screenshots/tests/design; Shahmeer assembles.\\
+R12 & Evaluation date confusion & Confirm with supervisor, but prepare for 16 October.\\
+\bottomrule\end{longtable}
+
+\section{Release Candidate Check}
+\begin{itemize}
+\task{Known baseline commit and three owner PRs recorded.}
+\task{Source modified only through agreed ownership boundaries.}
+\task{Backend imports successfully and real graph queries run.}
+\task{Frontend build succeeds and critical screens render.}
+\task{Backend/frontend test reports captured.}
+\task{Hosted GitHub Actions run captured.}
+\task{Demo asset/correction record IDs verified.}
+\task{Positive, negative and failure demos rehearsed.}
+\task{Report appendices and owner evidence complete.}
+\task{No credentials/screenshots leaked.}
+\task{Release tag, runtime settings (redacted), and limitations recorded.}
+\end{itemize}
+
+\chapter{Ready-to-Paste Instructions for Coding Agents}
+\section{Global Instructions (Give to All Three Agents)}
+\begin{notice}
+The following text may be copied into each coding-agent session. Replace placeholders with the actual repository and branch. Require the agent to ask before editing outside its allowed scope.
+\end{notice}
+\begin{lstlisting}
+You are working on Halite FYP-I Mid, a MAINTENANCE-ONLY
+AI diagnostic support app. This is an EXISTING React/Vite +
+FastAPI + Neo4j repository, not a blank project.
+Read the FYP-I Mid execution blueprint and inspect actual files.
+Preserve functioning code. Do not touch the dropped software
+product domain except for specifically owned isolation work.
+Do not invent test outcomes, credentials, source record IDs,
+model accuracy or completed features. Avoid destructive DB actions.
+Before changes: show baseline SHA, branch, file inventory,
+current test status, exact intended files and contract impacts.
+Edit ONLY your assigned paths; request cross-owner changes.
+Use a focused feature branch and small commits. Run relevant
+tests. Provide file list, summary, commands and actual results.
+Never push secrets or commit .env. Never merge to main yourself.
+\end{lstlisting}
+
+\section{Shahmeer Agent Prompt}
+\begin{lstlisting}
+ROLE: Shahmeer Atif -- sole frontend owner.
+BRANCH: feat/mid1/frontend-diagnostics
+ALLOWED: frontend/src/** and frontend tests.
+OBJECTIVE: Enhance existing Assets, AssetHistory, Diagnostics,
+ServiceRecords and ReviewQueue; show real record citations and
+clear loading/empty/error states. Hide obsolete software-domain
+navigation without breaking maintenance URLs. Reuse existing
+maintenanceAPI methods in frontend/src/api/client.js.
+DO NOT EDIT backend/**, Docker, CI YAML or .env.
+CONTRACT: consult Umar for /maintenance/diagnose response; Usman
+for assets/history/records/review. Request API fixes by issue.
+VERIFY: npm test; npm run build; live diagnosis-to-source click.
+DELIVER: PR, screenshots, fixtures, test results and UI demo steps.
+\end{lstlisting}
+
+\section{Umar Agent Prompt}
+\begin{lstlisting}
+ROLE: Muhammad Umar -- graph + diagnostic algorithm owner.
+BRANCH: feat/mid1/graph-diagnostics
+ALLOWED: backend/api/routes/diagnostics.py;
+backend/services/diagnostic_retrieval.py; backend/graph/**;
+backend/tests/test_diagnostic_retrieval.py and diagnostic tests.
+OBJECTIVE: Audit and stabilize REAL Neo4j asset retrieval,
+ranked_checks, evidence IDs, candidate ranking and the current
+citation validator. Document actual scoring, no-history and
+LLM-unavailable behavior. Preserve existing request/response keys.
+DO NOT EDIT frontend/**, backend/main.py, conflict engine,
+maintenance ingestion routes, Docker or CI YAML.
+VERIFY: focused PyTest and one real-graph query with correct IDs.
+DELIVER: response fixture, scoring explanation, graph evidence,
+positive/failure tests and PR.
+\end{lstlisting}
+
+\section{Usman Agent Prompt}
+\begin{lstlisting}
+ROLE: Muhammad Usman Al Haq -- maintenance data / conflict /
+backend wiring / CI-CD / deployment owner.
+BRANCH: feat/mid1/maintenance-devops
+ALLOWED: backend/api/routes/maintenance.py;
+backend/services/conflict_engine.py;
+backend/agents/maintenance_agent.py; backend/main.py;
+backend/tests/test_api_maintenance.py and conflict tests;
+.github/workflows/**; docker-compose.yml; README and setup docs.
+OBJECTIVE: Prove real corpus health and asset/review API behavior,
+add hosted GitHub Actions to run actual PyTest + npm tests/build,
+create reproducible setup and deployment/health evidence.
+DO NOT EDIT frontend/** or Umar's diagnostic/graph files.
+Never commit actual .env secrets. Never make an evaluation threshold
+change solely to improve demo optics.
+VERIFY: backend tests, GitHub Actions URL, graph_mode=neo4j,
+maintenance_corpus_loaded=true and reproducible startup.
+DELIVER: PR, CI logs, setup manual, review evidence, health JSON.
+\end{lstlisting}
+
+\section{Agent Stop-and-Ask Conditions}
+Every agent must pause and notify its human owner if: (1) another member's file must change; (2) an existing endpoint requires an incompatible response change; (3) the demo dataset may be overwritten; (4) keys or credentials appear in history; (5) tests fail for unrelated pre-existing reasons; (6) a major library/framework migration appears necessary; or (7) the verified scope conflicts with a report statement.
+
+\appendix
+\chapter{Mid-I Team Final Checklist}
+\section{Shahmeer}
+\begin{itemize}
+\task{Maintenance-only navigation and route smoke test.}
+\task{Real asset list and asset history work.}
+\task{Live symptom query shows ranked results.}
+\task{Evidence citation opens source record.}
+\task{Empty/error/loading states shown.}
+\task{Frontend tests and build pass; PR documented.}
+\end{itemize}
+\section{Umar}
+\begin{itemize}
+\task{Neo4j diagnostic query returns real source records.}
+\task{Ranking method and weights actually documented.}
+\task{Diagnostic response fields frozen and shared.}
+\task{Citation validator tested with valid and invalid IDs.}
+\task{No-history and model-unavailable tests captured.}
+\task{Diagnostic test logs, examples and PR documented.}
+\end{itemize}
+\section{Usman}
+\begin{itemize}
+\task{Real data corpus verified, IDs recorded, secrets protected.}
+\task{Asset/history/record/review endpoints tested.}
+\task{Historical conflict case works.}
+\task{GitHub workflow runs real tests and build.}
+\task{Deployment/setup guide reproduces app.}
+\task{Health shows real graph and recorded corpus.}
+\task{Release tag, PR, deployment evidence documented.}
+\end{itemize}
+\section{Whole Team}
+\begin{itemize}
+\task{Single end-to-end positive demo works.}
+\task{Negative/failure demo works without fabricated evidence.}
+\task{All planned vs achieved statements accurately labeled.}
+\task{Mid-I report covers handbook-designated artifacts.}
+\task{Each member can explain their contribution independently.}
+\task{Evaluation meeting confirmed within authorized dates.}
+\end{itemize}
+
+\chapter{Evidence Log Template}
+\begin{longtable}{P{2.5cm}P{4.0cm}P{5.1cm}}
+\toprule\textbf{Field} & \textbf{Value} & \textbf{Example of valid evidence}\\\midrule\endfirsthead
+\toprule\textbf{Field} & \textbf{Value} & \textbf{Example of valid evidence}\\\midrule\endhead
+Baseline SHA & \rule{3cm}{.4pt} & Git commit SHA before sprint.\\
+Release SHA & \rule{3cm}{.4pt} & Integration commit under evaluation.\\
+Frontend PR & \rule{3cm}{.4pt} & Reviewed Shahmeer PR.\\
+Graph PR & \rule{3cm}{.4pt} & Reviewed Umar PR.\\
+DevOps PR & \rule{3cm}{.4pt} & Reviewed Usman PR.\\
+CI run & \rule{3cm}{.4pt} & Hosted Actions URL with green jobs.\\
+Test count & \rule{3cm}{.4pt} & Actual command output, including skipped tests.\\
+Demo asset & \rule{3cm}{.4pt} & Real tail/asset from runtime.\\
+Demo record & \rule{3cm}{.4pt} & Actual source-linked record ID.\\
+Graph mode & \rule{3cm}{.4pt} & Real \file{/api/health} \file{graph_mode}.\\
+Model mode & \rule{3cm}{.4pt} & Live/fallback/cached behavior.\\
+Limitations & \rule{3cm}{.4pt} & Explicit missing features/known failures.\\
+Supervisor date & \rule{3cm}{.4pt} & Confirmed appointment and report handoff.\\
+\bottomrule\end{longtable}
+
+\chapter{Source References and Decision Notes}
+This execution blueprint is based on: (1) \emph{BS-FYP-Handbook-2026\_DRAFT.pdf}, specifically iteration 1, the FYP-I Mid deliverable table and FYP-I target guidance; (2) \emph{FYP-1-Mid-Assessment-Guidelines-and-Rubrics.pdf}; (3) \emph{F26\_FYP1\_Mid\_Report\_LaTeX\_Complete.pdf}, a report structure reference; (4) \emph{Halite\_FYP\_Report.docx}, project modules, proposed responsibilities and roadmap; (5) \emph{Halite (FYP).zip}, inspected source paths and code declarations; (6) internal maintenance architecture, handoff and state documents contained in that archive; and (7) the two FYP Committee emails supplied in conversation.
+
+\textbf{Source-derived vs proposed:} Existing filenames, declared routes and reported prior evaluation limitations were inspected from source material. The exclusive ownership rules, folder conventions, test gates, branch workflow, schedule breakdown, responses to errors and acceptance matrices are \emph{recommended engineering controls for this sprint}, not pre-existing facts or university-imposed requirements.
+
+\vfill
+\begin{center}\textcolor{rulec}{\rule{.9\textwidth}{.6pt}}\\
+{\sffamily\bfseries HALITE / FYP-I MID / ONE CONTRACT -- THREE OWNERS -- ONE LIVE DEMO}\\
+{\small This file is an internal execution plan. The actual Mid-I report must document implemented evidence and results.}
+\end{center}
+\end{document}

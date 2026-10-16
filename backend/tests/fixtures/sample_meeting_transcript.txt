@@ -1,0 +1,31 @@
+PROJECT HALITE — Architecture Sync Meeting
+Date: 10 July 2026
+Attendees: Umar (Backend), Usman (Data), Shahmeer (Frontend)
+
+---
+
+Umar: Let's lock a few decisions before we start coding the auth flow.
+
+Usman: Agreed. First — sessions vs JWT. Mobile wants offline tokens.
+
+Umar: Decision: we will use JWT over server-side sessions. Reasoning: the client needs a mobile app with offline-capable auth tokens, and stateless tokens simplify horizontal scaling of AuthModule.
+
+Shahmeer: What about refresh tokens?
+
+Umar: We'll add refresh token rotation later — tracked as ticket #42 against AuthModule.
+
+Usman: Database choice next. Mongo would be flexible, but billing and accounts need ACID.
+
+Usman: Decision: PostgreSQL over MongoDB. Reasoning: relational data with strict ACID requirements for billing and user accounts. PostgreSQL also gives us mature tooling and JSON columns where we need flexibility. DatabaseLayer will own the connection pool.
+
+Shahmeer: API routing — are we going through a gateway?
+
+Umar: Decision: all external traffic goes through ApiGateway. Reasoning: centralizes auth checks, rate limiting, and routing to internal services. ApiGateway depends on AuthModule for token validation.
+
+Usman: One more — event-driven updates for invalidation alerts.
+
+Umar: Decision: use an event-driven architecture for decision invalidation. Reasoning: when a commit modifies a component file, we publish an event so Alerts can flag related decisions without blocking the ingest pipeline. This decouples Gitea sync from the UI.
+
+Shahmeer: Document that AuthModule file path is src/auth/auth.service.ts so invalidation can match commits.
+
+Umar: Noted. Meeting adjourned.

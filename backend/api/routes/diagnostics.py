@@ -28,7 +28,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from api.deps import get_graph_repo, get_groq_service, get_settings
-from services.diagnostic_retrieval import build_diagnostic_context
+from services.citation_validation import validate_citations
+from services.diagnostic_retrieval import (
+    build_diagnostic_context,
+    rank_diagnostic_checks,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -54,11 +58,9 @@ class ChatRequest(BaseModel):
 # Cache helpers (reuse pattern from conflict_engine.py)
 # ---------------------------------------------------------------------------
 
-def _cache_dir() -> Path:
+def _cache_path() -> Path:
     from config import settings
-    d = Path(settings.MAINT_DATA_DIR) / "diag_cache"
-    d.mkdir(parents=True, exist_ok=True)
-    return d
+    return Path(settings.MAINT_DATA_DIR) / "diag_cache" / "cache.json"
 
 
 def _cache_key(asset_id: str, symptom: str, model: str) -> str:
@@ -68,7 +70,7 @@ def _cache_key(asset_id: str, symptom: str, model: str) -> str:
 
 
 def _load_cache() -> dict:
-    p = _cache_dir() / "cache.json"
+    p = _cache_path()
     if p.exists():
         try:
             with open(p, encoding="utf-8") as f:
@@ -79,107 +81,13 @@ def _load_cache() -> dict:
 
 
 def _save_cache(cache: dict) -> None:
-    p = _cache_dir() / "cache.json"
+    p = _cache_path()
     try:
+        p.parent.mkdir(parents=True, exist_ok=True)
         with open(p, "w", encoding="utf-8") as f:
             json.dump(cache, f, indent=2)
-    except Exception as e:
-        logger.error("Failed to write diag cache: %s", e)
-
-
-# ---------------------------------------------------------------------------
-# Citation validation
-# ---------------------------------------------------------------------------
-
-# Pattern: uppercase letters+digits sequences that look like FAA SDR IDs
-_RECORD_ID_RE = re.compile(r"\b([A-Z]{2,6}[\d]{6,})\b")
-
-
-def _validate_citations(text: str, graph_repo) -> dict:
-    """
-    Extract all record-ID-like tokens from LLM output and verify each exists
-    in the graph. Returns {valid: [...], invalid: [...], flagged_text: str}.
-    """
-    found = list(set(_RECORD_ID_RE.findall(text)))
-    valid = []
-    invalid = []
-    for rid in found:
-        rec = graph_repo.get_service_record(rid)
-        if rec:
-            valid.append(rid)
-        else:
-            invalid.append(rid)
-
-    # Build flagged version: mark invalid IDs
-    flagged = text
-    for rid in invalid:
-        flagged = flagged.replace(rid, f"[UNVERIFIED:{rid}]")
-
-    return {"valid": valid, "invalid": invalid, "flagged_text": flagged}
-
-
-# ---------------------------------------------------------------------------
-# Ranking logic (graph-derived, not LLM-derived)
-# ---------------------------------------------------------------------------
-
-def _rank_components(context: dict) -> list[dict]:
-    """
-    Produce a ranked inspection order from the graph context.
-
-    Ranking signals (all from real records):
-      1. Prior resolution frequency: how often has a component been the
-         corrective action on this asset or fleet?
-      2. Recency on this asset: components that appear in recent history
-         are ranked higher.
-      3. Fleet match score: components with high fleet similarity scores.
-
-    No LLM involved here — the ranking is computed from structure.
-    """
-    component_scores: dict[str, dict] = {}
-
-    def _add(part: str, weight: float, source: str, record_id: str):
-        if not part or part.upper() in ("UNKNOWN", ""):
-            return
-        key = part.upper().strip()
-        if key not in component_scores:
-            component_scores[key] = {
-                "part_name": key,
-                "score": 0.0,
-                "evidence_count": 0,
-                "evidence_record_ids": [],
-                "sources": [],
-            }
-        component_scores[key]["score"] += weight
-        if record_id not in component_scores[key]["evidence_record_ids"]:
-            component_scores[key]["evidence_count"] += 1
-            component_scores[key]["evidence_record_ids"].append(record_id)
-        if source not in component_scores[key]["sources"]:
-            component_scores[key]["sources"].append(source)
-
-    # Asset history: higher weight for recent non-superseded records
-    for i, rec in enumerate(context["asset_history"]):
-        recency_weight = 1.0 / (i + 1)  # newest (i=0) → weight 1.0
-        superseded_penalty = 0.3 if rec.get("is_superseded") else 1.0
-        _add(rec.get("part_name", ""),
-             recency_weight * superseded_penalty * 0.4,
-             "asset_history",
-             rec["record_id"])
-
-    # Fleet matches: scored by similarity
-    for rec in context["fleet_matches"]:
-        fleet_score = rec.get("score", 0.1)
-        superseded_penalty = 0.3 if rec.get("is_superseded") else 1.0
-        _add(rec.get("part_name", ""),
-             fleet_score * superseded_penalty * 0.6,
-             "fleet_match",
-             rec["record_id"])
-
-    # Sort by score descending
-    ranked = sorted(component_scores.values(), key=lambda x: x["score"], reverse=True)
-    for i, item in enumerate(ranked):
-        item["rank"] = i + 1
-        item["score"] = round(item["score"], 4)
-    return ranked
+    except OSError as exc:
+        logger.warning("Diagnostic cache unavailable; continuing without persistence: %s", exc)
 
 
 def _build_prompt(context: dict, ranked: list[dict]) -> str:
@@ -279,8 +187,8 @@ def diagnose(
                    "Check the ID or ensure the corpus is ingested.",
         )
 
-    # 4. Rank components (pure graph — no LLM)
-    ranked = _rank_components(context)
+    # 4. Rank components (pure graph — no LLM; see rank_diagnostic_checks)
+    ranked = rank_diagnostic_checks(context)
 
     # 5. Build prompt and call LLM only to phrase the answer
     prompt = _build_prompt(context, ranked)
@@ -305,7 +213,7 @@ def diagnose(
 
     # 7. Citation validation — mandatory
     explanation_text = llm_json.get("explanation", raw_llm)
-    citation_result = _validate_citations(explanation_text, graph_repo)
+    citation_result = validate_citations(explanation_text, graph_repo)
 
     # 8. Collect evidence records
     all_cited_ids = citation_result["valid"]
@@ -430,7 +338,7 @@ def maint_chat(
         max_tokens=800,
     )
 
-    citation_result = _validate_citations(raw, graph_repo)
+    citation_result = validate_citations(raw, graph_repo)
 
     return {
         "reply":       citation_result["flagged_text"],

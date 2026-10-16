@@ -3,3 +3,6 @@ __pycache__
 **/.env
 **/*.pyc
 .pytest_cache
+data/raw
+*.zip
+.git

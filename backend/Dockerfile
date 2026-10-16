@@ -5,5 +5,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
+ARG GIT_SHA=unknown
+ARG DEPLOYED_AT=
+ENV GIT_SHA=$GIT_SHA
+ENV DEPLOYED_AT=$DEPLOYED_AT
+
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -222,7 +222,6 @@ def classify_conflict(groq_service, new_record: dict, prior_record: dict) -> dic
     
     # 1. Check cache
     cache_dir = Path(settings.MAINT_DATA_DIR)
-    cache_dir.mkdir(parents=True, exist_ok=True)
     cache_path = cache_dir / "cache.json"
     
     cache = {}
@@ -269,10 +268,11 @@ def classify_conflict(groq_service, new_record: dict, prior_record: dict) -> dic
     # 3. Save to cache
     cache[cache_key] = final_result
     try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
         with open(cache_path, "w", encoding="utf-8") as f:
             json.dump(cache, f, indent=2)
-    except Exception as e:
-        logger.error("Failed to write cache: %s", e)
+    except OSError as exc:
+        logger.warning("Conflict cache unavailable; continuing without persistence: %s", exc)
         
     return final_result
 

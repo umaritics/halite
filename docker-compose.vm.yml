@@ -1,13 +1,21 @@
-# VM deploy only — bind localhost; Caddy exposes https://dev1.corp.curatech.pk/halite-api/
+# VM / shared staging deploy — bind localhost; Caddy exposes https://dev1.corp.curatech.pk/halite-api/
+# Deployed by .github/workflows/deploy-staging.yml (partners do not need SSH).
 services:
   api:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        GIT_SHA: ${GIT_SHA:-unknown}
+        DEPLOYED_AT: ${DEPLOYED_AT:-}
     container_name: halite-api
     restart: unless-stopped
     env_file:
       - ./backend/.env
+    environment:
+      GIT_SHA: ${GIT_SHA:-unknown}
+      DEPLOYED_AT: ${DEPLOYED_AT:-}
+      DEMO_MODE: "false"
     ports:
       - "127.0.0.1:8002:8000"
     security_opt:

@@ -1,0 +1,125 @@
+name: Deploy staging backend
+
+# Partners without VM access: push backend changes (or Run workflow) → updates the shared API.
+# Secrets: VM_SSH_HOST, VM_SSH_USER, VM_SSH_KEY, VM_DEPLOY_PATH
+# Guide: knowledge/context/modules/remote_backend.md
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git SHA or ref to deploy (empty = this commit)"
+        required: false
+        default: ""
+  push:
+    branches:
+      - umar/mid1-graph-diagnostics
+      - usman
+      - main
+    paths:
+      - "backend/**"
+      - "docker-compose.vm.yml"
+      - "scripts/vm/**"
+      - ".github/workflows/deploy-staging.yml"
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: SSH deploy to shared VM
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Check deploy secrets
+        env:
+          VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
+          VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+          VM_DEPLOY_PATH: ${{ secrets.VM_DEPLOY_PATH }}
+        run: |
+          missing=0
+          for name in VM_SSH_HOST VM_SSH_USER VM_SSH_KEY VM_DEPLOY_PATH; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing GitHub Actions secret: $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Add secrets under Repo Settings → Secrets and variables → Actions."
+            echo "Create Environment named 'staging' if GitHub prompts for it."
+            echo "Guide: knowledge/context/modules/remote_backend.md"
+            exit 1
+          fi
+
+      - name: Resolve deploy metadata
+        id: meta
+        run: |
+          REF="${{ github.event.inputs.ref }}"
+          if [ -z "$REF" ]; then REF="${{ github.sha }}"; fi
+          echo "sha=$REF" >> "$GITHUB_OUTPUT"
+          echo "deployed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_SSH_HOST }}
+          username: ${{ secrets.VM_SSH_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script_stop: true
+          envs: DEPLOY_SHA,DEPLOY_PATH,DEPLOYED_AT
+          script: |
+            set -euo pipefail
+            cd "$DEPLOY_PATH"
+            echo "==> Fetching $DEPLOY_SHA"
+            git fetch --all --prune
+            git checkout --force "$DEPLOY_SHA"
+            git reset --hard "$DEPLOY_SHA"
+            if [ -f scripts/vm/remote_deploy.sh ]; then
+              chmod +x scripts/vm/remote_deploy.sh
+              DEPLOY_PATH="$DEPLOY_PATH" DEPLOY_SHA="$DEPLOY_SHA" DEPLOYED_AT="$DEPLOYED_AT" \
+                bash scripts/vm/remote_deploy.sh
+            else
+              export GIT_SHA="$DEPLOY_SHA" DEPLOYED_AT="$DEPLOYED_AT"
+              docker compose -f docker-compose.vm.yml build \
+                --build-arg GIT_SHA="$GIT_SHA" --build-arg DEPLOYED_AT="$DEPLOYED_AT"
+              docker compose -f docker-compose.vm.yml up -d --remove-orphans
+              for i in $(seq 1 30); do
+                curl -fsS http://127.0.0.1:8002/api/health && exit 0
+                sleep 2
+              done
+              docker logs --tail=120 halite-api || true
+              exit 1
+            fi
+        env:
+          DEPLOY_SHA: ${{ steps.meta.outputs.sha }}
+          DEPLOY_PATH: ${{ secrets.VM_DEPLOY_PATH }}
+          DEPLOYED_AT: ${{ steps.meta.outputs.deployed_at }}
+
+      - name: Verify public health + version
+        run: |
+          set -euo pipefail
+          BASE="https://dev1.corp.curatech.pk/halite-api"
+          curl -fsS "$BASE/api/health" | tee /tmp/health.json
+          echo
+          curl -fsS "$BASE/api/ops/version" | tee /tmp/version.json || true
+          echo
+          python3 - <<'PY'
+          import json
+          h=json.load(open("/tmp/health.json"))
+          print("git_sha=", h.get("git_sha"), "graph_mode=", h.get("graph_mode"), "domains=", h.get("domains"))
+          if "git_sha" not in h and "graph_mode" not in h:
+              raise SystemExit("Deployed API still looks like the pre-Mid-I image")
+          PY
+
+      - name: Smoke maintenance assets
+        run: |
+          code=$(curl --max-time 30 -s -o /tmp/assets.json -w "%{http_code}" \
+            "https://dev1.corp.curatech.pk/halite-api/api/maintenance/assets")
+          echo "HTTP $code"
+          head -c 500 /tmp/assets.json || true
+          test "$code" = "200"

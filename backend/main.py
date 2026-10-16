@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routes import alerts, chat, decisions, graph, ingest, webhooks
 from api.routes.maintenance import domains_router, router as maintenance_router
 from api.routes.diagnostics import router as diagnostics_router
+from api.routes.ops import install_ring_buffer_logging, router as ops_router
 from config import settings
 from graph.memory_store import MemoryGraphStore
 from graph.neo4j_client import Neo4jClient
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    install_ring_buffer_logging()
     use_demo = settings.DEMO_MODE or not settings.neo4j_configured
     store = None
 
@@ -91,6 +93,7 @@ app.include_router(alerts.router, prefix="/api")
 app.include_router(maintenance_router, prefix="/api")
 app.include_router(diagnostics_router, prefix="/api")
 app.include_router(domains_router, prefix="/api")
+app.include_router(ops_router, prefix="/api")
 
 
 def _health_payload():
@@ -116,6 +119,8 @@ def _health_payload():
     from domains.registry import list_domains
     domains = list_domains()
 
+    import os
+
     return {
         "status": "ok",
         "app": "Halite",
@@ -132,6 +137,8 @@ def _health_payload():
         "maintenance_corpus_loaded": maintenance_corpus_loaded,
         "maintenance_record_count": maintenance_record_count,
         "fallback_invocations": groq_service.fallback_invocations if groq_service else 0,
+        "git_sha": os.environ.get("GIT_SHA") or settings.GIT_SHA or "unknown",
+        "deployed_at": os.environ.get("DEPLOYED_AT") or settings.DEPLOYED_AT or "",
     }
 
 

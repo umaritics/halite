@@ -1,0 +1,4 @@
+OperatorControlNumber,RegistryNNumber,DifficultyDate,SubmissionDate,AircraftMake,AircraftModel,AircraftSerialNumber,PartName,PartCondition,PartLocation,JASCCode,Discrepancy
+CI-SMOKE-001,N-CI-123,01/10/2026,2026-01-11T00:00:00Z,Boeing,737,CI-SN-001,Hydraulic Pump,Worn,Left Wing,2910,Hydraulic pressure dropped during taxi
+CI-SMOKE-002,N-CI-123,02/10/2026,2026-02-11T00:00:00Z,Boeing,737,CI-SN-001,Hydraulic Pump,Replaced,Left Wing,2910,Supplemental inspection found recurring pressure loss
+CI-SMOKE-003,N-CI-123,03/10/2026,2026-03-11T00:00:00Z,Boeing,737,CI-SN-001,Pressure Sensor,Inoperative,Left Wing,2910,Pressure sensor produced an intermittent low reading

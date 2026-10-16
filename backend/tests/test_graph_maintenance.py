@@ -154,6 +154,27 @@ class TestLinkRecordAboutAsset:
         assert history[0]["record_id"] == "LINK001"
 
 
+class TestListAssetsWithCounts:
+    def test_returns_sorted_assets_and_counts(self, repo):
+        first = repo.find_or_create_asset("NCOUNT2", {})
+        second = repo.find_or_create_asset("NCOUNT1", {})
+        for index in range(2):
+            record_id = f"COUNT{index:03d}"
+            repo.create_service_record({
+                "record_id": record_id,
+                "asset_key": "NCOUNT2",
+                "occurred_at": f"2025-01-0{index + 1}",
+                "text": "counted record",
+            })
+            repo.link_record_about_asset(record_id, first["id"])
+
+        assets = repo.list_assets_with_counts()
+
+        assert [asset["tail_number"] for asset in assets] == ["NCOUNT1", "NCOUNT2"]
+        counts = {asset["id"]: asset["record_count"] for asset in assets}
+        assert counts == {first["id"]: 2, second["id"]: 0}
+
+
 class TestListAssetHistory:
     def test_ascending_order(self, repo):
         asset = repo.find_or_create_asset("NHIST01", {})
@@ -183,6 +204,22 @@ class TestListAssetHistory:
 
         limited = repo.list_asset_history(asset["id"], limit=2)
         assert len(limited) == 2
+
+    def test_recent_newest_first_and_limited(self, repo):
+        asset = repo.find_or_create_asset("NHIST03", {})
+        for i, date in enumerate(["2025-01-01", "2025-03-01", "2025-02-01"]):
+            repo.create_service_record({
+                "record_id": f"REC{i:03d}",
+                "asset_key": "NHIST03",
+                "occurred_at": date,
+                "text": f"r{i}",
+            })
+            repo.link_record_about_asset(f"REC{i:03d}", asset["id"])
+
+        recent = repo.list_asset_history_recent(asset["id"], limit=2)
+        assert len(recent) == 2
+        assert recent[0]["occurred_at"] == "2025-03-01"
+        assert recent[1]["occurred_at"] == "2025-02-01"
 
 
 class TestLinkRecordSupersedes:

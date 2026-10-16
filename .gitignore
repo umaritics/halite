@@ -5,6 +5,11 @@ backend/**/__pycache__/
 backend/.env
 *.pyc
 *.pyo
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.pytest_cache/
 
 # Node
 frontend/node_modules/
@@ -32,3 +37,10 @@ backend/Untitled
 # FAA SDR data — never commit raw or processed CSVs
 backend/data/raw/
 backend/data/processed/
+
+# Reproducible runtime/model-response caches
+backend/data/cache.json
+backend/data/diag_cache/
+
+# Ad-hoc local debug output
+backend/*_output.txt

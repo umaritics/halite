@@ -1,0 +1,13 @@
+﻿---
+description: Keep flow docs and dependency graphs accurate
+globs: knowledge/**/*.md
+alwaysApply: false
+---
+
+# Technical docs maintenance
+
+- Every flow must keep a Mermaid dependency graph in sync with real imports/routes.
+- Decision files use Status / Context / Decision / Consequences / Owners.
+- Prefer editing existing hubs over creating parallel docs; link instead of duplicating PDFs.
+- When adding a DEC-*, add a row to `knowledge/decisions/INDEX.md`.
+- When adding a module or primary file, update `knowledge/REGISTRY.md`.
