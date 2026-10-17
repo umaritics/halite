@@ -123,7 +123,16 @@ python -B -m pytest -q -p no:cacheprovider
 ```
 
 The 23 skips are real-Neo4j tests; CI supplies Neo4j 5 Community. The final CI
-result is recorded below after the PR run.
+result was:
+
+```text
+PR #7: https://github.com/umaritics/halite/pull/7
+Backend tests (Neo4j 5 service): 194 passed, 1 warning in 6.14s
+Frontend tests and build: PASS
+Docker Compose real-graph smoke test: PASS
+Vercel checks: PASS
+CI run: https://github.com/umaritics/halite/actions/runs/39044958072
+```
 
 Three temporary mutations were applied individually and reverted:
 
