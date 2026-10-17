@@ -8,11 +8,12 @@ import { ThemeProvider } from '../context/ThemeContext';
 import * as client from '../api/client';
 
 // WebGL is unavailable in jsdom: record the props the page hands to the renderer instead.
-const fg = vi.hoisted(() => ({ last: null }));
+const fg = vi.hoisted(() => ({ last: null, crash: false }));
 vi.mock('react-force-graph-3d', async () => {
   const React = await import('react');
   return {
     default: React.forwardRef((props, ref) => {
+      if (fg.crash) throw new Error('WebGL context lost');
       fg.last = props;
       React.useImperativeHandle(ref, () => ({ zoomToFit: () => {} }));
       return <div data-testid="force-graph" />;
@@ -42,10 +43,33 @@ const edges = [
 const renderPage = () => render(<ThemeProvider><MemoryRouter><Graph /></MemoryRouter></ThemeProvider>);
 
 describe('Graph page', () => {
-  beforeEach(() => {
+    beforeEach(() => {
     vi.resetAllMocks();
     fg.last = null;
+    fg.crash = false;
+    // jsdom has no WebGL: pretend it exists unless a test removes it.
+    window.WebGLRenderingContext = function WebGLRenderingContext() {};
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({});
     overview.mockResolvedValue({ data: { nodes, edges } });
+  });
+
+  it('shows a clear message instead of a blank page when the browser has no WebGL', async () => {
+    delete window.WebGLRenderingContext;
+    renderPage();
+    expect(await screen.findByText(/needs WebGL/)).toBeInTheDocument();
+    expect(screen.queryByTestId('force-graph')).toBeNull();
+    // the rest of the page still works
+    expect(screen.getByLabelText('Aircraft')).toHaveValue('813SK');
+    expect(document.getElementById('graph-edge-legend')).not.toBeNull();
+  });
+
+  it('shows the same message, not a crash, when the 3D renderer throws', async () => {
+    fg.crash = true;
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    renderPage();
+    expect(await screen.findByText(/needs WebGL/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Aircraft')).toBeInTheDocument();
+    spy.mockRestore();
   });
 
   it('asks the backend for enough nodes rather than its 200-node default', async () => {
