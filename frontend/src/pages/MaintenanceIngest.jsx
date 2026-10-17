@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import FileUploader from '../components/FileUploader';
+import CsvUploader from '../components/CsvUploader';
+import IngestResult from '../components/IngestResult';
 import { maintenanceAPI } from '../api/client';
 import StatusChip from '../components/StatusChip';
 import ConfidenceBar from '../components/ConfidenceBar';
+import { describeLoadError } from '../utils/loadError';
 
 export default function MaintenanceIngest() {
   const [ingestUploading, setIngestUploading] = useState(false);
   const [ingestPath, setIngestPath] = useState('data/processed/sdr_poc_corpus.csv');
   const [ingestLimit, setIngestLimit] = useState('');
   const [ingestResult, setIngestResult] = useState(null);
+  const [ingestError, setIngestError] = useState(null);
 
   const [form, setForm] = useState({
     tailNumber: '',
@@ -22,17 +25,19 @@ export default function MaintenanceIngest() {
   });
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formResult, setFormResult] = useState(null);
+  const [formError, setFormError] = useState(null);
 
   const handleCorpusIngest = async () => {
     setIngestUploading(true);
     setIngestResult(null);
+    setIngestError(null);
     try {
       const payload = { csv_path: ingestPath };
       if (ingestLimit) payload.limit = parseInt(ingestLimit, 10);
       const { data } = await maintenanceAPI.ingest(payload);
       setIngestResult(data);
     } catch (err) {
-      alert(err.response?.data?.detail || err.message || 'Ingest failed');
+      setIngestError(describeLoadError(err).message);
     } finally {
       setIngestUploading(false);
     }
@@ -42,6 +47,7 @@ export default function MaintenanceIngest() {
     e.preventDefault();
     setFormSubmitting(true);
     setFormResult(null);
+    setFormError(null);
     try {
       const payload = {
         tail_number: form.tailNumber,
@@ -57,7 +63,7 @@ export default function MaintenanceIngest() {
       setFormResult(data);
 
     } catch (err) {
-      alert(err.response?.data?.detail || err.message || 'Submit failed');
+      setFormError(describeLoadError(err).message);
     } finally {
       setFormSubmitting(false);
     }
@@ -68,23 +74,34 @@ export default function MaintenanceIngest() {
       <header className="border-b border-theme px-6 py-4">
         <h2 className="font-brand text-xl text-primary">Maintenance Ingest</h2>
         <p className="font-sans text-sm text-secondary">
-          Import FAA SDR records or submit new service records to the knowledge graph
+          Import FAA SDR records or submit a single service record to the graph
         </p>
       </header>
 
       <div className="mx-auto max-w-4xl space-y-8 p-6">
         
-        {/* Panel 1: Corpus Ingest */}
+        {/* Panel 1: CSV upload */}
         <section className="halite-card p-6">
-          <h3 className="font-brand text-primary">Corpus Ingest</h3>
-          <p className="mt-1 font-sans text-sm text-secondary mb-4">
-            Import a batch of records from a CSV file.
+          <h3 className="font-brand text-primary">Upload CSV</h3>
+          <p className="mb-4 mt-1 font-sans text-sm text-secondary">
+            Import FAA SDR records from a CSV on your computer. Required columns: RegistryNNumber, DifficultyDate
+            (MM/DD/YYYY), OperatorControlNumber.
           </p>
-          
-          <div className="grid gap-4 sm:grid-cols-2 mb-4">
+          <CsvUploader />
+        </section>
+
+        {/* Panel 2: Corpus Ingest (file already on the API server) */}
+        <section className="halite-card p-6">
+          <h3 className="font-brand text-primary">Corpus Ingest (server file)</h3>
+          <p className="mb-4 mt-1 font-sans text-sm text-secondary">
+            Import a CSV that is already on the API server. The path is read on the server, not on your computer.
+          </p>
+
+          <div className="mb-4 grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="font-sans text-sm text-secondary">CSV Path</label>
+              <label htmlFor="ingest-path" className="font-sans text-sm text-secondary">CSV Path</label>
               <input
+                id="ingest-path"
                 value={ingestPath}
                 onChange={(e) => setIngestPath(e.target.value)}
                 className="halite-input mt-1 w-full"
@@ -92,8 +109,9 @@ export default function MaintenanceIngest() {
               />
             </div>
             <div>
-              <label className="font-sans text-sm text-secondary">Row Limit (Optional)</label>
+              <label htmlFor="ingest-limit" className="font-sans text-sm text-secondary">Row Limit (Optional)</label>
               <input
+                id="ingest-limit"
                 type="number"
                 value={ingestLimit}
                 onChange={(e) => setIngestLimit(e.target.value)}
@@ -102,42 +120,24 @@ export default function MaintenanceIngest() {
               />
             </div>
           </div>
-          
-          <button 
-            onClick={handleCorpusIngest} 
-            disabled={ingestUploading} 
+
+          <button
+            onClick={handleCorpusIngest}
+            disabled={ingestUploading}
             className="halite-btn-primary"
           >
             {ingestUploading ? 'Ingesting...' : 'Ingest Corpus'}
           </button>
 
-          {ingestResult && (
-            <div className="mt-6 p-4 bg-surface-dark/5 rounded border border-theme grid grid-cols-2 sm:grid-cols-5 gap-4">
-              <div className="flex flex-col">
-                <span className="text-secondary text-xs font-sans">Assets Created</span>
-                <span className="text-primary font-mono text-lg">{ingestResult.assets_created}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-secondary text-xs font-sans">Records Created</span>
-                <span className="text-primary font-mono text-lg">{ingestResult.records_created}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-secondary text-xs font-sans">Skipped (No Tail)</span>
-                <span className="text-amber-500 font-mono text-lg">{ingestResult.rows_skipped_no_tail}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-secondary text-xs font-sans">Skipped (Bad Date)</span>
-                <span className="text-amber-500 font-mono text-lg">{ingestResult.rows_skipped_bad_date}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-secondary text-xs font-sans">Duplicates Skipped</span>
-                <span className="text-primary font-mono text-lg">{ingestResult.duplicates_skipped || 0}</span>
-              </div>
-            </div>
+          {ingestError && (
+            <p role="alert" className="mt-4 rounded-md bg-red-500/10 px-3 py-2 font-sans text-sm text-red-400">
+              {ingestError}
+            </p>
           )}
+          {ingestResult && <IngestResult result={ingestResult} />}
         </section>
 
-        {/* Panel 2: Single Record Submission */}
+        {/* Panel 3: Single Record Submission */}
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">Single Record Submission</h3>
           <p className="mt-1 font-sans text-sm text-secondary mb-4">
@@ -147,44 +147,50 @@ export default function MaintenanceIngest() {
           <form onSubmit={handleSingleRecordSubmit} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="font-sans text-sm text-secondary">Tail Number</label>
-                <input required className="halite-input mt-1 w-full" value={form.tailNumber} onChange={e => setForm({...form, tailNumber: e.target.value})} placeholder="e.g. 508AE" />
+                <label htmlFor="form-tail" className="font-sans text-sm text-secondary">Tail Number</label>
+                <input id="form-tail" required className="halite-input mt-1 w-full" value={form.tailNumber} onChange={e => setForm({...form, tailNumber: e.target.value})} placeholder="e.g. 508AE" />
               </div>
               <div>
-                <label className="font-sans text-sm text-secondary">Date</label>
-                <input required type="date" className="halite-input mt-1 w-full" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
+                <label htmlFor="form-date" className="font-sans text-sm text-secondary">Date</label>
+                <input id="form-date" required type="date" className="halite-input mt-1 w-full" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
               </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
-                <label className="font-sans text-sm text-secondary">Part Name</label>
-                <input required className="halite-input mt-1 w-full" value={form.partName} onChange={e => setForm({...form, partName: e.target.value})} />
+                <label htmlFor="form-part" className="font-sans text-sm text-secondary">Part Name</label>
+                <input id="form-part" required className="halite-input mt-1 w-full" value={form.partName} onChange={e => setForm({...form, partName: e.target.value})} />
               </div>
               <div>
-                <label className="font-sans text-sm text-secondary">Condition</label>
-                <input className="halite-input mt-1 w-full" value={form.condition} onChange={e => setForm({...form, condition: e.target.value})} />
+                <label htmlFor="form-condition" className="font-sans text-sm text-secondary">Condition</label>
+                <input id="form-condition" className="halite-input mt-1 w-full" value={form.condition} onChange={e => setForm({...form, condition: e.target.value})} />
               </div>
               <div>
-                <label className="font-sans text-sm text-secondary">Location</label>
-                <input className="halite-input mt-1 w-full" value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
+                <label htmlFor="form-location" className="font-sans text-sm text-secondary">Location</label>
+                <input id="form-location" className="halite-input mt-1 w-full" value={form.location} onChange={e => setForm({...form, location: e.target.value})} />
               </div>
             </div>
 
             <div>
-              <label className="font-sans text-sm text-secondary">JASC Code</label>
-              <input className="halite-input mt-1 w-full" value={form.jasc} onChange={e => setForm({...form, jasc: e.target.value})} />
+              <label htmlFor="form-jasc" className="font-sans text-sm text-secondary">JASC Code</label>
+              <input id="form-jasc" className="halite-input mt-1 w-full" value={form.jasc} onChange={e => setForm({...form, jasc: e.target.value})} />
             </div>
 
             <div>
-              <label className="font-sans text-sm text-secondary">Discrepancy Text</label>
-              <textarea required rows={3} className="halite-input mt-1 w-full" value={form.discrepancy} onChange={e => setForm({...form, discrepancy: e.target.value})}></textarea>
+              <label htmlFor="form-text" className="font-sans text-sm text-secondary">Discrepancy Text</label>
+              <textarea id="form-text" required rows={3} className="halite-input mt-1 w-full" value={form.discrepancy} onChange={e => setForm({...form, discrepancy: e.target.value})}></textarea>
             </div>
 
             <button type="submit" disabled={formSubmitting} className="halite-btn-primary">
               {formSubmitting ? 'Processing...' : 'Submit Record'}
             </button>
           </form>
+
+          {formError && (
+            <p role="alert" className="mt-4 rounded-md bg-red-500/10 px-3 py-2 font-sans text-sm text-red-400">
+              {formError}
+            </p>
+          )}
 
           {formResult && (
             <div className="mt-6 p-4 bg-surface-dark/5 rounded border border-theme">

@@ -62,6 +62,7 @@ and unknown paths redirect to `/app/assets`.
 | Unscored and API-flagged legacy placeholders never show a number; no-conflict shows comparison count; relation scores are labelled heuristic/not probability; superseded shows backend `corrected_by` only | `ConfidenceBar.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx` |
 | Only backend-supplied values are displayed (no invented supersession reason, no "Invalid Date") | `AssetHistory.jsx`, `utils/format.js` |
 | No UI control may wipe the graph (Settings reset removed) | `Settings.jsx` |
+| Ingest writes only after an explicit confirm; counts are the backend's own numbers; failures are inline, never `alert()` | `MaintenanceIngest.jsx`, `CsvUploader.jsx`, `IngestResult.jsx`, [DEC-20261017-ingest-csv-upload-ui](../../decisions/DEC-20261017-ingest-csv-upload-ui.md) |
 | Graph shows only stored edges for one aircraft; counts are what is drawn; `SUPERSEDES` is styled apart; no invented edges | `Graph.jsx`, `utils/graphScope.js`, [DEC-20261017-graph-aircraft-focus](../../decisions/DEC-20261017-graph-aircraft-focus.md) |
 
 ## Performance

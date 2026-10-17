@@ -51,7 +51,8 @@ export const domainsAPI = {
 
 export const maintenanceAPI = {
   ingest: (payload) => api.post('/maintenance/ingest', payload),
-  ingestFile: (formData) => api.post('/maintenance/ingest', formData, {
+  // Multipart CSV upload (field name `file`); `ingest` above takes a server-side csv_path instead.
+  ingestFile: (formData) => api.post('/maintenance/ingest/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
   submitRecord: (payload) => api.post('/maintenance/records', payload),
