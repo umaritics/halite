@@ -32,6 +32,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [20_analysis_cost_report.md](20_analysis_cost_report.md) | Team | Reproducible conflict-analysis cost and partial-run quality audit |
 | [21_analysis_cascade_evidence.md](21_analysis_cascade_evidence.md) | Team | Offline cost cascade, tests, mutation checks, and PR #7 CI evidence |
 | [22_cursor_handoff_2026-10-17.md](22_cursor_handoff_2026-10-17.md) | Team → Cursor | Corrected current state, completed work, and explicit remaining expanded requirements |
+| [23_single_aircraft_analysis_evidence.md](23_single_aircraft_analysis_evidence.md) | Shahmeer | Bounded single-aircraft (800NN) conflict analysis on a scratch graph, vs FAA ground truth |
 
 ## Partner agents — start here
 

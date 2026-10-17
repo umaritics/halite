@@ -1,0 +1,172 @@
+{
+  "aircraft": "800NN",
+  "records": [
+    {
+      "record_id": "AALA202503100492",
+      "occurred_at": "2025-03-08",
+      "part": "DOOR TRACK",
+      "status": "superseded",
+      "analysis_state": "scored",
+      "confidence": 0.0,
+      "method": "screen",
+      "label": "no_candidates"
+    },
+    {
+      "record_id": "AALA202505053120",
+      "occurred_at": "2025-05-04",
+      "part": "BRAKE ASSY",
+      "status": "no_action",
+      "analysis_state": "scored",
+      "confidence": 0.0,
+      "method": "screen",
+      "label": "no_candidates"
+    },
+    {
+      "record_id": "AALA202506029401",
+      "occurred_at": "2025-06-01",
+      "part": "GUST LOCK",
+      "status": "no_action",
+      "analysis_state": "scored",
+      "confidence": 0.5,
+      "method": "llm",
+      "label": "scope_disjoint"
+    },
+    {
+      "record_id": "AALA202506059401",
+      "occurred_at": "2025-06-01",
+      "part": "GUST LOCK",
+      "status": "auto_accepted",
+      "analysis_state": "scored",
+      "confidence": 0.8,
+      "method": "llm",
+      "label": "supersedes"
+    },
+    {
+      "record_id": "AALA202506040273",
+      "occurred_at": "2025-06-03",
+      "part": "GUST LOCK",
+      "status": "needs_review",
+      "analysis_state": "needs_review",
+      "confidence": 0.65,
+      "method": "llm",
+      "label": "contradicts"
+    },
+    {
+      "record_id": "AALA202506050273",
+      "occurred_at": "2025-06-03",
+      "part": "GUIDE ARM",
+      "status": "auto_accepted",
+      "analysis_state": "scored",
+      "confidence": 0.7000000000000001,
+      "method": "llm",
+      "label": "supersedes"
+    },
+    {
+      "record_id": "AALA202506090459",
+      "occurred_at": "2025-06-08",
+      "part": "DOOR",
+      "status": "auto_accepted",
+      "analysis_state": "scored",
+      "confidence": 0.75,
+      "method": "llm",
+      "label": "supersedes"
+    },
+    {
+      "record_id": "AALA202506107305",
+      "occurred_at": "2025-06-09",
+      "part": "WARNING LIGHT",
+      "status": "no_action",
+      "analysis_state": "scored",
+      "confidence": 0.5,
+      "method": "llm",
+      "label": "scope_disjoint"
+    },
+    {
+      "record_id": "AALA202506127305",
+      "occurred_at": "2025-06-09",
+      "part": "COMPUTER",
+      "status": "auto_accepted",
+      "analysis_state": "scored",
+      "confidence": 0.7000000000000001,
+      "method": "llm",
+      "label": "supersedes"
+    },
+    {
+      "record_id": "AALA202507130066",
+      "occurred_at": "2025-07-10",
+      "part": "DOOR",
+      "status": "no_action",
+      "analysis_state": "scored",
+      "confidence": 0.55,
+      "method": "llm",
+      "label": "no_conflict"
+    },
+    {
+      "record_id": "AALA202508012480",
+      "occurred_at": "2025-07-30",
+      "part": "FLASHLIGHT",
+      "status": "no_action",
+      "analysis_state": "scored",
+      "confidence": 0.5,
+      "method": "llm",
+      "label": "scope_disjoint"
+    },
+    {
+      "record_id": "AALA202508014885",
+      "occurred_at": "2025-07-30",
+      "part": "FLASHLIGHT",
+      "status": "no_action",
+      "analysis_state": "scored",
+      "confidence": 0.3,
+      "method": "llm",
+      "label": "scope_disjoint"
+    },
+    {
+      "record_id": "AALA202510319363",
+      "occurred_at": "2025-10-30",
+      "part": "DOOR",
+      "status": "needs_review",
+      "analysis_state": "needs_review",
+      "confidence": 0.9,
+      "method": "llm",
+      "label": "partial_supersedes"
+    }
+  ],
+  "supersedes_edges": [
+    {
+      "superseded": "AALA202506029401",
+      "superseding": "AALA202506059401",
+      "in_ground_truth": true
+    },
+    {
+      "superseded": "AALA202506040273",
+      "superseding": "AALA202506050273",
+      "in_ground_truth": true
+    },
+    {
+      "superseded": "AALA202503100492",
+      "superseding": "AALA202506090459",
+      "in_ground_truth": false
+    },
+    {
+      "superseded": "AALA202506107305",
+      "superseding": "AALA202506127305",
+      "in_ground_truth": true
+    }
+  ],
+  "ground_truth_pairs": [
+    [
+      "AALA202506029401",
+      "AALA202506059401"
+    ],
+    [
+      "AALA202506040273",
+      "AALA202506050273"
+    ],
+    [
+      "AALA202506107305",
+      "AALA202506127305"
+    ]
+  ],
+  "ground_truth_found": 3
+}
