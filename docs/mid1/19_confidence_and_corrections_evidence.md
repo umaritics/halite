@@ -63,6 +63,34 @@ there. Docker was checked locally and was unavailable:
 failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine
 ```
 
+PR CI run `39042782049`, backend job `117425454323`, executed the same suite
+against a healthy `neo4j:5-community` service:
+
+```text
+Run python -m pytest -q
+181 passed, 1 warning in 7.95s
+```
+
+The first real-Neo4j run exposed three failures: status, asset, and
+analysis-state filters returned unfiltered rows. The original shape attached
+`WHERE` directly to an `OPTIONAL MATCH`; in Cypher that constrains the optional
+pattern rather than removing the `ServiceRecord` row. The fixed query shape,
+used by both list and page/count reads, is:
+
+```cypher
+MATCH (sr:ServiceRecord)
+OPTIONAL MATCH (sr)-[:ABOUT]->(a:Asset)
+WITH sr, a
+WHERE sr.status = $status
+OPTIONAL MATCH (corrector:ServiceRecord)-[:SUPERSEDES]->(sr)
+RETURN sr, a.id AS asset_id, a.tail_number AS tail_number
+ORDER BY sr.occurred_at DESC
+```
+
+Equivalent dynamic predicates cover `a.id`, `analysis_state`, text, part, and
+date filters. The passing 181-test result is the real Neo4j evidence; local
+memory tests alone did not detect this Cypher scoping defect.
+
 Frontend:
 
 ```text
