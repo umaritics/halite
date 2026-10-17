@@ -14,6 +14,8 @@ vi.mock('../api/client', () => ({
     assetHistory: vi.fn(),
     accept: vi.fn(),
     reject: vi.fn(),
+    analysisStatus: vi.fn(),
+    corrections: vi.fn(),
   }
 }));
 
@@ -33,6 +35,47 @@ const conflictDetail = (overrides = {}) => ({
     },
     ...overrides,
   }
+});
+
+describe('Detected corrections tab', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    api.reviewQueue.mockResolvedValue({ data: [] });
+    api.analysisStatus.mockResolvedValue({ data: { total: 1, unscored: 0, scored: 1, needs_review: 0, reviewed: 0 } });
+    api.assets.mockResolvedValue({ data: [{ id: 'asset-1', tail_number: '105NN' }] });
+    api.corrections.mockResolvedValue({ data: {
+      total: 1,
+      next: null,
+      summary: { total_corrections: 1, component_changed: 1, component_changed_pct: 100 },
+      items: [{
+        aircraft: { id: 'asset-1', tail_number: '105NN' },
+        older_record: { id: 'OLD1', part_name: 'PUMP', occurred_at: '2025-01-01' },
+        newer_record: { id: 'NEW1', part_name: 'PRESSURE SWITCH', occurred_at: '2025-02-01' },
+        component_changed: true,
+        classification_label: 'supersedes',
+        rationale: 'Later report corrected the component.',
+        review_status: 'scored',
+      }],
+    } });
+  });
+
+  it('defaults the corrections aircraft filter to All aircraft and renders live summary', async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: 'Detected corrections' }));
+    expect(await screen.findByText('OLD1')).toBeInTheDocument();
+    expect(screen.getByLabelText('Corrections aircraft')).toHaveValue('');
+    expect(screen.getByText('100%')).toBeInTheDocument();
+    expect(screen.getByText('PUMP → PRESSURE SWITCH')).toBeInTheDocument();
+    expect(screen.getByText(/recall on the ground-truth set was 0.66/)).toBeInTheDocument();
+  });
+
+  it('filters corrections by aircraft', async () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: 'Detected corrections' }));
+    await screen.findByText('OLD1');
+    fireEvent.change(screen.getByLabelText('Corrections aircraft'), { target: { value: 'asset-1' } });
+    await waitFor(() => expect(api.corrections).toHaveBeenLastCalledWith(expect.objectContaining({ asset_id: 'asset-1' })));
+  });
 });
 
 const queueItem = (record_id, extra = {}) => ({
@@ -56,6 +99,8 @@ describe('ReviewQueue', () => {
     vi.resetAllMocks();
     api.assetHistory.mockResolvedValue({ data: { count: 10 } });
     api.assets.mockResolvedValue({ data: [{ id: 'uuid-N123', tail_number: 'N123' }] });
+    api.analysisStatus.mockResolvedValue({ data: { total: 12, unscored: 0, scored: 10, needs_review: 2, reviewed: 0, by_label: {} } });
+    api.corrections.mockResolvedValue({ data: { items: [], total: 0, next: null, summary: { total_corrections: 0, component_changed: 0, component_changed_pct: 0 } } });
   });
 
   it('renders queued item and pruning line', async () => {
@@ -106,10 +151,18 @@ describe('ReviewQueue', () => {
       await screen.findByText('INCOMING RECORD');
     });
 
-    it('a genuinely empty queue says nothing is awaiting review', async () => {
+    it('an analysed empty queue states the analysed count', async () => {
       api.reviewQueue.mockResolvedValue({ data: [] });
+      api.analysisStatus.mockResolvedValue({ data: { total: 12, unscored: 0, scored: 10, needs_review: 0, reviewed: 2 } });
       renderPage();
-      await screen.findByText(/nothing is awaiting review/i);
+      await screen.findByText('12 analysed, none need review.');
+    });
+
+    it('an unanalysed empty queue states the remaining count', async () => {
+      api.reviewQueue.mockResolvedValue({ data: [] });
+      api.analysisStatus.mockResolvedValue({ data: { total: 12, unscored: 12, scored: 0, needs_review: 0, reviewed: 0 } });
+      renderPage();
+      await screen.findByText('Analysis has not run for 12 records.');
     });
 
     it('uses the backend history_size and skips the extra history request', async () => {
@@ -228,7 +281,7 @@ describe('ReviewQueue', () => {
 
       confirm({ data: { record_id: 'R1', status: 'accepted' } });
       await screen.findByText('Accepted record R1');
-      expect(screen.getByText(/nothing is awaiting review/i)).toBeDefined();
+      expect(screen.getByText('10 analysed, none need review.')).toBeDefined();
     });
 
     it('keeps the record in the queue and shows the server reason when accept fails', async () => {

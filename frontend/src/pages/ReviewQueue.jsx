@@ -29,7 +29,7 @@ function Finding({ label, rationale, confidence, considered, historyCount }) {
     <div className="border-t border-theme pt-6">
       <div className="flex justify-between items-start mb-3">
         <StatusChip status={label || 'no_conflict'} />
-        <ConfidenceBar confidence={confidence} />
+        <ConfidenceBar confidence={confidence} analysisState="needs_review" classification={label} candidateCount={considered} />
       </div>
       {LABEL_MEANING[label] && (
         <p className="font-sans text-xs text-secondary mb-3">{LABEL_MEANING[label]}</p>
@@ -49,7 +49,7 @@ function Finding({ label, rationale, confidence, considered, historyCount }) {
   );
 }
 
-export default function ReviewQueue() {
+function NeedsReviewPanel({ analysisStatus }) {
   const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(true);
   const [queueError, setQueueError] = useState(null);
@@ -240,7 +240,9 @@ export default function ReviewQueue() {
           </div>
         )}
         <div className="p-6 font-sans text-secondary">
-          Nothing is awaiting review. Records the conflict engine cannot resolve confidently will appear here.
+          {analysisStatus?.unscored > 0
+            ? `Analysis has not run for ${analysisStatus.unscored} record${analysisStatus.unscored === 1 ? '' : 's'}.`
+            : `${(analysisStatus?.scored ?? 0) + (analysisStatus?.reviewed ?? 0)} analysed, none need review.`}
         </div>
       </div>
     );
@@ -430,6 +432,107 @@ export default function ReviewQueue() {
 
         </div>
       </div>
+    </div>
+  );
+}
+
+
+function CorrectionsPanel() {
+  const [assets, setAssets] = useState([]);
+  const [assetId, setAssetId] = useState('');
+  const [changed, setChanged] = useState('');
+  const [data, setData] = useState({ items: [], total: 0, next: null, summary: {} });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    maintenanceAPI.assets().then(({ data: rows }) => setAssets(rows || [])).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+    const params = { limit: 50, offset: 0 };
+    if (assetId) params.asset_id = assetId;
+    if (changed) params.component_changed = changed === 'yes';
+    maintenanceAPI.corrections(params)
+      .then(({ data: response }) => { if (!cancelled) setData(response); })
+      .catch((err) => { if (!cancelled) setError(describeLoadError(err)); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [assetId, changed]);
+
+  const loadMore = async () => {
+    const params = { limit: 50, offset: data.next };
+    if (assetId) params.asset_id = assetId;
+    if (changed) params.component_changed = changed === 'yes';
+    const { data: response } = await maintenanceAPI.corrections(params);
+    setData((current) => ({ ...response, items: [...current.items, ...response.items] }));
+  };
+
+  return (
+    <div className="p-6 space-y-5">
+      <div className="flex flex-wrap gap-3">
+        <select aria-label="Corrections aircraft" className="halite-input" value={assetId} onChange={(e) => setAssetId(e.target.value)}>
+          <option value="">All aircraft</option>
+          {assets.map((asset) => <option key={asset.id} value={asset.id}>{asset.tail_number}</option>)}
+        </select>
+        <select aria-label="Component change" className="halite-input" value={changed} onChange={(e) => setChanged(e.target.value)}>
+          <option value="">All corrections</option>
+          <option value="yes">Component changed</option>
+          <option value="no">Same component</option>
+        </select>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="halite-card p-4"><p className="text-xs text-secondary">Detected corrections</p><p className="text-2xl text-primary">{data.summary?.total_corrections ?? 0}</p></div>
+        <div className="halite-card p-4"><p className="text-xs text-secondary">Component changed</p><p className="text-2xl text-primary">{data.summary?.component_changed ?? 0}</p></div>
+        <div className="halite-card p-4"><p className="text-xs text-secondary">Component-change rate</p><p className="text-2xl text-primary">{data.summary?.component_changed_pct ?? 0}%</p></div>
+      </div>
+      {loading ? <p className="text-secondary">Loading detected corrections…</p> : error ? <p role="alert" className="text-red-400">{error.message}</p> : (
+        <div className="halite-card overflow-hidden">
+          <div className="grid grid-cols-[6rem_1fr_3rem_1fr_10rem] gap-3 border-b border-theme px-4 py-3 text-xs text-secondary">
+            <span>Aircraft</span><span>Older finding</span><span></span><span>Newer finding</span><span>Review</span>
+          </div>
+          {data.items.length === 0 ? <p className="p-4 text-sm text-secondary">No detected corrections match these filters.</p> : data.items.map((row) => (
+            <div key={`${row.newer_record.id}-${row.older_record.id}`} className="grid grid-cols-[6rem_1fr_3rem_1fr_10rem] gap-3 border-b border-theme px-4 py-4 text-sm">
+              <span className="text-primary">{row.aircraft.tail_number}</span>
+              <Link className="text-primary hover:underline" to={historyLink(row.aircraft.id, row.older_record.id)}>
+                <span className="block font-mono text-xs">{row.older_record.id}</span>{row.older_record.part_name}
+              </Link>
+              <span className={row.component_changed ? 'text-amber-500' : 'text-secondary'}>→</span>
+              <Link className="text-primary hover:underline" to={historyLink(row.aircraft.id, row.newer_record.id)}>
+                <span className="block font-mono text-xs">{row.newer_record.id}</span>{row.newer_record.part_name}
+                {row.component_changed && <span className="mt-1 block text-xs text-amber-500">{row.older_record.part_name} → {row.newer_record.part_name}</span>}
+                <span className="mt-1 block text-xs text-secondary">{row.rationale}</span>
+              </Link>
+              <div><StatusChip status={row.review_status} analysisState={row.review_status} /><p className="mt-1 text-xs text-secondary">{row.classification_label}</p></div>
+            </div>
+          ))}
+        </div>
+      )}
+      {data.next != null && <button className="halite-btn" onClick={loadMore}>Load more</button>}
+      <p className="text-xs text-secondary">Model-assisted detection; recall on the ground-truth set was 0.66 (docs/evaluation_results.md). Results are not exhaustive.</p>
+    </div>
+  );
+}
+
+
+export default function ReviewQueue() {
+  const [tab, setTab] = useState('review');
+  const [analysisStatus, setAnalysisStatus] = useState(null);
+
+  useEffect(() => {
+    maintenanceAPI.analysisStatus().then(({ data }) => setAnalysisStatus(data)).catch(() => setAnalysisStatus(null));
+  }, []);
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex gap-2 border-b border-theme px-6 pt-3">
+        <button className={`px-4 py-2 text-sm ${tab === 'review' ? 'border-b-2 border-accent text-primary' : 'text-secondary'}`} onClick={() => setTab('review')}>Needs review</button>
+        <button className={`px-4 py-2 text-sm ${tab === 'corrections' ? 'border-b-2 border-accent text-primary' : 'text-secondary'}`} onClick={() => setTab('corrections')}>Detected corrections</button>
+      </div>
+      <div className="min-h-0 flex-1">{tab === 'review' ? <NeedsReviewPanel analysisStatus={analysisStatus} /> : <CorrectionsPanel />}</div>
     </div>
   );
 }

@@ -56,7 +56,7 @@ describe('AssetHistory', () => {
         count: 2,
         records: [
           { record_id: 'R1', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'Engine' },
-          { record_id: 'R2', occurred_at: '2025-01-02T00:00:00Z', status: 'superseded', superseding_record: 'R3', supersede_rationale: 'Testing', part_name: 'Wing' }
+          { record_id: 'R2', occurred_at: '2025-01-02T00:00:00Z', status: 'superseded', corrected_by: { record_id: 'R3', part_name: 'Bracket' }, part_name: 'Wing' }
         ]
       }
     });
@@ -70,7 +70,8 @@ describe('AssetHistory', () => {
     await waitFor(() => {
       expect(screen.getByText('Engine')).toBeInTheDocument();
       expect(screen.getByText('Superseded')).toBeInTheDocument();
-      expect(screen.getByText(/Superseded by R3/)).toBeInTheDocument();
+      expect(screen.getByText(/component changed Wing → Bracket/)).toBeInTheDocument();
+      expect(screen.getByText('R3').getAttribute('href')).toMatch(/#R3$/);
     });
   });
 });

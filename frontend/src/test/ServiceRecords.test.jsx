@@ -1,302 +1,146 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ServiceRecords from '../pages/ServiceRecords';
 import ConfidenceBar from '../components/ConfidenceBar';
+import StatusChip from '../components/StatusChip';
 import * as client from '../api/client';
 
 vi.mock('../api/client', () => ({
-  maintenanceAPI: {
-    assets: vi.fn(),
-    assetHistory: vi.fn(),
-  }
+  maintenanceAPI: { assets: vi.fn(), records: vi.fn() },
 }));
 
 const api = client.maintenanceAPI;
+const assets = [
+  { id: 'a1', tail_number: '105NN', record_count: 2 },
+  { id: 'a2', tail_number: '813SK', record_count: 1 },
+];
+const records = [
+  { record_id: 'R1', asset_id: 'a1', tail_number: '105NN', occurred_at: '2025-02-01', part_name: 'DRAG ANGLE', status: 'no_action', analysis_state: 'scored', confidence: 0, classification_label: 'no_conflict', candidate_count: 2 },
+  { record_id: 'R2', asset_id: 'a2', tail_number: '813SK', occurred_at: '2025-01-01', part_name: 'PUMP', status: 'unscored', analysis_state: 'unscored', confidence: null },
+];
 
-describe('ConfidenceBar', () => {
-  it('renders above and below threshold properly', () => {
-    const { container: container1 } = render(<ConfidenceBar confidence={0.8} threshold={0.5} />);
-    // Bar opacity is 1 (doesn't have opacity-40)
-    expect(container1.querySelector('.bg-accent')).not.toHaveClass('opacity-40');
-    expect(screen.getByText('0.80')).toBeInTheDocument();
+const page = (items = records, overrides = {}) => ({ data: { items, total: items.length, next: null, ...overrides } });
+const renderAt = (url = '/app/records') => render(<MemoryRouter initialEntries={[url]}><ServiceRecords /></MemoryRouter>);
 
-    const { container: container2 } = render(<ConfidenceBar confidence={0.3} threshold={0.5} />);
-    expect(container2.querySelector('.bg-accent')).toHaveClass('opacity-40');
-    expect(screen.getByText('0.30')).toBeInTheDocument();
+describe('confidence and status states', () => {
+  it('renders unscored without a numeric score', () => {
+    render(<><ConfidenceBar analysisState="unscored" confidence={null} /><StatusChip analysisState="unscored" status="unscored" /></>);
+    expect(screen.getAllByText('Not analysed')).toHaveLength(2);
+    expect(screen.queryByText(/0\.00|1\.00/)).toBeNull();
+  });
+
+  it('renders no-conflict comparisons without a numeric score', () => {
+    render(<ConfidenceBar analysisState="scored" confidence={0} classification="no_conflict" candidateCount={3} />);
+    expect(screen.getByText('No conflict found (3 comparisons)')).toBeInTheDocument();
+    expect(screen.queryByText('0.00')).toBeNull();
+  });
+
+  it('renders a relation as a heuristic score', () => {
+    render(<ConfidenceBar analysisState="scored" confidence={0.8} classification="supersedes" candidateCount={1} />);
+    expect(screen.getByText('supersedes')).toBeInTheDocument();
+    expect(screen.getByText('Conflict-check score (heuristic, not a probability)')).toBeInTheDocument();
+    expect(screen.getByText('0.80').closest('[title]')).toHaveAttribute('title', expect.stringContaining('not a probability'));
+  });
+
+  it('hides confidence for superseded records', () => {
+    const { container } = render(<ConfidenceBar analysisState="scored" confidence={0.9} classification="supersedes" status="superseded" />);
+    expect(container).toBeEmptyDOMElement();
   });
 });
 
-describe('ServiceRecords', () => {
+describe('ServiceRecords fleet view', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    api.assets.mockResolvedValue({ data: assets });
+    api.records.mockResolvedValue(page());
   });
 
-  it('filters and renders records', async () => {
-    api.assets.mockResolvedValue({
-      data: [{ id: '1', tail_number: 'N123' }]
-    });
-    api.assetHistory.mockResolvedValue({
-      data: {
-        asset_id: '1',
-        records: [
-          { record_id: 'R1', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'Engine', text: 'broken' },
-          { record_id: 'R2', occurred_at: '2025-01-02T00:00:00Z', status: 'needs_review', part_name: 'Wing', text: 'cracked' }
-        ]
-      }
-    });
-
-    render(
-      <MemoryRouter>
-        <ServiceRecords />
-      </MemoryRouter>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('Engine')).toBeInTheDocument();
-      expect(screen.getByText('Wing')).toBeInTheDocument();
-    });
-
-    // Filtering test could be simulated with userEvent, but standard query logic is covered
-  });
-});
-
-// Mid-I performance acceptance (docs/mid1/10_perf_assets_api_handoff.md):
-// Service Records initial load must use at most 2 API calls, not one per aircraft.
-describe('ServiceRecords request volume', () => {
-  const fleet = Array.from({ length: 118 }, (_, i) => ({
-    id: `uuid-${i}`,
-    tail_number: `T${String(i).padStart(3, '0')}`,
-    record_count: i === 7 ? 153 : 5,
-  }));
-
-  const history = (assetId, tail, records) => ({
-    data: {
-      asset_id: assetId,
-      count: records.length,
-      records: records.map((r, i) => ({
-        id: `${assetId}-${i}`,
-        asset_key: tail,
-        occurred_at: '2025-01-01T00:00:00Z',
-        status: 'auto_accepted',
-        ...r,
-      })),
-    },
-  });
-
-  beforeEach(() => {
-    vi.resetAllMocks();
-    api.assets.mockResolvedValue({ data: fleet });
-    api.assetHistory.mockImplementation((id) =>
-      Promise.resolve(history(id, fleet.find(a => a.id === id).tail_number, [
-        { record_id: `REC-${id}`, part_name: `PART OF ${id}` },
-      ]))
-    );
-  });
-
-  const renderAt = (url = '/app/records') =>
-    render(
-      <MemoryRouter initialEntries={[url]}>
-        <ServiceRecords />
-      </MemoryRouter>
-    );
-
-  it('first load makes exactly 2 API calls for a 118-aircraft fleet', async () => {
+  it('defaults to All aircraft', async () => {
     renderAt();
-    await screen.findByText('PART OF uuid-7');
+    expect(await screen.findByRole('option', { name: 'All aircraft' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Aircraft')).toHaveValue('');
+    expect(screen.getByText('All aircraft — fleet-wide records')).toBeInTheDocument();
+  });
 
+  it('makes exactly two page-initiated calls on first load', async () => {
+    renderAt();
+    await screen.findByText('DRAG ANGLE');
     expect(api.assets).toHaveBeenCalledTimes(1);
-    expect(api.assetHistory).toHaveBeenCalledTimes(1);
-    // Defaults to the aircraft with the most records, and fetches nobody else's history.
-    expect(api.assetHistory).toHaveBeenCalledWith('uuid-7');
+    expect(api.records).toHaveBeenCalledTimes(1);
   });
 
-  it('switching aircraft loads only that aircraft', async () => {
+  it('renders tail number on every row and the fleet total', async () => {
     renderAt();
-    await screen.findByText('PART OF uuid-7');
-
-    fireEvent.change(screen.getByLabelText('Aircraft'), { target: { value: 'uuid-3' } });
-
-    await screen.findByText('PART OF uuid-3');
-    expect(screen.queryByText('PART OF uuid-7')).toBeNull();
-    expect(api.assetHistory).toHaveBeenCalledTimes(2);
-    expect(api.assetHistory).toHaveBeenLastCalledWith('uuid-3');
+    await screen.findByText('Showing 2 of 2 records');
+    expect(screen.getAllByText('105NN')).toHaveLength(2);
+    expect(screen.getAllByText('813SK')).toHaveLength(2);
   });
 
-  it('honours ?asset=<uuid> from the link', async () => {
-    renderAt('/app/records?asset=uuid-11');
-    await screen.findByText('PART OF uuid-11');
-    expect(api.assetHistory).toHaveBeenCalledTimes(1);
-    expect(api.assetHistory).toHaveBeenCalledWith('uuid-11');
-  });
-
-  it('says so and falls back when the linked aircraft does not exist', async () => {
-    renderAt('/app/records?asset=nope');
-    await screen.findByText('PART OF uuid-7');
-    expect(screen.getByRole('status')).toHaveTextContent(/not found/i);
-    expect(api.assetHistory).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows the records of the latest selection even if an earlier request finishes last', async () => {
-    let releaseSlow;
-    api.assetHistory.mockImplementation((id) => {
-      if (id === 'uuid-7') {
-        return new Promise((resolve) => {
-          releaseSlow = () => resolve(history('uuid-7', 'T007', [{ record_id: 'SLOW', part_name: 'STALE PART' }]));
-        });
-      }
-      return Promise.resolve(history(id, 'x', [{ record_id: `REC-${id}`, part_name: `PART OF ${id}` }]));
-    });
-
+  it('keeps record deep links on the asset UUID and record ID', async () => {
     renderAt();
-    await waitFor(() => expect(api.assetHistory).toHaveBeenCalledWith('uuid-7'));
-    fireEvent.change(screen.getByLabelText('Aircraft'), { target: { value: 'uuid-3' } });
-    await screen.findByText('PART OF uuid-3');
-
-    releaseSlow();
-    await new Promise((r) => setTimeout(r, 20));
-    expect(screen.queryByText('STALE PART')).toBeNull();
-    expect(screen.getByText('PART OF uuid-3')).toBeDefined();
+    expect((await screen.findByText('R1')).closest('a')).toHaveAttribute('href', '/app/asset-history/a1#R1');
   });
 
-  it('links each record to its asset history by asset UUID', async () => {
+  it('preselects an asset from a shareable URL', async () => {
+    renderAt('/app/records?asset=a1');
+    await waitFor(() => expect(api.records).toHaveBeenCalledWith(expect.objectContaining({ asset_id: 'a1' })));
+    expect(screen.getByLabelText('Aircraft')).toHaveValue('a1');
+  });
+
+  it('highlights a linked record from a shareable URL', async () => {
+    renderAt('/app/records?asset=a1&record=R1');
+    const row = (await screen.findByText('R1')).closest('[id="record-R1"]');
+    expect(row).toHaveClass('ring-accent');
+  });
+
+  it('sends aircraft filter changes to the fleet endpoint', async () => {
     renderAt();
-    await screen.findByText('PART OF uuid-7');
-    const link = screen.getByRole('link', { name: /REC-uuid-7/ });
-    expect(link.getAttribute('href')).toBe('/app/asset-history/uuid-7#REC-uuid-7');
+    await screen.findByText('R1');
+    fireEvent.change(screen.getByLabelText('Aircraft'), { target: { value: 'a2' } });
+    await waitFor(() => expect(api.records).toHaveBeenLastCalledWith(expect.objectContaining({ asset_id: 'a2' })));
   });
 
-  it('is honest that records are per aircraft and fleet-wide search is not available', async () => {
+  it.each([
+    ['Search records', 'q', 'crack'],
+    ['Status', 'status', 'needs_review'],
+    ['Analysis state', 'analysis_state', 'reviewed'],
+    ['Component', 'part', 'PUMP'],
+    ['Date from', 'date_from', '2025-01-01'],
+    ['Date to', 'date_to', '2025-12-31'],
+  ])('sends the %s filter through URL-backed params', async (label, key, value) => {
     renderAt();
-    await screen.findByText('PART OF uuid-7');
-    expect(screen.getByText(/maintenance records for one aircraft at a time/i)).toBeDefined();
-    expect(screen.getByText(/searching across the whole fleet is not available yet/i)).toBeDefined();
-  });
-});
-
-describe('ServiceRecords states', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
+    await screen.findByText('R1');
+    fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    await waitFor(() => expect(api.records).toHaveBeenLastCalledWith(expect.objectContaining({ [key]: value })));
   });
 
-  const renderPage = () =>
-    render(
-      <MemoryRouter>
-        <ServiceRecords />
-      </MemoryRouter>
-    );
-
-  it('an aircraft-list failure is shown as a failure, never as "no records", and retry recovers', async () => {
-    api.assets.mockRejectedValueOnce({ code: 'ERR_NETWORK', message: 'Network Error', request: {} });
-    renderPage();
-
-    const alert = await screen.findByRole('alert');
-    expect(alert).toHaveTextContent('Could not load the aircraft list');
-    expect(screen.queryByText(/no records/i)).toBeNull();
-
-    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 1 }] });
-    api.assetHistory.mockResolvedValue({ data: { asset_id: 'a', records: [{ record_id: 'R1', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'ENGINE' }] } });
-    fireEvent.click(screen.getByRole('button', { name: /try again/i }));
-    await screen.findByText('ENGINE');
+  it('loads the next page and appends records', async () => {
+    api.records
+      .mockResolvedValueOnce(page([records[0]], { total: 2, next: 1 }))
+      .mockResolvedValueOnce(page([records[1]], { total: 2, next: null }));
+    renderAt();
+    fireEvent.click(await screen.findByRole('button', { name: 'Load more' }));
+    expect(await screen.findByText('PUMP')).toBeInTheDocument();
+    expect(api.records).toHaveBeenLastCalledWith(expect.objectContaining({ offset: 1, limit: 50 }));
   });
 
-  it('a history failure is shown as a failure for that aircraft, and retry recovers', async () => {
-    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 1 }] });
-    api.assetHistory.mockRejectedValueOnce({ response: { status: 500, data: {} } });
-    renderPage();
-
-    const alert = await screen.findByRole('alert');
-    expect(alert).toHaveTextContent('Could not load records for this aircraft');
-    expect(screen.queryByText('No records for this aircraft.')).toBeNull();
-
-    api.assetHistory.mockResolvedValue({ data: { asset_id: 'a', records: [{ record_id: 'R1', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'ENGINE' }] } });
-    fireEvent.click(screen.getByRole('button', { name: /try again/i }));
-    await screen.findByText('ENGINE');
+  it('shows a corrected-by banner with a link', async () => {
+    api.records.mockResolvedValue(page([{
+      ...records[0], status: 'superseded', part_name: 'PUMP',
+      corrected_by: { record_id: 'R9', part_name: 'PRESSURE SWITCH' },
+    }]));
+    renderAt();
+    expect(await screen.findByText(/component changed PUMP → PRESSURE SWITCH/)).toBeInTheDocument();
+    expect(screen.getByText('R9')).toHaveAttribute('href', '/app/asset-history/a1#R9');
   });
 
-  it('says plainly when an aircraft genuinely has no records', async () => {
-    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 0 }] });
-    api.assetHistory.mockResolvedValue({ data: { asset_id: 'a', records: [] } });
-    renderPage();
-    await screen.findByText('No records for this aircraft.');
-  });
-
-  it('says so when the corpus has no aircraft at all', async () => {
-    api.assets.mockResolvedValue({ data: [] });
-    renderPage();
-    await screen.findByText('No aircraft in the loaded corpus.');
-    expect(api.assetHistory).not.toHaveBeenCalled();
-  });
-
-  it('shows a missing date plainly and lists undated records last', async () => {
-    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 2 }] });
-    api.assetHistory.mockResolvedValue({
-      data: {
-        asset_id: 'a',
-        records: [
-          { record_id: 'NODATE', status: 'accepted', part_name: 'UNDATED PART' },
-          { record_id: 'DATED', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'DATED PART' },
-        ],
-      },
-    });
-    renderPage();
-
-    await screen.findByText('DATED PART');
-    expect(screen.getByText('Date not recorded')).toBeDefined();
-    expect(screen.queryByText(/invalid date/i)).toBeNull();
-    const order = screen.getAllByRole('link').map(a => a.textContent);
-    expect(order.findIndex(t => t.includes('DATED PART'))).toBeLessThan(order.findIndex(t => t.includes('UNDATED PART')));
-  });
-
-  it('filters by status and by search text within the selected aircraft', async () => {
-    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 2 }] });
-    api.assetHistory.mockResolvedValue({
-      data: {
-        asset_id: 'a',
-        records: [
-          { record_id: 'R1', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'ENGINE', text: 'broken' },
-          { record_id: 'R2', occurred_at: '2025-01-02T00:00:00Z', status: 'needs_review', part_name: 'WING', text: 'cracked' },
-        ],
-      },
-    });
-    renderPage();
-    await screen.findByText('ENGINE');
-
-    fireEvent.click(screen.getByRole('button', { name: 'Needs Review' }));
-    expect(screen.queryByText('ENGINE')).toBeNull();
-    expect(screen.getByText('WING')).toBeDefined();
-
-    fireEvent.click(screen.getByRole('button', { name: 'All' }));
-    fireEvent.change(screen.getByPlaceholderText(/search discrepancy/i), { target: { value: 'broken' } });
-    expect(screen.getByText('ENGINE')).toBeDefined();
-    expect(screen.queryByText('WING')).toBeNull();
-  });
-});
-
-describe('ServiceRecords shows the JASC code the backend returns', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
-
-  it('shows JASC next to the part when present and nothing when absent', async () => {
-    api.assets.mockResolvedValue({ data: [{ id: 'a', tail_number: 'N1', record_count: 2 }] });
-    api.assetHistory.mockResolvedValue({
-      data: {
-        asset_id: 'a',
-        records: [
-          { record_id: 'R1', occurred_at: '2025-01-02T00:00:00Z', status: 'accepted', part_name: 'ENGINE', jasc_code: '7200' },
-          { record_id: 'R2', occurred_at: '2025-01-01T00:00:00Z', status: 'accepted', part_name: 'WING' },
-        ],
-      },
-    });
-    render(
-      <MemoryRouter>
-        <ServiceRecords />
-      </MemoryRouter>
-    );
-
-    await screen.findByText('JASC 7200');
-    expect(screen.getAllByText(/JASC/)).toHaveLength(1);
+  it('reports a records failure and can retry', async () => {
+    api.records.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(page());
+    renderAt();
+    expect(await screen.findByText('Could not load service records')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText('DRAG ANGLE')).toBeInTheDocument();
   });
 });

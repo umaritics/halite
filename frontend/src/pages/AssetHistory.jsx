@@ -159,15 +159,17 @@ export default function AssetHistory() {
                           Linked record
                         </span>
                       )}
-                      <StatusChip status={rec.status} />
+                      <StatusChip status={rec.status} analysisState={rec.analysis_state} />
                     </div>
                   </div>
 
-                  {isSuperseded && (
-                    <div className="mb-3 font-sans text-sm text-accent bg-accent/10 p-2 rounded border border-accent/20">
-                      {/* Only text the backend actually supplied is shown; nothing is filled in. */}
-                      {`Superseded by ${rec.superseding_record || 'a later record'}`}
-                      {rec.supersede_rationale ? ` — ${rec.supersede_rationale}` : '.'}
+                  {isSuperseded && rec.corrected_by && (
+                    <div className="mb-3 rounded border border-accent/20 bg-accent/10 p-2 font-sans text-sm text-accent">
+                      Corrected by{' '}
+                      <Link className="font-mono underline" to={`#${encodeURIComponent(rec.corrected_by.record_id)}`}>
+                        {rec.corrected_by.record_id}
+                      </Link>
+                      {` — component changed ${rec.part_name || 'Unknown'} → ${rec.corrected_by.part_name || 'Unknown'}`}
                     </div>
                   )}
 
@@ -178,9 +180,9 @@ export default function AssetHistory() {
                     {rec.text}
                   </p>
                   {/* Conflict-engine and ingest fields exactly as the backend returns them. */}
-                  {(rec.confidence != null || rec.jasc_code || rec.source) && (
+                  {(rec.analysis_state || rec.confidence != null || rec.jasc_code || rec.source) && (
                     <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-xs text-secondary">
-                      {rec.confidence != null && <ConfidenceBar confidence={rec.confidence} />}
+                      <ConfidenceBar confidence={rec.confidence} analysisState={rec.analysis_state} classification={rec.classification_label} candidateCount={rec.candidate_count ?? rec.candidates_considered} status={rec.status} />
                       {rec.jasc_code && <span>JASC {rec.jasc_code}</span>}
                       {rec.source && <span>Source: {rec.source}</span>}
                     </div>
