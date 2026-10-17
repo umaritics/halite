@@ -18,6 +18,25 @@ typing a UUID, open Assets → 813SK and use the links the app gives you.
 | Risk | Your machine only | Shared corpus: Accept/Reject would change data for everyone |
 | Conflict data (steps 6 and 7) | 9 review-queue items (first: 163AA `AALA202510203314`); 813SK has 1 superseded record (`SWIA2025111576508`) | **Empty on 2026-10-16:** review queue = 0 items; all 153 of 813SK's records are `auto_accepted`; no superseded records; no `SUPERSEDES` edges in the graph sample. The conflict backfill has apparently not been run on staging. Steps 6 and 7 (superseded record) only work on the local stack until Usman runs it there |
 
+**Staging, re-checked 2026-10-18:** `/api/maintenance/analysis/status` reports 2,079 records, **all unscored**, plus about 16 stored findings
+(7 `SUPERSEDES`). Staging therefore still has almost nothing to show on the conflict screens.
+
+### Third option: the scratch scored-aircraft stack (recommended for the conflict screens)
+
+One aircraft, **800NN** (13 records), was analysed on a throwaway local Neo4j so that scores, corrections and a review queue are real and
+visible. Full method, results and limits: [23_single_aircraft_analysis_evidence.md](23_single_aircraft_analysis_evidence.md).
+It is a local copy, not staging, and one aircraft is not an accuracy claim. Say so out loud.
+
+```bash
+docker start halite-neo4j-scratch      # throwaway Neo4j on :7688 (recreate it with the commands in doc 23 if missing)
+cd backend && NEO4J_URI=bolt://localhost:7688 NEO4J_PASSWORD=<scratch-password> DEMO_MODE=false \
+  MAINT_DATA_DIR=<scratch-dir> venv/bin/python -m uvicorn main:app --port 8000
+cd frontend && VITE_API_URL=http://localhost:8000/api npm run dev
+```
+
+Check `/api/health` shows `neo4j` + `live`. **Never click Accept or Reject on this copy**: they change the data the demo relies on.
+The 800NN asset UUID on this graph is created at ingest, so open **Assets → 800NN** rather than typing a URL.
+
 **Check `/api/health` agrees before you claim anything:** `graph_mode=neo4j`, `llm_mode=live`, `maintenance_corpus_loaded=true`.
 
 ## Before you start (5 minutes, not on stage)
@@ -38,7 +57,7 @@ curl -s localhost:8000/api/health   # local; or https://dev1.corp.curatech.pk/ha
 4. Have these tabs ready (use the UUID for your environment; see above):
    - Linked-record view: `/app/asset-history/<813SK uuid>#SWIA2025122076513`
    - Failure view: `/app/asset-history/ZZ999`
-5. Backup: `docs/mid1/screenshots/` (13 stills, captured on the local stack) and `docs/mid1/fixtures/`.
+5. Backup: `docs/mid1/screenshots/` (19 stills: 01–13 on the full local stack, 14–19 on the 800NN scratch stack) and `docs/mid1/fixtures/`.
 
 **Never click Accept or Reject on the real queue.** They permanently change a record's status in the corpus and
 cannot be undone from the UI. Talk through the screen instead.
@@ -106,6 +125,28 @@ status changes; **do not click them**.
 
 The prior record's **Open in asset history →** link opens that aircraft's history on the prior record.
 
+## Step 6b — Shahmeer: a scored aircraft, 800NN (about 2 min, scratch stack)
+
+Use this when the conflict screens must show real scores (staging cannot). Backup stills: `screenshots/14_…` to `18_…`.
+
+1. **Service Records** (`14_records_scored_800NN.jpg`): 13 records with a score and label each. Say "the score is a heuristic comparison, not a probability";
+   records with no earlier candidate read "No conflict found (N comparisons)".
+2. **Asset → 800NN history** (`15_history_correction_800NN.jpg`): the older DOOR TRACK record is greyed: "Corrected by AALA202506090459 — component changed DOOR TRACK → DOOR".
+   The wording comes from the stored records, not from the UI.
+3. **Review Queue**, badge 2 (`16_review_queue_800NN.jpg`): the incoming record beside the retrieved prior record with the model's rationale. Talk through it; do not click Accept or Reject.
+4. **Detected corrections** tab (`17_corrections_tab_800NN.jpg`): 4 corrections found, 3 with a component change.
+5. **Knowledge Graph** (`18_graph_800NN_amber_corrections.jpg`): aircraft 800NN, 14 nodes, 29 edges. The four `SUPERSEDES` corrections are thick and amber; ABOUT and PRECEDED_BY are the stored ingest edges.
+   The page only selects edges the backend stored; it never draws an inferred one.
+
+Say honestly: "All 3 FAA-recorded correction pairs for this aircraft were found. The engine also created one edge that is not in the FAA list; we have not verified it, and one aircraft is not an accuracy figure."
+
+In the test browser pane the graph sometimes opened zoomed into the hub until the window was redrawn. If that happens, resize the window slightly. Rehearse this screen once on the demo machine.
+
+## Step 6c — Shahmeer: uploading a CSV (optional, about 1 min)
+
+**Ingest** page → **Upload CSV** (`19_ingest_upload_nothing_new.jpg`). Choosing a file changes nothing; **Ingest this file** writes to the connected graph. The result shows the backend's own counts.
+Uploading the same file again reports "Already in graph" and changes nothing. Dates must be `MM/DD/YYYY`. Do this only on the scratch stack with a file whose rows are already loaded, never on staging.
+
 ## Step 7 — All: failure cases (about 1 min)
 
 Pick one or two; each is real.
@@ -122,8 +163,8 @@ is down; use an uncached one to show the failure.
 
 ## Step 8 — Usman: GitHub Actions evidence (about 1 min)
 
-(Owner: Usman.) Hosted CI exists only on the `usman` branch until it is merged; show the green run URL from
-`docs/mid1/07_usman_release_readiness.md` only if it is actually green on the final SHA.
+(Owner: Usman.) CI runs on `main` (backend tests, frontend tests and build, real-Neo4j Docker smoke). It was green on `5bf5961` (2026-10-18).
+Show the Actions run for the **final** SHA you present, and only if it is green.
 
 ## Step 9 — All: contribution split and remaining work
 
@@ -151,8 +192,8 @@ The domain is fixed to maintenance (`DomainContext`), the sidebar lists only mai
 The files still exist in the repo. Route smoke test: `logs/route-smoke.txt`.
 
 **How do the frontend tests verify live API behaviour?**
-They don't, on their own: they are component tests with the API mocked (75 tests, every response shape and error state). The live integration was verified by hand
-against the running stack with screenshots and fixtures (§6 of the evidence file). Hosted CI for this branch has not been run yet.
+They don't, on their own: they are component tests with the API mocked (171 tests on `main` as of 2026-10-18, every response shape and error state). The live integration was verified by hand
+against the running stack with screenshots and fixtures (§6 and §13 of the evidence file). Hosted CI runs them on every push to `main`.
 
 **Why is `ANGLE` ranked second for a drag-angle crack?**
 The ranking is a frequency/lift-based score over historical records, not a trained model. `ANGLE` is supported by 17 fleet-wide cases, which is why it ranks
