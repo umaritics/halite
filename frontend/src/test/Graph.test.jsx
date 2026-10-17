@@ -120,6 +120,28 @@ describe('Graph page', () => {
     expect(fg.last.linkWidth(sup)).toBeGreaterThan(fg.last.linkWidth(about));
   });
 
+  it('settles a small layout before the first frame so the camera fits the final positions', async () => {
+    renderPage();
+    await screen.findByTestId('force-graph');
+    expect(fg.last.warmupTicks).toBeGreaterThanOrEqual(100);
+    expect(fg.last.cooldownTicks).toBe(0);
+  });
+
+  it('keeps large views to a short animated settle instead of blocking on a long warm-up', async () => {
+    overview.mockResolvedValue({
+      data: {
+        nodes: Array.from({ length: 700 }, (_, i) => ({ id: `n${i}`, label: 'Asset', tail_number: `T${i}` })),
+        edges: [],
+      },
+    });
+    renderPage();
+    await screen.findByTestId('force-graph');
+    fireEvent.change(screen.getByLabelText('Aircraft'), { target: { value: '' } });
+    await waitFor(() => expect(fg.last.graphData.nodes).toHaveLength(700));
+    expect(fg.last.warmupTicks).toBeLessThanOrEqual(30);
+    expect(fg.last.cooldownTicks).toBeGreaterThan(0);
+  });
+
   it('labels nodes by tail number and record id, not by UUID', async () => {
     renderPage();
     await screen.findByTestId('force-graph');
