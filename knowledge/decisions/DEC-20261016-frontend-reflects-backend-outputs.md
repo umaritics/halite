@@ -28,5 +28,5 @@ The UI reflects backend outputs; it may add presentation, labels and warnings bu
 
 - New backend fields should be surfaced here in the same change, or listed as intentionally not shown.
 - Removing a displayed field needs a new DEC. Tests: `Diagnostics`, `AssetHistory`, `ServiceRecords`, `Settings`.
-- Service Records is per-aircraft because the backend has no paginated endpoint (DEC-20261016-service-records-per-aircraft); a fleet-wide
-  list would need a backend endpoint, not a frontend workaround.
+- Service Records is now fleet-wide and paginated by a backend endpoint (DEC-20261017-fleet-service-records, which superseded the per-aircraft
+  decision). A missing view should be solved by a backend endpoint, not a frontend workaround.
