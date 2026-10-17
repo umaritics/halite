@@ -10,6 +10,7 @@ vi.mock('../context/ThemeContext', () => ({
 
 vi.mock('../api/client', () => ({
   healthAPI: { check: vi.fn() },
+  maintenanceAPI: { analysisStatus: vi.fn() },
 }));
 
 const baseHealth = {
@@ -25,6 +26,9 @@ const row = (label) => screen.getByText(label).closest('div');
 describe('Settings system status mirrors /api/health', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    client.maintenanceAPI.analysisStatus.mockResolvedValue({
+      data: { total: 2079, unscored: 17, scored: 2058, needs_review: 4, reviewed: 0 },
+    });
   });
 
   it('shows the runtime-honesty fields the backend reports', async () => {

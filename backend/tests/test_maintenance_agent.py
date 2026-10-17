@@ -75,6 +75,9 @@ def test_creates_asset_and_record():
     assert sr is not None
     assert sr["occurred_at"] == "2025-01-15"
     assert sr["asset_key"] == "N12345"
+    assert sr["status"] == "unscored"
+    assert sr["analysis_state"] == "unscored"
+    assert sr["confidence"] is None
 
 
 def test_asset_linked_to_record():

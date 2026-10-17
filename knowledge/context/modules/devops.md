@@ -16,7 +16,9 @@ updated: 2026-10-16
 
 ## CI (`.github/workflows/ci.yml`)
 
-Jobs: backend pytest (`DEMO_MODE=true`), frontend `npm test` + build, Docker Compose real-graph smoke.
+Jobs: backend pytest (`DEMO_MODE=true`) against an ephemeral Neo4j 5 service,
+frontend `npm test` + build, Docker Compose real-graph smoke. Repository
+contract tests run against both memory and Neo4j in the backend job.
 
 Triggers currently include `main`, `develop`, `usman`. Umar branch should be added when pushing Mid-I work (see decisions).
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../context/ThemeContext';
-import { healthAPI } from '../api/client';
+import { healthAPI, maintenanceAPI } from '../api/client';
 import HaliteLogo from '../components/HaliteLogo';
 import BrandName from '../components/BrandName';
 
@@ -25,9 +25,11 @@ const yesNo = (v) => (typeof v === 'boolean' ? (v ? 'Yes' : 'No') : undefined);
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
   const [health, setHealth] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
 
   useEffect(() => {
     healthAPI.check().then(({ data }) => setHealth(data)).catch(() => setHealth(null));
+    maintenanceAPI.analysisStatus().then(({ data }) => setAnalysis(data)).catch(() => setAnalysis(null));
   }, []);
 
   return (
@@ -78,6 +80,17 @@ export default function Settings() {
               />
             </button>
           </div>
+        </section>
+
+        <section className="halite-card p-6">
+          <h3 className="font-brand text-primary">Conflict-analysis coverage</h3>
+          {analysis ? (
+            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-5">
+              {['total', 'unscored', 'scored', 'needs_review', 'reviewed'].map((key) => (
+                <div key={key}><dt className="text-secondary">{key.replaceAll('_', ' ')}</dt><dd className="text-xl text-primary">{analysis[key] ?? 0}</dd></div>
+              ))}
+            </dl>
+          ) : <p className="mt-3 text-sm text-secondary">Analysis coverage unavailable.</p>}
         </section>
 
         <section className="halite-card p-6">

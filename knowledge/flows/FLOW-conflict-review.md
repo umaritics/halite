@@ -2,58 +2,68 @@
 id: flow-conflict-review
 title: Conflict detection and review flow
 status: active
-owners: [Usman, Shahmeer]
-updated: 2026-10-16
+owners: [Usman, Shahmeer, Umar]
+updated: 2026-10-17
 ---
 
 # FLOW-conflict-review
 
 ## Happy path
 
-1. Record ingested or submitted via maintenance APIs.
-2. `process_record` finds same-asset candidates → classifies → scores → routes.
-3. If `needs_review`, record appears in `GET /api/maintenance/review-queue`.
-4. Reviewer opens Review Queue UI; inspects prior + classification.
-5. Accept → `accepted`; Reject (note required) → `rejected`. Original text preserved.
-6. The UI updates only after the server confirms; on failure the record stays in the queue and the server reason is shown.
+1. Ingest stores `analysis_state=unscored` and `confidence=null`.
+2. A record call, CLI resume, or ops-token batch runs `process_record`.
+3. Positive-score same-asset candidates are classified, scored and routed.
+   A record with no comparable candidate becomes `scored/no_candidates`
+   without an LLM call.
+4. `needs_review` rows appear in `GET /maintenance/review-queue`; Accept or
+   Reject preserves source text and sets `analysis_state=reviewed`.
+5. Confident supersessions create `SUPERSEDES`. `GET
+   /maintenance/corrections` and inline corrected-by banners read that edge.
+6. `GET /maintenance/analysis/status` drives coverage and honest empty states.
 
-## Failure / safety
+## Failure and safety
 
-- LLM unavailable during conflict processing must not silently invent supersessions.
-- The bulk conflict-score backfill exits before processing unless Groq is live;
-  it invokes the engine with `allow_stub=False`.
-- A record with no older candidate is persisted as scored with confidence
-  `0.0`; resume mode skips any record that is no longer an untouched ingest
-  placeholder.
-- Do not destroy source records on reject.
-- Seeded demo queue items must not be mislabeled as adjudicated diagnoses.
+- Model-dependent work fails closed unless Groq is live; stubs are never
+  persisted as conflict evidence.
+- Batch size is capped at 25, retries for 429 are bounded, and resume selects
+  only explicit `unscored` state.
+- Review failure leaves the record in the queue. Reject never deletes source
+  data.
+- A superseded older record shows its corrector, not a confidence score.
+- API reads normalize untouched legacy `confidence=1.0` placeholders to
+  `legacy_placeholder=true`, null confidence and an unscored presentation;
+  this does not write the graph or hide them from the migration.
+- Shared staging analysis or migration requires explicit approval.
 
-## UI behaviour (ReviewQueue.jsx)
+## UI behavior
 
-- Rows already carry the stored classification (`classification_label`, `classification_rationale`, `confidence`,
-  `candidates_considered`, `history_size`). The right-hand finding is fetched with `GET /maintenance/records/{id}`, which
-  re-runs the engine (a model call). If that fails (e.g. 503) the page says so, offers Retry, and shows the stored finding
-  labelled as such. It never shows the previous record's finding.
-- Accept/Reject are explicit buttons only (no bare-key shortcuts) and lock while a request is pending.
-- "Open in asset history" links need the asset UUID, resolved from `GET /maintenance/assets`; no link is shown if it cannot be
-  resolved (the history endpoint 404s on tail numbers).
-- A failed queue load is shown as a failure, not as an empty queue.
-- Label meanings shown to reviewers come from the engine prompt (`supersedes`, `partial_supersedes`, `contradicts`).
-- `AssetHistory.jsx` shows each record's `status`, `confidence`, `jasc_code` and `source` exactly as returned (confidence 1.00 on an
-  unscored corpus is shown, not hidden). It does not show which later record superseded one: the history API has no such field.
+- Needs review distinguishes “analysis has not run (M unscored)” from “N
+  analysed, none need review”.
+- Detected corrections shows live totals, component-change rate, both records,
+  rationale/status, and history links.
+- Service Records defaults to All aircraft with URL filters and pagination.
+- Unscored shows “Not analysed”; no-conflict shows comparison count; relation
+  scores are explicitly heuristic, not probability.
 
 ## Dependency graph
 
 ```mermaid
 flowchart TB
-  RQ[ReviewQueue.jsx] --> API[client.js]
-  AH[AssetHistory.jsx] --> API
-  RQ -. Open in asset history, by asset uuid .-> AH
-  RQ --> UT[utils/format.js, loadError.js]
-  API --> M[maintenance.py review-queue, records/id, assets, history]
-  IN[ingest / records POST] --> M
-  M --> CE[conflict_engine.py]
+  CSV[FAA corpus] --> IN[MaintenanceAgent: unscored/null]
+  MIG[migrate_conflict_analysis_state.py] --> U[(unscored records)]
+  IN --> U
+  CLI[backfill --resume] --> CE[conflict_engine.py]
+  RUN[POST /maintenance/analysis/run + ops token] --> CE
+  U --> CE
+  CE --> G[Live Groq + cache]
   CE --> GR[GraphRepository]
-  CE --> G[groq_service + cache.json]
-  GR --> N[(Neo4j)]
+  GR --> N[(Neo4j or memory)]
+  N --> ST[GET /analysis/status]
+  N --> RQ[GET /review-queue]
+  N --> COR[GET /corrections]
+  N --> REC[GET /records]
+  RQ --> UI[ReviewQueue.jsx]
+  COR --> UI
+  REC --> SR[ServiceRecords.jsx]
+  N --> AH[AssetHistory.jsx]
 ```

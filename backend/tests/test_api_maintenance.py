@@ -197,6 +197,34 @@ class TestIngestAndQuery:
         dates = [r["occurred_at"] for r in data["records"]]
         assert dates == sorted(dates)
 
+    def test_legacy_perfect_score_is_returned_as_not_analysed(self, seeded_client):
+        c, asset_id = seeded_client
+        repo = c.app.state.graph_repo
+        repo.create_service_record({
+            "record_id": "LEGACY100", "asset_key": "NSEED1",
+            "occurred_at": "2025-03-01", "text": "Legacy ingest placeholder.",
+            "part_name": "Bracket", "status": "auto_accepted", "confidence": 1.0,
+        })
+        repo.link_record_about_asset("LEGACY100", asset_id)
+        stored_id = repo.get_service_record("LEGACY100")["id"]
+        repo.store.nodes[stored_id].pop("analysis_state")
+
+        response = c.get("/api/maintenance/records")
+        record = next(item for item in response.json()["items"] if item["record_id"] == "LEGACY100")
+        assert record["confidence"] is None
+        assert record["analysis_state"] == "unscored"
+        assert record["legacy_placeholder"] is True
+
+        response = c.get(f"/api/maintenance/assets/{asset_id}/history")
+        record = next(item for item in response.json()["records"] if item["record_id"] == "LEGACY100")
+        assert record["confidence"] is None
+        assert record["analysis_state"] == "unscored"
+        assert record["legacy_placeholder"] is True
+
+        stored = repo.get_service_record("LEGACY100")
+        assert stored["confidence"] == 1.0
+        assert stored.get("analysis_state") is None
+
     def test_review_queue_returns_needs_review(self, seeded_client):
         c, _ = seeded_client
         resp = c.get("/api/maintenance/review-queue")
@@ -286,3 +314,98 @@ class TestIngestAndQuery:
         assert "route" in data
         assert 0.0 <= data["confidence"] <= 1.0
         assert data["route"] in ("auto_accepted", "needs_review")
+
+
+class TestConflictAnalysisApi:
+    @staticmethod
+    def _seed_record(app, record_id, date, analysis_state="unscored"):
+        repo = app.state.graph_repo
+        asset = repo.find_or_create_asset("NANALYSIS", {})
+        repo.create_service_record({
+            "record_id": record_id,
+            "asset_key": "NANALYSIS",
+            "occurred_at": date,
+            "text": "inspection finding",
+            "part_name": "PUMP",
+            "analysis_state": analysis_state,
+            "status": "unscored" if analysis_state == "unscored" else "no_action",
+        })
+        repo.link_record_about_asset(record_id, asset["id"])
+
+    def test_status_counts_and_records_list_limit_validation(self, client):
+        self._seed_record(client.app, "API-UNSCORED", "2025-01-01")
+        self._seed_record(client.app, "API-SCORED", "2025-01-02", "scored")
+        status = client.get("/api/maintenance/analysis/status")
+        assert status.status_code == 200
+        assert status.json()["total"] == 2
+        assert status.json()["unscored"] == 1
+        assert status.json()["scored"] == 1
+
+        page = client.get("/api/maintenance/records", params={"limit": 1})
+        assert page.status_code == 200
+        assert page.json()["total"] == 2
+        assert page.json()["next"] == 1
+        assert client.get("/api/maintenance/records", params={"limit": 101}).status_code == 422
+
+    def test_analysis_run_requires_token_and_live_llm(self, client):
+        client.app.state.settings.OPS_TOKEN = "analysis-token"
+        assert client.post("/api/maintenance/analysis/run", json={"batch_size": 1}).status_code == 401
+        response = client.post(
+            "/api/maintenance/analysis/run",
+            json={"batch_size": 1},
+            headers={"X-Ops-Token": "analysis-token"},
+        )
+        assert response.status_code == 503
+        assert "live Groq" in response.json()["detail"]
+
+    def test_no_candidate_is_analysed_without_model_call_and_scored_is_skipped(self, client):
+        class LiveModelThatMustNotBeCalled:
+            is_live = True
+            model = "test-live-model"
+
+            def complete(self, *_args, **_kwargs):
+                raise AssertionError("first record has no candidates and must not call the model")
+
+        client.app.state.settings.OPS_TOKEN = "analysis-token"
+        client.app.state.groq_service = LiveModelThatMustNotBeCalled()
+        self._seed_record(client.app, "FIRST", "2025-01-01")
+        self._seed_record(client.app, "ALREADY", "2025-01-02", "scored")
+
+        response = client.post(
+            "/api/maintenance/analysis/run",
+            json={"batch_size": 1},
+            headers={"X-Ops-Token": "analysis-token"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["processed"] == 1
+        assert data["model_records"] == 0
+        assert data["no_candidate_records"] == 1
+        assert data["results"][0]["record_id"] == "FIRST"
+        assert data["results"][0]["classification_label"] == "no_candidates"
+        assert client.app.state.graph_repo.get_service_record("ALREADY")["analysis_state"] == "scored"
+
+    def test_corrections_endpoint_returns_live_summary(self, client):
+        repo = client.app.state.graph_repo
+        asset = repo.find_or_create_asset("NAPI-CORR", {})
+        for rid, date, part in (
+            ("API-OLD", "2025-01-01", "PUMP"),
+            ("API-NEW", "2025-02-01", "SWITCH"),
+        ):
+            repo.create_service_record({
+                "record_id": rid, "asset_key": "NAPI-CORR", "occurred_at": date,
+                "text": rid, "part_name": part, "analysis_state": "scored",
+            })
+            repo.link_record_about_asset(rid, asset["id"])
+        repo.link_record_supersedes("API-NEW", "API-OLD", "supersedes", 0.8, "new finding")
+
+        response = client.get("/api/maintenance/corrections")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["summary"] == {
+            "total_corrections": 1,
+            "component_changed": 1,
+            "component_changed_pct": 100.0,
+        }
+        assert data["items"][0]["older_record"]["id"] == "API-OLD"
+        assert data["items"][0]["newer_record"]["id"] == "API-NEW"

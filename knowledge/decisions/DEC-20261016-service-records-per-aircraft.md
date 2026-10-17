@@ -1,12 +1,14 @@
 ---
 id: DEC-20261016-service-records-per-aircraft
 title: Service Records loads one aircraft's history at a time
-status: accepted
+status: superseded
 owners: [Shahmeer]
 updated: 2026-10-16
 ---
 
 # DEC-20261016 — Service Records per aircraft
+
+> Superseded by [DEC-20261017-fleet-service-records](DEC-20261017-fleet-service-records.md).
 
 ## Context
 

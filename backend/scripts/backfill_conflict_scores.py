@@ -10,15 +10,11 @@ and updates its confidence, status, and any SUPERSEDES edges.
 """
 
 import argparse
-import asyncio
-import json
 import logging
 import os
 import sys
 import time
 from pathlib import Path
-
-from fastapi import HTTPException
 
 # Add backend directory to sys.path so we can import modules
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -26,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config import settings
 from graph.neo4j_client import Neo4jClient
 from graph.queries import GraphRepository
-from services.conflict_engine import find_candidate_pairs, classify_conflict, process_record
+from services.conflict_engine import process_record
 from services.groq_service import GroqService
 from api.routes.maintenance import _get_maintenance_adapter
 
@@ -39,18 +35,32 @@ if sys.stdout.encoding.lower() != 'utf-8':
 
 
 def _is_unscored_placeholder(record: dict) -> bool:
-    """Return true only for untouched bulk-ingest defaults."""
-    return (
-        record.get("status") == "auto_accepted"
-        and record.get("confidence") == 1.0
-        and not record.get("classification_label")
-    )
+    """Resume is driven by the explicit analysis state, never confidence."""
+    return (record.get("analysis_state") or "unscored") == "unscored"
+
+
+def _process_with_retries(repo, groq, adapter, record_id: str, *, attempts: int = 3):
+    last_error = None
+    for attempt in range(attempts):
+        try:
+            return process_record(
+                repo, groq, adapter, record_id,
+                threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
+                allow_stub=False,
+            )
+        except RuntimeError as exc:
+            last_error = exc
+            if "429" not in str(exc) and "rate limit" not in str(exc).lower():
+                raise
+            if attempt + 1 < attempts:
+                time.sleep(0.5 * (attempt + 1))
+    raise last_error
 
 def main():
     parser = argparse.ArgumentParser(description="Backfill conflict scores")
     parser.add_argument("--limit", type=int, help="Limit number of records processed")
     parser.add_argument("--asset", action="append", help="Filter to specific tail numbers")
-    parser.add_argument("--resume", action="store_true", help="Skip records that have already been scored (confidence != 1.0)")
+    parser.add_argument("--resume", action="store_true", help="Process only records with analysis_state=unscored")
     args = parser.parse_args()
 
     client = Neo4jClient(settings.NEO4J_URI, settings.NEO4J_USERNAME, settings.NEO4J_PASSWORD)
@@ -119,7 +129,7 @@ def main():
         "llm_calls": 0,
         "parse_failures": 0,
         "supersedes_created": 0,
-        "statuses": {"needs_review": 0, "auto_accepted": 0, "superseded": 0},
+        "statuses": {"needs_review": 0, "auto_accepted": 0, "no_action": 0, "superseded": 0},
         "confidences": []
     }
     
@@ -129,7 +139,6 @@ def main():
         record_id = rec.get("record_id") or rec.get("id")
         asset_id = rec.get("asset_id")
         
-        conf = rec.get("confidence")
         if args.resume and not _is_unscored_placeholder(rec):
             stats["skipped_resume"] += 1
             continue
@@ -137,15 +146,11 @@ def main():
         logger.info(f"Processing {record_id} (Asset: {rec.get('tail_number')})")
         
         try:
-            res = process_record(
-                repo, groq, adapter, record_id,
-                threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
-                allow_stub=False
-            )
+            res = _process_with_retries(repo, groq, adapter, record_id)
             stats["processed"] += 1
             stats["statuses"][res["status_applied"]] = stats["statuses"].get(res["status_applied"], 0) + 1
             stats["confidences"].append(res["confidence"])
-            stats["llm_calls"] += res["candidates_considered"]
+            stats["llm_calls"] += int(res["candidates_considered"] > 0)
             stats["parse_failures"] += res.get("parse_failures", 0)
             if res["status_applied"] == "auto_accepted" and res.get("adjudication", {}).get("action") in ("supersedes", "partial_supersedes"):
                 stats["supersedes_created"] += 1

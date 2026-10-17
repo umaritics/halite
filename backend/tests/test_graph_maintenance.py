@@ -101,7 +101,9 @@ class TestCreateServiceRecord:
         })
         assert sr["record_id"] == "TEST001"
         assert sr["text"] == "Emergency exit sign missing."
-        assert sr["status"] == "auto_accepted"  # default
+        assert sr["status"] == "unscored"
+        assert sr["analysis_state"] == "unscored"
+        assert sr["confidence"] is None
 
     def test_idempotent_on_record_id(self, repo):
         data = {"record_id": "IDEMP001", "asset_key": "NTEST", "occurred_at": "2025-01-01", "text": "x"}
@@ -335,3 +337,146 @@ class TestUpdateServiceRecord:
     def test_update_nonexistent_returns_none(self, repo):
         result = repo.update_service_record("GHOST9999", {"status": "accepted"})
         assert result is None
+
+
+class TestFleetRecordPage:
+    def test_filters_orders_and_paginates(self, repo):
+        asset = repo.find_or_create_asset("NFLEET", {})
+        for rid, date, part, state in (
+            ("PAGEB", "2025-02-01", "Pump", "scored"),
+            ("PAGEA", "2025-02-01", "Drag Angle", "needs_review"),
+            ("PAGEC", "2025-01-01", "Pump", "unscored"),
+        ):
+            repo.create_service_record({
+                "record_id": rid, "asset_key": "NFLEET", "occurred_at": date,
+                "text": f"inspection of {part}", "part_name": part,
+                "status": "needs_review" if state == "needs_review" else "no_action",
+                "analysis_state": state,
+            })
+            repo.link_record_about_asset(rid, asset["id"])
+
+        first = repo.list_service_records_page(limit=2, offset=0)
+        assert [item["record_id"] for item in first["items"]] == ["PAGEA", "PAGEB"]
+        assert first["total"] == 3
+        assert first["next"] == 2
+        second = repo.list_service_records_page(limit=2, offset=first["next"])
+        assert [item["record_id"] for item in second["items"]] == ["PAGEC"]
+        assert second["next"] is None
+        assert repo.list_service_records_page(part="drag")["items"][0]["record_id"] == "PAGEA"
+        assert repo.list_service_records_page(analysis_state="unscored")["total"] == 1
+        assert repo.list_service_records_page(q="NFLEET")["total"] == 3
+
+    def test_analysis_status_counts_states_and_labels(self, repo):
+        for rid, state, label in (
+            ("STATE1", "unscored", None),
+            ("STATE2", "scored", "no_candidates"),
+            ("STATE3", "needs_review", "contradicts"),
+            ("STATE4", "reviewed", "contradicts"),
+        ):
+            repo.create_service_record({
+                "record_id": rid, "asset_key": "NSTATE", "occurred_at": "2025-01-01",
+                "text": "state", "analysis_state": state,
+                "classification_label": label,
+            })
+        status = repo.analysis_status()
+        assert status["total"] == 4
+        assert {key: status[key] for key in ("unscored", "scored", "needs_review", "reviewed")} == {
+            "unscored": 1, "scored": 1, "needs_review": 1, "reviewed": 1,
+        }
+        assert status["by_label"] == {"contradicts": 2, "no_candidates": 1}
+
+
+class TestCorrectionsPage:
+    def test_summary_component_change_and_filters(self, repo):
+        asset = repo.find_or_create_asset("NCORR", {})
+        for rid, date, part in (
+            ("OLD1", "2025-01-01", "PUMP"),
+            ("NEW1", "2025-02-01", "PRESSURE SWITCH"),
+            ("OLD2", "2025-03-01", "VALVE"),
+            ("NEW2", "2025-04-01", "VALVE"),
+        ):
+            repo.create_service_record({
+                "record_id": rid, "asset_key": "NCORR", "occurred_at": date,
+                "text": rid, "part_name": part, "analysis_state": "scored",
+            })
+            repo.link_record_about_asset(rid, asset["id"])
+        repo.link_record_supersedes("NEW1", "OLD1", "supersedes", 0.8, "corrected component")
+        repo.link_record_supersedes("NEW2", "OLD2", "supersedes", 0.9, "same component")
+
+        page = repo.list_corrections_page(limit=1)
+        assert page["total"] == 2
+        assert page["next"] == 1
+        assert page["summary"] == {
+            "total_corrections": 2, "component_changed": 1, "component_changed_pct": 50.0,
+        }
+        changed = repo.list_corrections_page(component_changed=True)
+        assert changed["total"] == 1
+        assert changed["items"][0]["older_record"]["part_name"] == "PUMP"
+        assert changed["items"][0]["newer_record"]["part_name"] == "PRESSURE SWITCH"
+
+
+class TestNeo4jPaginationQueryShape:
+    """Exercise the non-memory repository branch without requiring a server."""
+
+    def test_records_filters_count_and_page_in_cypher(self):
+        from graph.queries import GraphRepository
+
+        class Store:
+            def __init__(self):
+                self.calls = []
+
+            def run_query(self, query, parameters=None):
+                self.calls.append((query, parameters or {}))
+                if "count(sr) AS total" in query:
+                    return [{"total": 2}]
+                return [{
+                    "sr": {"record_id": "N1", "classification_label": "no_conflict"},
+                    "asset_id": "asset-1", "tail_number": "105NN", "corrected_by": None,
+                }]
+
+        store = Store()
+        page = GraphRepository(store).list_service_records_page(
+            asset_id="asset-1", q="drag", analysis_state="scored",
+            part="ANGLE", limit=1, offset=1,
+        )
+
+        assert page["total"] == 2
+        assert page["next"] is None
+        assert page["items"][0]["classification"] == "no_conflict"
+        count_query, count_params = store.calls[0]
+        page_query, page_params = store.calls[1]
+        assert "a.id = $asset_id" in count_query
+        assert "coalesce(sr.analysis_state, 'unscored') = $analysis_state" in count_query
+        assert "SKIP $offset LIMIT $limit" in page_query
+        assert "ORDER BY sr.occurred_at DESC, sr.record_id ASC" in page_query
+        assert page_params["limit"] == 1 and page_params["offset"] == 1
+
+    def test_corrections_summary_and_page_are_computed_in_cypher(self):
+        from graph.queries import GraphRepository
+
+        class Store:
+            def __init__(self):
+                self.calls = []
+
+            def run_query(self, query, parameters=None):
+                self.calls.append((query, parameters or {}))
+                if "count(*) AS total" in query:
+                    return [{"total": 1, "changed": 1}]
+                return [{
+                    "asset_id": "asset-1", "tail_number": "105NN",
+                    "older": {"record_id": "OLD", "part_name": "PUMP", "occurred_at": "2025-01-01"},
+                    "newer": {"record_id": "NEW", "part_name": "SWITCH", "occurred_at": "2025-02-01", "analysis_state": "scored"},
+                    "rel": {"scope": "supersedes", "confidence": 0.8, "rationale": "corrected"},
+                }]
+
+        store = Store()
+        page = GraphRepository(store).list_corrections_page(
+            asset_id="asset-1", component_changed=True, limit=10, offset=0,
+        )
+
+        assert page["summary"] == {
+            "total_corrections": 1, "component_changed": 1, "component_changed_pct": 100.0,
+        }
+        assert page["items"][0]["component_changed"] is True
+        assert "= $component_changed" in store.calls[0][0]
+        assert store.calls[0][1]["component_changed"] is True

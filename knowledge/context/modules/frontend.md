@@ -42,7 +42,8 @@ and unknown paths redirect to `/app/assets`.
 - Copilot turn carries optional asset/session IDs, a bounded message, and the
   current case state. The page defaults to fleet-wide chat and retains the
   one-shot UI under **Quick diagnose**.
-- Review queue rows carry `classification_label`, `classification_rationale`, `confidence`, `candidates_considered`, `history_size`.
+- Review queue rows carry `classification_label`, `classification_rationale`, `confidence`, `candidates_considered`, `history_size`; coverage comes from `/maintenance/analysis/status`.
+- Service Records consumes paginated `/maintenance/records`; Corrections consumes `/maintenance/corrections`.
 - `GET /maintenance/records/{id}` re-runs the conflict engine (a model call) each time it is viewed.
 
 ## Behaviour rules (do not weaken)
@@ -58,14 +59,16 @@ and unknown paths redirect to `/app/assets`.
 | **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
+| Unscored and API-flagged legacy placeholders never show a number; no-conflict shows comparison count; relation scores are labelled heuristic/not probability; superseded shows backend `corrected_by` only | `ConfidenceBar.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx` |
 | Only backend-supplied values are displayed (no invented supersession reason, no "Invalid Date") | `AssetHistory.jsx`, `utils/format.js` |
 | No UI control may wipe the graph (Settings reset removed) | `Settings.jsx` |
 
 ## Performance
 
 - Assets: one `GET /maintenance/assets` (staging 0.99 s for 118 aircraft after the backend aggregation fix).
-- Service Records: loads **one aircraft at a time**: 2 page-initiated calls on first load, +1 per aircraft switch
-  ([DEC-20261016-service-records-per-aircraft](../../decisions/DEC-20261016-service-records-per-aircraft.md)).
+- Service Records: defaults to **All aircraft** and makes two page-initiated
+  calls (asset options + first paginated record page), with no per-aircraft
+  fan-out ([DEC-20261017-fleet-service-records](../../decisions/DEC-20261017-fleet-service-records.md)).
   The app shell adds one `review-queue` call for the sidebar badge on every page, then polls every 30 s.
 - Diagnostics: fresh diagnoses and copilot turns call the model and can be slow;
   the UI sets no request timeout. Copilot state is bounded by backend list and
@@ -80,12 +83,11 @@ deep links containing a UUID are environment-specific.
 
 ## Tests
 
-`npm test -- --run` (99 tests at 2026-10-16) and `npm run build`. Tests mock the API: they prove UI behaviour per response
+`npm test` (123 tests at 2026-10-17) and `npm run build`. Tests mock the API: they prove UI behaviour per response
 shape, not live integration. There is no linter. Evidence and live checks: `docs/mid1/02_frontend_evidence.md`.
 
 ## Open / known
 
-- Fleet-wide service-record search is unavailable (needs a paginated backend endpoint; see deferred scope).
 - `npm audit --omit=dev`: 2 moderate react-router 6.x advisories remain; the fix is react-router 7 (breaking). See
   deferred scope.
 - 2026-10-16 observation: on shared staging, fresh diagnose calls returned an empty `explanation`, empty `evidence` and

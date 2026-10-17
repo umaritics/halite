@@ -33,7 +33,10 @@ SCHEMA_INDEXES = [
     "CREATE INDEX ticket_id IF NOT EXISTS FOR (t:Ticket) ON (t.id)",
     # ── maintenance ───────────────────────────────────────────────────
     "CREATE INDEX asset_tail IF NOT EXISTS FOR (a:Asset) ON (a.tail_number)",
+    "CREATE INDEX asset_id IF NOT EXISTS FOR (a:Asset) ON (a.id)",
     "CREATE INDEX service_record_id IF NOT EXISTS FOR (sr:ServiceRecord) ON (sr.record_id)",
     "CREATE INDEX service_record_occurred IF NOT EXISTS FOR (sr:ServiceRecord) ON (sr.occurred_at)",
     "CREATE INDEX service_record_status IF NOT EXISTS FOR (sr:ServiceRecord) ON (sr.status)",
+    "CREATE INDEX service_record_analysis_state IF NOT EXISTS FOR (sr:ServiceRecord) ON (sr.analysis_state)",
+    "CREATE INDEX service_record_part IF NOT EXISTS FOR (sr:ServiceRecord) ON (sr.part_name)",
 ]

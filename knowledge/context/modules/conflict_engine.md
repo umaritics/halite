@@ -2,8 +2,8 @@
 id: mod-conflict
 title: Conflict engine module
 status: active
-owners: [Usman]
-updated: 2026-10-16
+owners: [Usman, Umar]
+updated: 2026-10-17
 ---
 
 # Module: Conflict engine
@@ -22,7 +22,7 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 
 ## Pipeline
 
-1. **Candidate pairing** — same-asset history, heuristic score, cap (`MAINT_MAX_CANDIDATES`, often 25).
+1. **Candidate pairing** — same-asset history, positive heuristic score, cap (`MAINT_MAX_CANDIDATES`, often 25). Score-zero records are not candidates.
 2. **Classify** — LLM JSON label (`supersedes`, `partial_supersedes`, `contradicts`, `no_conflict`, `scope_disjoint`) with cache.
 3. **Adjudicate + confidence** — evidence signals (citation language, recency, authority, part/JASC agreement).
 4. **Route** — high-risk labels → `needs_review`; else confidence vs `MAINT_CONFIDENCE_THRESHOLD`.
@@ -33,19 +33,28 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 - Preserve original records on accept/reject; do not claim adjudicated *diagnosis*.
 - Conflict metrics ≠ diagnostic accuracy.
 
-## Staging caveat (Mid-I)
+## Analysis state and operations
 
-Bulk ingest leaves all records at `auto_accepted` / `confidence=1.0` until `process_record` or `scripts/backfill_conflict_scores.py` runs. Empty Review Queue + all confidence=1 → see [`docs/mid1/16_usman_conflict_score_backfill_handoff.md`](../../../docs/mid1/16_usman_conflict_score_backfill_handoff.md).
+Ingest writes `unscored` with null confidence. The additive state machine is
+`unscored` → `scored|needs_review` → `reviewed`. `no_candidates` is a real
+`scored` result with zero comparisons, score 0, and no model call. A superseded
+older record is presented through its incoming `SUPERSEDES` edge rather than a
+confidence number.
 
-The backfill command fails closed unless `GroqService.is_live` is true and
-calls `process_record(..., allow_stub=False)`. Cached or canned stub output
-must never be persisted as staging conflict evidence.
+The legacy migration is dry-run by default and preserves `legacy_confidence`.
+Before migration, API reads identify an untouched `confidence=1.0` record with
+no analysis metadata as `legacy_placeholder`, return null confidence and
+`analysis_state=unscored`, and leave the stored graph value unchanged.
+Backfill `--resume` and `POST /maintenance/analysis/run` select explicit
+`analysis_state=unscored`; both require live Groq, use `allow_stub=False`, and
+bound 429 retries. The API batch is ops-token protected and capped at 25.
+Coverage is returned by `GET /maintenance/analysis/status`.
 
-Records with no older candidate persist the engine's real result
-(`auto_accepted`, confidence `0.0`, zero candidates) instead of retaining the
-ingest placeholder confidence `1.0`. Resume mode processes only untouched
-`auto_accepted`/`1.0` records with no classification label, preserving
-supersessions, review states, and prior scored results.
+The effective threshold is 0.50. The 2026-10-17 real-corpus preflight found
+1,835 model-eligible records under current positive-score pairing, materially
+different from the old “roughly 460” evidence. Do not tune pairing or routing
+to fit that old count without a ground-truth evaluation. See
+`docs/mid1/19_confidence_and_corrections_evidence.md`.
 
 ## Related
 

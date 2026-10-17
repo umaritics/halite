@@ -180,8 +180,9 @@ class MaintenanceAgent(BaseAgent):
                 "part_location": (raw.get("PartLocation") or "").strip(),
                 "jasc_code": (raw.get("JASCCode") or "").strip(),
                 "text": (raw.get("Discrepancy") or "").strip(),
-                "status": "auto_accepted",
-                "confidence": 1.0,
+                "status": "unscored",
+                "analysis_state": "unscored",
+                "confidence": None,
                 "source": "faa_sdr",
             }
             sr = self.graph_repo.create_service_record(sr_data)

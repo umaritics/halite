@@ -99,7 +99,7 @@ describe('AssetHistory honesty and failure states', () => {
     renderAt('/app/asset-history/813SK');
 
     await screen.findByText('FRAME');
-    expect(screen.getByText('Superseded by a later record.')).toBeDefined();
+    expect(screen.queryByText(/Corrected by/i)).toBeNull();
     expect(screen.queryByText(/unknown/i)).toBeNull();
     expect(screen.queryByText(/invalidated/i)).toBeNull();
   });
@@ -196,15 +196,16 @@ describe('AssetHistory shows the conflict-engine and ingest fields the backend r
     expect(screen.queryByText('Conf')).toBeNull();
   });
 
-  it('shows a confidence of exactly 1 as returned (no hiding of an unscored corpus)', async () => {
+  it('never renders a numeric confidence for an unscored record', async () => {
     client.maintenanceAPI.assetHistory.mockResolvedValue({
       data: {
         count: 1,
-        records: [{ id: 'u', record_id: 'R1', asset_key: '813SK', occurred_at: '2025-01-01T00:00:00Z', status: 'auto_accepted', part_name: 'PUMP', confidence: 1 }],
+        records: [{ id: 'u', record_id: 'R1', asset_key: '813SK', occurred_at: '2025-01-01T00:00:00Z', status: 'unscored', analysis_state: 'unscored', part_name: 'PUMP', confidence: null }],
       },
     });
     renderAt('/app/asset-history/813SK');
     await screen.findByText('PUMP');
-    expect(screen.getByText('1.00')).toBeDefined();
+    expect(screen.getAllByText('Not analysed').length).toBeGreaterThan(0);
+    expect(screen.queryByText('1.00')).toBeNull();
   });
 });

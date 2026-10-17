@@ -102,10 +102,10 @@ class TestFindCandidatePairs:
         # Asset 1
         a1 = repo.find_or_create_asset("NASSET1", {})
         repo.create_service_record({"record_id": "A1R001", "asset_key": "NASSET1",
-                                    "occurred_at": "2025-01-01", "text": "p1"})
+                                    "occurred_at": "2025-01-01", "part_name": "PUMP", "text": "p1"})
         repo.link_record_about_asset("A1R001", a1["id"])
         repo.create_service_record({"record_id": "A1R002", "asset_key": "NASSET1",
-                                    "occurred_at": "2025-02-01", "text": "p2"})
+                                    "occurred_at": "2025-02-01", "part_name": "PUMP", "text": "p2"})
         repo.link_record_about_asset("A1R002", a1["id"])
 
         # Asset 2 — completely separate
@@ -127,16 +127,33 @@ class TestFindCandidatePairs:
         for i in range(10):
             rid = f"MC{i:03d}"
             repo.create_service_record({"record_id": rid, "asset_key": "NMAXCAND",
-                                        "occurred_at": f"2025-0{(i%9)+1}-01", "text": f"r{i}"})
+                                        "occurred_at": f"2025-0{(i%9)+1}-01", "part_name": "PUMP", "text": f"r{i}"})
             repo.link_record_about_asset(rid, asset["id"])
 
         target_rid = "MCTARGET"
         repo.create_service_record({"record_id": target_rid, "asset_key": "NMAXCAND",
-                                    "occurred_at": "2025-12-01", "text": "target"})
+                                    "occurred_at": "2025-12-01", "part_name": "PUMP", "text": "target"})
         repo.link_record_about_asset(target_rid, asset["id"])
 
         candidates = find_candidate_pairs(repo, target_rid, max_candidates=3)
         assert len(candidates) <= 3, f"max_candidates=3 violated: {len(candidates)}"
+
+    def test_excludes_same_asset_records_with_no_pairing_signal(self):
+        from services.conflict_engine import find_candidate_pairs
+        repo = _make_repo()
+        asset = repo.find_or_create_asset("NUNRELATED", {})
+        for rid, date, part, jasc in (
+            ("OLD", "2025-01-01", "PUMP", "2900"),
+            ("NEW", "2025-06-01", "DRAG ANGLE", "5340"),
+        ):
+            repo.create_service_record({
+                "record_id": rid, "asset_key": "NUNRELATED", "occurred_at": date,
+                "part_name": part, "jasc_code": jasc, "part_location": rid,
+                "text": rid,
+            })
+            repo.link_record_about_asset(rid, asset["id"])
+
+        assert find_candidate_pairs(repo, "NEW") == []
 
     def test_excludes_self(self):
         from services.conflict_engine import find_candidate_pairs
@@ -154,7 +171,7 @@ class TestFindCandidatePairs:
         for rid, date in [("OLDER", "2025-01-01"), ("TARGET", "2025-06-01"),
                           ("NEWER", "2025-12-01")]:
             repo.create_service_record({"record_id": rid, "asset_key": "NORDER",
-                                        "occurred_at": date, "text": rid})
+                                        "occurred_at": date, "part_name": "PUMP", "text": rid})
             repo.link_record_about_asset(rid, asset["id"])
 
         candidates = find_candidate_pairs(repo, "TARGET")
@@ -385,7 +402,7 @@ class TestProcessRecord:
         assert len(linked) == 1
 
 
-    def test_no_candidates_returns_auto_accepted(self):
+    def test_no_candidates_is_scored_without_model_classification(self):
         """Record with no prior records on the same asset → auto_accepted, 0 candidates."""
         from services.conflict_engine import process_record
         repo = _make_repo()
@@ -398,9 +415,13 @@ class TestProcessRecord:
         groq = StubGroqLive()
         result = process_record(repo, groq, adapter, "LONE001", allow_stub=True)
         assert result["candidates_considered"] == 0
-        assert result["route"] == "auto_accepted"
+        assert result["route"] == "no_action"
+        assert result["classification"]["label"] == "no_candidates"
         stored = repo.get_service_record("LONE001")
-        assert stored["status"] == "auto_accepted"
+        assert stored["status"] == "no_action"
+        assert stored["analysis_state"] == "scored"
+        assert stored["classification_label"] == "no_candidates"
+        assert stored["analysis_model"] == "none"
         assert stored["confidence"] == 0.0
         assert stored["candidates_considered"] == 0
 

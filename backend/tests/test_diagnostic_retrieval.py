@@ -105,6 +105,15 @@ class TestAssetHistoryContext:
         history = asset_history_context(gr, "not-a-real-asset-id", limit=30)
         assert history == []
 
+    def test_null_confidence_is_preserved_without_error(self, repo):
+        gr, a1_id, _ = repo
+        gr.update_service_record("R1_RECENT", {
+            "confidence": None, "analysis_state": "unscored"
+        })
+        history = asset_history_context(gr, a1_id, limit=30)
+        record = next(item for item in history if item["record_id"] == "R1_RECENT")
+        assert record["confidence"] is None
+
 
 # ---------------------------------------------------------------------------
 # Tests: similar_symptom_records
