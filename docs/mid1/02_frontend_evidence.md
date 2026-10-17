@@ -11,6 +11,9 @@ Branch: `feat/mid1/frontend-diagnostics` · Date: 2026-10-16
 | `/api/health` during live checks | `graph_mode=neo4j`, `llm_mode=live` (`openai/gpt-oss-120b`), `maintenance_record_count=2079`, `using_memory_graph=false` |
 | Node / npm | v26.11.1 / 11.20.0 |
 
+> **Addendum, 2026-10-18:** this document is a snapshot of 16 Oct. Work merged after it (PRs #5–#12) is recorded in [§13](#13-addendum-2026-10-18-work-merged-after-this-snapshot);
+> where §3 and §12 say "unchanged", "unmerged" or "not yet on `main`", §13 is current.
+
 Everything below was executed on the SHA above. Where something was **not** verified, it says so
 (see [Limitations](#7-limitations-and-what-was-not-verified)).
 
@@ -257,3 +260,46 @@ Notes:
 - Asset UUIDs differ between local Neo4j and staging (813SK: `aa4e5d11-…` vs `92bdb741-…`). Deep links with a UUID are environment-specific.
 - Staging is shared: Accept/Reject there would change the corpus everyone, including the demo, uses.
 - Dev builds run React in StrictMode, which doubles effect-driven requests; request counts above are from a production build.
+
+## 13. Addendum (2026-10-18): work merged after this snapshot
+
+Verified on `main` at `5bf5961` (merge of PR #12): `npm test -- --run` **171 passed (15 files)**, `npm run build` passes, hosted CI
+(backend tests, frontend tests and build, real-Neo4j Docker smoke) **success** on that SHA.
+
+### 13.1 Frontend PRs
+
+| PR | Merge SHA | Change |
+| --- | --- | --- |
+| #9 | `77fe7d6` | Knowledge Graph shows one aircraft's stored subgraph (backend limit 3000; opens on the busiest aircraft; truthful node/edge counts; `SUPERSEDES` drawn apart from `ABOUT`/`PRECEDED_BY` with a legend; tail/record-ID labels; stored-field side panel; legacy software nodes removed). Staging check: 813SK = 154 nodes / 305 edges. [DEC-20261017-graph-aircraft-focus](../../knowledge/decisions/DEC-20261017-graph-aircraft-focus.md) |
+| #10 | `e6abdc9` | Ingest page: CSV upload via the existing `POST /maintenance/ingest/upload` (explicit confirm step, `.csv` ≤ 10 MB), backend counts relabelled for what they count, inline errors instead of `alert()`, `MM/DD/YYYY` stated. [DEC-20261017-ingest-csv-upload-ui](../../knowledge/decisions/DEC-20261017-ingest-csv-upload-ui.md) |
+| #11 | `a5d1399` | Graph spacing: link distance, charge and node size so small graphs do not hide their edges; layout warm-up |
+| #8, #12 | `062f9a1`, `5bf5961` | Docs and evidence (this document's siblings: [23_single_aircraft_analysis_evidence.md](23_single_aircraft_analysis_evidence.md)) |
+
+PRs #5–#7 (diagnostic copilot, confidence and corrections, analysis cost cascade) were authored by Usman and merged earlier; the frontend consumes them in Service Records, the Review Queue
+(Detected corrections tab) and Diagnostics. Service Records is now fleet-wide and paginated. §3's "unchanged" notes for the Graph and Ingest pages no longer apply.
+
+### 13.2 New screenshots (scratch graph, aircraft 800NN)
+
+Captured 2026-10-18 in the Claude desktop Browser pane (1280×800 emulation, downscaled), against a **local backend on a throwaway Neo4j** that holds only the 13 `800NN` records,
+analysed in `legacy` mode with `openai/gpt-oss-120b`. They are not staging. Method and results: doc 23.
+
+| File | Shows |
+| --- | --- |
+| `14_records_scored_800NN.jpg` | Service Records with score, label and status per record; "heuristic, not a probability"; "No conflict found (N comparisons)" |
+| `15_history_correction_800NN.jpg` | Asset History: DOOR TRACK greyed and "Corrected by AALA202506090459 — component changed DOOR TRACK → DOOR" |
+| `16_review_queue_800NN.jpg` | Review Queue (2): incoming record, retrieved prior record, model rationale, Accept/Reject (not clicked) |
+| `17_corrections_tab_800NN.jpg` | Detected corrections: 4 found, 3 with a component change |
+| `18_graph_800NN_amber_corrections.jpg` | Knowledge Graph for 800NN: 14 nodes, 29 edges; four `SUPERSEDES` edges thick and amber; superseded record grey |
+| `19_ingest_upload_nothing_new.jpg` | Ingest → Upload CSV re-upload of two already-loaded rows: 0 new, 2 already in graph |
+
+### 13.3 Still open or not verified
+
+- **Staging has almost no analysis output.** Checked 2026-10-18: 2,079 records, all unscored, about 16 stored findings (7 `SUPERSEDES`). Single-aircraft analysis was run on a scratch graph only; the full-corpus run was deliberately not done for Mid-I.
+- **Graph side-panel click** (record or aircraft details, link to Asset History) is covered by unit tests but was **not verified live**: canvas clicks did not register in the browser tool.
+- **Graph camera:** in the test browser pane the camera sometimes stayed zoomed into the hub until the page was redrawn; time-to-fit on a real GPU was not measured.
+- **WebGL fallback:** commit `6678736` (WebGL check and error boundary for the 3D graph) is still **not on `main`**; on a machine without WebGL the Graph page has no safe fallback.
+- **Ingest** was exercised on a local in-memory backend and a scratch Neo4j only, not on staging and not with a full-size file. The backend answers an unreadable CSV (for example an empty file) with an unhandled HTTP 500 without CORS headers, which browsers report as a network failure (owner: Usman).
+- **Cosmetic:** on narrow layouts the long `partial_supersedes` label runs into its score in `ConfidenceBar`.
+- **§12 items now closed:** the `ReviewQueue` test fix, the fan-out fix and the dependency patches are on `main`, with hosted CI green. **Still open:** react-router 7 upgrade (deferred), the report's tool disclosure (Form 13 and addendum), supervisor sign-off.
+- The staging explanation gap in §9 (empty `explanation` on staging, model `openai/gpt-oss-20b`) has not been re-checked since 2026-10-16.
+
