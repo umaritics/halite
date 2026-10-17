@@ -60,7 +60,7 @@ Open **Settings → System Status**: `neo4j`, `live`, `openai/gpt-oss-120b`, `20
 
 ## Step 3 — Shahmeer: an asset's dated history (about 1 min)
 
-Do: Assets → **813SK** (or open the Linked-record view tab). Optional, 20 seconds: **Service Records** opens one aircraft at a time (813SK by default); change the aircraft in the selector and only that aircraft's records load.
+Do: Assets → **813SK** (or open the Linked-record view tab). Optional, 20 seconds: **Service Records** is fleet-wide and paginated ("All aircraft"); pick 813SK in the aircraft filter to narrow it, and note the "Not analysed" state on records the conflict analysis has not processed yet.
 Say: "These are real FAA Service Difficulty Reports, oldest first, each with its original report ID. Nothing here is generated."
 Point out: record ID at the bottom of each card; the one **superseded** record (`SWIA2025111576508`, 11/15/2025) says only
 "Superseded by a later record." The API doesn't supply more, so the UI doesn't invent more.
@@ -75,7 +75,7 @@ Umar should confirm the exact scoring factors before the demo.
 
 ## Step 5 — Shahmeer: live diagnosis with cited evidence (about 2 min)
 
-Do: **Diagnostics** → aircraft **813SK** → symptom **`crack found on drag angle during inspection`** → **Run diagnostic**.
+Do: **Diagnostics** opens on the **Copilot** tab (multi-turn). For this single-question flow click the **Quick diagnose** tab → aircraft **813SK** → symptom **`crack found on drag angle during inspection`** → **Run diagnostic**. (The Copilot tab is the multi-turn investigation; rehearse it separately.)
 
 Show, in order:
 1. The line under the form: *"Diagnosis for 813SK — …"* and *"Answered from 30 records on this asset and 20 fleet-wide matches across 9 assets."*
@@ -84,7 +84,7 @@ Show, in order:
 4. **Evidence Records:** click one (e.g. `SWIA2025122076513`). The history page opens **on that record**, marked "Linked record".
 5. The footer: *Decision support only… not a calibrated probability…*
 
-Say about the ranking: "The score reflects how often components appear in matching historical records. It is not a probability."
+Say about the ranking: "The evidence score is a heuristic computed from how often components appear in matching historical records. It is not a probability." (The label reads *evidence score (heuristic)* since the Copilot merge.)
 
 If it fails:
 - Spinner never ends or a red box appears → read it aloud; it says what failed (see "Failure cases" below). Don't improvise a diagnosis.
