@@ -19,7 +19,8 @@ export const decisionsAPI = {
 };
 
 export const graphAPI = {
-  overview: () => api.get('/graph/overview'),
+  // `limit` is the maximum number of nodes returned; the backend default is only 200.
+  overview: (limit) => api.get('/graph/overview', limit ? { params: { limit } } : undefined),
   component: (id) => api.get(`/graph/component/${id}`),
   decision: (id) => api.get(`/graph/decision/${id}`),
   exportContext: () => api.get('/graph/export/context', { responseType: 'text' }),

@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import { formatDate } from '../utils/format';
+
+// Correction edges (SUPERSEDES, computed by the conflict engine) are drawn apart from the
+// stored ordering/ownership edges so they can be found at a glance.
+const CORRECTION_EDGE = 'SUPERSEDES';
+const CORRECTION_COLOR = '#E5A100';
 
 const NODE_COLORS = {
   Component: '#E8650A',
@@ -29,7 +36,11 @@ function getNodeColor(node) {
 }
 
 function getNodeLabel(node) {
-  return node.name || node.title || node.filename || node.id?.slice(0, 8) || 'Node';
+  // Aircraft show their tail number and service records their FAA record id; a UUID prefix
+  // means nothing to a reader.
+  return (
+    node.tail_number || node.record_id || node.name || node.title || node.filename || node.id?.slice(0, 8) || 'Node'
+  );
 }
 
 export default function GraphViewer({ data, onNodeSelect, searchQuery = '', typeFilters = {} }) {
@@ -72,7 +83,8 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
       label: n.label || (n.title ? 'Decision' : n.name ? 'Component' : 'Node'),
       name: getNodeLabel(n),
       color: getNodeColor(n),
-      val: n.label === 'Decision' || n.title ? 8 : 5,
+      // The aircraft is the hub; its records stay small so dozens of them remain distinguishable.
+      val: n.label === 'Asset' ? 14 : n.label === 'ServiceRecord' ? 3 : n.label === 'Decision' || n.title ? 8 : 5,
       // keep original fields for side panel
       ...n,
       displayName: getNodeLabel(n),
@@ -119,6 +131,9 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
 
   const bg = isDark ? '#000000' : '#F5F5F5';
   const linkCol = isDark ? 'rgba(232,101,10,0.55)' : 'rgba(232,101,10,0.7)';
+  // Animated particles on every edge are heavy on a dense graph; keep them for corrections
+  // always, and for other edges only while the view is small enough to stay smooth.
+  const particlesOnAll = graphData.links.length <= 600;
 
   return (
     <div
@@ -149,17 +164,19 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
           nodeVal={(n) => n.val || 5}
           nodeRelSize={6}
           nodeOpacity={1}
-          linkColor={() => linkCol}
-          linkWidth={1.5}
+          linkColor={(l) => (l.type === CORRECTION_EDGE ? CORRECTION_COLOR : linkCol)}
+          linkWidth={(l) => (l.type === CORRECTION_EDGE ? 3.5 : 1.5)}
           linkOpacity={0.8}
-          linkDirectionalParticles={2}
+          linkDirectionalParticles={(l) => (l.type === CORRECTION_EDGE ? 4 : particlesOnAll ? 2 : 0)}
           linkDirectionalParticleWidth={2}
-          linkDirectionalParticleColor={() => '#E8650A'}
+          linkDirectionalParticleColor={(l) => (l.type === CORRECTION_EDGE ? CORRECTION_COLOR : '#E8650A')}
           onNodeClick={handleClick}
           onNodeHover={(node) => {
             document.body.style.cursor = node ? 'pointer' : 'default';
           }}
           cooldownTicks={80}
+          // Default is 15 s; the camera is only fitted when the layout stops, so cap it.
+          cooldownTime={3000}
           onEngineStop={() => {
             try {
               fgRef.current?.zoomToFit(400, 60);
@@ -177,8 +194,12 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
   );
 }
 
-export function GraphSidePanel({ node, onClose, onChatAbout }) {
+// `assetUuid` (optional) is the aircraft's id, used to link into the asset history page.
+export function GraphSidePanel({ node, onClose, onChatAbout, assetUuid }) {
   if (!node) return null;
+
+  const isRecord = node.label === 'ServiceRecord';
+  const isAsset = node.label === 'Asset';
 
   return (
     <div className="halite-card absolute right-4 top-4 z-10 max-h-[calc(100%-2rem)] w-80 overflow-y-auto p-4">
@@ -198,6 +219,24 @@ export function GraphSidePanel({ node, onClose, onChatAbout }) {
             <span className="text-[#555555]">Status:</span> {node.status}
           </p>
         )}
+        {isRecord && (
+          <div id="graph-record-details" className="space-y-1">
+            <p><span className="text-[#555555]">Record:</span> <span className="font-mono text-xs text-primary">{node.record_id}</span></p>
+            {node.asset_key && <p><span className="text-[#555555]">Aircraft:</span> {node.asset_key}</p>}
+            <p><span className="text-[#555555]">Date:</span> {formatDate(node.occurred_at)}</p>
+            {node.part_name && <p><span className="text-[#555555]">Part:</span> {node.part_name}</p>}
+            {node.jasc_code && <p><span className="text-[#555555]">JASC:</span> {node.jasc_code}</p>}
+            {node.source && <p><span className="text-[#555555]">Source:</span> {node.source}</p>}
+            {node.text && <p className="whitespace-pre-wrap text-xs">{String(node.text).slice(0, 280)}{String(node.text).length > 280 ? '…' : ''}</p>}
+          </div>
+        )}
+        {isAsset && (
+          <div id="graph-asset-details" className="space-y-1">
+            {node.tail_number && <p><span className="text-[#555555]">Tail number:</span> {node.tail_number}</p>}
+            {(node.make || node.model) && <p><span className="text-[#555555]">Aircraft:</span> {[node.make, node.model].filter(Boolean).join(' ')}</p>}
+            {node.serial_number && <p><span className="text-[#555555]">Serial:</span> {node.serial_number}</p>}
+          </div>
+        )}
         {node.reasoning && <p className="whitespace-pre-wrap">{node.reasoning}</p>}
         {node.description && <p>{node.description}</p>}
         {node.file_path && (
@@ -207,6 +246,19 @@ export function GraphSidePanel({ node, onClose, onChatAbout }) {
           </p>
         )}
       </div>
+
+      {(isRecord || isAsset) && (assetUuid || isAsset) && (
+        <Link
+          to={
+            isRecord
+              ? `/app/asset-history/${encodeURIComponent(assetUuid)}#${encodeURIComponent(node.record_id)}`
+              : `/app/asset-history/${encodeURIComponent(assetUuid || node.id)}`
+          }
+          className="mt-4 inline-block text-xs text-accent hover:underline"
+        >
+          Open in asset history →
+        </Link>
+      )}
 
       {onChatAbout && (
         <button onClick={() => onChatAbout(node)} className="halite-btn-primary mt-4 w-full text-sm">
