@@ -947,7 +947,10 @@ class GraphRepository:
             where_clauses.append("a.id = $asset_id")
             params["asset_id"] = asset_id
         where = "WHERE " + " AND ".join(where_clauses) if where_clauses else ""
-        match = "MATCH (sr:ServiceRecord) OPTIONAL MATCH (sr)-[:ABOUT]->(a:Asset)"
+        # A WHERE directly after OPTIONAL MATCH is scoped to that optional
+        # pattern and does not remove the ServiceRecord row.  Project first so
+        # status/asset filters constrain the complete row set.
+        match = "MATCH (sr:ServiceRecord) OPTIONAL MATCH (sr)-[:ABOUT]->(a:Asset) WITH sr, a"
         limit_clause = ""
         if limit is not None:
             params["limit"] = int(limit)
@@ -1025,6 +1028,7 @@ class GraphRepository:
             f"""
             MATCH (sr:ServiceRecord)
             OPTIONAL MATCH (sr)-[:ABOUT]->(a:Asset)
+            WITH sr, a
             {where_sql}
             RETURN count(sr) AS total
             """,
@@ -1035,6 +1039,7 @@ class GraphRepository:
             f"""
             MATCH (sr:ServiceRecord)
             OPTIONAL MATCH (sr)-[:ABOUT]->(a:Asset)
+            WITH sr, a
             {where_sql}
             OPTIONAL MATCH (corrector:ServiceRecord)-[:SUPERSEDES]->(sr)
             WITH sr, a, head(collect(CASE WHEN corrector IS NULL THEN null ELSE {{record_id: corrector.record_id, part_name: corrector.part_name}} END)) AS corrected_by

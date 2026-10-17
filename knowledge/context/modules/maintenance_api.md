@@ -58,6 +58,9 @@ this fix; correct query shape comes first.
 Neo4j performs filtering/count/pagination before returning rows. Memory mode
 maintains record/asset indexes and traverses relationship maps in one pass so
 the real 2,079-row corpus remains usable for local verification.
+The Neo4j query projects `sr, a` through `WITH` before applying dynamic
+filters; a `WHERE` attached directly to the optional `ABOUT` match would only
+filter that optional pattern and incorrectly retain every ServiceRecord.
 
 ## Failure and safety behavior
 
