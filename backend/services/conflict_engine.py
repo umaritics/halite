@@ -19,8 +19,11 @@ recorded T7 evaluation. Runtime callers pass settings.MAINT_CONFIDENCE_THRESHOLD
 import json
 import logging
 import os
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
+
+from services.conflict_screen import text_overlap_features
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +70,9 @@ MAINT_MAX_CANDIDATES: int = int(
     os.environ.get("MAINT_MAX_CANDIDATES", "25")
 )
 
+# Pre-registered on the 141-pair development set before held-out evaluation.
+CASCADE_SCREEN_THRESHOLD: float = 0.79
+
 # Classification labels returned by the LLM
 _VALID_LABELS = frozenset(
     ["no_conflict", "scope_disjoint", "supersedes", "partial_supersedes", "contradicts"]
@@ -97,7 +103,8 @@ Return ONLY the JSON object.
 # ---------------------------------------------------------------------------
 
 def find_candidate_pairs(
-    graph_repo, record_id: str, max_candidates: int = MAINT_MAX_CANDIDATES
+    graph_repo, record_id: str, max_candidates: int = MAINT_MAX_CANDIDATES,
+    analysis_mode: str = "legacy",
 ) -> list[dict]:
     """
     Find candidate prior records for the given record_id from the same asset's history.
@@ -207,6 +214,15 @@ def find_candidate_pairs(
     candidates.sort(key=lambda c: c["record"].get("occurred_at", ""), reverse=True)
     candidates.sort(key=lambda c: c["score"], reverse=True)
 
+    if analysis_mode == "cascade":
+        for candidate in candidates:
+            candidate["screen_features"] = text_overlap_features(target, candidate["record"])
+        # Python's stable sort preserves the legacy score/date/id ordering for ties.
+        candidates.sort(
+            key=lambda candidate: candidate["screen_features"]["containment"],
+            reverse=True,
+        )
+
     result = candidates[:max_candidates]
     logger.info(
         "find_candidate_pairs: record=%r asset=%r history=%d candidates=%d",
@@ -215,7 +231,51 @@ def find_candidate_pairs(
     return result
 
 
-def classify_conflict(groq_service, new_record: dict, prior_record: dict) -> dict:
+def _normalise_cached_classification(value: dict) -> dict:
+    """Read both the original flat cache entries and metered cascade entries."""
+    result = dict(value)
+    result.setdefault("method", "llm")
+    result.setdefault("model", "unknown")
+    result.setdefault("passes", None)
+    result.setdefault("votes", [])
+    result.setdefault("prompt_tokens", None)
+    result.setdefault("completion_tokens", None)
+    result.setdefault("reasoning_tokens", None)
+    result.setdefault("total_tokens", None)
+    result.setdefault("vote_agreement", None)
+    result.setdefault("vote_split", False)
+    result.setdefault("timestamp", None)
+    result["cache_hit"] = True
+    return result
+
+
+def _save_classification_cache(cache_key: str, value: dict) -> None:
+    from config import settings
+
+    cache_dir = Path(settings.MAINT_DATA_DIR)
+    cache_path = cache_dir / "cache.json"
+    cache = {}
+    if cache_path.exists():
+        try:
+            cache = json.loads(cache_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            cache = {}
+    cache[cache_key] = {key: item for key, item in value.items() if key != "cache_hit"}
+    try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_path.write_text(json.dumps(cache, indent=2), encoding="utf-8")
+    except OSError as exc:
+        logger.warning("Conflict cache unavailable; continuing without persistence: %s", exc)
+
+
+def classify_conflict(
+    groq_service,
+    new_record: dict,
+    prior_record: dict,
+    *,
+    analysis_mode: str = "legacy",
+    budget_manager=None,
+) -> dict:
     """
     Ask the LLM to classify the conflict relationship between two records.
     Uses caching and supports multiple self-consistency passes.
@@ -241,7 +301,7 @@ def classify_conflict(groq_service, new_record: dict, prior_record: dict) -> dic
     cache_key = f"{new_id}_{prior_id}_{model}"
     if cache_key in cache and "PYTEST_CURRENT_TEST" not in os.environ:
         logger.info("classify_conflict: CACHE HIT for %s", cache_key)
-        return cache[cache_key]
+        return _normalise_cached_classification(cache[cache_key])
 
     prompt = (
         f"NEW RECORD (occurred_at={new_record.get('occurred_at', '?')}):\n"
@@ -250,35 +310,78 @@ def classify_conflict(groq_service, new_record: dict, prior_record: dict) -> dic
         f"{prior_record.get('text', '')[:800]}"
     )
     
-    # 2. Fast mode / self consistency passes
-    passes = int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5"))
-    if passes < 1:
-        passes = 1
-        
+    # Legacy preserves the existing configurable pass count. Cascade starts
+    # with two votes and buys three more only if the first two do not agree.
+    requested_passes = max(1, int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5")))
+    requested_passes = 2 if analysis_mode == "cascade" else requested_passes
     results = []
-    for _ in range(passes):
-        raw = groq_service.extract_json(prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT)
+    totals = {key: 0 for key in (
+        "prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens"
+    )}
+
+    def run_vote() -> None:
+        if budget_manager is not None:
+            budget_manager.before_request(model)
+        usage = {}
+        try:
+            if hasattr(groq_service, "extract_json_with_usage"):
+                response = groq_service.extract_json_with_usage(
+                    prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT
+                )
+                raw = response["content"]
+                usage = response.get("usage") or {}
+            else:
+                raw = groq_service.extract_json(
+                    prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT
+                )
+        except Exception:
+            if budget_manager is not None:
+                budget_manager.record_request(model, usage)
+            raise
+        if budget_manager is not None:
+            budget_manager.record_request(model, usage)
         parsed = _parse_classification(raw)
+        parsed["usage"] = usage
         results.append(parsed)
-        
+        for key in totals:
+            totals[key] += int(usage.get(key) or 0)
+
+    for _ in range(requested_passes):
+        run_vote()
+    if analysis_mode == "cascade":
+        first_labels = [r["label"] for r in results if not r.get("parse_failed")]
+        if len(first_labels) != 2 or first_labels[0] != first_labels[1]:
+            for _ in range(3):
+                run_vote()
+
     # Majority vote
-    from collections import Counter
     labels = [r["label"] for r in results if not r.get("parse_failed")]
     if not labels:
         final_result = {"label": "no_conflict", "rationale": "", "parse_failed": True}
+        top_count = 0
     else:
-        best_label = Counter(labels).most_common(1)[0][0]
+        best_label, top_count = Counter(labels).most_common(1)[0]
         # Find the first result with this label to get its rationale
-        final_result = next(r for r in results if r["label"] == best_label)
+        final_result = {
+            key: value for key, value in next(
+                r for r in results if r["label"] == best_label
+            ).items() if key != "usage"
+        }
+
+    final_result.update({
+        "method": "llm-escalated" if analysis_mode == "cascade" and len(results) == 5 else "llm",
+        "model": model,
+        "passes": len(results),
+        "votes": results,
+        **totals,
+        "vote_agreement": (top_count / len(labels)) if labels else 0.0,
+        "vote_split": bool(labels and top_count <= len(labels) / 2),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "cache_hit": False,
+    })
         
     # 3. Save to cache
-    cache[cache_key] = final_result
-    try:
-        cache_dir.mkdir(parents=True, exist_ok=True)
-        with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(cache, f, indent=2)
-    except OSError as exc:
-        logger.warning("Conflict cache unavailable; continuing without persistence: %s", exc)
+    _save_classification_cache(cache_key, final_result)
         
     return final_result
 
@@ -399,7 +502,10 @@ def score_confidence(signals: dict) -> float:
     
     for key, weight in weights.items():
         if signals.get(key, False):
-            score += weight
+            if key == "classification_supersedes" and signals.get("classification_vote_agreement") is not None:
+                score += weight * float(signals["classification_vote_agreement"])
+            else:
+                score += weight
     # Clamp to [0, 1]
     return max(0.0, min(1.0, score))
 
@@ -412,7 +518,6 @@ def route(record: dict, confidence: float, threshold: float, classification: dic
 
     if classification and classification.get("parse_failed"):
         return "needs_review"
-    
     if label in ("contradicts", "partial_supersedes"):
         return "needs_review"
     if label in ("no_conflict", "scope_disjoint"):
@@ -429,6 +534,8 @@ def process_record(
     threshold: float = MAINT_CONFIDENCE_THRESHOLD,
     allow_stub: bool = False,
     dry_run: bool = False,
+    analysis_mode: str | None = None,
+    budget_manager=None,
 ) -> dict:
     """
     Full conflict-detection pipeline for a single ServiceRecord.
@@ -443,7 +550,13 @@ def process_record(
       parse_failures (int), status_applied (str)
     """
     # §7: refuse to run with canned responses in production context
-    if not allow_stub and not groq_service.is_live:
+    if analysis_mode is None:
+        from config import settings
+        analysis_mode = settings.MAINT_ANALYSIS_MODE
+    if analysis_mode not in ("legacy", "cascade"):
+        raise ValueError(f"Unknown maintenance analysis mode: {analysis_mode!r}")
+
+    if analysis_mode == "legacy" and not allow_stub and not groq_service.is_live:
         raise RuntimeError(
             "process_record: groq_service is not live (is_live=False). "
             "Running with a canned LLM response would produce meaningless results. "
@@ -455,7 +568,10 @@ def process_record(
     analysis_model = getattr(groq_service, "model", "unknown")
 
     # 1. Find candidates
-    candidates = find_candidate_pairs(graph_repo, record_id, max_candidates=MAINT_MAX_CANDIDATES)
+    candidates = find_candidate_pairs(
+        graph_repo, record_id, max_candidates=MAINT_MAX_CANDIDATES,
+        analysis_mode=analysis_mode,
+    )
     target = graph_repo.get_service_record(record_id)
     if target is None:
         raise ValueError(f"process_record: record {record_id!r} not found in graph")
@@ -476,6 +592,14 @@ def process_record(
                 "classification_label": "no_candidates",
                 "classification_rationale": "No comparable earlier record was found.",
                 "analysis_model": "none",
+                "analysis_method": "screen",
+                "analysis_passes": 0,
+                "analysis_votes_json": "[]",
+                "analysis_prompt_tokens": 0,
+                "analysis_completion_tokens": 0,
+                "analysis_reasoning_tokens": 0,
+                "analysis_total_tokens": 0,
+                "analysed_at": scored_at,
             })
         return {
             "record_id": record_id,
@@ -493,11 +617,48 @@ def process_record(
             "route": "no_action",
             "parse_failures": 0,
             "status_applied": "no_action",
+            "analysis_method": "screen",
         }
 
     # 2. Classify against the top candidate
     best = candidates[0]["record"]
-    classification = classify_conflict(groq_service, target, best)
+    screen_features = candidates[0].get("screen_features") or {}
+    if analysis_mode == "cascade" and screen_features.get("screen_score", 0.0) < CASCADE_SCREEN_THRESHOLD:
+        any_scope_match = any(screen_features.get(key) for key in (
+            "same_part_name", "same_jasc_code", "same_part_location"
+        ))
+        classification = {
+            "label": "no_conflict" if any_scope_match else "scope_disjoint",
+            "rationale": "Deterministic text-and-scope screen found insufficient overlap for model classification.",
+            "parse_failed": False,
+            "method": "screen",
+            "model": "deterministic-screen-v1",
+            "passes": 0,
+            "votes": [],
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "reasoning_tokens": 0,
+            "total_tokens": 0,
+            "vote_agreement": None,
+            "vote_split": False,
+            "timestamp": scored_at,
+            "cache_hit": False,
+        }
+        _save_classification_cache(
+            f"{record_id}_{best.get('record_id')}_deterministic-screen-v1",
+            classification,
+        )
+    else:
+        if not allow_stub and not groq_service.is_live:
+            raise RuntimeError(
+                "process_record: groq_service is not live (is_live=False). "
+                "The cascade screen requires a live model for this record."
+            )
+        classification = classify_conflict(
+            groq_service, target, best,
+            analysis_mode=analysis_mode,
+            budget_manager=budget_manager,
+        )
     if classification.get("parse_failed"):
         parse_failures += 1
         logger.warning("process_record: parse failure for record %r", record_id)
@@ -530,6 +691,9 @@ def process_record(
             and target.get("jasc_code", "").strip() == best.get("jasc_code", "").strip()
         ),
         "proximity_bonus": (days_between is not None and 0 < days_between <= 30),
+        "classification_vote_agreement": (
+            classification.get("vote_agreement") if analysis_mode == "cascade" else None
+        ),
     }
 
     # 5. Score confidence
@@ -537,6 +701,8 @@ def process_record(
 
     # 6. Route
     routing_decision = route(target, confidence, threshold, classification)
+    if analysis_mode == "cascade" and classification.get("vote_split"):
+        routing_decision = "needs_review"
 
     # 7. Apply to graph on confirmed supersession
     action = adjudication_result.get("action")
@@ -565,7 +731,16 @@ def process_record(
             "candidates_considered": len(candidates),
             "classification_label": classification.get("label") if classification else None,
             "classification_rationale": classification.get("rationale") if classification else None,
-            "analysis_model": analysis_model,
+            "analysis_model": classification.get("model", analysis_model),
+            "analysis_method": classification.get("method", "llm"),
+            "analysis_passes": classification.get("passes"),
+            "analysis_vote_agreement": classification.get("vote_agreement"),
+            "analysis_votes_json": json.dumps(classification.get("votes", [])),
+            "analysis_prompt_tokens": classification.get("prompt_tokens"),
+            "analysis_completion_tokens": classification.get("completion_tokens"),
+            "analysis_reasoning_tokens": classification.get("reasoning_tokens"),
+            "analysis_total_tokens": classification.get("total_tokens"),
+            "analysed_at": classification.get("timestamp") or scored_at,
         })
 
     return {
@@ -580,4 +755,5 @@ def process_record(
         "route": routing_decision,
         "parse_failures": parse_failures,
         "status_applied": status_applied,
+        "analysis_method": classification.get("method", "llm"),
     }

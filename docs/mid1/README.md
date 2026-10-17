@@ -27,7 +27,11 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [14_usman_umar_integration.md](14_usman_umar_integration.md) | Usman + Umar | Combined audit, rubric mapping, performance closure, remaining Shahmeer work |
 | [15_report_mid1_addendum.md](15_report_mid1_addendum.md) ([PDF](Halite_FYP_Report_Mid1_Addendum.pdf)) | Team | Report implementation correction and responsible tool disclosure |
 | [16_usman_conflict_score_backfill_handoff.md](16_usman_conflict_score_backfill_handoff.md) | **Usman** | All records confidence=1 / auto_accepted — ingest vs conflict backfill; demo Review Queue |
+| [17_diagnostic_copilot_evidence.md](17_diagnostic_copilot_evidence.md) | Team | Diagnostic Copilot contracts, tests, and verification limits |
 | [19_confidence_and_corrections_evidence.md](19_confidence_and_corrections_evidence.md) | Team | Honest analysis state, fleet records, corrections, tests, and bounded live-run evidence |
+| [20_analysis_cost_report.md](20_analysis_cost_report.md) | Team | Reproducible conflict-analysis cost and partial-run quality audit |
+| [21_analysis_cascade_evidence.md](21_analysis_cascade_evidence.md) | Team | Offline cost cascade, tests, mutation checks, and PR #7 CI evidence |
+| [22_cursor_handoff_2026-10-17.md](22_cursor_handoff_2026-10-17.md) | Team → Cursor | Corrected current state, completed work, and explicit remaining expanded requirements |
 
 ## Partner agents — start here
 

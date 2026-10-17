@@ -28,6 +28,7 @@ from api.routes.ops import _require_ops_token
 from domains.registry import list_domains
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
 from services.analysis_state import normalize_analysis_for_api
+from services.analysis_budget import BudgetExhausted, DailyBudgetManager
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +84,19 @@ class AnalysisRunRequest(BaseModel):
 def _get_maintenance_adapter():
     from domains.registry import get_adapter
     return get_adapter("maintenance")
+
+
+def _analysis_budget(settings) -> DailyBudgetManager:
+    state_file = settings.MAINT_BUDGET_STATE_FILE or str(
+        Path(settings.MAINT_DATA_DIR) / "analysis_budget.json"
+    )
+    return DailyBudgetManager(
+        state_file,
+        request_limit=settings.MAINT_DAILY_REQUEST_LIMIT,
+        token_limit=settings.MAINT_DAILY_TOKEN_LIMIT,
+        utilization=settings.MAINT_BUDGET_UTILIZATION,
+        token_reserve=settings.MAINT_BUDGET_TOKEN_RESERVE,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -338,8 +352,11 @@ def run_analysis_batch(
         limit=body.batch_size, offset=0,
     )
     adapter = _get_maintenance_adapter()
+    budget = _analysis_budget(settings)
     results = []
     model_records = 0
+    screen_records = 0
+    stopped_reason = None
     for record in page["items"]:
         record_id = record["record_id"]
         last_error = None
@@ -349,16 +366,25 @@ def run_analysis_batch(
                     graph_repo, groq_service, adapter, record_id,
                     threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
                     allow_stub=False,
+                    analysis_mode=settings.MAINT_ANALYSIS_MODE,
+                    budget_manager=budget,
                 )
-                if result["candidates_considered"] > 0:
+                if result.get("analysis_method") in ("llm", "llm-escalated"):
                     model_records += 1
+                elif result.get("analysis_method") == "screen":
+                    screen_records += 1
                 results.append({
                     "record_id": record_id,
                     "analysis_state": "needs_review" if result["status_applied"] == "needs_review" else "scored",
                     "classification_label": (result.get("classification") or {}).get("label"),
                     "confidence": result.get("confidence"),
                     "candidates_considered": result.get("candidates_considered", 0),
+                    "analysis_method": result.get("analysis_method"),
                 })
+                last_error = None
+                break
+            except BudgetExhausted as exc:
+                stopped_reason = exc.stopped_reason
                 last_error = None
                 break
             except RuntimeError as exc:
@@ -367,6 +393,8 @@ def run_analysis_batch(
                     break
                 if attempt < 2:
                     time.sleep(0.5 * (attempt + 1))
+        if stopped_reason:
+            break
         if last_error is not None:
             raise HTTPException(status_code=503, detail=f"Analysis stopped at {record_id}: {last_error}")
     after = graph_repo.analysis_status()
@@ -374,7 +402,12 @@ def run_analysis_batch(
         "batch_size": body.batch_size,
         "processed": len(results),
         "model_records": model_records,
-        "no_candidate_records": len(results) - model_records,
+        "screen_records": screen_records,
+        "no_candidate_records": sum(
+            result["classification_label"] == "no_candidates" for result in results
+        ),
+        "stopped_reason": stopped_reason,
+        "budget_remaining": budget.snapshot(groq_service.model),
         "remaining_unscored": after["unscored"],
         "before": before,
         "after": after,

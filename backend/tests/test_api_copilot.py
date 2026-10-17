@@ -210,3 +210,28 @@ def test_groq_wrapper_rejects_none_content_with_finish_reason():
     )
     with pytest.raises(RuntimeError, match="empty model response"):
         service.chat([{"role": "user", "content": "test"}])
+
+
+def test_groq_wrapper_returns_provider_usage_metadata():
+    service = GroqService("fake-key", model="qwen/qwen3.8-27b")
+    service.demo_mode = False
+    completion = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'), finish_reason="stop")],
+        usage=SimpleNamespace(
+            prompt_tokens=123,
+            completion_tokens=17,
+            total_tokens=140,
+            completion_tokens_details=SimpleNamespace(reasoning_tokens=4),
+        ),
+    )
+    service.client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=lambda **kwargs: completion))
+    )
+    result = service.extract_json_with_usage("test")
+    assert result["content"] == '{"ok":true}'
+    assert result["usage"] == {
+        "prompt_tokens": 123,
+        "completion_tokens": 17,
+        "total_tokens": 140,
+        "reasoning_tokens": 4,
+    }

@@ -20,6 +20,7 @@ from domains.registry import get_adapter
 from graph.memory_store import MemoryGraphStore
 from graph.queries import GraphRepository
 from services.conflict_engine import find_candidate_pairs, process_record
+from services.conflict_screen import text_overlap_features
 
 
 ANSWER_KEY = re.compile(
@@ -89,14 +90,25 @@ def main() -> None:
     raw_candidates = {}
     capped_candidates = {}
     tight_candidates = {}
+    cascade_candidates = {}
     histogram = Counter()
     for index, record in enumerate(records, 1):
         raw = find_candidate_pairs(repo, record["record_id"], max_candidates=10_000)
         capped = raw[:25]
         tight = [item for item in raw if tight_gate(record, item["record"])]
+        enriched = [
+            {**item, "screen": text_overlap_features(record, item["record"])}
+            for item in raw
+        ]
+        cascade = sorted(
+            enriched,
+            key=lambda item: item["screen"]["containment"],
+            reverse=True,
+        )
         raw_candidates[record["record_id"]] = raw
         capped_candidates[record["record_id"]] = capped
         tight_candidates[record["record_id"]] = tight[:25]
+        cascade_candidates[record["record_id"]] = cascade[:25]
         histogram[_bucket(len(raw))] += 1
         if index % 250 == 0:
             print(json.dumps({"candidate_progress": index}), file=sys.stderr, flush=True)
@@ -108,15 +120,28 @@ def main() -> None:
     gt_current_top = 0
     gt_tight_retrieved = 0
     gt_tight_top = 0
+    gt_cascade_top = 0
+    gt_true_screen_scores = []
     for row in gt_rows:
         new_id = row["superseding_record_id"]
         prior_id = row["superseded_record_id"]
         current_ids = [item["record"]["record_id"] for item in capped_candidates.get(new_id, [])]
         tight_ids = [item["record"]["record_id"] for item in tight_candidates.get(new_id, [])]
+        cascade = cascade_candidates.get(new_id, [])
+        cascade_ids = [item["record"]["record_id"] for item in cascade]
         gt_current_retrieved += prior_id in current_ids
         gt_current_top += bool(current_ids and current_ids[0] == prior_id)
         gt_tight_retrieved += prior_id in tight_ids
         gt_tight_top += bool(tight_ids and tight_ids[0] == prior_id)
+        gt_cascade_top += bool(cascade_ids and cascade_ids[0] == prior_id)
+        true_item = next(item for item in cascade if item["record"]["record_id"] == prior_id)
+        gt_true_screen_scores.append(true_item["screen"]["screen_score"])
+
+    threshold = min(gt_true_screen_scores)
+    cascade_model_records = sum(
+        bool(items) and items[0]["screen"]["screen_score"] >= threshold
+        for items in cascade_candidates.values()
+    )
 
     # Replay the exact chronological 103-record partial run using cache only.
     adapter = get_adapter("maintenance")
@@ -165,6 +190,16 @@ def main() -> None:
             "current_top1": gt_current_top,
             "tight_retrieved": gt_tight_retrieved,
             "tight_top1": gt_tight_top,
+        },
+        "cascade_screen": {
+            "dev_threshold_max_retaining_all": threshold,
+            "ground_truth_retained": sum(score >= threshold for score in gt_true_screen_scores),
+            "ground_truth_n": len(gt_true_screen_scores),
+            "old_top1": gt_current_top,
+            "containment_first_top1": gt_cascade_top,
+            "eligible_before_screen": sum(bool(items) for items in cascade_candidates.values()),
+            "eligible_after_screen": cascade_model_records,
+            "screened_free": sum(bool(items) for items in cascade_candidates.values()) - cascade_model_records,
         },
         "cache": {
             "entries": len(cache),

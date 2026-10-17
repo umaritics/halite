@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     MAINT_CONFIDENCE_THRESHOLD: float = 0.50  # Re-calibrated via evaluate_conflict_detection.py
     MAINT_DATA_DIR: str = "data"              # Base data directory (raw/ and processed/ beneath)
     MAINT_MAX_CANDIDATES: int = 25            # Max prior records to consider per conflict check
+    MAINT_ANALYSIS_MODE: str = "legacy"        # legacy remains the safe default; cascade is opt-in
+    MAINT_DAILY_REQUEST_LIMIT: int = 1000
+    MAINT_DAILY_TOKEN_LIMIT: int = 200000
+    MAINT_BUDGET_UTILIZATION: float = 0.90
+    MAINT_BUDGET_TOKEN_RESERVE: int = 1000
+    MAINT_BUDGET_STATE_FILE: str = ""          # defaults to MAINT_DATA_DIR/analysis_budget.json
 
     @property
     def neo4j_configured(self) -> bool:

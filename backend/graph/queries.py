@@ -770,7 +770,10 @@ class GraphRepository:
             "legacy_confidence", "scored_at", "classification_label",
             "classification_rationale", "candidate_count",
             "candidates_considered", "analysis_model", "history_size",
-            "review_note",
+            "review_note", "analysed_at", "analysis_method", "analysis_passes",
+            "analysis_vote_agreement", "analysis_votes_json",
+            "analysis_prompt_tokens", "analysis_completion_tokens",
+            "analysis_reasoning_tokens", "analysis_total_tokens",
         ):
             if key in data:
                 props[key] = data[key]
@@ -1083,6 +1086,15 @@ class GraphRepository:
             """
         )
         counts["by_label"] = {row["label"]: int(row["count"]) for row in labels}
+        methods = self.store.run_query(
+            """
+            MATCH (sr:ServiceRecord)
+            WHERE sr.analysis_method IS NOT NULL
+            RETURN sr.analysis_method AS method, count(*) AS count
+            ORDER BY method
+            """
+        )
+        counts["by_method"] = {row["method"]: int(row["count"]) for row in methods}
         return counts
 
     def list_corrections_page(self, **filters) -> dict:

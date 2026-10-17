@@ -15,6 +15,8 @@ updated: 2026-10-17
 3. Positive-score same-asset candidates are classified, scored and routed.
    A record with no comparable candidate becomes `scored/no_candidates`
    without an LLM call.
+   When explicitly configured, cascade mode first applies the deterministic
+   text/scope screen, then uses adaptive 2-or-5-pass model voting.
 4. `needs_review` rows appear in `GET /maintenance/review-queue`; Accept or
    Reject preserves source text and sets `analysis_state=reviewed`.
 5. Confident supersessions create `SUPERSEDES`. `GET
@@ -27,6 +29,8 @@ updated: 2026-10-17
   persisted as conflict evidence.
 - Batch size is capped at 25, retries for 429 are bounded, and resume selects
   only explicit `unscored` state.
+- Request/token budgets persist by UTC date and model. Batch/API runs stop
+  cleanly at 90% and cached classifications consume no budget.
 - Review failure leaves the record in the queue. Reject never deletes source
   data.
 - A superseded older record shows its corrector, not a confidence score.
@@ -55,7 +59,11 @@ flowchart TB
   CLI[backfill --resume] --> CE[conflict_engine.py]
   RUN[POST /maintenance/analysis/run + ops token] --> CE
   U --> CE
-  CE --> G[Live Groq + cache]
+  CE --> SC[Deterministic text/scope screen]
+  SC -->|above threshold| G[Adaptive Groq votes + cache]
+  SC -->|below threshold| GR
+  B[(UTC daily budget state)] --> G
+  G --> GR
   CE --> GR[GraphRepository]
   GR --> N[(Neo4j or memory)]
   N --> ST[GET /analysis/status]

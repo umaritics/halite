@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261017-analysis-cost-cascade](DEC-20261017-analysis-cost-cascade.md) | Pre-register the opt-in conflict-analysis cost cascade | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261017-conflict-analysis-state](DEC-20261017-conflict-analysis-state.md) | Persist honest conflict-analysis state separately from confidence | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261017-fleet-service-records](DEC-20261017-fleet-service-records.md) | Fleet-wide paginated Service Records and corrections | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261017-diagnostic-copilot-scope](DEC-20261017-diagnostic-copilot-scope.md) | Diagnostic copilot cross-owner scope waiver | accepted | Umar, Shahmeer, Usman |

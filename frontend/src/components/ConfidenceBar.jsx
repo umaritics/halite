@@ -8,7 +8,26 @@ export default function ConfidenceBar({
   candidateCount,
   status,
   legacyPlaceholder = false,
+  analysisMethod,
+  analysisPasses,
+  voteAgreement,
 }) {
+  const methodDetail = (() => {
+    if (analysisMethod === 'screen') {
+      return classification === 'no_candidates'
+        ? 'Candidate screen; no model request.'
+        : 'Text-overlap screen; no model request.';
+    }
+    if (analysisMethod === 'llm-escalated') {
+      const agreeing = Math.round((voteAgreement ?? 0) * (analysisPasses ?? 5));
+      return `Model, escalated ${agreeing}/${analysisPasses ?? 5} votes agree.`;
+    }
+    if (analysisMethod === 'llm' && analysisPasses) {
+      return `Model, ${analysisPasses} passes agree.`;
+    }
+    return '';
+  })();
+
   if (status === 'superseded') return null;
   if (legacyPlaceholder || analysisState === 'unscored' || confidence === undefined || confidence === null) {
     return (
@@ -22,7 +41,7 @@ export default function ConfidenceBar({
     return (
       <div
         className="text-xs text-secondary"
-        title="The conflict engine found no correction relationship in the comparisons it performed."
+        title={`The conflict engine found no correction relationship in the comparisons it performed.${methodDetail ? ` ${methodDetail}` : ''}`}
       >
         No conflict found ({candidateCount ?? 0} comparisons)
       </div>
@@ -36,7 +55,7 @@ export default function ConfidenceBar({
   return (
     <div
       className="flex flex-col gap-1 w-full max-w-[150px]"
-      title="Conflict-check score: a heuristic routing score, not a probability."
+      title={`Conflict-check score: a heuristic routing score, not a probability.${methodDetail ? ` ${methodDetail}` : ''}`}
     >
       <div className="flex justify-between items-center text-xs font-mono text-secondary">
         <span>{classification || 'Conflict check'}</span>

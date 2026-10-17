@@ -1,5 +1,7 @@
 # G0: Misdiagnosis Density
 
+> **Historical evaluation context.** The previously published **121 detected / 117 auto-resolved / 4 review / 1,617 no-candidate / 1,958 remaining** corpus counts are not reproducible today, and the **0.762 F1** came from an older `openai/gpt-oss-120b` run. These values must not be presented as cascade results.
+
 ## Measurement
 
 Ground-truth pairs: **141** (from `ground_truth_pairs.csv`)
