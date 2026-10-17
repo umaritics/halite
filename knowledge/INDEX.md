@@ -24,8 +24,8 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | diagnose, copilot, multi-turn, case_state, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py`, docs/mid1/08–13, docs/mid1/17_diagnostic_copilot_evidence.md |
 | mid1 umar audit, U1–U5 | docs/mid1/08_umar_progress.md (+ 09–13 handoffs) |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
-| conflict, needs_review, confidence gate | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, docs/mid1/16_usman_conflict_score_backfill_handoff.md |
-| review queue empty, all confidence 1 | docs/mid1/16_usman_conflict_score_backfill_handoff.md (Usman backfill) |
+| conflict, analysis_state, unscored, needs_review, confidence gate, migration | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, decisions/DEC-20261017-conflict-analysis-state.md, docs/mid1/19_confidence_and_corrections_evidence.md |
+| review queue empty, all confidence 1, legacy placeholder | decisions/DEC-20261017-conflict-analysis-state.md, docs/mid1/19_confidence_and_corrections_evidence.md |
 | ingest, SDR, FAA corpus | flows/FLOW-ingest.md |
 | DEMO_MODE, graph_mode, llm_mode | context/modules/devops.md |
 | CI, GitHub Actions, docker compose | flows/FLOW-ci.md, context/modules/devops.md |
@@ -33,7 +33,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | Mid-I progress, partner handoff | docs/mid1/README.md, docs/mid1/08_umar_progress.md |
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |
-| service records, fan-out, per-aircraft, N+1 (frontend) | decisions/DEC-20261016-service-records-per-aircraft.md, docs/mid1/10_perf_assets_api_handoff.md |
+| service records, fleet-wide, corrections, pagination, fan-out | decisions/DEC-20261017-fleet-service-records.md, modules/maintenance_api.md, docs/mid1/19_confidence_and_corrections_evidence.md |
 | frontend shows backend fields (rank score, confidence, JASC, health flags), never hides | decisions/DEC-20261016-frontend-reflects-backend-outputs.md |
 | legacy software UI, domain lock, Settings reset removed | decisions/DEC-20261016-frontend-maintenance-only.md |
 | Usman audit, A1–A4 | decisions/DEC-20261016-usman-baseline.md |
@@ -49,7 +49,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |
 | `backend/agents/maintenance_agent.py` | FLOW-ingest.md |
 | `frontend/src/pages/Diagnostics.jsx` | modules/frontend.md, FLOW-diagnose.md |
-| `frontend/src/pages/ReviewQueue.jsx` | modules/frontend.md, FLOW-conflict-review.md |
+| `frontend/src/pages/ReviewQueue.jsx`, `frontend/src/pages/ServiceRecords.jsx` | modules/frontend.md, FLOW-conflict-review.md, decisions/DEC-20261017-fleet-service-records.md |
 | `.github/workflows/ci.yml` | FLOW-ci.md, modules/devops.md |
 | `docker-compose.yml` | modules/devops.md, FLOW-ingest.md |
 

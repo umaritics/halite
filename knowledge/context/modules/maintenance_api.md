@@ -3,7 +3,7 @@ id: mod-maintenance-api
 title: Maintenance API
 status: active
 owners: [Usman]
-updated: 2026-10-16
+updated: 2026-10-17
 depends_on: [ctx-data-graph]
 ---
 
@@ -43,6 +43,21 @@ relationship creation without duplicating an existing relationship.
 Mid-I staging target: one graph query (or a small constant) and less than
 2–3 seconds for the approximately 2,079-record corpus. Redis is not part of
 this fix; correct query shape comes first.
+
+## Fleet records, analysis, and corrections
+
+- `GET /maintenance/records` is the fleet-wide paginated list. Optional
+  filters are aircraft, text, status, analysis state, part, and date range;
+  default order is occurrence date descending with record ID ascending.
+- `GET /maintenance/analysis/status` reports live state and label counts.
+- `POST /maintenance/analysis/run` is ops-token guarded, live-model only, and
+  processes at most 25 chronological unscored records.
+- `GET /maintenance/corrections` reads `SUPERSEDES` pairs, derives component
+  changes, and computes its summary from graph data.
+
+Neo4j performs filtering/count/pagination before returning rows. Memory mode
+maintains record/asset indexes and traverses relationship maps in one pass so
+the real 2,079-row corpus remains usable for local verification.
 
 ## Failure and safety behavior
 

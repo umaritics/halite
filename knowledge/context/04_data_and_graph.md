@@ -24,7 +24,7 @@ updated: 2026-10-16
 | Label | Key ideas |
 | --- | --- |
 | `Asset` | Aircraft; `tail_number` / Registry N-number |
-| `ServiceRecord` | One SDR filing; `record_id`, `occurred_at`, `text`, part/JASC fields, `status`, optional confidence/classification fields |
+| `ServiceRecord` | One SDR filing; `record_id`, `occurred_at`, part/JASC/text, `status`, `analysis_state`, nullable confidence, classification/rationale/candidate/model metadata |
 
 ## Relationship types
 
@@ -38,11 +38,16 @@ Do **not** invent causal “causes/fixes” edges without data justification (Mi
 
 ## Status values (service records)
 
-Common: `auto_accepted`, `needs_review`, `accepted`, `rejected`, `superseded`, plus ingest defaults. Review queue = `status == needs_review`.
+Workflow status includes `unscored`, `no_action`, `auto_accepted`,
+`needs_review`, `accepted`, `rejected`, and `superseded`. Analysis coverage is
+separate: `unscored`, `scored`, `needs_review`, `reviewed`. Review queue remains
+`status == needs_review`.
 
 ## Access patterns
 
-- List assets / history: Usman routes in `maintenance.py`.
+- List fleet records/history/corrections: maintenance routes use store-level
+  filtering and deterministic pagination; corrected-by data is derived from
+  incoming `SUPERSEDES` edges.
 - Diagnostic context: Umar `asset_history_context`, `similar_symptom_records`, `build_diagnostic_context`.
 - Always bound limits on dense assets (e.g. history `limit`).
 

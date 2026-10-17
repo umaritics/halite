@@ -27,6 +27,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [14_usman_umar_integration.md](14_usman_umar_integration.md) | Usman + Umar | Combined audit, rubric mapping, performance closure, remaining Shahmeer work |
 | [15_report_mid1_addendum.md](15_report_mid1_addendum.md) ([PDF](Halite_FYP_Report_Mid1_Addendum.pdf)) | Team | Report implementation correction and responsible tool disclosure |
 | [16_usman_conflict_score_backfill_handoff.md](16_usman_conflict_score_backfill_handoff.md) | **Usman** | All records confidence=1 / auto_accepted — ingest vs conflict backfill; demo Review Queue |
+| [19_confidence_and_corrections_evidence.md](19_confidence_and_corrections_evidence.md) | Team | Honest analysis state, fleet records, corrections, tests, and bounded live-run evidence |
 
 ## Partner agents — start here
 
