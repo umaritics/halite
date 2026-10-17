@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { graphAPI } from '../api/client';
+import { describeLoadError } from '../utils/loadError';
 
-export function useGraph() {
+// `limit` is the most nodes the backend may return. The backend default is 200, which is only a
+// slice of the maintenance graph (about 2,200 nodes), so the caller passes an explicit limit.
+export function useGraph(limit) {
   const [data, setData] = useState({ nodes: [], edges: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,14 +13,15 @@ export function useGraph() {
     setLoading(true);
     setError(null);
     try {
-      const { data: graphData } = await graphAPI.overview();
-      setData(graphData);
+      const { data: graphData } = await graphAPI.overview(limit);
+      setData({ nodes: graphData?.nodes ?? [], edges: graphData?.edges ?? [] });
     } catch (err) {
-      setError(err.message || 'Failed to load graph');
+      console.error(err);
+      setError(describeLoadError(err).message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [limit]);
 
   useEffect(() => {
     fetchGraph();

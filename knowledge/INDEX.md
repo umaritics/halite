@@ -34,6 +34,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |
 | service records, fleet-wide, corrections, pagination, fan-out | decisions/DEC-20261017-fleet-service-records.md, modules/maintenance_api.md, docs/mid1/19_confidence_and_corrections_evidence.md |
+| knowledge graph page, graph limit, aircraft focus, SUPERSEDES styling | decisions/DEC-20261017-graph-aircraft-focus.md, modules/frontend.md |
 | frontend shows backend fields (rank score, confidence, JASC, health flags), never hides | decisions/DEC-20261016-frontend-reflects-backend-outputs.md |
 | legacy software UI, domain lock, Settings reset removed | decisions/DEC-20261016-frontend-maintenance-only.md |
 | Usman audit, A1–A4 | decisions/DEC-20261016-usman-baseline.md |
@@ -49,6 +50,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |
 | `backend/agents/maintenance_agent.py` | FLOW-ingest.md |
 | `frontend/src/pages/Diagnostics.jsx` | modules/frontend.md, FLOW-diagnose.md |
+| `frontend/src/pages/Graph.jsx`, `frontend/src/utils/graphScope.js`, `frontend/src/components/GraphViewer.jsx` | modules/frontend.md, decisions/DEC-20261017-graph-aircraft-focus.md |
 | `frontend/src/pages/ReviewQueue.jsx`, `frontend/src/pages/ServiceRecords.jsx` | modules/frontend.md, FLOW-conflict-review.md, decisions/DEC-20261017-fleet-service-records.md |
 | `.github/workflows/ci.yml` | FLOW-ci.md, modules/devops.md |
 | `docker-compose.yml` | modules/devops.md, FLOW-ingest.md |
