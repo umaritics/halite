@@ -380,10 +380,46 @@ class TestConflictAnalysisApi:
         data = response.json()
         assert data["processed"] == 1
         assert data["model_records"] == 0
+        assert data["screen_records"] == 1
         assert data["no_candidate_records"] == 1
+        assert data["stopped_reason"] is None
+        assert "requests_remaining" in data["budget_remaining"]
         assert data["results"][0]["record_id"] == "FIRST"
         assert data["results"][0]["classification_label"] == "no_candidates"
         assert client.app.state.graph_repo.get_service_record("ALREADY")["analysis_state"] == "scored"
+
+    def test_analysis_run_stops_cleanly_at_persistent_budget(self, client, tmp_path, monkeypatch):
+        class MeteredModel:
+            is_live = True
+            model = "test-budget-model"
+
+            def extract_json_with_usage(self, **_kwargs):
+                return {
+                    "content": '{"label":"no_conflict","rationale":"test"}',
+                    "usage": {"prompt_tokens": 10, "completion_tokens": 2, "total_tokens": 12},
+                }
+
+        settings = client.app.state.settings
+        monkeypatch.setattr(settings, "OPS_TOKEN", "analysis-token")
+        monkeypatch.setattr(settings, "MAINT_ANALYSIS_MODE", "cascade")
+        monkeypatch.setattr(settings, "MAINT_BUDGET_STATE_FILE", str(tmp_path / "budget.json"))
+        monkeypatch.setattr(settings, "MAINT_DAILY_REQUEST_LIMIT", 1)
+        monkeypatch.setattr(settings, "MAINT_DAILY_TOKEN_LIMIT", 1000)
+        monkeypatch.setattr(settings, "MAINT_BUDGET_UTILIZATION", 1.0)
+        monkeypatch.setattr(settings, "MAINT_BUDGET_TOKEN_RESERVE", 0)
+        client.app.state.groq_service = MeteredModel()
+        self._seed_record(client.app, "BUDGET-FIRST", "2025-01-01")
+        self._seed_record(client.app, "BUDGET-SECOND", "2025-01-02")
+
+        response = client.post(
+            "/api/maintenance/analysis/run", json={"batch_size": 2},
+            headers={"X-Ops-Token": "analysis-token"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["processed"] == 1
+        assert data["stopped_reason"] == "daily_request_budget"
+        assert data["budget_remaining"]["requests_used"] == 1
 
     def test_corrections_endpoint_returns_live_summary(self, client):
         repo = client.app.state.graph_repo

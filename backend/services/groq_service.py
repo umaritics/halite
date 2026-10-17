@@ -26,9 +26,15 @@ class GroqService:
         return not self.demo_mode and self.client is not None
 
     def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048) -> str:
+        return self.chat_with_usage(messages, system_prompt, max_tokens)["content"]
+
+    def chat_with_usage(
+        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048
+    ) -> dict:
+        """Return content plus provider token accounting when Groq supplies it."""
         if self.demo_mode:
             self.fallback_invocations += 1
-            return self._demo_response(messages, system_prompt)
+            return {"content": self._demo_response(messages, system_prompt), "usage": {}}
         full_messages = []
         if system_prompt:
             full_messages.append({"role": "system", "content": system_prompt})
@@ -57,7 +63,18 @@ class GroqService:
                     "Groq returned an empty model response "
                     f"(model={self.model}, finish_reason={finish_reason})."
                 )
-            return str(content)
+            response_usage = getattr(response, "usage", None)
+            usage = {
+                "prompt_tokens": getattr(response_usage, "prompt_tokens", None),
+                "completion_tokens": getattr(response_usage, "completion_tokens", None),
+                "total_tokens": getattr(response_usage, "total_tokens", None),
+            }
+            completion_details = getattr(response_usage, "completion_tokens_details", None)
+            usage["reasoning_tokens"] = getattr(
+                completion_details, "reasoning_tokens",
+                getattr(response_usage, "reasoning_tokens", None),
+            )
+            return {"content": str(content), "usage": usage}
         except Exception as exc:
             if "rate limit" in str(exc).lower() or "429" in str(exc):
                 from config import settings
@@ -65,7 +82,7 @@ class GroqService:
                     logger.warning("Rate limit hit! Switching to GROQ_API_KEY_FALLBACK.")
                     self.api_key = settings.GROQ_API_KEY_FALLBACK
                     self.client.api_key = self.api_key
-                    return self.chat(messages, system_prompt, max_tokens)
+                    return self.chat_with_usage(messages, system_prompt, max_tokens)
             
             logger.error("Groq API error: %s", exc)
             if self.demo_mode:
@@ -75,6 +92,15 @@ class GroqService:
 
     def extract_json(self, prompt: str, system_prompt: str | None = None, max_tokens: int = 800) -> str:
         return self.chat(
+            messages=[{"role": "user", "content": prompt}],
+            system_prompt=system_prompt,
+            max_tokens=max_tokens,
+        )
+
+    def extract_json_with_usage(
+        self, prompt: str, system_prompt: str | None = None, max_tokens: int = 800
+    ) -> dict:
+        return self.chat_with_usage(
             messages=[{"role": "user", "content": prompt}],
             system_prompt=system_prompt,
             max_tokens=max_tokens,

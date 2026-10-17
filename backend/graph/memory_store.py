@@ -375,6 +375,17 @@ class MemoryGraphStore:
             "source": data.get("source", "faa_sdr"),
         }
         for key in (
+            "analysis_state", "legacy_confidence", "scored_at", "analysed_at",
+            "classification_label", "classification_rationale", "candidate_count",
+            "candidates_considered", "analysis_model", "analysis_method",
+            "analysis_passes", "analysis_vote_agreement", "analysis_votes_json",
+            "analysis_prompt_tokens", "analysis_completion_tokens",
+            "analysis_reasoning_tokens", "analysis_total_tokens", "history_size",
+            "review_note",
+        ):
+            if key in data:
+                props[key] = data[key]
+        for key in (
             "legacy_confidence", "scored_at", "classification_label",
             "classification_rationale", "candidate_count",
             "candidates_considered", "analysis_model", "history_size",
@@ -615,13 +626,21 @@ class MemoryGraphStore:
         records = self._find_nodes("ServiceRecord")
         states = {"unscored": 0, "scored": 0, "needs_review": 0, "reviewed": 0}
         by_label: dict[str, int] = {}
+        by_method: dict[str, int] = {}
         for record in records:
             state = record.get("analysis_state") or "unscored"
             states[state] = states.get(state, 0) + 1
             label = record.get("classification_label")
             if label:
                 by_label[label] = by_label.get(label, 0) + 1
-        return {"total": len(records), **states, "by_label": dict(sorted(by_label.items()))}
+            method = record.get("analysis_method")
+            if method:
+                by_method[method] = by_method.get(method, 0) + 1
+        return {
+            "total": len(records), **states,
+            "by_label": dict(sorted(by_label.items())),
+            "by_method": dict(sorted(by_method.items())),
+        }
 
     def list_corrections_page(
         self,

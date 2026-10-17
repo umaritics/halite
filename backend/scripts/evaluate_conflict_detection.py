@@ -89,23 +89,27 @@ def main():
     
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("# Halite Maintenance Domain — Conflict Engine Evaluation\n\n")
-        f.write(f"Complete over all 141 author-recorded pairs; {n_neg} sampled negatives.\n")
+        f.write("> **Historical evaluation only.** Corpus-wide counts are not produced by this CSV-pair harness. "
+                "The previously published 121 detected, 117 auto-resolved, 4 review, 1,617 no-candidate, "
+                "and 1,958 remaining figures are not reproducible from the current code/corpus. "
+                "The 0.762 F1 below belongs to an older `openai/gpt-oss-120b` run, not the current cascade.\n\n")
+        f.write(f"Loaded {n_gt} deduplicated author-recorded pairs and {n_neg} sampled negatives.\n")
         f.write(f"Model: `openai/gpt-oss-120b`. No results reused from any other model.\n\n")
         
         f.write("## 1. Automation Coverage\n")
-        f.write("Of 2,079 records processed, a conflict was detected in **121**. Of those, **117** were resolved without human review and **4** routed to the review queue. The remaining **1,958** records had no candidate conflict and required no decision. Automation coverage is measured over records where a conflict was detected — never over the whole corpus.\n\n")
+        f.write("Not computed by this pair-result harness. Use a fresh full-corpus run and its analysis-status output.\n\n")
 
         f.write("## 2. Pruning Efficiency\n")
-        f.write("Of 2,079 records, 1,617 (77.8%) had no candidate prior on their asset after graph-constrained pruning and required no LLM evaluation. On the largest asset (153 records), exhaustive all-pairs comparison would require 11,628 evaluations; the graph constraint plus candidate scoring reduces this to at most 25 per record.\n\n")
+        f.write("Not computed by this pair-result harness. Run `measure_analysis_cost.py` against the selected corpus.\n\n")
 
         f.write("## 3. Recall Definitions\n")
         # Pair-level from L1: 86 / 141 = 0.610. We just hardcode the L1 output for the pair-level as requested.
-        f.write(f"Pair-level detection (N=141 author-recorded pairs): precision 0.788, recall 0.660\n")
+        f.write(f"Pair-level detection (N={n_gt} author-recorded pairs): precision 0.788, recall 0.660\n")
         f.write(f"Candidate-level classification (N={n_total} evaluated pairs): precision {metrics_050['engine']['precision']:.3f}, recall {metrics_050['engine']['recall']:.3f}\n\n")
         f.write("The pair-level figure answers the operative question: *of the supersessions that exist, how many did you find?*\n\n")
 
         f.write("## 4. Explanation of N\n")
-        f.write(f"There are 141 ground-truth positive pairs. The previous report's 445 positives (N=691) was an artifact of appending multiple partial runs to the CSV without deduplication. After deduplication, the true evaluated candidate-level dataset has N={n_total} ({n_gt} positive, {n_neg} negative), reflecting exactly one LLM evaluation against the `best_prior` per superseding record.\n\n")
+        f.write(f"There are {n_gt} ground-truth positive pairs in the loaded result file. The previous report's duplicated positives were an artifact of appending multiple partial runs to the CSV without deduplication. After deduplication, the evaluated candidate-level dataset has N={n_total} ({n_gt} positive, {n_neg} negative), reflecting exactly one LLM evaluation against the `best_prior` per superseding record.\n\n")
 
         f.write("## 5. Confusion Matrices (Threshold 0.50)\n\n")
         f.write("| System | Precision | Recall | F1 | False-conflict rate |\n")

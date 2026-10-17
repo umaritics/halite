@@ -367,16 +367,17 @@ class TestFleetRecordPage:
         assert repo.list_service_records_page(q="NFLEET")["total"] == 3
 
     def test_analysis_status_counts_states_and_labels(self, repo):
-        for rid, state, label in (
-            ("STATE1", "unscored", None),
-            ("STATE2", "scored", "no_candidates"),
-            ("STATE3", "needs_review", "contradicts"),
-            ("STATE4", "reviewed", "contradicts"),
+        for rid, state, label, method in (
+            ("STATE1", "unscored", None, None),
+            ("STATE2", "scored", "no_candidates", "screen"),
+            ("STATE3", "needs_review", "contradicts", "llm-escalated"),
+            ("STATE4", "reviewed", "contradicts", "llm"),
         ):
             repo.create_service_record({
                 "record_id": rid, "asset_key": "NSTATE", "occurred_at": "2025-01-01",
                 "text": "state", "analysis_state": state,
                 "classification_label": label,
+                "analysis_method": method,
             })
         status = repo.analysis_status()
         assert status["total"] == 4
@@ -384,6 +385,7 @@ class TestFleetRecordPage:
             "unscored": 1, "scored": 1, "needs_review": 1, "reviewed": 1,
         }
         assert status["by_label"] == {"contradicts": 2, "no_candidates": 1}
+        assert status["by_method"] == {"llm": 1, "llm-escalated": 1, "screen": 1}
 
 
 class TestCorrectionsPage:

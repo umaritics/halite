@@ -24,6 +24,7 @@ from graph.neo4j_client import Neo4jClient
 from graph.queries import GraphRepository
 from services.conflict_engine import process_record
 from services.groq_service import GroqService
+from services.analysis_budget import BudgetExhausted, DailyBudgetManager
 from api.routes.maintenance import _get_maintenance_adapter
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message)s")
@@ -39,7 +40,7 @@ def _is_unscored_placeholder(record: dict) -> bool:
     return (record.get("analysis_state") or "unscored") == "unscored"
 
 
-def _process_with_retries(repo, groq, adapter, record_id: str, *, attempts: int = 3):
+def _process_with_retries(repo, groq, adapter, record_id: str, *, budget=None, attempts: int = 3):
     last_error = None
     for attempt in range(attempts):
         try:
@@ -47,6 +48,8 @@ def _process_with_retries(repo, groq, adapter, record_id: str, *, attempts: int 
                 repo, groq, adapter, record_id,
                 threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
                 allow_stub=False,
+                analysis_mode=settings.MAINT_ANALYSIS_MODE,
+                budget_manager=budget,
             )
         except RuntimeError as exc:
             last_error = exc
@@ -61,11 +64,25 @@ def main():
     parser.add_argument("--limit", type=int, help="Limit number of records processed")
     parser.add_argument("--asset", action="append", help="Filter to specific tail numbers")
     parser.add_argument("--resume", action="store_true", help="Process only records with analysis_state=unscored")
+    parser.add_argument(
+        "--until-budget", action="store_true",
+        help="Resume unscored records and stop cleanly at the persistent daily budget",
+    )
     args = parser.parse_args()
 
     client = Neo4jClient(settings.NEO4J_URI, settings.NEO4J_USERNAME, settings.NEO4J_PASSWORD)
     repo = GraphRepository(client)
     groq = GroqService(api_key=settings.GROQ_API_KEY, model=settings.GROQ_MODEL)
+    budget_path = settings.MAINT_BUDGET_STATE_FILE or str(
+        Path(settings.MAINT_DATA_DIR) / "analysis_budget.json"
+    )
+    budget = DailyBudgetManager(
+        budget_path,
+        request_limit=settings.MAINT_DAILY_REQUEST_LIMIT,
+        token_limit=settings.MAINT_DAILY_TOKEN_LIMIT,
+        utilization=settings.MAINT_BUDGET_UTILIZATION,
+        token_reserve=settings.MAINT_BUDGET_TOKEN_RESERVE,
+    )
     
     if not groq.is_live:
         logger.error("Groq is not live. Refusing to backfill with cache or stubs.")
@@ -126,7 +143,9 @@ def main():
         "processed": 0,
         "skipped_resume": 0,
         "cache_hits": 0,
-        "llm_calls": 0,
+        "model_classifications": 0,
+        "screen_records": 0,
+        "provider_requests": 0,
         "parse_failures": 0,
         "supersedes_created": 0,
         "statuses": {"needs_review": 0, "auto_accepted": 0, "no_action": 0, "superseded": 0},
@@ -139,21 +158,30 @@ def main():
         record_id = rec.get("record_id") or rec.get("id")
         asset_id = rec.get("asset_id")
         
-        if args.resume and not _is_unscored_placeholder(rec):
+        if (args.resume or args.until_budget) and not _is_unscored_placeholder(rec):
             stats["skipped_resume"] += 1
             continue
             
         logger.info(f"Processing {record_id} (Asset: {rec.get('tail_number')})")
         
         try:
-            res = _process_with_retries(repo, groq, adapter, record_id)
+            res = _process_with_retries(repo, groq, adapter, record_id, budget=budget)
             stats["processed"] += 1
             stats["statuses"][res["status_applied"]] = stats["statuses"].get(res["status_applied"], 0) + 1
             stats["confidences"].append(res["confidence"])
-            stats["llm_calls"] += int(res["candidates_considered"] > 0)
+            method = res.get("analysis_method")
+            stats["model_classifications"] += int(method in ("llm", "llm-escalated"))
+            stats["screen_records"] += int(method == "screen")
+            classification = res.get("classification") or {}
+            if not classification.get("cache_hit"):
+                stats["provider_requests"] += int(classification.get("passes") or 0)
             stats["parse_failures"] += res.get("parse_failures", 0)
             if res["status_applied"] == "auto_accepted" and res.get("adjudication", {}).get("action") in ("supersedes", "partial_supersedes"):
                 stats["supersedes_created"] += 1
+        except BudgetExhausted as exc:
+            stats["stopped_reason"] = exc.stopped_reason
+            logger.info("Stopped cleanly at %s", exc.stopped_reason)
+            break
         except Exception as e:
             logger.error(f"Failed to process {record_id}: {e}")
             continue
@@ -168,7 +196,11 @@ def main():
     print(f"Records skipped:    {stats['skipped_resume']}")
     print(f"Parse failures:     {stats['parse_failures']}")
     print(f"SUPERSEDES created: {stats['supersedes_created']}")
-    print(f"LLM/Cache Calls:    {stats['llm_calls']} (cache handles internally)")
+    print(f"Model classifications: {stats['model_classifications']}")
+    print(f"Screen records:        {stats['screen_records']}")
+    print(f"Provider requests:     {stats['provider_requests']} (cache hits excluded)")
+    print(f"Stopped reason:     {stats.get('stopped_reason') or 'none'}")
+    print(f"Budget remaining:   {budget.snapshot(groq.model)}")
     print("\nStatus Distribution:")
     for st, count in stats["statuses"].items():
         print(f"  {st}: {count}")

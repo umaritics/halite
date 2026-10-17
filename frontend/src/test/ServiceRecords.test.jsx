@@ -51,6 +51,13 @@ describe('confidence and status states', () => {
     expect(screen.getByText('0.80').closest('[title]')).toHaveAttribute('title', expect.stringContaining('not a probability'));
   });
 
+  it('explains screen and adaptive model methods in the score tooltip', () => {
+    const { rerender } = render(<ConfidenceBar analysisState="scored" confidence={0} classification="no_conflict" candidateCount={1} analysisMethod="screen" analysisPasses={0} />);
+    expect(screen.getByText(/No conflict found/)).toHaveAttribute('title', expect.stringContaining('no model request'));
+    rerender(<ConfidenceBar analysisState="scored" confidence={0.8} classification="supersedes" analysisMethod="llm-escalated" analysisPasses={5} voteAgreement={0.6} />);
+    expect(screen.getByText('0.80').closest('[title]')).toHaveAttribute('title', expect.stringContaining('escalated 3/5'));
+  });
+
   it('hides confidence for superseded records', () => {
     const { container } = render(<ConfidenceBar analysisState="scored" confidence={0.9} classification="supersedes" status="superseded" />);
     expect(container).toBeEmptyDOMElement();

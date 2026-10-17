@@ -1,5 +1,7 @@
 # Halite Maintenance Domain — Conflict Engine Evaluation
 
+> **Historical evaluation only — not current product evidence.** The published **121 detected / 117 auto-resolved / 4 review / 1,617 no-candidate / 1,958 remaining** counts are not reproducible from today’s corpus and code. The **0.762 F1** is from the older `openai/gpt-oss-120b` result files, not the opt-in cascade. See `docs/mid1/20_analysis_cost_report.md` and `docs/mid1/21_analysis_cascade_evidence.md`.
+
 Complete over all 141 author-recorded pairs; 209 sampled negatives.
 Model: `openai/gpt-oss-120b`. No results reused from any other model.
 

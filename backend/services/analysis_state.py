@@ -8,6 +8,8 @@ ANALYSIS_METADATA = (
     "candidate_count",
     "candidates_considered",
     "analysis_model",
+    "analysis_method",
+    "analysed_at",
 )
 
 

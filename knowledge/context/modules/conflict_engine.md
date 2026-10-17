@@ -50,11 +50,31 @@ Backfill `--resume` and `POST /maintenance/analysis/run` select explicit
 bound 429 retries. The API batch is ops-token protected and capped at 25.
 Coverage is returned by `GET /maintenance/analysis/status`.
 
+### Opt-in cost cascade
+
+`MAINT_ANALYSIS_MODE=legacy` remains the default. In `cascade` mode, candidate
+ties are reordered by meaningful older-text containment, with supplemental-ID
+answer keys and generic boilerplate removed. Pairs below the pre-registered
+0.79 text/scope score become deterministic `screen` decisions without a model
+request. Remaining pairs use two votes, escalating to five only on initial
+disagreement; a persistent split goes to review. Confidence scales the model
+classification signal by vote agreement, never by the number of passes.
+
+Every classification stores method, model, votes, passes, provider token
+usage when available, agreement and timestamp in the cache and on the record
+(votes are JSON text for Neo4j property compatibility). A UTC-day budget is
+persisted per model and stops before 90% of configured request or token caps.
+Cache hits do not debit it. `/analysis/status` groups stored results by method,
+and `/analysis/run` returns its stop reason and remaining budget.
+
 The effective threshold is 0.50. The 2026-10-17 real-corpus preflight found
 1,835 model-eligible records under current positive-score pairing, materially
 different from the old “roughly 460” evidence. Do not tune pairing or routing
 to fit that old count without a ground-truth evaluation. See
 `docs/mid1/19_confidence_and_corrections_evidence.md`.
+The cascade’s offline evidence is in
+`docs/mid1/21_analysis_cascade_evidence.md`; live quality remains for the
+next round.
 
 ## Related
 
