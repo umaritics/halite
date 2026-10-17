@@ -14,8 +14,11 @@ updated: 2026-10-17
 2. `POST /api/maintenance/ingest` with default path `data/processed/sdr_poc_corpus.csv`.
 3. `MaintenanceAgent` creates `Asset` + unscored `ServiceRecord` (`confidence=null`), `ABOUT`, and chronological `PRECEDED_BY`.
 4. Idempotent: second ingest skips duplicates (`duplicates_skipped`).
-5. Health shows `maintenance_corpus_loaded` + non-zero count.
-6. `GET /api/maintenance/assets` returns assets and counts through one
+5. UI path: the Ingest page's **Upload CSV** panel posts the file (multipart `file`) to
+   `POST /api/maintenance/ingest/upload`, which runs the same agent on a temporary file.
+   Dates must be `MM/DD/YYYY`; an unreadable CSV currently returns an unhandled HTTP 500.
+6. Health shows `maintenance_corpus_loaded` + non-zero count.
+7. `GET /api/maintenance/assets` returns assets and counts through one
    repository aggregation; it does not issue one history query per asset.
 
 ## Dependency graph
@@ -23,6 +26,8 @@ updated: 2026-10-17
 ```mermaid
 flowchart LR
   CSV[sdr_poc_corpus.csv] --> Route[maintenance.py /ingest]
+  Upload[Ingest page: CsvUploader] --> UpRoute[maintenance.py /ingest/upload]
+  UpRoute --> Agent
   Route --> Agent[maintenance_agent.py]
   Agent --> GR[GraphRepository]
   Agent --> U[analysis_state unscored]

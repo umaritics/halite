@@ -26,7 +26,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
 | conflict, analysis_state, unscored, needs_review, confidence gate, cascade, daily budget, migration | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, decisions/DEC-20261017-conflict-analysis-state.md, decisions/DEC-20261017-analysis-cost-cascade.md, docs/mid1/19_confidence_and_corrections_evidence.md, docs/mid1/21_analysis_cascade_evidence.md |
 | review queue empty, all confidence 1, legacy placeholder | decisions/DEC-20261017-conflict-analysis-state.md, docs/mid1/19_confidence_and_corrections_evidence.md |
-| ingest, SDR, FAA corpus | flows/FLOW-ingest.md |
+| ingest, SDR, FAA corpus | flows/FLOW-ingest.md, decisions/DEC-20261017-ingest-csv-upload-ui.md |
 | DEMO_MODE, graph_mode, llm_mode | context/modules/devops.md |
 | CI, GitHub Actions, docker compose | flows/FLOW-ci.md, context/modules/devops.md |
 | staging, remote VM, deploy, OPS_TOKEN, ops/logs | context/modules/remote_backend.md, flows/FLOW-deploy.md |
@@ -50,6 +50,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |
 | `backend/agents/maintenance_agent.py` | FLOW-ingest.md |
 | `frontend/src/pages/Diagnostics.jsx` | modules/frontend.md, FLOW-diagnose.md |
+| `frontend/src/pages/MaintenanceIngest.jsx`, `frontend/src/components/CsvUploader.jsx`, `frontend/src/components/IngestResult.jsx` | modules/frontend.md, flows/FLOW-ingest.md, decisions/DEC-20261017-ingest-csv-upload-ui.md |
 | `frontend/src/pages/Graph.jsx`, `frontend/src/utils/graphScope.js`, `frontend/src/components/GraphViewer.jsx` | modules/frontend.md, decisions/DEC-20261017-graph-aircraft-focus.md |
 | `frontend/src/pages/ReviewQueue.jsx`, `frontend/src/pages/ServiceRecords.jsx` | modules/frontend.md, FLOW-conflict-review.md, decisions/DEC-20261017-fleet-service-records.md |
 | `.github/workflows/ci.yml` | FLOW-ci.md, modules/devops.md |
