@@ -31,6 +31,13 @@ describe('confidence and status states', () => {
     expect(screen.queryByText(/0\.00|1\.00/)).toBeNull();
   });
 
+  it('renders a flagged legacy 1.00 placeholder as not analysed', () => {
+    render(<><ConfidenceBar legacyPlaceholder confidence={1} /><StatusChip legacyPlaceholder status="auto_accepted" /></>);
+    expect(screen.getAllByText('Not analysed')).toHaveLength(2);
+    expect(screen.queryByText('1.00')).toBeNull();
+    expect(screen.queryByText('Auto Accepted')).toBeNull();
+  });
+
   it('renders no-conflict comparisons without a numeric score', () => {
     render(<ConfidenceBar analysisState="scored" confidence={0} classification="no_conflict" candidateCount={3} />);
     expect(screen.getByText('No conflict found (3 comparisons)')).toBeInTheDocument();

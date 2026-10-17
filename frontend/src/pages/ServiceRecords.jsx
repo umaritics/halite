@@ -131,8 +131,8 @@ export default function ServiceRecords() {
                     <span className="text-primary">{record.tail_number}</span>
                     <span className="text-secondary">{formatDate(record.occurred_at)}</span>
                     <span className="truncate text-primary">{record.part_name || 'Unknown'}</span>
-                    <ConfidenceBar confidence={record.confidence} analysisState={record.analysis_state} classification={record.classification_label} candidateCount={record.candidate_count ?? record.candidates_considered} status={record.status} />
-                    <StatusChip status={record.status} analysisState={record.analysis_state} />
+                    <ConfidenceBar confidence={record.confidence} analysisState={record.analysis_state} classification={record.classification_label} candidateCount={record.candidate_count ?? record.candidates_considered} status={record.status} legacyPlaceholder={record.legacy_placeholder} />
+                    <StatusChip status={record.status} analysisState={record.analysis_state} legacyPlaceholder={record.legacy_placeholder} />
                   </Link>
                   {record.status === 'superseded' && record.corrected_by && (
                     <div className="bg-amber-500/5 px-4 py-2 text-xs text-amber-500">

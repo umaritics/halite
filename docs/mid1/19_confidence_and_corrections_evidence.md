@@ -16,8 +16,33 @@ were not changed. The task explicitly waived normal Mid-I file ownership.
   `GET /api/maintenance/corrections`, filtered in the backing store.
 - UI: honest confidence states, fleet-wide Service Records, correction links,
   Review Queue coverage and Detected corrections tab.
+- Pre-migration read safety: an untouched stored `confidence=1.0` with no
+  analysis metadata is returned as `confidence=null`,
+  `analysis_state=unscored`, `legacy_placeholder=true`. Storage is unchanged,
+  so the dry-run/apply migration can still find it. Both Service Records and
+  Asset History render the flag as “Not analysed”.
 - Effective confidence threshold was already consistently `0.50` in
   `backend/config.py` and `backend/.env.example`; it was not tuned.
+
+Read-time regression output (ephemeral memory graph):
+
+```json
+{
+  "stored": {
+    "record_id": "LEGACY-1",
+    "status": "auto_accepted",
+    "confidence": 1.0,
+    "analysis_state": null
+  },
+  "api": {
+    "record_id": "LEGACY-1",
+    "status": "auto_accepted",
+    "confidence": null,
+    "analysis_state": "unscored",
+    "legacy_placeholder": true
+  }
+}
+```
 
 ## Automated verification
 
@@ -27,11 +52,12 @@ this Windows filesystem blocked pytest's temporary cache rename):
 ```text
 cd backend
 python -m pytest -p no:cacheprovider -q
-157 passed, 23 skipped in 7.55s
+158 passed, 23 skipped in 7.16s
 ```
 
-The 23 skips are the parameterized live-Neo4j cases. Docker was checked and
-was unavailable:
+The 23 local skips are the parameterized live-Neo4j cases. The PR CI backend
+job now provides an ephemeral Neo4j 5 service so those cases must execute
+there. Docker was checked locally and was unavailable:
 
 ```text
 failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine
@@ -43,11 +69,11 @@ Frontend:
 cd frontend
 npm test
 Test Files  12 passed (12)
-Tests       123 passed (123)
+Tests       125 passed (125)
 
 npm run build
 ✓ 854 modules transformed.
-✓ built in 6.20s
+✓ built in 5.19s
 ```
 
 The build retained the existing large-chunk warning. `npm ci` reported 15
@@ -166,6 +192,17 @@ because the live quota stopped the run.
 - Review Queue: coverage-aware empty message; Detected corrections tab has
   live cards, All-aircraft default, paired findings and evaluation footnote.
 
+## Shared staging read and prohibited writes
+
+A read-only health call returned `graph_mode=neo4j`, `llm_mode=live`, 2,079
+records, and deployed SHA `21bd6290365041500cfd850df7935a17cf331275`.
+`GET /api/maintenance/records?limit=1` returned HTTP 405 because this branch
+was not deployed. Therefore the **staging UI legacy presentation was not
+verified**; the local API/UI regression proves “Not analysed” for the new
+contract, not what the older staging SHA currently renders.
+
+No migration, analysis batch, or other staging graph write was made.
+
 ## Staging command sequence (not executed)
 
 Only run after explicit approval and a backup:
@@ -186,4 +223,5 @@ X-Ops-Token: <configured token>
 {"batch_size":25}
 ```
 
-Shared staging was not read or mutated for this verification.
+See `20_analysis_cost_report.md` for current candidate/cost measurements and
+the exact NOT RUN / UNVERIFIED list.

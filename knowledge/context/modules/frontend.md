@@ -59,7 +59,7 @@ and unknown paths redirect to `/app/assets`.
 | **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
-| Unscored never shows a number; no-conflict shows comparison count; relation scores are labelled heuristic/not probability; superseded shows backend `corrected_by` only | `ConfidenceBar.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx` |
+| Unscored and API-flagged legacy placeholders never show a number; no-conflict shows comparison count; relation scores are labelled heuristic/not probability; superseded shows backend `corrected_by` only | `ConfidenceBar.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx` |
 | Only backend-supplied values are displayed (no invented supersession reason, no "Invalid Date") | `AssetHistory.jsx`, `utils/format.js` |
 | No UI control may wipe the graph (Settings reset removed) | `Settings.jsx` |
 

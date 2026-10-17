@@ -42,6 +42,9 @@ older record is presented through its incoming `SUPERSEDES` edge rather than a
 confidence number.
 
 The legacy migration is dry-run by default and preserves `legacy_confidence`.
+Before migration, API reads identify an untouched `confidence=1.0` record with
+no analysis metadata as `legacy_placeholder`, return null confidence and
+`analysis_state=unscored`, and leave the stored graph value unchanged.
 Backfill `--resume` and `POST /maintenance/analysis/run` select explicit
 `analysis_state=unscored`; both require live Groq, use `allow_stub=False`, and
 bound 429 retries. The API batch is ops-token protected and capped at 25.

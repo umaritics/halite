@@ -7,9 +7,10 @@ export default function ConfidenceBar({
   classification,
   candidateCount,
   status,
+  legacyPlaceholder = false,
 }) {
   if (status === 'superseded') return null;
-  if (analysisState === 'unscored' || confidence === undefined || confidence === null) {
+  if (legacyPlaceholder || analysisState === 'unscored' || confidence === undefined || confidence === null) {
     return (
       <div className="flex flex-col gap-1 w-full max-w-[120px]">
         <div className="text-xs font-medium text-secondary">Not analysed</div>

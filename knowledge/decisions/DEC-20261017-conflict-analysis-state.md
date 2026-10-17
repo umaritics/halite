@@ -32,6 +32,8 @@ cross-backend/frontend correction.
   incoming `SUPERSEDES` record as “Corrected by <id>”.
 - The dry-run migration recognizes only `confidence=1.0` records with no
   analysis metadata and preserves `legacy_confidence`/`legacy_status`.
+- Until migration, API reads expose those untouched placeholders as unscored
+  with `legacy_placeholder=true` and null confidence, without changing storage.
 - Resume selects `analysis_state=unscored`; it never infers work state from a
   score. The effective threshold remains the evaluated `0.50`.
 - Same-aircraft records with pairing score zero are not model candidates.

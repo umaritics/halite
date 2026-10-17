@@ -30,6 +30,9 @@ updated: 2026-10-17
 - Review failure leaves the record in the queue. Reject never deletes source
   data.
 - A superseded older record shows its corrector, not a confidence score.
+- API reads normalize untouched legacy `confidence=1.0` placeholders to
+  `legacy_placeholder=true`, null confidence and an unscored presentation;
+  this does not write the graph or hide them from the migration.
 - Shared staging analysis or migration requires explicit approval.
 
 ## UI behavior

@@ -197,6 +197,34 @@ class TestIngestAndQuery:
         dates = [r["occurred_at"] for r in data["records"]]
         assert dates == sorted(dates)
 
+    def test_legacy_perfect_score_is_returned_as_not_analysed(self, seeded_client):
+        c, asset_id = seeded_client
+        repo = c.app.state.graph_repo
+        repo.create_service_record({
+            "record_id": "LEGACY100", "asset_key": "NSEED1",
+            "occurred_at": "2025-03-01", "text": "Legacy ingest placeholder.",
+            "part_name": "Bracket", "status": "auto_accepted", "confidence": 1.0,
+        })
+        repo.link_record_about_asset("LEGACY100", asset_id)
+        stored_id = repo.get_service_record("LEGACY100")["id"]
+        repo.store.nodes[stored_id].pop("analysis_state")
+
+        response = c.get("/api/maintenance/records")
+        record = next(item for item in response.json()["items"] if item["record_id"] == "LEGACY100")
+        assert record["confidence"] is None
+        assert record["analysis_state"] == "unscored"
+        assert record["legacy_placeholder"] is True
+
+        response = c.get(f"/api/maintenance/assets/{asset_id}/history")
+        record = next(item for item in response.json()["records"] if item["record_id"] == "LEGACY100")
+        assert record["confidence"] is None
+        assert record["analysis_state"] == "unscored"
+        assert record["legacy_placeholder"] is True
+
+        stored = repo.get_service_record("LEGACY100")
+        assert stored["confidence"] == 1.0
+        assert stored.get("analysis_state") is None
+
     def test_review_queue_returns_needs_review(self, seeded_client):
         c, _ = seeded_client
         resp = c.get("/api/maintenance/review-queue")

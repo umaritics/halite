@@ -13,20 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config import settings
 from graph.neo4j_client import Neo4jClient
 from graph.queries import GraphRepository
-
-ANALYSIS_METADATA = (
-    "analysis_state", "scored_at", "classification_label",
-    "classification_rationale", "candidate_count", "candidates_considered",
-    "analysis_model",
-)
-
-
-def is_legacy_placeholder(record: dict) -> bool:
-    return (
-        record.get("confidence") == 1.0
-        and record.get("legacy_confidence") is None
-        and not any(record.get(key) is not None for key in ANALYSIS_METADATA)
-    )
+from services.analysis_state import is_legacy_placeholder
 
 
 def is_restorable(record: dict) -> bool:

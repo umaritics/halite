@@ -159,7 +159,7 @@ export default function AssetHistory() {
                           Linked record
                         </span>
                       )}
-                      <StatusChip status={rec.status} analysisState={rec.analysis_state} />
+                      <StatusChip status={rec.status} analysisState={rec.analysis_state} legacyPlaceholder={rec.legacy_placeholder} />
                     </div>
                   </div>
 
@@ -182,7 +182,7 @@ export default function AssetHistory() {
                   {/* Conflict-engine and ingest fields exactly as the backend returns them. */}
                   {(rec.analysis_state || rec.confidence != null || rec.jasc_code || rec.source) && (
                     <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-xs text-secondary">
-                      <ConfidenceBar confidence={rec.confidence} analysisState={rec.analysis_state} classification={rec.classification_label} candidateCount={rec.candidate_count ?? rec.candidates_considered} status={rec.status} />
+                      <ConfidenceBar confidence={rec.confidence} analysisState={rec.analysis_state} classification={rec.classification_label} candidateCount={rec.candidate_count ?? rec.candidates_considered} status={rec.status} legacyPlaceholder={rec.legacy_placeholder} />
                       {rec.jasc_code && <span>JASC {rec.jasc_code}</span>}
                       {rec.source && <span>Source: {rec.source}</span>}
                     </div>

@@ -10,7 +10,8 @@ updated: 2026-10-16
 
 ## Jobs
 
-1. **backend** — pytest with `DEMO_MODE=true`, empty Neo4j/Groq secrets.
+1. **backend** — pytest with `DEMO_MODE=true`, empty Groq secrets, and an
+   ephemeral Neo4j 5 service so repository contracts execute in both stores.
 2. **frontend** — `npm ci`, `npm test`, `npm run build`.
 3. **docker-smoke** — compose up, health, `verify_mid1_runtime.py`, frontend root HTML check, teardown.
 

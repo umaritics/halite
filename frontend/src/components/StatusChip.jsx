@@ -1,9 +1,9 @@
 import React from 'react';
 
-export default function StatusChip({ status, analysisState }) {
+export default function StatusChip({ status, analysisState, legacyPlaceholder = false }) {
   const baseClasses = "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border";
 
-  if (analysisState === 'unscored' || status === 'unscored') {
+  if (legacyPlaceholder || analysisState === 'unscored' || status === 'unscored') {
     return <span className={`${baseClasses} bg-purple-500/10 border-purple-500/20 text-purple-600 dark:text-purple-400`}>Not analysed</span>;
   }
 

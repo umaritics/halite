@@ -27,6 +27,7 @@ from api.deps import get_graph_repo, get_groq_service, get_settings
 from api.routes.ops import _require_ops_token
 from domains.registry import list_domains
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
+from services.analysis_state import normalize_analysis_for_api
 
 logger = logging.getLogger(__name__)
 
@@ -174,11 +175,13 @@ def list_records(
     graph_repo=Depends(get_graph_repo),
 ):
     """Fleet-wide record list with store-level filtering and pagination."""
-    return graph_repo.list_service_records_page(
+    page = graph_repo.list_service_records_page(
         asset_id=asset_id, q=q, status=status, analysis_state=analysis_state,
         part=part, date_from=date_from, date_to=date_to, sort=sort,
         limit=limit, offset=offset,
     )
+    page["items"] = [normalize_analysis_for_api(record) for record in page["items"]]
+    return page
 
 
 @router.get("/records/{record_id}")
@@ -291,7 +294,11 @@ def asset_history(asset_id: str, graph_repo=Depends(get_graph_repo)):
         if asset is None:
             raise HTTPException(status_code=404, detail=f"Asset {asset_id!r} not found")
 
-    return {"asset_id": asset_id, "records": history, "count": len(history)}
+    return {
+        "asset_id": asset_id,
+        "records": [normalize_analysis_for_api(record) for record in history],
+        "count": len(history),
+    }
 
 
 # ---------------------------------------------------------------------------
