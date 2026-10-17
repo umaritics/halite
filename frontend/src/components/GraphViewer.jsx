@@ -112,6 +112,10 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
 
   useEffect(() => {
     if (!fgRef.current || !graphData.nodes.length) return;
+    // Space the layout out so a small graph's edges are not hidden behind its nodes.
+    const link = fgRef.current.d3Force?.('link');
+    link?.distance?.(70);
+    fgRef.current.d3Force?.('charge')?.strength?.(-140);
     const t = setTimeout(() => {
       try {
         fgRef.current.zoomToFit(500, 80);
@@ -162,7 +166,7 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
           nodeLabel="displayName"
           nodeColor={(n) => n.color}
           nodeVal={(n) => n.val || 5}
-          nodeRelSize={6}
+          nodeRelSize={4}
           nodeOpacity={1}
           linkColor={(l) => (l.type === CORRECTION_EDGE ? CORRECTION_COLOR : linkCol)}
           linkWidth={(l) => (l.type === CORRECTION_EDGE ? 3.5 : 1.5)}
@@ -174,8 +178,10 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
           onNodeHover={(node) => {
             document.body.style.cursor = node ? 'pointer' : 'default';
           }}
-          cooldownTicks={80}
-          // Default is 15 s; the camera is only fitted when the layout stops, so cap it.
+          // Settle the layout before the first frame so the camera fits to the final positions even
+          // when frames are slow; very large views keep a short animated settle instead.
+          warmupTicks={graphData.nodes.length > 600 ? 30 : 120}
+          cooldownTicks={graphData.nodes.length > 600 ? 80 : 0}
           cooldownTime={3000}
           onEngineStop={() => {
             try {
