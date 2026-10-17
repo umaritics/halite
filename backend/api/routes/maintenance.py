@@ -15,14 +15,16 @@ Endpoints:
 """
 import logging
 import os
+import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from pydantic import BaseModel, Field, field_validator
 
 from agents.maintenance_agent import MaintenanceAgent
 from api.deps import get_graph_repo, get_groq_service, get_settings
+from api.routes.ops import _require_ops_token
 from domains.registry import list_domains
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
 
@@ -67,6 +69,10 @@ class RejectActionRequest(BaseModel):
         if not value:
             raise ValueError("rejection note must not be blank")
         return value
+
+
+class AnalysisRunRequest(BaseModel):
+    batch_size: int = Field(default=10, ge=1, le=25)
 
 
 # ---------------------------------------------------------------------------
@@ -152,6 +158,28 @@ async def maintenance_ingest_upload(
 # ---------------------------------------------------------------------------
 # GET /api/maintenance/records/{record_id} — read-only detail
 # ---------------------------------------------------------------------------
+
+@router.get("/records")
+def list_records(
+    asset_id: str | None = None,
+    q: str | None = None,
+    status: str | None = None,
+    analysis_state: str | None = None,
+    part: str | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    sort: Literal["occurred_at_desc", "occurred_at_asc", "record_id_asc", "record_id_desc"] = "occurred_at_desc",
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    graph_repo=Depends(get_graph_repo),
+):
+    """Fleet-wide record list with store-level filtering and pagination."""
+    return graph_repo.list_service_records_page(
+        asset_id=asset_id, q=q, status=status, analysis_state=analysis_state,
+        part=part, date_from=date_from, date_to=date_to, sort=sort,
+        limit=limit, offset=offset,
+    )
+
 
 @router.get("/records/{record_id}")
 def get_single_record(
@@ -279,6 +307,90 @@ def review_queue(graph_repo=Depends(get_graph_repo)):
     return records
 
 
+@router.get("/analysis/status")
+def analysis_status(graph_repo=Depends(get_graph_repo)):
+    """Return live conflict-analysis coverage from stored record metadata."""
+    return graph_repo.analysis_status()
+
+
+@router.post("/analysis/run")
+def run_analysis_batch(
+    body: AnalysisRunRequest | None = None,
+    _: None = Depends(_require_ops_token),
+    graph_repo=Depends(get_graph_repo),
+    groq_service=Depends(get_groq_service),
+    settings=Depends(get_settings),
+):
+    """Process the next bounded chronological batch of unscored records."""
+    if not groq_service.is_live:
+        raise HTTPException(status_code=503, detail="A live Groq model is required for conflict analysis.")
+    body = body or AnalysisRunRequest()
+    before = graph_repo.analysis_status()
+    page = graph_repo.list_service_records_page(
+        analysis_state="unscored", sort="occurred_at_asc",
+        limit=body.batch_size, offset=0,
+    )
+    adapter = _get_maintenance_adapter()
+    results = []
+    model_records = 0
+    for record in page["items"]:
+        record_id = record["record_id"]
+        last_error = None
+        for attempt in range(3):
+            try:
+                result = process_record(
+                    graph_repo, groq_service, adapter, record_id,
+                    threshold=settings.MAINT_CONFIDENCE_THRESHOLD,
+                    allow_stub=False,
+                )
+                if result["candidates_considered"] > 0:
+                    model_records += 1
+                results.append({
+                    "record_id": record_id,
+                    "analysis_state": "needs_review" if result["status_applied"] == "needs_review" else "scored",
+                    "classification_label": (result.get("classification") or {}).get("label"),
+                    "confidence": result.get("confidence"),
+                    "candidates_considered": result.get("candidates_considered", 0),
+                })
+                last_error = None
+                break
+            except RuntimeError as exc:
+                last_error = exc
+                if "429" not in str(exc) and "rate limit" not in str(exc).lower():
+                    break
+                if attempt < 2:
+                    time.sleep(0.5 * (attempt + 1))
+        if last_error is not None:
+            raise HTTPException(status_code=503, detail=f"Analysis stopped at {record_id}: {last_error}")
+    after = graph_repo.analysis_status()
+    return {
+        "batch_size": body.batch_size,
+        "processed": len(results),
+        "model_records": model_records,
+        "no_candidate_records": len(results) - model_records,
+        "remaining_unscored": after["unscored"],
+        "before": before,
+        "after": after,
+        "results": results,
+    }
+
+
+@router.get("/corrections")
+def corrections(
+    asset_id: str | None = None,
+    component_changed: bool | None = None,
+    date_from: str | None = None,
+    date_to: str | None = None,
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    graph_repo=Depends(get_graph_repo),
+):
+    return graph_repo.list_corrections_page(
+        asset_id=asset_id, component_changed=component_changed,
+        date_from=date_from, date_to=date_to, limit=limit, offset=offset,
+    )
+
+
 # ---------------------------------------------------------------------------
 # POST /api/maintenance/review-queue/{record_id}/accept
 # ---------------------------------------------------------------------------
@@ -299,7 +411,10 @@ def accept_record(
             status_code=409,
             detail=f"Record {record_id!r} is in status '{sr.get('status')}', cannot accept",
         )
-    updated = graph_repo.update_service_record(record_id, {"status": "accepted", "review_note": note})
+    updated = graph_repo.update_service_record(
+        record_id,
+        {"status": "accepted", "analysis_state": "reviewed", "review_note": note},
+    )
     logger.info("Record %r accepted. Note: %r", record_id, note)
     return {"record_id": record_id, "status": "accepted", "record": updated}
 
@@ -324,7 +439,8 @@ def reject_record(
             detail=f"Record {record_id!r} is in status '{sr.get('status')}', cannot reject",
         )
     updated = graph_repo.update_service_record(
-        record_id, {"status": "rejected", "review_note": body.note}
+        record_id,
+        {"status": "rejected", "analysis_state": "reviewed", "review_note": body.note},
     )
     logger.info("Record %r rejected. Note: %r", record_id, body.note)
     return {"record_id": record_id, "status": "rejected", "record": updated}

@@ -27,13 +27,12 @@ def test_backfill_refuses_to_run_without_live_groq(monkeypatch):
 @pytest.mark.parametrize(
     ("record", "expected"),
     [
-        ({"status": "auto_accepted", "confidence": 1.0}, True),
-        ({"status": "auto_accepted", "confidence": 1.0,
-          "classification_label": "supersedes"}, False),
-        ({"status": "auto_accepted", "confidence": 0.8}, False),
-        ({"status": "superseded", "confidence": 1.0}, False),
-        ({"status": "needs_review", "confidence": 1.0}, False),
+        ({"analysis_state": "unscored", "confidence": None}, True),
+        ({"analysis_state": "scored", "confidence": 1.0}, False),
+        ({"analysis_state": "needs_review", "confidence": 0.4}, False),
+        ({"analysis_state": "reviewed", "confidence": 0.8}, False),
+        ({"confidence": 1.0}, True),
     ],
 )
-def test_resume_only_selects_untouched_ingest_placeholders(record, expected):
+def test_resume_uses_analysis_state_only(record, expected):
     assert backfill_conflict_scores._is_unscored_placeholder(record) is expected

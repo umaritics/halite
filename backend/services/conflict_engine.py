@@ -13,13 +13,13 @@ Public API:
 §7 guard: process_record raises RuntimeError if groq_service.is_live is False
 and allow_stub is False.  Unit tests pass allow_stub=True.
 
-§5 — confidence threshold: default MAINT_CONFIDENCE_THRESHOLD = 0.72
-Provisional — must be re-calibrated after T7 evaluation.
+§5 — confidence threshold: MAINT_CONFIDENCE_THRESHOLD = 0.50, selected by the
+recorded T7 evaluation. Runtime callers pass settings.MAINT_CONFIDENCE_THRESHOLD.
 """
 import json
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -56,10 +56,10 @@ WEIGHTS_NO_CITATION: dict[str, float] = {
     "proximity_bonus": 0.10,                  # increased weight
 }
 
-# Default threshold — provisional, pending T7 calibration.
-# Documented as provisional in the final report; do not present as tuned.
+# Fallback aligned with config.py and .env.example. The evaluation in
+# docs/evaluation_results.md selected 0.50; do not change without rerunning it.
 MAINT_CONFIDENCE_THRESHOLD: float = float(
-    os.environ.get("MAINT_CONFIDENCE_THRESHOLD", "0.72")
+    os.environ.get("MAINT_CONFIDENCE_THRESHOLD", "0.50")
 )
 
 # Max candidates to retrieve per record — env-overridable.
@@ -116,10 +116,10 @@ def find_candidate_pairs(
 
     # Find the asset linked to this record
     if graph_repo.is_memory:
-        sr_nodes = graph_repo.store._find_nodes("ServiceRecord", record_id=record_id)
-        if not sr_nodes:
+        target_node = graph_repo.store.get_service_record(record_id)
+        if not target_node:
             return []
-        sr_node_id = sr_nodes[0]["id"]
+        sr_node_id = target_node["id"]
         # Find the asset via ABOUT edge
         asset_id = None
         for edge in graph_repo.store.edges:
@@ -195,11 +195,17 @@ def find_candidate_pairs(
         except (ValueError, KeyError):
             pass
 
-        candidates.append({"record": prior, "score": score})
+        # A same-aircraft record is only comparable when at least one graph-
+        # pruning signal matches. Sending score-zero pairs to the model turns
+        # unrelated history into fake candidates and defeats the documented
+        # no-candidate fast path.
+        if score > 0:
+            candidates.append({"record": prior, "score": score})
 
-    # Sort descending by score, then descending by occurred_at (most recent first)
-    candidates.sort(key=lambda c: (-c["score"], c["record"].get("occurred_at", "")), reverse=False)
-    candidates.sort(key=lambda c: -c["score"])
+    # Stable deterministic ordering: score DESC, date DESC, record_id ASC.
+    candidates.sort(key=lambda c: str(c["record"].get("record_id", "")))
+    candidates.sort(key=lambda c: c["record"].get("occurred_at", ""), reverse=True)
+    candidates.sort(key=lambda c: c["score"], reverse=True)
 
     result = candidates[:max_candidates]
     logger.info(
@@ -403,6 +409,9 @@ def route(record: dict, confidence: float, threshold: float, classification: dic
     Route a record based on classification and confidence.
     """
     label = classification.get("label", "no_conflict") if classification else "no_conflict"
+
+    if classification and classification.get("parse_failed"):
+        return "needs_review"
     
     if label in ("contradicts", "partial_supersedes"):
         return "needs_review"
@@ -442,6 +451,8 @@ def process_record(
         )
 
     parse_failures = 0
+    scored_at = datetime.now(timezone.utc).isoformat()
+    analysis_model = getattr(groq_service, "model", "unknown")
 
     # 1. Find candidates
     candidates = find_candidate_pairs(graph_repo, record_id, max_candidates=MAINT_MAX_CANDIDATES)
@@ -455,25 +466,33 @@ def process_record(
     if not candidates:
         if not dry_run:
             graph_repo.update_service_record(record_id, {
-                "status": "auto_accepted",
+                "status": "no_action",
+                "analysis_state": "scored",
                 "confidence": 0.0,
+                "scored_at": scored_at,
                 "history_size": history_size,
+                "candidate_count": 0,
                 "candidates_considered": 0,
-                "classification_label": None,
-                "classification_rationale": None,
+                "classification_label": "no_candidates",
+                "classification_rationale": "No comparable earlier record was found.",
+                "analysis_model": "none",
             })
         return {
             "record_id": record_id,
             "candidates_considered": 0,
             "history_size": history_size,
             "best_prior": None,
-            "classification": None,
+            "classification": {
+                "label": "no_candidates",
+                "rationale": "No comparable earlier record was found.",
+                "parse_failed": False,
+            },
             "adjudication": None,
             "signals": {},
             "confidence": 0.0,
-            "route": "auto_accepted",
+            "route": "no_action",
             "parse_failures": 0,
-            "status_applied": "auto_accepted",
+            "status_applied": "no_action",
         }
 
     # 2. Classify against the top candidate
@@ -538,11 +557,15 @@ def process_record(
     if not dry_run:
         graph_repo.update_service_record(record_id, {
             "status": status_applied, 
+            "analysis_state": "needs_review" if status_applied == "needs_review" else "scored",
             "confidence": confidence,
+            "scored_at": scored_at,
             "history_size": history_size,
+            "candidate_count": len(candidates),
             "candidates_considered": len(candidates),
             "classification_label": classification.get("label") if classification else None,
-            "classification_rationale": classification.get("rationale") if classification else None
+            "classification_rationale": classification.get("rationale") if classification else None,
+            "analysis_model": analysis_model,
         })
 
     return {
