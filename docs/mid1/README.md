@@ -34,6 +34,7 @@ Durable architecture lives in [`knowledge/`](../../knowledge/README.md). Univers
 | [22_cursor_handoff_2026-10-17.md](22_cursor_handoff_2026-10-17.md) | Team → Cursor | Corrected current state, completed work, and explicit remaining expanded requirements |
 | [23_single_aircraft_analysis_evidence.md](23_single_aircraft_analysis_evidence.md) | Shahmeer | Bounded single-aircraft (800NN) conflict analysis on a scratch graph, vs FAA ground truth |
 | [report/](report/README.md) | Team | LaTeX source of the FYP-1 Mid report (build instructions, figures, generated test appendix) |
+| [24_live_revalidation_2026-10-18.md](24_live_revalidation_2026-10-18.md) | Shahmeer | Live re-validation on the real local stack; found and fixed the broken one-shot diagnose prompt |
 
 ## Partner agents — start here
 

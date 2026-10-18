@@ -15,6 +15,10 @@ htmlcov/
 frontend/node_modules/
 frontend/dist/
 
+# Local frontend configuration (may point at a private backend)
+frontend/.env.local
+frontend/.env.*.local
+
 # IDE
 .vscode/
 .idea/

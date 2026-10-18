@@ -16,6 +16,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 | [DEC-20261017-conflict-analysis-state](DEC-20261017-conflict-analysis-state.md) | Persist honest conflict-analysis state separately from confidence | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261017-fleet-service-records](DEC-20261017-fleet-service-records.md) | Fleet-wide paginated Service Records and corrections | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261017-graph-aircraft-focus](DEC-20261017-graph-aircraft-focus.md) | Knowledge Graph shows one aircraft's stored subgraph with truthful counts | accepted | Shahmeer |
+| [DEC-20261018-protect-graph-reset](DEC-20261018-protect-graph-reset.md) | Graph reset needs the operations token (and a typed confirmation for Neo4j) | accepted | Usman, Umar, Shahmeer |
 | [DEC-20261017-ingest-csv-upload-ui](DEC-20261017-ingest-csv-upload-ui.md) | Ingest page uploads a CSV via the existing upload route; honest counts, inline errors | accepted | Shahmeer |
 | [DEC-20261017-diagnostic-copilot-scope](DEC-20261017-diagnostic-copilot-scope.md) | Diagnostic copilot cross-owner scope waiver | accepted | Umar, Shahmeer, Usman |
 | [DEC-20261016-main-only-staging-release](DEC-20261016-main-only-staging-release.md) | Main-only, CI-gated staging releases | accepted | Umar, Usman |
