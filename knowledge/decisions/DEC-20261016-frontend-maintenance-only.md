@@ -29,3 +29,5 @@ navigation and forbids destructive wipes of the demo dataset.
 - Reinstating any software screen needs a new DEC.
 - `DELETE /api/graph/reset` still exists on the backend (Usman); removing the UI button does not protect the API.
 - Tests: `DomainContext`, `Sidebar`.
+
+Update 2026-10-18: the backend route is now protected by the operations token; see [DEC-20261018-protect-graph-reset](DEC-20261018-protect-graph-reset.md).
