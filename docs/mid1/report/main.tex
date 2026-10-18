@@ -1,0 +1,111 @@
+\documentclass{fast-nuces-bs}
+%\documentclass{article}
+
+\usepackage{blindtext}
+\usepackage{mathptmx}% Times Roman font
+\usepackage[T1]{fontenc}
+\usepackage{lipsum} 
+\usepackage{sectsty}
+\usepackage{tikz-uml}
+\usepackage{titlesec}
+\usepackage{longtable,booktabs,array,graphicx,xcolor,tabularx,multirow,enumitem,float,caption,listings,url}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds,decorations.pathreplacing}
+\graphicspath{{./ThesisFigs/}{../screenshots/}{./figures/}}
+\setlist{itemsep=2pt,topsep=4pt}
+\setlength{\tabcolsep}{3pt}
+\sloppy\setlength{\emergencystretch}{3em}
+\renewcommand{\arraystretch}{1.12}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,frame=single,columns=fullflexible}
+\tikzset{
+  box/.style={draw,rounded corners=2pt,align=center,font=\footnotesize,minimum height=0.75cm,inner sep=4pt,fill=white},
+  ext/.style={draw,rounded corners=2pt,align=center,font=\footnotesize,minimum height=0.75cm,inner sep=4pt,fill=gray!18},
+  grp/.style={draw,dashed,rounded corners=4pt,inner sep=7pt},
+  arr/.style={-{Stealth[length=2mm]}},
+  darr/.style={dashed,-{Stealth[length=2mm]}},
+  lab/.style={font=\scriptsize,fill=white,inner sep=1pt},
+}
+% Items the team must confirm before submission are highlighted so they cannot be missed.
+\makeatletter\g@addto@macro\UrlBreaks{\do\_\do\-\do\:}\makeatother
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\pth}[1]{{\urlstyle{tt}\path{#1}}}
+\usepackage{soul}
+\newcommand{\confirm}[1]{{\sethlcolor{yellow}\bfseries\hl{[CONFIRM: #1]}}}
+
+% Information about the Thesis 
+% -----------------------------------------------------------------------------
+% (All are compulsory, do not delete any line other than author Information)
+% For e.g., usually there are 3 students in a group, so leave authorone, 
+% authortwo, and authorthree, and delete authorfour.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\department{FAST School of Computing}
+\faculty{Computer Science}
+\degreeyear{2026}
+\degreemonth{October}
+\degreename{Computer Science}
+\campuscity{Islamabad}
+\authorone{Shahmeer Atif}{23I-0711}
+\authortwo{Muhammad Umar}{23I-0782}
+\authorthree{Muhammad Usman Al Haq}{23I-0585}
+\supervisor{Syed Muhammad Saad Salman}
+\sessionduration{ 2023--2027}
+\deanname{Dr. Dean Computing}
+\directorname{Dr. Director of the Campus}
+\hodname{Dr. Head of Computer Science Department}
+\fypcoordinatorname{Name of FYP Coordinator}
+\title{Halite: AI-Powered Maintenance Diagnostics and Asset Intelligence Platform}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Former document starts below this
+\def\projecttitle{Halite: AI-Powered Maintenance Diagnostics and Asset Intelligence Platform}
+\def\studentone{Shahmeer Atif (23I-0711)}
+\def\studenttwo{Muhammad Umar (23I-0782)}
+\def\studentthree{Muhammad Usman Al Haq (23I-0585)}
+
+\begin{document}
+
+%\begin{acknowledgements}
+%	Your acknowledgments here
+%\end{acknowledgements}
+
+%\begin{abstract}
+%Briefly state the (1) research problem, (2) methodology, (3) key results, and (4) conclusion. Generally, abstracts are between 150 and 200 words–roughly 10-15 sentences.
+%\end{abstract}
+
+\cleardoublepage
+\pagenumbering{roman}
+\input{chapters/01_students_submission}
+\input{chapters/02_anti_plagiarism}
+\input{chapters/03_authors_declaration}
+\input{chapters/04_abstract}
+\input{chapters/05_acknowledgments}
+\input{chapters/06_executive_summary}
+% The class prints the contents and the lists of figures and tables with the title page.
+\input{chapters/07_abbreviations}
+
+\cleardoublepage
+\pagenumbering{arabic}
+\input{chapters/chapter1_introduction}
+\input{chapters/chapter2_research}
+\input{chapters/chapter3_iteration_plan}
+\input{chapters/chapter4_requirements}
+\input{chapters/chapter5_design}
+\input{chapters/chapter6_iteration1}
+\input{chapters/chapter8_testing}
+\input{chapters/chapter9_development_evidence}
+\input{chapters/chapter10_fyp2_plan}
+\input{chapters/conclusion}
+
+\appendix
+\input{chapters/appendix_action_register}
+\input{chapters/appendix_requirements}
+\input{chapters/appendix_test_cases}
+\input{chapters/appendix_repository}
+\input{chapters/appendix_diagrams}
+\input{chapters/appendix_meetings}
+
+\bibliographystyle{plainnat}
+\bibliography{references/references}
+\end{document}
+

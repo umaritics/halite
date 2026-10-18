@@ -1,0 +1,148 @@
+\chapter{Project Management and Development Evidence}\label{ch:evidence}
+
+\section{Work Completed}
+\begin{itemize}
+\item The data pipeline: FAA acquisition, ground-truth extraction, a validated idempotent ingest, 2,079 records on 118 aircraft in Neo4j.
+\item The backend: maintenance, diagnostics, graph and operations routes; deterministic retrieval and ranking; citation validation; the conflict engine with an honest analysis state, a budget and an opt-in cost cascade.
+\item The frontend: assets, history, fleet records, diagnostics (Copilot and Quick diagnose), review queue and corrections, knowledge graph, CSV ingest, system status.
+\item Quality and delivery: 371 automated tests, CI on pushes to \code{main}, named branches and every pull request, a CI-gated staging deployment, decision records and a knowledge bank, and dated evidence under \code{docs/mid1/}.
+\end{itemize}
+
+\section{Work Remaining}
+Hybrid retrieval and its evaluation; role-based access and organisations; server-side session history; the training and analytics modules; analysis of the full corpus; usability testing; coverage measurement; and the open defects in Table~\ref{tab:defects}. Chapter~\ref{ch:remaining} gives the plan.
+
+\section{Individual Responsibilities}
+\begin{longtable}{p{0.17\textwidth}p{0.4\textwidth}p{0.33\textwidth}}
+\caption{Ownership of files and work packages}\label{tab:owners}\\
+\toprule \textbf{Member} & \textbf{Owns} & \textbf{Work packages} \\ \midrule \endfirsthead
+\toprule \textbf{Member} & \textbf{Owns} & \textbf{Work packages} \\ \midrule \endhead
+Shahmeer Atif (23I-0711) & React pages and components, the Axios client, frontend tests & S1--S5, then the graph view, CSV upload, evidence refresh \\
+Muhammad Umar (23I-0782) & Graph schema and queries, diagnose internals, ranking, citation validation, diagnostic tests & U1--U5 \\
+Muhammad Usman Al Haq (23I-0585) & Ingest, maintenance APIs, conflict engine, Docker Compose, CI, application wiring & A1--A4, then copilot, confidence and corrections, cost cascade \\
+\bottomrule
+\end{longtable}
+
+\section{Contribution of Each Team Member}\label{sec:contrib}
+Commit and pull-request counts below are evidence of activity, not a measure of contribution; the proposal states the same. They are counted at commit \code{06bc614}, excluding merge commits. GitHub attributes the commits made under the author name ``Your Name'' (email \code{i230585@isb.nu.edu.pk}) to Usman's account; Shahmeer's commits carry two author identities.
+\begin{longtable}{p{0.2\textwidth}p{0.1\textwidth}p{0.22\textwidth}p{0.4\textwidth}}
+\caption{Repository activity by member}\label{tab:activity}\\
+\toprule \textbf{Member} & \textbf{Commits} & \textbf{Pull requests authored} & \textbf{Main deliverables} \\ \midrule \endfirsthead
+\toprule \textbf{Member} & \textbf{Commits} & \textbf{Pull requests authored} & \textbf{Main deliverables} \\ \midrule \endhead
+Shahmeer & 22 & \#3, \#4, \#8--\#13, \#16, \#17 merged; \#14 open; \#15 (this report) & Frontend rework and tests; graph view; CSV upload; knowledge-bank entries for the frontend; evidence documents; the live re-validation and the two fixes it led to; this report \\
+Umar & 19 & none on GitHub; his branch was merged through the integration branches & Bounded retrieval (U2), deterministic ranking (U3), citation boundary and tests (U4, U5); shared staging deployment workflow and operations API; the knowledge bank and agent protocol \\
+Usman & 59 & \#2, \#5, \#6, \#7 merged; \#1 closed unmerged & Maintenance domain and conflict engine, FAA data acquisition and ingest, evaluation harness, maintenance APIs, CI, diagnostic copilot, confidence and corrections, cost cascade \\
+\bottomrule
+\end{longtable}
+
+\textbf{Shahmeer Atif} rebuilt the maintenance frontend against the frozen backend contract (work packages S1--S5): maintenance-only navigation, asset and history pages with dependable evidence deep links, diagnostics states, a server-confirmed review queue, and the fleet-wide records page that replaced a 119-request fan-out. He then added the one-aircraft knowledge graph, the CSV upload page and the evidence and demonstration documents, and ran and recorded the one-aircraft analysis (Section~\ref{sec:oneaircraft}). \emph{Can demonstrate and explain:} the page code and its tests; the failure model; how each screen reflects a backend field.
+
+\textbf{Muhammad Umar} audited the existing diagnostics (U1), made retrieval bounded on the real Neo4j corpus (U2), wrote the deterministic ranking with a stable tie-break (U3), the citation boundary and its failure behaviour (U4) and the diagnostic backend tests (U5), and set up the shared staging deployment, the operations API and the knowledge bank. \emph{Can demonstrate and explain:} the ranking formula, the retrieval bounds, the citation validation and the staging release path.
+
+\textbf{Muhammad Usman Al Haq} built the maintenance proof of concept in September (domain registry, FAA acquisition with 141 ground-truth pairs, ingest, the conflict engine and its evaluation) and, in October, the maintenance APIs and hosted CI (A1--A4), then the diagnostic copilot, the honest analysis state with corrections, and the cost cascade. \emph{Can demonstrate and explain:} the conflict pipeline and its routing, the ingest agent, the budget and cascade, and the CI workflows.
+
+\section{Repository and Version Control Evidence}
+The repository is \pth{github.com/umaritics/halite}. Work is organised in feature branches and pull requests; each pull request ran the CI checks before merge. Table~\ref{tab:prs} lists them.
+\begin{longtable}{p{0.06\textwidth}p{0.2\textwidth}p{0.12\textwidth}p{0.5\textwidth}}
+\caption{Pull requests}\label{tab:prs}\\
+\toprule \textbf{PR} & \textbf{Author} & \textbf{State} & \textbf{Title} \\ \midrule \endfirsthead
+\toprule \textbf{PR} & \textbf{Author} & \textbf{State} & \textbf{Title} \\ \midrule \endhead
+\#1 & Usman & closed & Maintenance domain integration (September proof of concept; the commits are in \code{main}'s history through the integration branch) \\
+\#2 & Usman & merged & Mid-I backend release hygiene closure \\
+\#3 & Shahmeer & merged & Frontend maintenance UX, Service Records performance, diagnose and review hardening \\
+\#4 & Shahmeer & merged & Frontend reflects backend outputs \\
+\#5 & Usman & merged & Evidence-grounded diagnostic copilot \\
+\#6 & Usman & merged & Confidence, corrections, conflict-cost evidence \\
+\#7 & Usman & merged & Opt-in conflict-analysis cost cascade \\
+\#8 & Shahmeer & merged & Documentation sync after \#5--\#7 \\
+\#9 & Shahmeer & merged & Knowledge graph focused on one aircraft \\
+\#10 & Shahmeer & merged & CSV upload with honest counts and inline errors \\
+\#11 & Shahmeer & merged & Graph spacing and layout settling \\
+\#12 & Shahmeer & merged & Single-aircraft analysis evidence \\
+\#13 & Shahmeer & merged & Frontend evidence and demo script refresh \\
+\#14 & Shahmeer & open & WebGL check and error boundary for the graph \\
+\#15 & Shahmeer & merged after \code{06bc614} & This report (documents only) \\
+\#16 & Shahmeer & merged & Protect the graph-reset route with the operations token \\
+\#17 & Shahmeer & merged & Restore the one-shot diagnosis prompt (found by live re-validation) \\
+\bottomrule
+\end{longtable}
+\textbf{Release marking.} The annotated tag \code{mid1-submission}, created on 18 October 2026, marks the \code{main} commit that contains this report. The code and tests described here were evaluated at commit \code{06bc614} (CI run 39143888904); the commits after it add this report and its source, documents only.
+
+\section{Milestones and Commit Evidence}
+\begin{longtable}{p{0.16\textwidth}p{0.45\textwidth}p{0.3\textwidth}}
+\caption{Milestone log with evidence}\label{tab:milestones}\\
+\toprule \textbf{Date (2026)} & \textbf{Milestone} & \textbf{Evidence} \\ \midrule \endfirsthead
+\toprule \textbf{Date (2026)} & \textbf{Milestone} & \textbf{Evidence} \\ \midrule \endhead
+11 Jul -- 18 Aug & Earlier software-engineering prototype (later set aside) & Commits by Umar's account \\
+8 -- 10 Sep & Maintenance proof of concept: domain registry, FAA acquisition, conflict engine, evaluation harness, first maintenance screens & Commits T0--T10, C--E, F, G, H, J \\
+15 Oct & Mid-I engineering blueprint; runtime smoke test fixed in CI & \pth{docs/halite_work_division_mid1.pdf}; commit \code{2651eab} \\
+16 Oct & Frontend S1--S5; retrieval, ranking and citation boundary U2--U5; staging deployment; PRs \#2--\#5 merged & Commits; \code{docs/mid1/02}, \code{08}, \code{11}--\code{13} \\
+17 Oct & Confidence and corrections; cost cascade; knowledge graph; PRs \#6, \#7, \#9 & \code{docs/mid1/19}--\code{21} \\
+18 Oct & CSV upload; evidence refresh; one-aircraft analysis; live re-validation, which found and fixed a broken diagnosis prompt; protection of the graph-reset route; this report; PRs \#10--\#13, \#15--\#17 & \code{docs/mid1/23}, \code{24}; CI run 39143888904 \\
+\bottomrule
+\end{longtable}
+
+\section{Tools and Tool-Assisted Development}\label{sec:tools}
+\textbf{Disclosure.} The team used three generative-AI tools during development and during the preparation of this report: \textbf{Claude} (Claude Code, model Claude Sonnet 5.5), \textbf{OpenAI Codex} and \textbf{Cursor}. This section states what is recorded about each, how the output was checked, and where each member must add to it. The proposal committed the team to an AI usage log (\S3.9.4); the repository's agent protocol (\code{AGENTS.md}) and the existing report addendum (\code{docs/mid1/15}) already say that a tool's absence from a list is not permission to omit it.
+
+\begin{longtable}{p{0.14\textwidth}p{0.36\textwidth}p{0.4\textwidth}}
+\caption{Generative-AI tools used}\label{tab:aitools}\\
+\toprule \textbf{Tool} & \textbf{Where it is recorded in the repository} & \textbf{Recorded use} \\ \midrule \endfirsthead
+\toprule \textbf{Tool} & \textbf{Where it is recorded} & \textbf{Recorded use} \\ \midrule \endhead
+Claude Code (Claude Sonnet 5.5) & \code{Co-Authored-By} trailers on the commits it helped write; the frontend, knowledge-bank and evidence documents & Frontend code and tests (work packages S1--S5 and PRs \#3, \#4, \#8--\#14), knowledge-bank and evidence documents, the one-aircraft analysis run, the live re-validation and its two fixes (PRs \#16, \#17), and the drafting of this report from the repository and its evidence \\
+OpenAI Codex & \pth{docs/mid1/15_report_mid1_addendum.md} & The 16 October integration audit: inspecting repository state, proposing scoped edits, running tests and builds, drafting engineering documentation \\
+Cursor & \code{Co-authored-by: Cursor} trailers on five commits (four on 11 July, one on 15 October); \code{.cursor/rules}; \pth{docs/mid1/22_cursor_handoff_2026-10-17.md} & The initial prototype and its deployment configuration (11 July), a documentation commit (15 October), and a hand-off document written for a Cursor session (17 October). Which later work used Cursor is not recorded per commit \\
+\bottomrule
+\end{longtable}
+
+\textbf{Member statements.} The rows for Umar and Usman state what the repository records for their accounts, and the verification their work packages recorded; each of them must also be able to give a personal account of his own use of these tools in the evaluation.
+\begin{longtable}{p{0.13\textwidth}p{0.2\textwidth}p{0.6\textwidth}}
+\toprule \textbf{Member} & \textbf{Tools} & \textbf{Used for, and what was verified} \\ \midrule \endhead
+Shahmeer & Claude Code & Frontend, tests, knowledge-bank and evidence documents, the live re-validation and its two fixes, and this report. Verified every change by running the tests and the build, by mutation checks on new tests, by live checks in a browser and against the running API, and by reading each diff before merging through a pull request with CI \\
+Umar & Cursor & Recorded: \code{Co-authored-by: Cursor} trailers on four commits under his account on 11 July 2026 (the initial prototype and its deployment configuration); no tool trailer on his Mid-I commits of 16 October; no other tool use by him is recorded. Verification recorded for his work packages: the evidence documents \pth{docs/mid1/08}, \code{11}, \code{12} and \code{13} list the tests run and their results; his code is covered by the tests in Table~\ref{tab:testcounts} and by CI \\
+Usman & Cursor, OpenAI Codex & Recorded: a Cursor trailer on his commit of 15 October, the Cursor rule files, and the Cursor hand-off document of 17 October; Codex is recorded for the 16 October integration audit (\code{docs/mid1/14}, \code{15}), which covered his work and Umar's, and the repository does not record which member operated it. Verification recorded for his work packages: the evidence documents \pth{docs/mid1/04}, \code{05} and \code{07} list commands and results; pull requests \#2 and \#5--\#7 passed CI before merge \\
+\bottomrule
+\end{longtable}
+
+\textbf{Checks applied to tool output.} Code produced with a tool was accepted only after (1) the automated tests and the build passed, (2) for new tests, a mutation check showed that the test fails when the protected code is broken, (3) the behaviour was checked live where a running system was available, (4) another member could review it through a pull request with CI, and (5) numbers in documents were traced to a test, a measurement or a CI log. Where something could not be verified, the documents say so. The members remain responsible for being able to explain every change.
+
+\textbf{Not a development tool.} The Groq-hosted language model is an external component of the product, not a development assistant; it is described in Section~\ref{sec:external}.
+
+\section{External Components and Dependencies}
+The runtime and development dependencies are in Table~\ref{tab:tools}. The data source is the FAA Service Difficulty Report collection \citep{faa-sdr}, public domain, downloaded by script and excluded from version control. The language model is called over the network, is rate limited, and can be replaced without changing the ranking, the graph or the citation check.
+
+\section{Risks and Mitigation}\label{sec:risks}
+\begin{longtable}{p{0.06\textwidth}p{0.28\textwidth}p{0.5\textwidth}p{0.08\textwidth}}
+\caption{Risk register and outcome}\label{tab:risks}\\
+\toprule \textbf{ID} & \textbf{Risk} & \textbf{Mitigation and what happened} & \textbf{State} \\ \midrule \endfirsthead
+\toprule \textbf{ID} & \textbf{Risk} & \textbf{Mitigation and what happened} & \textbf{State} \\ \midrule \endhead
+R1 & Too much new code in too little time & Occurred in part: 81 commits in four days. Mitigation: ownership, small pull requests, CI, tests, decision records; each member explains their own code & Residual \\
+R2 & Graph unavailable & Compose smoke test; health endpoint reports the real mode & Mitigated \\
+R3 & Live model or key unavailable, or a defect only a live model exposes & 503 and failure screens. A prompt defect that CI could not see was found on 18 October by a live check and fixed; staging was re-tested successfully & Mitigated \\
+R4 & Different JSON assumptions between owners & Contract freeze and recorded fixtures; one miss (UUID versus tail number) fixed & Mitigated \\
+R5 & Merge conflicts from several people and tools & One owner per file, hand-off decisions, small pull requests & Mitigated \\
+R6 & Exposed secrets & Secrets only in ignored files; audit by Usman; \code{.env.local} was found not to be in \code{.gitignore} and must not be committed & Residual \\
+R7 & Wrong dataset version & Dataset profile and counts recorded with the file year & Mitigated \\
+R8 & No hosted CI proof & CI on \code{main}; run 39143888904 & Mitigated \\
+R9 & Legacy software scope leaks into the interface & Isolation by routing; tests & Mitigated \\
+R10 & Conflict metrics presented as diagnostic accuracy & Addendum and this report keep them apart & Mitigated \\
+R11 & Missing university artefacts & This report; evidence documents & Mitigated \\
+R12 & Shared staging data changed by a demonstration & Staging is read-only for demonstrations; analysis was run on a scratch graph & Mitigated \\
+R13 & Model quota and cost & Daily budget, bounded retries, opt-in cascade; full run deferred & Residual \\
+R14 & Unauthenticated destructive endpoint (\pth{DELETE /api/graph/reset}) & Operations token required (503 when none is configured), typed confirmation for Neo4j, four regression tests; merged 18 October. Not exercised against staging, by design & Mitigated \\
+\bottomrule
+\end{longtable}
+
+\section{Security and Privacy Considerations}
+No personal data about users is stored; the corpus holds public FAA reports. Secrets (model key, database password, operations token, deployment keys) are read from environment files that are not committed. The batch analysis endpoint and the log endpoint require an operations token. Authentication and authorisation for ordinary users do not exist yet. The graph-reset route, formerly the known gap, now requires the operations token (Table~\ref{tab:risks}). Staging is shared, so the team avoids writing to it for demonstrations.
+
+\section{Current Limitations}
+\begin{itemize}
+\item The ranking is a heuristic with unevaluated weights; semantic retrieval is not built.
+\item The full corpus has not been analysed; on staging every record is unanalysed.
+\item No authentication, organisations or reviewer identity; the audit trail records status and a note, not who acted.
+\item Copilot sessions live in the browser only.
+\item No usability study, load test or coverage measurement.
+\item The staging model (\code{gpt-oss-20b}) differs from the model used for the evaluation (\code{gpt-oss-120b}); a single staging diagnosis was re-tested on 18 October and succeeded.
+\item Continuous integration never calls a live model, so a defect that only a live model exposes needs a live check.
+\item The graph side panel was verified by unit tests, not by a live click.
+\end{itemize}

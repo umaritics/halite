@@ -18,6 +18,8 @@ typing a UUID, open Assets → 813SK and use the links the app gives you.
 | Risk | Your machine only | Shared corpus: Accept/Reject would change data for everyone |
 | Conflict data (steps 6 and 7) | 9 review-queue items (first: 163AA `AALA202510203314`); 813SK has 1 superseded record (`SWIA2025111576508`) | **Empty on 2026-10-16:** review queue = 0 items; all 153 of 813SK's records are `auto_accepted`; no superseded records; no `SUPERSEDES` edges in the graph sample. The conflict backfill has apparently not been run on staging. Steps 6 and 7 (superseded record) only work on the local stack until Usman runs it there |
 
+**Update 2026-10-18 (diagnosis and reset route):** a live re-validation found that one-shot diagnosis had been broken since 16 Oct (the prompt builder returned nothing). It was fixed in PR #17; shared staging then served `06bc614` and one fresh diagnosis for 813SK returned HTTP 200 with a full explanation and 14 verified citations (`24_live_revalidation_2026-10-18.md`). The earlier "no explanation on staging" caution in the table above no longer applies. `DELETE /api/graph/reset` now needs the operations token (PR #16); never call it against shared data.
+
 **Staging, re-checked 2026-10-18:** `/api/maintenance/analysis/status` reports 2,079 records, **all unscored**, plus about 16 stored findings
 (7 `SUPERSEDES`). Staging therefore still has almost nothing to show on the conflict screens.
 

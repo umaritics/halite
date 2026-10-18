@@ -1,0 +1,20 @@
+\begin{tikzpicture}[scale=0.92,transform shape,st/.style={draw,rounded corners=6pt,font=\footnotesize,minimum width=2.4cm,minimum height=0.7cm,align=center,fill=white}]
+\node[font=\footnotesize\bfseries] at (2.4,2.1) {\code{analysis_state}};
+\node[st] (u) at (0,0.8) {unscored};
+\node[st] (sc) at (4.8,1.4) {scored};
+\node[st] (nr) at (4.8,0) {needs\_review};
+\node[st] (rv) at (4.8,-1.6) {reviewed};
+\draw[arr] (u)--(sc); \draw[arr] (u)--(nr); \draw[arr] (nr)--node[lab,right]{accept / reject}(rv);
+\node[font=\footnotesize\bfseries] at (11.0,2.1) {\code{status}};
+\node[st] (su) at (8.6,0.8) {unscored};
+\node[st] (na) at (12.6,1.5) {no\_action};
+\node[st] (aa) at (12.6,0) {auto\_accepted};
+\node[st] (nr2) at (8.6,-1.0) {needs\_review};
+\node[st] (ac) at (12.6,-1.6) {accepted};
+\node[st] (rj) at (12.6,-2.7) {rejected};
+\node[st] (sp) at (8.6,-2.7) {superseded};
+\draw[arr] (su)--(na); \draw[arr] (su)--(aa); \draw[arr] (su)--(nr2);
+\draw[arr] (nr2)--(ac); \draw[arr] (nr2)--(rj); \draw[arr] (aa)--(ac); \draw[arr] (aa.east) to[out=0,in=0,looseness=2.2] (rj.east);
+\node[font=\scriptsize] (any) at (8.6,-4.2) {(any status)};
+\draw[arr] (any) -- node[lab,right]{a later record's supersession is confirmed} (sp);
+\end{tikzpicture}

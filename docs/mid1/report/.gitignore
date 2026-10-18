@@ -1,0 +1,15 @@
+# LaTeX build output
+build.aux
+build.bbl
+build.blg
+build.lof
+build.lot
+build.log
+build.out
+build.toc
+build.xdv
+build.pdf
+build.txt
+*.synctex.gz
+# The submission PDF is produced by ./build.sh and renamed by the team once every [CONFIRM] is resolved
+F26_*.pdf

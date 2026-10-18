@@ -1,0 +1,21 @@
+\chapter*{Executive Summary}
+\addcontentsline{toc}{chapter}{Executive Summary}
+
+\textbf{Problem.} A technician investigating a recurring fault needs to know which symptoms occurred before, which components were examined, which repairs failed, and which earlier reports a later report has since corrected. Ordinary search returns similar documents but cannot say whether they still stand. Halite addresses this over public FAA Service Difficulty Reports (SDR): 2,079 records covering 118 aircraft.
+
+\textbf{What exists at FYP-1 Mid.} The proposal planned nine modules. This iteration delivers a vertical slice through four of them, on real data, with the same commit passing automated tests in continuous integration:
+\begin{itemize}
+\item \textbf{Asset intelligence:} a fleet list and a dated history for each aircraft, with every record's original FAA identifier.
+\item \textbf{Knowledge graph:} \code{Asset} and \code{ServiceRecord} nodes in Neo4j joined by \code{ABOUT}, \code{PRECEDED_BY} and \code{SUPERSEDES} relationships, shown one aircraft at a time.
+\item \textbf{Diagnostics:} a symptom-based investigation that retrieves bounded graph context, ranks inspection checks with a deterministic heuristic, and verifies every cited record identifier against the graph. A model phrases the answer (and, in the multi-turn Copilot, extracts facts from the technician's message); it never decides the ranking. If no live model is available the system reports that instead of inventing a diagnosis.
+\item \textbf{Conflict intelligence:} classification of record pairs (supersedes, partially supersedes, contradicts, scope-disjoint, no conflict), a confidence score, and a human review queue with accept and reject actions.
+\end{itemize}
+A CSV upload path, a React user interface, and a continuous-integration and staging-deployment pipeline complete the slice.
+
+\textbf{Research findings.} Retrieval bounded by the graph (same aircraft, at least one matching signal, no records from the future) keeps conflict analysis tractable: on the largest aircraft (153 records) exhaustive pairing would need 11,628 comparisons. The FAA's own ``supplemental report'' wording gave us 141 correction pairs as ground truth without hand labelling.
+
+\textbf{Validation status.} 200 backend and 171 frontend tests pass in GitHub Actions on the evaluated commit. A live re-validation of the diagnosis path on 18 October found a defect that the tests had missed (a function that returned nothing, so every fresh one-shot diagnosis failed); it was fixed, and diagnosis then succeeded on both the local stack and shared staging. A bounded live run on one aircraft (800NN, 13 records) found all three FAA-recorded corrections for it. An older offline evaluation of the conflict engine (350 evaluated pairs, threshold 0.50) reported precision 0.903, recall 0.660 and F1 0.762; it is historical evidence for conflict detection only and is not a measure of diagnostic accuracy.
+
+\textbf{Honest limits and risks.} The diagnostic ranking is a lexical heuristic, not a trained model, and its scores are not probabilities. Semantic retrieval, authentication and organisations, the training module and analytics are not built. On the shared staging system every record is still unanalysed, because a full analysis run needs several days of model quota. Most of the code was merged in the last days before this report (Section~\ref{sec:timeline}), so each member's section states what they can demonstrate and explain.
+
+\textbf{Remaining work.} FYP-1 Final adds hybrid retrieval, role-based access and session history; FYP-2 adds training, analytics, evaluation against baselines and production hardening (Chapter~\ref{ch:remaining}).

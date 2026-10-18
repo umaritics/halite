@@ -1,0 +1,162 @@
+\chapter{System Design}\label{ch:design}
+
+\section{System Architecture}
+Halite is a client--server web application (Figure~\ref{fig:arch}). A React single-page application, hosted on Vercel, calls a FastAPI backend over JSON. The backend runs in Docker on a shared virtual machine and reads and writes a Neo4j graph database. A language model on the Groq API is called by the backend for three jobs only: phrasing an explanation, extracting structured facts from a technician's message in the multi-turn Copilot, and proposing a classification for a pair of records. The model never determines the diagnostic ranking.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_arch}
+\caption{System architecture and deployment path. Grey boxes are external services.}\label{fig:arch}
+\end{figure}
+
+\textbf{Runtime honesty.} \code{GET /api/health} reports the graph mode (\code{neo4j} or \code{memory}), whether the model is live, and the number of records loaded. The application and our evidence documents claim ``real data'' or ``live model'' only when this endpoint agrees. A \code{memory} mode exists for tests and degraded operation and is labelled as such.
+
+\textbf{Domain registry.} Domain-specific rules (record labels, source authority) sit behind an adapter. The maintenance adapter is the product; the earlier software-engineering adapter is retained as frozen infrastructure, covered by seven regression tests, and is unreachable from the interface.
+
+\section{Architectural Components}
+\begin{longtable}{p{0.2\textwidth}p{0.4\textwidth}p{0.3\textwidth}}
+\caption{Components and responsibilities}\label{tab:components}\\
+\toprule \textbf{Component} & \textbf{Responsibility} & \textbf{Main files} \\ \midrule \endfirsthead
+\toprule \textbf{Component} & \textbf{Responsibility} & \textbf{Main files} \\ \midrule \endhead
+React application & Pages for assets, history, service records, diagnostics, review, graph, ingest; every failure state shown honestly & \code{frontend/src/pages}, \code{components}, \code{utils} \\
+API client & One Axios instance and the functions for every endpoint & \pth{frontend/src/api/client.js} \\
+API routes & HTTP contracts, validation, controlled errors (404, 409, 422, 503) & \code{backend/api/routes} \\
+Ingest agent & Validated, idempotent loading of FAA records; explicit skip counts & \pth{agents/maintenance_agent.py} \\
+Retrieval and ranking & Bounded graph context; deterministic ranking; copilot context and ranking delta & \pth{services/diagnostic_retrieval.py} \\
+Citation validation & Extract FAA-shaped identifiers and check them against the graph & \pth{services/citation_validation.py} \\
+Conflict engine & Candidate pairing, classification, adjudication, confidence, routing & \pth{services/conflict_engine.py}, \code{conflict_screen.py} \\
+Analysis state and budget & Honest unanalysed state; per-day request and token budget & \code{analysis_state.py}, \code{analysis_budget.py} \\
+Model client & Calls Groq; rejects empty content; bounded retries & \pth{services/groq_service.py} \\
+Graph repository & One query layer over Neo4j or the in-memory store & \code{graph/queries.py}, \code{schema.py} \\
+\bottomrule
+\end{longtable}
+
+\section{Interfaces and Dependencies}
+\subsection{Backend interfaces}
+\begin{longtable}{p{0.1\textwidth}p{0.36\textwidth}p{0.44\textwidth}}
+\caption{Principal backend endpoints}\label{tab:api}\\
+\toprule \textbf{Method} & \textbf{Path} & \textbf{Purpose and contract notes} \\ \midrule \endfirsthead
+\toprule \textbf{Method} & \textbf{Path} & \textbf{Purpose and contract notes} \\ \midrule \endhead
+GET & \code{/api/health} & Runtime mode and record count \\
+GET & \pth{/api/maintenance/assets} & Aircraft with record counts, one aggregation query \\
+GET & \code{/api/maintenance/assets/{id}/history} & One aircraft's records; keyed by the aircraft UUID; unknown returns 404 \\
+GET & \pth{/api/maintenance/records} & Fleet-wide list: filters, deterministic pagination \\
+POST & \pth{/api/maintenance/records} & Submit one record and process it \\
+POST & \pth{/api/maintenance/ingest} & Ingest a CSV already on the server \\
+POST & \pth{/api/maintenance/ingest/upload} & Multipart CSV upload, same ingest \\
+GET & \pth{/api/maintenance/review-queue} & Records awaiting review \\
+POST & \code{/api/maintenance/review-queue/{id}/accept} or \code{/reject} & Review action; reject needs a note; 409 if not reviewable \\
+GET & \pth{/api/maintenance/corrections} & One row per \code{SUPERSEDES} edge with a summary \\
+GET & \pth{/api/maintenance/analysis/status} & Analysis coverage and label counts \\
+POST & \pth{/api/maintenance/analysis/run} & Batch analysis, at most 25 records; needs the operations token and a live model \\
+POST & \pth{/api/maintenance/diagnose} & One-shot diagnosis; 404 unknown or empty history; 503 if the model is unavailable \\
+POST & \pth{/api/maintenance/copilot/turn} & Multi-turn copilot; state carried by the client \\
+GET & \code{/api/graph/overview} & Nodes and edges for the graph view; \code{limit} sets the node cap (default 200) \\
+GET & \code{/api/ops/version}, \code{/api/ops/logs} & Deployed commit; recent log lines (token required) \\
+DELETE & \code{/api/graph/reset} & Wipes the graph. Needs the operations token (503 if none is configured) and, for Neo4j, \code{confirm=WIPE} \\
+\bottomrule
+\end{longtable}
+
+\subsection{Component dependencies}
+Figure~\ref{fig:components} shows which module calls which. Routes call services; services call one repository; the repository is the only code that talks to the database. This keeps the graph queries in one place and lets the same service code run against an in-memory store in tests.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_components}
+\caption{Backend component dependencies.}\label{fig:components}
+\end{figure}
+
+\subsection{External dependencies}
+Neo4j (graph database), Groq (language model), FastAPI and Pydantic, pandas (CSV loading), React 18, Vite, Tailwind CSS, Axios, \code{react-force-graph-3d}, Vitest, PyTest, Docker Compose, GitHub Actions and Vercel. Section~\ref{sec:external} gives the list with versions and purpose.
+
+\section{Architecture Decisions and Rationale}
+Non-obvious decisions are recorded as short decision records in the repository. Table~\ref{tab:dec} lists those most relevant to this iteration.
+\begin{longtable}{p{0.3\textwidth}p{0.62\textwidth}}
+\caption{Selected architecture and process decisions}\label{tab:dec}\\
+\toprule \textbf{Decision (date)} & \textbf{Rationale} \\ \midrule \endfirsthead
+\toprule \textbf{Decision (date)} & \textbf{Rationale} \\ \midrule \endhead
+Maintenance-only frontend (16 Oct) & The product is maintenance diagnostics; the legacy software screens stay in the repository but are unreachable, so they cannot be mistaken for features \\
+Frontend reflects backend outputs (16 Oct) & The interface may add labels and warnings but must never hide, alter or invent a value the backend returned \\
+Review actions are server-confirmed (16 Oct) & Accept and reject change real data, so the screen changes only after the server confirms; no keyboard shortcut can trigger them \\
+Centralised staging and CI-gated release (16 Oct) & One shared staging API for the whole team; only a commit that passed full CI on \code{main} is deployed, with a recorded rollback \\
+Honest analysis state (17 Oct) & Analysis state is stored separately from confidence; ``unscored'' is never shown as a confident result \\
+Fleet-wide paginated records (17 Oct) & Replaced a 119-request fan-out with one paginated, filterable endpoint \\
+Opt-in cost cascade (17 Oct) & Pre-registered, off by default: a deterministic text screen before the model, and adaptive voting, to cut requests without tuning against the evaluation \\
+Diagnostic copilot scope waiver (16 Oct) & A named, limited exception to file ownership so the copilot could be built across route, retrieval and UI without touching the conflict engine, ingest or CI \\
+Graph shows one aircraft (17 Oct) & The whole graph is too dense to read; one aircraft's stored subgraph is readable and every drawn edge is a stored edge \\
+Graph reset protected (18 Oct) & A destructive route had no authentication; it now needs the operations token and a typed confirmation, and regression tests prove an unauthenticated call changes nothing \\
+Knowledge bank and agent protocol (16 Oct) & A written, versioned memory of context, flows and decisions that every contributor and every AI assistant must read first and update in the same change \\
+\bottomrule
+\end{longtable}
+
+\section{Design Evolution}
+\begin{longtable}{p{0.22\textwidth}p{0.3\textwidth}p{0.4\textwidth}}
+\caption{Design as proposed against design as built}\label{tab:evolution}\\
+\toprule \textbf{Aspect} & \textbf{Proposal} & \textbf{Built at Mid, and why} \\ \midrule \endfirsthead
+\toprule \textbf{Aspect} & \textbf{Proposal} & \textbf{Built at Mid, and why} \\ \midrule \endhead
+Retrieval & Graph-constrained plus embedding-based hybrid & Graph-bounded with lexical (Jaccard) similarity; embeddings deferred so the baseline is measured first \\
+Ranking & Hybrid evidence score with a historical correction penalty & Deterministic: recency and similarity weights, factor 0.3 for superseded records \\
+Conflict engine & Five-label classifier with human review & As proposed; plus a stored analysis state, a daily budget, and an opt-in cost cascade after we measured 9,175 projected requests \\
+Tenancy and identity & PostgreSQL, organisations, roles & Not built; reviewer identity is therefore not recorded \\
+Sessions & Server-side diagnostic session storage & Client-side state only; the server is stateless \\
+Interface & Chat-centred workspace & Asset-first workspace with a Copilot tab; one-shot diagnose kept as the stable contract \\
+Corpus & About 60 airframes & 118 aircraft, because every aircraft with a ground-truth pair is kept first \\
+\bottomrule
+\end{longtable}
+
+\section{Domain Model}
+Figure~\ref{fig:erd} is the graph schema. There are two node types and three relationship types. Each relationship records its provenance: \code{ABOUT} and \code{PRECEDED_BY} are created at ingest; \code{SUPERSEDES} is created only by the conflict engine when a supersession is confirmed. No relationship is invented to make the graph look richer; a causal ``component causes failure'' edge is deliberately absent because the data does not justify one.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_erd}
+\caption{Graph schema (entity--relationship view).}\label{fig:erd}
+\end{figure}
+
+\section{Data Design}\label{sec:data}
+\textbf{Source.} FAA Service Difficulty Reports, 2025 file: 67,637 raw rows, 66,658 after removing duplicates on (aircraft, date, normalised text). The proof-of-concept corpus is a deterministic selection (fixed seed): every aircraft that has a ground-truth pair is included first, then others are added until about 2,000 records. It holds \textbf{2,079 records on 118 aircraft}; the largest aircraft has 153 records. Raw and processed files are not committed; a script downloads them \citep{faa-sdr}.
+
+\textbf{Ground truth.} 141 valid correction pairs written by the FAA reporters (``supplemental report for \ldots'') were extracted; six candidates were discarded (five cite a record outside the corpus, one crosses aircraft).
+
+\textbf{Ingest rules.} A row needs a tail number, a parseable \code{MM/DD/YYYY} date and an \code{OperatorControlNumber}; otherwise it is counted in a named skip category. A record that already exists is counted as a duplicate and left unchanged, and its \code{ABOUT} link is re-asserted so an interrupted earlier run is repaired. New records are stored with status \code{unscored}, \code{analysis_state} \code{unscored} and a null confidence.
+
+\textbf{Status values.} Workflow \code{status}: \code{unscored}, \code{no_action}, \code{auto_accepted}, \code{needs_review}, \code{accepted}, \code{rejected}, \code{superseded}. Coverage \code{analysis_state}: \code{unscored}, \code{scored}, \code{needs_review}, \code{reviewed}. The two are separate on purpose: whether a record has been analysed is not the same as what the analysis decided.
+
+\textbf{Known data fact.} On staging, 2,079 record nodes have 2,078 \code{ABOUT} links: one record (\code{AALA202506230216}, aircraft 991AU) is an orphan. Re-running ingest repairs it, but staging was not mutated without approval.
+
+\section{Process / Behavior Design}
+\subsection{Diagnosis}
+Figure~\ref{fig:seq} shows the one-shot diagnosis. The retrieval and ranking happen before the model is called, so the ranking is identical with or without a model. If the model is unavailable, or returns empty text, the route returns HTTP 503 with a reason and the interface shows no diagnosis. After the model answers, every identifier in its text is looked up in the graph.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_seq_diagnose}
+\caption{Sequence diagram: one-shot diagnosis. Dashed arrows are returns.}\label{fig:seq}
+\end{figure}
+
+\subsection{Conflict analysis}
+Figure~\ref{fig:flow} is the conflict pipeline. Only the leftmost path calls the model. Records with no comparable earlier record, and (in cascade mode) pairs the deterministic screen rules out, never reach it.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_conflict_flow}
+\caption{Activity diagram: analysis of one record.}\label{fig:flow}
+\end{figure}
+
+\subsection{Record state}
+Figure~\ref{fig:states} shows how the two state fields change. A record's \code{status} becomes \code{superseded} only when a later record's supersession is confirmed.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_states}
+\caption{State diagrams for \texttt{analysis\_state} and \texttt{status}.}\label{fig:states}
+\end{figure}
+
+\subsection{Build and release}
+Figure~\ref{fig:cicd} shows how a change reaches users. The frontend is built by Vercel on every push. The backend is deployed to staging only from a \code{main} commit that passed all three CI jobs; a manual deploy or rollback needs an exact commit and a typed confirmation.
+
+\begin{figure}[H]
+\centering
+\input{figures/fig_cicd}
+\caption{CI/CD pipeline.}\label{fig:cicd}
+\end{figure}

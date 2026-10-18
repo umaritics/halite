@@ -1,0 +1,9 @@
+\begin{tikzpicture}[scale=0.92,transform shape]
+\node[box,minimum width=2.6cm] (dev) at (0,0) {Developer\\push / pull request};
+\node[box,minimum width=4.2cm,align=left] (ci) at (4.7,0) {\textbf{GitHub Actions: CI}\\[1pt]1. Backend tests (Python 3.11,\\\hspace{1.2em}real Neo4j 5 service)\\2. Frontend tests and build (Node 20)\\3. Docker Compose real-graph smoke};
+\node[box,minimum width=4.4cm] (dep) at (10.9,0) {\textbf{Deploy staging}\\runs only after CI succeeds\\on \code{main}; optional approval};
+\node[ext,minimum width=3.2cm] (vm) at (10.9,-2.2) {Shared VM (Docker)\\+ managed Neo4j};
+\node[ext,minimum width=3.2cm] (vc) at (4.7,-2.2) {Vercel\\preview and production builds};
+\draw[arr] (dev)--(ci); \draw[arr] (ci)--node[lab,above]{success}(dep); \draw[arr] (dep)--node[lab,right]{SSH}(vm);
+\draw[arr] (dev) |- (vc.west);
+\end{tikzpicture}

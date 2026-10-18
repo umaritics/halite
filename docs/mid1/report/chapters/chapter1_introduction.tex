@@ -1,0 +1,121 @@
+\chapter{Introduction and Project Vision}\label{ch:intro}
+
+\section{Project Overview}
+Halite is a maintenance diagnostics and asset-intelligence platform. It organises historical service records around the aircraft they describe, links each record to the record before it and to any later record that corrects it, and uses that structure to answer a technician's question: \emph{given this aircraft and this symptom, what has been seen before, what was examined, and what should be checked next?} Every answer names the records it rests on, and the system states plainly when it cannot answer.
+
+Halite is decision support. It does not approve repairs, certify airworthiness, or replace licensed inspectors.
+
+\section{Problem Statement}
+Given an identified asset, a natural-language symptom, a corpus of historical service reports, and the possibility that some reports have been superseded or contradicted by later ones, design a system that retrieves relevant evidence, ranks investigative possibilities, and explains its recommendations without treating unsupported model output as fact. The system must preserve provenance, identify conflicting historical claims, and allow a human to intervene.
+
+\section{Problem Context and Motivation}
+Maintenance organisations accumulate service reports, inspection findings and corrective actions over the life of each asset. These records are free text, inconsistent in vocabulary, and sometimes wrong in hindsight. A retrieved report may describe a repair that did not work, or a finding that a later report corrected. In the FAA data we use, reporters sometimes file a ``supplemental report'' that names the earlier record it replaces, and the replacement may name a different component from the original. A search tool that returns the original as if it still stood misleads the technician; the correction is itself diagnostic evidence.
+
+This is therefore not only a document-search problem. It is a problem of reasoning over evidence that changes over time, which is what motivates a graph that records order and correction explicitly, rather than a flat index of text.
+
+\section{Project Vision}
+To turn fragmented maintenance records into an accessible, explainable diagnostic knowledge system that helps maintenance teams investigate failures, understand earlier interventions, and learn from historical cases.
+
+\section{Project Objectives}
+The proposal lists thirteen objectives. Table~\ref{tab:objectives} states each one's status at this mid-report, with the measurable check we apply.
+
+\begin{longtable}{p{0.04\textwidth}p{0.36\textwidth}p{0.14\textwidth}p{0.36\textwidth}}
+\caption{Project objectives and their status at FYP-1 Mid}\label{tab:objectives}\\
+\toprule
+\textbf{\#} & \textbf{Objective} & \textbf{Status} & \textbf{Measurable check} \\ \midrule \endfirsthead
+\toprule \textbf{\#} & \textbf{Objective} & \textbf{Status} & \textbf{Measurable check} \\ \midrule \endhead
+1 & Structured maintenance knowledge graph & Done (Mid scope) & 2,079 records and 118 aircraft in Neo4j; relationships \code{ABOUT}, \code{PRECEDED_BY}, \code{SUPERSEDES} \\
+2 & Record ingestion and normalisation & Partial & CSV ingest with explicit skip counts and duplicate safety; no free-text extraction \\
+3 & Asset-aware historical retrieval & Done & Retrieval bounded to the aircraft history plus a capped fleet scan (Section~\ref{sec:alg-rank}) \\
+4 & Semantic retrieval & Not started & Planned for FYP-1 Final; not claimed \\
+5 & Evidence-aware diagnostic ranking & Done (heuristic) & Deterministic, documented weights; scores are not probabilities \\
+6 & Interactive conversational investigation & Done (basic) & Multi-turn Copilot with carried case state \\
+7 & Detect superseded and contradictory findings & Done & Five-label classifier with confidence and routing \\
+8 & Human review for uncertain decisions & Done & Review queue with accept and reject; notes stored \\
+9 & Educational diagnostic scenarios & Not started & Training module is FYP-2 \\
+10 & Recurring-fault and fleet analytics & Not started & FYP-2 \\
+11 & Secure multi-user SaaS application & Not started & No authentication yet \\
+12 & Evaluation against controlled baselines & Partial & Historical conflict evaluation exists; diagnostic baselines not yet run \\
+13 & Deployment with automated testing and CI/CD & Done & GitHub Actions on pushes to \code{main} and three named branches and on every pull request; CI-gated staging deploy \\
+\bottomrule
+\end{longtable}
+
+\section{Project Scope}
+\subsection{Included at FYP-1 Mid}
+The iteration is a \emph{vertical slice}: one working path from real data to a cited answer, not a small piece of every module. A technician chooses a real aircraft, reads its dated records, enters a symptom, receives a ranked, evidence-linked investigation, opens a cited record, and sees a real correction or conflict example. The same commit has automated tests and a CI run.
+
+\subsection{Excluded at FYP-1 Mid}
+Authentication and organisations, the technician training module, analytics dashboards, semantic or hybrid retrieval, trained predictive models, and parts-demand forecasting are excluded. Performance claims for industries other than aviation are excluded because only FAA data has been used. Table~\ref{tab:scope} gives the scope decision for every module so that this report, the proposal and the demonstration agree.
+
+\begin{longtable}{p{0.07\textwidth}p{0.2\textwidth}p{0.18\textwidth}p{0.45\textwidth}}
+\caption{Scope of the nine proposal modules at FYP-1 Mid}\label{tab:scope}\\
+\toprule
+\textbf{ID} & \textbf{Module} & \textbf{Mid scope} & \textbf{What is delivered, or why not} \\ \midrule \endfirsthead
+\toprule \textbf{ID} & \textbf{Module} & \textbf{Mid scope} & \textbf{What is delivered, or why not} \\ \midrule \endhead
+M01 & Workspace and identity & Out & No login, roles or tenancy yet; batch analysis is protected only by an operations token \\
+M02 & Assets & In & Fleet list, per-aircraft dated history, fleet-wide record search with filters \\
+M03 & Knowledge graph & In & Graph in Neo4j; interactive 3D view of one aircraft's stored subgraph \\
+M04 & Diagnostics & In & One-shot diagnose and multi-turn Copilot; ranking and citation validation \\
+M05 & Conflict intelligence & In & Candidate pairing, classification, confidence, routing, review queue, corrections view \\
+M06 & Report intelligence & Partial & CSV upload and single-record entry; no extraction from documents \\
+M07 & Technician academy & Out & FYP-2 \\
+M08 & Analytics & Out & FYP-2 \\
+M09 & Administration & Out & FYP-2; only a read-only system-status page exists \\
+\bottomrule
+\end{longtable}
+
+\section{Project Modules}
+The four modules in scope are summarised below; their design is in Chapter~\ref{ch:design} and their implementation in Chapter~\ref{ch:iter1}.
+
+\begin{description}
+\item[M02 Assets.] Lists the 118 aircraft with record counts, shows each aircraft's records in date order with their FAA identifiers, and provides a fleet-wide, filterable, paginated record list.
+\item[M03 Knowledge graph.] Stores aircraft and service records and the relationships between them. The interface draws one aircraft at a time and separates relationships created at ingest from the ones computed by the conflict engine.
+\item[M04 Diagnostics.] Retrieves bounded graph context for a symptom, ranks inspection checks with a deterministic heuristic, and verifies each cited record identifier against the graph. A language model phrases the explanation; in the multi-turn Copilot it also extracts structured facts from each message, but it never decides the ranking.
+\item[M05 Conflict intelligence.] Compares a record with earlier records on the same aircraft, classifies the relationship, scores confidence, and sends uncertain cases to a human reviewer.
+\end{description}
+
+\section{Stakeholders and User Classes}
+\begin{longtable}{p{0.2\textwidth}p{0.35\textwidth}p{0.35\textwidth}}
+\caption{Stakeholders and what each needs}\label{tab:stakeholders}\\
+\toprule
+\textbf{Stakeholder} & \textbf{Role in the system} & \textbf{Need} \\ \midrule \endfirsthead
+\toprule \textbf{Stakeholder} & \textbf{Role in the system} & \textbf{Need} \\ \midrule \endhead
+Maintenance technician & Reads aircraft history, enters symptoms, opens cited records & Find relevant past cases quickly; avoid repeating a failed repair \\
+Maintenance supervisor & Reviews records the system could not resolve & See both records and the reasoning; accept or reject with a note \\
+Technician (uploading reports) & Loads new records from a CSV or a single entry & Know exactly how many records were created, skipped or duplicated \\
+Project supervisor (evaluator) & Assesses progress & Demonstrable claims that match the code and tests \\
+\bottomrule
+\end{longtable}
+Only the technician and maintenance-supervisor roles are exercised in this iteration, and they are not yet separated by authentication.
+
+\section{Success Criteria}
+Success at FYP-1 Mid is defined by the team's own pass gate, agreed before this iteration:
+\begin{enumerate}[label=\textbf{\Alph*.}]
+\item A functional application with real asset and graph history.
+\item A diagnosis path that succeeds with a live model, or reports a clearly explained limitation.
+\item At least one cited record that opens the real source record.
+\item The existing conflict workflow is visible and testable.
+\item Backend and frontend tests and the build run automatically in GitHub Actions.
+\item A repository tag or commit, setup instructions, tests, evidence and individual contributions are documented.
+\item Every member can defend their own code and explain an integration failure.
+\end{enumerate}
+Section~\ref{sec:gate} reports each item with its evidence.
+
+\section{Constraints and Assumptions}
+\begin{itemize}
+\item \textbf{Time and team.} Three students and one academic term for the first iteration.
+\item \textbf{Data.} Public FAA SDR data does not confirm the true root cause of every fault; correction pairs are those the FAA reporters wrote themselves.
+\item \textbf{External services.} The language model (Groq) has request and token limits per day and can be unavailable. The design therefore never depends on it for the ranking, and it fails visibly (HTTP 503) when it is needed and absent.
+\item \textbf{Hosting.} A shared staging backend (a virtual machine with a managed Neo4j instance) and Vercel for the frontend; staging data is shared, so destructive actions on it are avoided.
+\item \textbf{Assumption.} The corpus is a historical sample of 2,079 records; claims about it are not claims about all aviation maintenance.
+\end{itemize}
+
+\section{Ethical, Legal and DEI Considerations}
+\begin{itemize}
+\item \textbf{Safety boundary.} Output is investigative support. The interface labels ranking scores as heuristic, not probabilities, and a citation check as confirming that a record exists, not that a statement is supported.
+\item \textbf{Data licence.} FAA Service Difficulty Reports are works of the United States government and are in the public domain (17 U.S.C.~\S105). Raw and processed data are excluded from version control and downloaded by script.
+\item \textbf{Privacy and secrets.} The data contains no personal data about Halite's users. API keys and operations tokens are kept in ignored environment files; none is committed.
+\item \textbf{Honest presentation.} Records that have not been analysed are shown as ``Not analysed'', never as a confident result. A legacy placeholder confidence of 1.0 in old data is reported as unanalysed rather than as a real score.
+\item \textbf{Accessibility.} The interface uses plain language and error messages that say what failed. A formal accessibility audit has not been done.
+\item \textbf{Generative AI.} AI coding assistants were used and are disclosed in Section~\ref{sec:tools}.
+\end{itemize}

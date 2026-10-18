@@ -1,0 +1,24 @@
+\begin{tikzpicture}[scale=0.88,transform shape,cb/.style={draw,rounded corners=2pt,font=\scriptsize,minimum width=2.9cm,minimum height=0.65cm,align=center,fill=white}]
+% layer 1: routes
+\foreach \x/\k/\n in {0/a/maintenance.py,3.4/b/diagnostics.py,6.8/c/graph.py,10.2/d/ops.py} {\node[cb] (r\k) at (\x,0) {\texttt{\n}};}
+\node[draw,dashed,rounded corners=4pt,fit=(ra)(rb)(rc)(rd),inner sep=6pt,label={[font=\scriptsize]left:Routes}] (L1) {};
+% layer 2: services
+\node[cb] (s1) at (0,-2.2) {\code{maintenance_agent}};
+\node[cb] (s2) at (3.4,-2.2) {\code{conflict_engine}};
+\node[cb] (s3) at (6.8,-2.2) {\code{conflict_screen}};
+\node[cb] (s4) at (10.2,-2.2) {\code{analysis_budget}};
+\node[cb] (s5) at (0,-3.2) {\code{diagnostic_retrieval}};
+\node[cb] (s6) at (3.4,-3.2) {\code{citation_validation}};
+\node[cb] (s7) at (6.8,-3.2) {\code{groq_service}};
+\node[cb] (s8) at (10.2,-3.2) {\code{domains} adapter};
+\node[draw,dashed,rounded corners=4pt,fit=(s1)(s2)(s3)(s4)(s5)(s6)(s7)(s8),inner sep=6pt,label={[font=\scriptsize]left:Services}] (L2) {};
+% layer 3
+\node[cb,minimum width=6.2cm] (repo) at (5.1,-5.2) {\code{GraphRepository} (\code{graph/queries.py})};
+% layer 4
+\node[cb] (mem) at (2.6,-6.8) {in-memory store};
+\node[cb] (n4j) at (6.0,-6.8) {\code{Neo4jClient}};
+\node[cb,fill=gray!18] (db) at (9.4,-6.8) {Neo4j};
+\draw[arr] (L1.south) -- node[lab,right]{call} (L2.north);
+\draw[arr] (L2.south) -- node[lab,right]{read / write} (repo.north);
+\draw[arr] (repo) -- (mem.north); \draw[arr] (repo) -- (n4j.north); \draw[arr] (n4j)--(db);
+\end{tikzpicture}

@@ -1,0 +1,18 @@
+\begin{tikzpicture}[scale=0.85,transform shape]
+\newcommand{\msg}[5]{\draw[#5] (#2,#1)--node[above,fill=white,font=\scriptsize,align=center,inner sep=2pt]{#4}(#3,#1);}
+\foreach \x/\n in {0/Technician,2.8/React UI,5.8/{API route\\\code{/diagnose}},9.0/{\code{diagnostic_}\\\code{retrieval}},12.0/Neo4j graph,14.8/{Groq\\model}} {
+  \node[box,minimum width=2.1cm] at (\x,0) {\n};
+  \draw[dashed] (\x,-0.5)--(\x,-14.2);
+}
+\msg{-1.9}{0}{2.8}{choose aircraft,\\enter symptom}{arr}
+\msg{-3.2}{2.8}{5.8}{POST \{asset\_id,\\symptom\_text\}}{arr}
+\msg{-4.4}{5.8}{9.0}{build context}{arr}
+\msg{-5.7}{9.0}{12.0}{history (30) +\\fleet scan ($\le$2500)}{arr}
+\msg{-6.7}{12.0}{9.0}{records}{darr}
+\msg{-8.0}{9.0}{5.8}{context + ranked checks\\(deterministic)}{darr}
+\msg{-9.4}{5.8}{14.8}{prompt built from retrieved records only}{arr}
+\msg{-10.5}{14.8}{5.8}{explanation text (or unavailable $\to$ HTTP 503)}{darr}
+\msg{-11.6}{5.8}{12.0}{look up cited IDs}{arr}
+\msg{-12.6}{12.0}{5.8}{found / not found}{darr}
+\msg{-13.9}{5.8}{2.8}{ranked checks, explanation,\\evidence, citation status}{darr}
+\end{tikzpicture}

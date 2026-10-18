@@ -294,6 +294,8 @@ analysed in `legacy` mode with `openai/gpt-oss-120b`. They are not staging. Meth
 
 ### 13.3 Still open or not verified
 
+- **Diagnosis on staging, resolved 2026-10-18.** One-shot diagnosis had been broken by a truncated prompt builder (found by live re-validation, fixed in PR #17). At `06bc614` one fresh staging diagnosis returned HTTP 200 with a full explanation and 14 verified citations. The 16 Oct empty-explanation observation was not reproduced. See `24_live_revalidation_2026-10-18.md`.
+- **Graph reset route protected, 2026-10-18** (PR #16): operations token required; not exercised against staging.
 - **Staging has almost no analysis output.** Checked 2026-10-18: 2,079 records, all unscored, about 16 stored findings (7 `SUPERSEDES`). Single-aircraft analysis was run on a scratch graph only; the full-corpus run was deliberately not done for Mid-I.
 - **Graph side-panel click** (record or aircraft details, link to Asset History) is covered by unit tests but was **not verified live**: canvas clicks did not register in the browser tool.
 - **Graph camera:** in the test browser pane the camera sometimes stayed zoomed into the hub until the page was redrawn; time-to-fit on a real GPU was not measured.

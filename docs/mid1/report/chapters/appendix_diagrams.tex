@@ -1,0 +1,22 @@
+\chapter{Additional Design Diagrams}\label{app:diagrams}
+\section*{One turn of the diagnostic Copilot}
+Figure~\ref{fig:copilot} shows the data flow of one Copilot turn. The server is stateless: the browser carries the case state and sends it with every message.
+\begin{figure}[H]
+\centering
+\input{figures/fig_copilot}
+\caption{Processing of one Copilot turn.}\label{fig:copilot}
+\end{figure}
+
+\section*{Frontend routes and the data they read}
+\begin{longtable}{p{0.3\textwidth}p{0.25\textwidth}p{0.35\textwidth}}
+\toprule \textbf{Route} & \textbf{Page} & \textbf{Main endpoint(s)} \\ \midrule \endhead
+\code{/app/assets} & Assets & \pth{GET /maintenance/assets} \\
+\code{/app/asset-history/:id[#record]} & Asset History & \code{GET /maintenance/assets/{id}/history} \\
+\code{/app/records} & Service Records & \pth{GET /maintenance/records}, \code{/assets} \\
+\code{/app/diagnostics} & Diagnostics & \pth{POST /maintenance/copilot/turn}, \code{/diagnose} \\
+\code{/app/review-queue} & Review Queue, Detected corrections & \code{GET /review-queue}, \code{/corrections}; \code{POST} accept, reject \\
+\pth{/app/maintenance-ingest} & Ingest & \pth{POST /maintenance/ingest/upload}, \code{/ingest}, \code{/records} \\
+\code{/app/graph} & Knowledge Graph & \code{GET /graph/overview} \\
+\code{/app/settings} & Settings and system status & \code{GET /health} \\
+\bottomrule
+\end{longtable}
