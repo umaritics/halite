@@ -132,6 +132,40 @@ def _build_prompt(context: dict, ranked: list[dict]) -> str:
         for r in ranked[:5]
     )
 
+    fleet_str = "\n".join(
+        f"  [{r['record_id']}] {r.get('part_name','')} "
+        f"- {r.get('text','')[:80]} "
+        f"({'SUPERSEDED' if r.get('is_superseded') else 'active'})"
+        for r in context["fleet_matches"][:5]
+    )
+
+    history_str = "\n".join(
+        f"  [{r['record_id']}] {r.get('occurred_at','')} "
+        f"{r.get('part_name','')} "
+        f"({'SUPERSEDED' if r.get('is_superseded') else r.get('status','')})"
+        for r in context["asset_history"][:5]
+    )
+
+    return (
+        f"You are a maintenance diagnostic assistant. A technician has reported:\n"
+        f'Symptom: "{symptom}"\n'
+        f"Asset: {asset_id}\n\n"
+        f"The graph has pre-ranked the most likely components:\n{ranked_str}\n\n"
+        f"Recent asset history (newest first):\n{history_str}\n\n"
+        f"Fleet-wide matches from {n_assets} other aircraft:\n{fleet_str}\n\n"
+        f"CONTEXT: Answered from {n_asset} records on this asset and "
+        f"{n_fleet} fleet-wide matches across {n_assets} assets.\n\n"
+        f"Instructions:\n"
+        f"1. Explain in plain language WHY each component is ranked there, "
+        f"citing ONLY record IDs from the lists above.\n"
+        f"2. Highlight any fleet cases that provide rare prior evidence.\n"
+        f"3. Mark clearly any superseded records — do not recommend acting on them.\n"
+        f"4. Do NOT invent record IDs. Use ONLY the IDs provided above.\n"
+        f"5. Respond in JSON: "
+        f'{{"explanation": "...", "rare_cases": ["record_id", ...], '
+        f'"warnings": ["..."]}}'
+    )
+
 
 _CASE_FIELDS = ("symptoms", "observations", "checks_done", "ruled_out", "open_questions")
 
