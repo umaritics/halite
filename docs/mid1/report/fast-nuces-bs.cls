@@ -246,8 +246,7 @@
 		\par{\fontsize{17}{17}\selectfont \textbf{\@degreemonth, \@degreeyear}}\par
 	}
 	\end{center}
-  	\null\vfill
-	\clearpage
+\clearpage
 		
 
 
