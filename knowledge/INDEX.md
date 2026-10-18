@@ -34,6 +34,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |
 | service records, fleet-wide, corrections, pagination, fan-out | decisions/DEC-20261017-fleet-service-records.md, modules/maintenance_api.md, docs/mid1/19_confidence_and_corrections_evidence.md |
+| graph reset, destructive endpoint, ops token, `.env.local` | decisions/DEC-20261018-protect-graph-reset.md, modules/devops.md |
 | knowledge graph page, graph limit, aircraft focus, SUPERSEDES styling | decisions/DEC-20261017-graph-aircraft-focus.md, modules/frontend.md |
 | frontend shows backend fields (rank score, confidence, JASC, health flags), never hides | decisions/DEC-20261016-frontend-reflects-backend-outputs.md |
 | legacy software UI, domain lock, Settings reset removed | decisions/DEC-20261016-frontend-maintenance-only.md |
