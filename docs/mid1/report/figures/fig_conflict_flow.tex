@@ -1,0 +1,24 @@
+\begin{tikzpicture}[scale=0.9,transform shape,wbox/.style={box,text width=5.4cm},rbox/.style={box,text width=6.2cm}]
+\node[circle,fill=black,inner sep=2pt] (s) at (0,0) {};
+\node[wbox] (a) at (0,-1.1) {Record stored as \code{unscored}\\(\code{confidence} = null)};
+\node[wbox] (b) at (0,-2.8) {Find candidate priors: same aircraft, earlier in time, at least one matching signal, at most 25};
+\node[diamond,draw,aspect=3,font=\footnotesize,align=center,inner sep=1pt] (d1) at (0,-4.6) {candidates?};
+\node[rbox] (o1) at (8.6,-4.6) {\code{scored}, \code{no_candidates}; \code{no_action}; no model call};
+\node[diamond,draw,aspect=2.6,font=\footnotesize,align=center,inner sep=1pt] (d2) at (0,-6.5) {cascade mode and\\screen $<$ 0.79?};
+\node[rbox] (o2) at (8.6,-6.5) {deterministic screen decision (no model request)};
+\node[wbox] (c) at (0,-8.4) {Model classifies the top pair (legacy: 5 votes; cascade: 2, then 5 on a split)};
+\node[wbox] (r) at (0,-10.0) {\code{route(label, confidence, 0.50)}};
+\node[rbox] (n1) at (8.6,-8.6) {parse failure, vote split (cascade), \code{contradicts}, \code{partial_supersedes} $\to$ \code{needs_review}};
+\node[rbox] (n2) at (8.6,-9.9) {\code{no_conflict}, \code{scope_disjoint} $\to$ \code{no_action}};
+\node[rbox] (n3) at (8.6,-11.2) {\code{supersedes}, confidence $\ge$ 0.50 $\to$ \code{auto_accepted} + \code{SUPERSEDES} edge; otherwise \code{needs_review}};
+\node[rbox] (rv) at (8.6,-12.8) {Supervisor accepts, or rejects with a note $\to$ \code{reviewed}; the record is never deleted};
+\draw[arr] (s)--(a); \draw[arr] (a)--(b); \draw[arr] (b)--(d1);
+\draw[arr] (d1.east)-- node[lab,above]{no} (o1.west);
+\draw[arr] (d1)-- node[lab,right]{yes} (d2);
+\draw[arr] (d2.east)-- node[lab,above]{yes} (o2.west);
+\draw[arr] (d2)-- node[lab,right]{no} (c);
+\draw[arr] (c)--(r);
+\draw (r.east) -- ++(0.6,0) coordinate (bus);
+\draw[arr] (bus) |- (n1.west); \draw[arr] (bus) |- (n2.west); \draw[arr] (bus) |- (n3.west);
+\draw[arr] (n1.east) -- ++(0.3,0) |- (rv.east);
+\end{tikzpicture}

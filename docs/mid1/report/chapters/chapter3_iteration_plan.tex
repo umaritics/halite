@@ -1,0 +1,116 @@
+\chapter{Proposal Feedback and Iteration Plan}\label{ch:plan}
+
+\section{Proposal Feedback Summary}
+No panel feedback or required changes were issued at the proposal stage, so there is no panel action to answer. The supervisor can confirm this. The team nevertheless identified and corrected three statements of its own proposal before this report, listed in Section~\ref{sec:register}.
+
+\section{Proposal Action Register}\label{sec:register}
+\begin{longtable}{p{0.05\textwidth}p{0.23\textwidth}p{0.3\textwidth}p{0.1\textwidth}p{0.2\textwidth}}
+\caption{Proposal action register}\label{tab:register}\\
+\toprule \textbf{No.} & \textbf{Feedback / required change} & \textbf{Action taken} & \textbf{Status} & \textbf{Evidence} \\ \midrule \endfirsthead
+\toprule \textbf{No.} & \textbf{Feedback / required change} & \textbf{Action taken} & \textbf{Status} & \textbf{Evidence} \\ \midrule \endhead
+-- & None issued by the proposal panel & Not applicable & Not applicable & Team statement; supervisor can confirm \\ \midrule
+\multicolumn{5}{l}{\textit{Corrections the team made to its own proposal}} \\ \midrule
+T1 & Proposal describes embedding-based and hybrid retrieval (its \S10.4) & Mid-I addendum states these are planned for FYP-1 Final, not implemented; the prototype uses lexical matching over a bounded candidate set & Corrected & \pth{docs/mid1/15_report_mid1_addendum.md}; Table~\ref{tab:compare} \\
+T2 & Proposal gives about 60 airframes & The proof-of-concept corpus keeps every aircraft that has a ground-truth pair before adding others, giving 2,079 records and 118 aircraft & Corrected & \pth{docs/dataset_profile.md}; Section~\ref{sec:data} \\
+T3 & Proposal plans a complete nine-module product & Mid scope is a vertical slice through four modules; Table~\ref{tab:scope} states every module's scope & Corrected & Chapter~\ref{ch:intro} \\
+\bottomrule
+\end{longtable}
+
+\section{Iteration Strategy}
+Development is iterative and incremental, as the FYP handbook prescribes \citep{fyp-handbook}. Three practices shaped this iteration.
+\begin{itemize}
+\item \textbf{Ownership with a controlled interface.} Each member owns a set of files (frontend; graph, retrieval and ranking; ingest, conflict engine, CI). Shared contracts such as the diagnose request and response were frozen early, and a change to another owner's file needed an explicit hand-off decision.
+\item \textbf{Pull requests with automated checks.} In this iteration work reaches \code{main} by pull request. GitHub Actions runs the backend tests (with a real Neo4j service), the frontend tests and build, and a Docker Compose smoke test on every push; the staging deployment runs only after CI succeeds.
+\item \textbf{A written knowledge bank.} A \code{knowledge/} folder records context, flows with dependency diagrams, and short decision records for non-obvious choices. A rule file (\code{AGENTS.md}) requires it to be updated in the same change as the code, so design documents cannot drift from the implementation.
+\end{itemize}
+
+\section{Iteration 1 Plan}
+\textbf{Objective.} Demonstrate a working maintenance diagnostic vertical slice on real historical data.
+
+\textbf{Selected features} (from the proposal): a maintenance-focused interface; an asset history browser; a live knowledge graph; symptom-based diagnostic input; historical evidence retrieval; ranked investigation suggestions; conflict review; API integration; automated tests; GitHub Actions CI/CD.
+
+\textbf{Planned demonstration flow:} open an asset, view its history, enter a symptom, retrieve related records, generate an evidence-backed response, display real source references, show a relevant historical correction, and show CI results.
+
+\textbf{Deliverables and evidence.} The running application, the tests and CI runs, the evidence documents under \code{docs/mid1/}, and this report.
+
+\section{Iteration 2 Plan}
+FYP-1 Final targets an integrated minimum viable product: improved diagnostic ranking, hybrid (graph and semantic) retrieval, multi-turn sessions with server-side history, an asset and component graph, role-based access, a deployed demonstration, and an updated requirements and design specification with an initial algorithm evaluation. Chapter~\ref{ch:remaining} gives the detailed plan, including what slipped from this iteration.
+
+\section{Work Breakdown and Responsibilities}
+\begin{longtable}{p{0.08\textwidth}p{0.4\textwidth}p{0.16\textwidth}p{0.26\textwidth}}
+\caption{Work packages of Iteration 1}\label{tab:wp}\\
+\toprule \textbf{Pkg} & \textbf{Work package} & \textbf{Owner} & \textbf{Status} \\ \midrule \endfirsthead
+\toprule \textbf{Pkg} & \textbf{Work package} & \textbf{Owner} & \textbf{Status} \\ \midrule \endhead
+S1 & Maintenance-only navigation; isolate legacy screens & Shahmeer & Done \\
+S2 & Asset list and dated history & Shahmeer & Done \\
+S3 & Diagnostic workspace states and safety & Shahmeer & Done \\
+S4 & Evidence navigation and review UI & Shahmeer & Done \\
+S5 & Frontend tests and build quality & Shahmeer & Done; no linter yet \\
+U1 & Audit of existing diagnostics & Umar & Done \\
+U2 & Real-data graph retrieval (bounded) & Umar & Done \\
+U3 & Deterministic fault ranking & Umar & Done \\
+U4 & Citation validation and model boundary & Umar & Done \\
+U5 & Diagnostic backend tests & Umar & Done \\
+A1 & Data and environment baseline & Usman & Done \\
+A2 & Maintenance APIs and conflict workflow & Usman & Done \\
+A3 & GitHub Actions and repository health & Usman & Done \\
+A4 & Backend wiring and documentation & Usman & Done \\
+-- & Diagnostic Copilot (multi-turn), confidence and corrections, conflict-analysis cost cascade (PRs \#5--\#7) & Usman & Done after the packages above \\
+-- & Knowledge graph view, CSV upload, evidence refresh, WebGL fallback (PRs \#9--\#14) & Shahmeer & Done; \#14 open at the time of writing \\
+\bottomrule
+\end{longtable}
+Member contributions are described in Chapter~\ref{ch:evidence}.
+
+\section{Progress Against Plan}\label{sec:progress}
+\begin{longtable}{p{0.05\textwidth}p{0.27\textwidth}p{0.12\textwidth}p{0.5\textwidth}}
+\caption{Planned Iteration 1 features against delivered state}\label{tab:progress}\\
+\toprule \textbf{\#} & \textbf{Planned feature} & \textbf{Status} & \textbf{Delivered state and evidence} \\ \midrule \endfirsthead
+\toprule \textbf{\#} & \textbf{Planned feature} & \textbf{Status} & \textbf{Delivered state and evidence} \\ \midrule \endhead
+1 & Maintenance-focused UI & Done & Sidebar lists only maintenance screens; legacy URLs redirect. Tests: Sidebar, DomainContext \\
+2 & Asset history browser & Done & 118 aircraft; dated history with FAA identifiers (Figure~\ref{fig:shot-history}) \\
+3 & Live knowledge graph & Done & Neo4j graph; interactive 3D view of one aircraft's stored subgraph (Figure~\ref{fig:shot-graph}) \\
+4 & Symptom-based diagnostic input & Done & One-shot diagnose and multi-turn Copilot \\
+5 & Historical evidence retrieval & Done (lexical) & Bounded retrieval; semantic retrieval not built \\
+6 & Ranked investigation suggestions & Done (heuristic) & Deterministic ranking with documented weights \\
+7 & Conflict review capability & Done & Review queue, corrections view (Figures~\ref{fig:shot-review}, \ref{fig:shot-corr}) \\
+8 & API integration & Done & Axios client to the FastAPI routes; contract tests \\
+9 & Automated tests & Done & 194 backend and 171 frontend tests pass in CI \\
+10 & GitHub Actions CI/CD & Done & CI on every push; CI-gated staging deploy \\
+\bottomrule
+\end{longtable}
+
+\subsection{Team pass gate}\label{sec:gate}
+\begin{longtable}{p{0.04\textwidth}p{0.3\textwidth}p{0.14\textwidth}p{0.42\textwidth}}
+\caption{Mid-I pass gate and evidence}\label{tab:gate}\\
+\toprule \textbf{} & \textbf{Gate item} & \textbf{Result} & \textbf{Evidence and caveat} \\ \midrule \endfirsthead
+\toprule \textbf{} & \textbf{Gate item} & \textbf{Result} & \textbf{Evidence and caveat} \\ \midrule \endhead
+A & Functional app with real asset and graph history & Met & Staging health: Neo4j graph mode, live model, 2,079 records (checked 18 October 2026) \\
+B & Diagnosis succeeds with a live model or reports a limitation & Partly met & Full explanations with a live model locally; on staging fresh diagnoses returned no explanation text on 16 October (cause not established, not re-checked). The limitation is reported by the API, not hidden \\
+C & A cited record opens the real source record & Met & Deep links from evidence to the history page; tests in \code{AssetHistory} and \code{Diagnostics} \\
+D & Conflict workflow visible and testable & Met & Review queue and corrections tabs; 32 conflict-engine tests \\
+E & Tests and build run in GitHub Actions & Met & Run 39068741787 on commit \code{36a98a3}: backend 194 passed, frontend 171 passed, Docker smoke passed \\
+F & Tag or commit, setup, tests, evidence, contributions documented & Partly met & Setup guide, evidence documents and this report exist. \confirm{release tag name and commit once created} \\
+G & Every member can defend their own code & To be shown & A property of the evaluation meeting, not of this document \\
+\bottomrule
+\end{longtable}
+
+\section{Delays, Deviations and Recovery Plan}\label{sec:timeline}
+\textbf{The commit timeline is uneven and we state it plainly.} At commit \code{36a98a3} the repository has 115 commits (98 excluding merges), in three phases:
+\begin{longtable}{p{0.2\textwidth}p{0.12\textwidth}p{0.55\textwidth}}
+\caption{Commits by phase (counts at \texttt{36a98a3})}\label{tab:phases}\\
+\toprule \textbf{Dates (2026)} & \textbf{Commits} & \textbf{What the work was} \\ \midrule \endfirsthead
+\toprule \textbf{Dates (2026)} & \textbf{Commits} & \textbf{What the work was} \\ \midrule \endhead
+11 Jul -- 18 Aug & 9 & An earlier software-engineering prototype of the same stack (graph, chat, deploy configuration). It was later set aside; its code remains as frozen legacy with regression tests \\
+8 -- 10 Sep & 29 & The maintenance proof of concept: domain registry, FAA data acquisition, the conflict engine, an evaluation harness, a first set of maintenance screens, diagnostic endpoints \\
+15 -- 18 Oct & 77 & Mid-I integration: contract freeze, hardening, the frontend rework, copilot, confidence and corrections, the cost cascade, CI on \code{main}, evidence \\
+\bottomrule
+\end{longtable}
+Most of the code that this report describes was therefore merged in the last days. This is the pattern the evaluation rubric names as a red flag, so we do not hide it: the report assigns each module to a named owner (Chapter~\ref{ch:evidence}), every member must be able to walk through their own code, and the decision records explain why each non-obvious choice was made.
+
+\textbf{Deviations.}
+\begin{itemize}
+\item \textbf{Semantic retrieval was not built.} The proposal's hybrid retrieval moved to FYP-1 Final. Recovery: embedding evaluation is the first task of that iteration, and no claim of semantic retrieval is made here.
+\item \textbf{Hosted CI existed only on a side branch} until 16 October. Recovery: workflows now run on \code{main}, and the staging deployment is gated by them.
+\item \textbf{The full corpus has not been analysed.} Analysis costs days of model quota on the free tier. Recovery: the cascade reduces projected requests; a bounded run on one aircraft was done and is reported in Section~\ref{sec:oneaircraft}; a full run is planned only after live token measurement.
+\item \textbf{Authentication, training and analytics are outside this iteration} by the scope decision in Table~\ref{tab:scope}.
+\end{itemize}

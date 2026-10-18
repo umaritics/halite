@@ -1,0 +1,72 @@
+\chapter{Remaining FYP Plan}\label{ch:remaining}
+
+\section{Remaining Scope}
+The proposal's nine modules and thirteen objectives remain the scope of the project. At this mid-report four modules are in a working vertical slice (Table~\ref{tab:scope}); the rest, and the evaluation that makes the research claims, remain. Nothing is dropped. The plan below is ordered by what the research questions need first: a measured retrieval baseline, then the evaluation of correction-aware ranking, then the product features around them.
+
+\section{Remaining Modules and Features}
+\begin{longtable}{p{0.2\textwidth}p{0.26\textwidth}p{0.44\textwidth}}
+\caption{Remaining work by module}\label{tab:remmods}\\
+\toprule \textbf{Module} & \textbf{State now} & \textbf{Remaining} \\ \midrule \endfirsthead
+\toprule \textbf{Module} & \textbf{State now} & \textbf{Remaining} \\ \midrule \endhead
+M01 Workspace & Not started & Authentication, roles, organisations, reviewer identity in the audit trail \\
+M02 Assets & Working & Manual asset registration; component view \\
+M03 Knowledge graph & Working (one aircraft) & Component-level graph; path exploration; fallback when WebGL is missing (pull request open) \\
+M04 Diagnostics & Working (lexical, heuristic) & Semantic and hybrid retrieval; evaluation against baselines; server-side session history; clarification policy \\
+M05 Conflict intelligence & Working; mostly unanalysed & Token measurement; full-corpus analysis with the cascade; review audit log \\
+M06 Report intelligence & CSV and single record & Extraction from documents; ambiguous-field flags \\
+M07 Academy & Not started & Case-based scenarios, learner steps, feedback linked to evidence \\
+M08 Analytics & Not started & Recurring-fault and fleet views with descriptive statistics only \\
+M09 Administration & Status page only & Audit, configuration, governance \\
+\bottomrule
+\end{longtable}
+
+\section{Remaining Iterations}
+The proposal's later iterations stand: \textbf{Iteration 2 (FYP-1 Final)}, an integrated minimum viable product with hybrid retrieval, role-based access, multi-turn sessions with server-side history and a deployed demonstration; \textbf{Iteration 3 (FYP-2 Early)} for training, analytics and graph exploration; \textbf{Iteration 4 (FYP-2 Mid)}, a job-fair-ready integrated product; and \textbf{Iteration 5 (FYP-2 Final)} for hardening, final evaluation and handover. The percentages in the timeline are targets, not measured progress.
+
+\section{Implementation Plan}
+\textbf{Iteration 2 (FYP-1 Final).} Tasks are ordered by dependency; owners follow the ownership in Table~\ref{tab:owners}.
+\begin{longtable}{p{0.05\textwidth}p{0.5\textwidth}p{0.14\textwidth}p{0.21\textwidth}}
+\toprule \textbf{\#} & \textbf{Task} & \textbf{Owner} & \textbf{Done when} \\ \midrule \endhead
+1 & Close the open defects in Table~\ref{tab:defects}: staging explanations, an HTTP 400 for unreadable CSV, the orphan record, protection of the graph-reset route & Usman, Umar & Each has a test or a recorded check \\
+2 & Measure live token use on a bounded sample and project the full-corpus cost; decide the default analysis mode & Usman & Measured numbers in an evidence document \\
+3 & Embedding-based retrieval and a hybrid ranker behind a switch & Umar & Runs on the corpus; unit tests \\
+4 & Diagnostic evaluation harness and baselines (keyword, lexical, semantic, graph-only, hybrid, direct model) & Umar, Usman & Metrics reproducible from a script \\
+5 & Roles and authentication; reviewer identity in the audit trail & Usman, Shahmeer & Requests carry an identity; review events record who and when \\
+6 & Server-side session history for the Copilot & Umar, Shahmeer & Sessions survive a browser change \\
+7 & Analysis of the full corpus with the cascade on a scratch graph, then staging with approval & Usman & Coverage shown in the interface \\
+8 & Quality: lint job in CI, coverage report for core modules, release tags & Shahmeer, Usman & CI reports them \\
+\bottomrule
+\end{longtable}
+
+\section{Testing and Validation Plan}
+\begin{longtable}{p{0.07\textwidth}p{0.4\textwidth}p{0.43\textwidth}}
+\caption{Validation plan against the research questions}\label{tab:valplan}\\
+\toprule \textbf{RQ} & \textbf{Question} & \textbf{Planned evidence} \\ \midrule \endfirsthead
+\toprule \textbf{RQ} & \textbf{Question} & \textbf{Planned evidence} \\ \midrule \endhead
+RQ1 & Does graph-constrained retrieval beat keyword retrieval at finding relevant cases? & Recall at $k$ and mean reciprocal rank on the 141 FAA pairs, same queries for both methods \\
+RQ2 & Does hybrid retrieval improve ranking over semantic alone? & Same metrics, with an ablation of each signal \\
+RQ3 & Does correction-aware retrieval reduce misleading recommendations? & Using the FAA pairs in which the follow-up names a different component (92 of 141): does the system surface the later component for the earlier symptom? \\
+RQ4 & Can abstention reduce unsupported suggestions? & Coverage against error rate as the evidence threshold changes \\
+RQ5 & Does case-based training improve learners' results? & Planned with the training module in FYP-2 \\
+\bottomrule
+\end{longtable}
+To avoid leakage the evaluation will use a different year of FAA data than the one used to choose weights and thresholds, and any threshold will be fixed before it is applied to held-out data, as the cascade threshold was. Usability will be measured with proxy participants (a task and a System Usability Scale questionnaire), which the proposal already says will be declared as proxies. Load performance will be tested against the 500~ms target (NFR-02), and coverage measured against NFR-04.
+
+\section{Deployment Plan}
+The staging deployment, with its recorded rollback and approval gate, is the model for later releases. For FYP-2 the plan is a production-style deployment of the same pipeline with backups of the graph before any migration, read-only demonstrations on shared data, and a prerecorded backup of every demonstration.
+
+\section{Tentative Timeline}
+Dates follow the university calendar once it is published; the weeks below are relative to the FYP-1 Final evaluation.
+\begin{longtable}{p{0.18\textwidth}p{0.72\textwidth}}
+\toprule \textbf{Period} & \textbf{Work} \\ \midrule \endhead
+Weeks 1--2 & Close open defects (task 1); live token measurement (task 2); lint and coverage in CI (task 8) \\
+Weeks 3--5 & Embedding retrieval and hybrid ranker (task 3); evaluation harness and baselines (task 4) \\
+Weeks 4--6 & Roles, authentication and reviewer identity (task 5) \\
+Weeks 6--7 & Server-side session history (task 6); full-corpus analysis on a scratch graph (task 7) \\
+Week 8 & Integration, regression, updated requirements and design specification, rehearsal \\
+\bottomrule
+\end{longtable}
+Each week ends with a demonstrable milestone, recorded with its evidence in the milestone log, so that progress is checkable against the demonstration and not against a task list.
+
+\section{Expected Final Deliverables}
+A deployed, tested and documented multi-user system with the nine modules; a reproducible evaluation against baselines with stated limits; the repository with tags, setup instructions and decision records; the final report; and a demonstration that every member can explain.

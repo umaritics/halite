@@ -1,0 +1,21 @@
+\begin{tikzpicture}[scale=0.92,transform shape]
+\node[box,minimum width=3.7cm,minimum height=2.6cm] (ui) at (0,0) {\textbf{React single-page app}\\(Vite, Tailwind, Axios)\\[2pt]Assets $\cdot$ History\\Service Records\\Diagnostics (Copilot, Quick)\\Review Queue $\cdot$ Graph $\cdot$ Ingest};
+\node[grp,fit=(ui),label={[font=\scriptsize]above:Browser / Vercel (frontend hosting)}] {};
+\node[box,minimum width=4.2cm] (routes) at (6.2,2.0) {\textbf{API routes} (FastAPI)\\\code{/maintenance} $\cdot$ \code{/diagnose}\\\code{/copilot} $\cdot$ \code{/graph} $\cdot$ \code{/ops} $\cdot$ \code{/health}};
+\node[box,minimum width=4.2cm] (svc) at (6.2,0) {\textbf{Services}\\retrieval and ranking $\cdot$ citation check\\conflict engine $\cdot$ budget $\cdot$ model client};
+\node[box,minimum width=4.2cm] (agent) at (6.2,-1.7) {\textbf{Ingest agent}\\validated, idempotent FAA loader};
+\node[box,minimum width=4.2cm] (repo) at (6.2,-3.3) {\textbf{GraphRepository}\\one query layer over the store};
+\node[grp,fit=(routes)(svc)(agent)(repo),label={[font=\scriptsize]above:Backend (Docker, shared VM)}] {};
+\node[ext,minimum width=3cm] (neo) at (12.0,-3.3) {Neo4j graph database\\(managed instance)};
+\node[ext,minimum width=3cm] (groq) at (12.0,0) {Groq API\\(language model)};
+\draw[arr] (ui.east) -- node[lab,above]{HTTPS} (routes.west);
+\draw[arr] (routes) -- (svc);
+\draw[arr] (svc) -- (agent);
+\draw[arr] (agent) -- (repo);
+\draw[arr] (repo.east) -- node[lab,above]{Bolt} (neo.west);
+\draw[arr] (svc.east) -- node[lab,above]{model calls} (groq.west);
+\node[box,minimum width=3.1cm] (ci) at (0,-4.3) {GitHub Actions\\CI: tests, build, smoke};
+\node[box,minimum width=3.1cm] (dep) at (0,-5.9) {Deploy to VM\\(after CI success on \code{main})};
+\draw[arr] (ci) -- (dep);
+\draw[arr] (dep.east) -| node[lab,pos=0.25,above]{SSH} ([xshift=0.9cm,yshift=-0.33cm]repo.south west);
+\end{tikzpicture}

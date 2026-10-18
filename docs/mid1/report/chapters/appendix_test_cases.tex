@@ -1,0 +1,457 @@
+\chapter{Detailed Test Cases}\label{app:tests}
+These lists are generated from the test runners by \texttt{gen\_appendix\_tests.py}; they are not typed by hand. Test names describe the behaviour checked. The Neo4j repository-contract file is collected here and executed only in CI, against a real Neo4j service.
+\section{Backend tests (194 tests)}\label{app:tests-backend}
+\small
+\subsection*{\texttt{test\_api\_copilot.py} (10)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_second\_turn\_reranks\_accumulated\_case\_and\_reports\_delta \\
+2 & test\_ruled\_out\_component\_is\_not\_recommended \\
+3 & test\_invalid\_citation\_is\_flagged\_and\_never\_verified \\
+4 & test\_superseded\_record\_is\_marked\_but\_not\_used\_in\_ranked\_recommendations \\
+5 & test\_validation\_unknown\_asset\_and\_model\_failure\_states \\
+6 & test\_fleet\_only\_mode\_and\_deterministic\_record\_report\_selection \\
+7 & test\_period\_and\_topic\_report\_selects\_only\_matching\_asset\_records \\
+8 & test\_diagnose\_empty\_explanation\_regression\_is\_explicit\_503 \\
+9 & test\_groq\_wrapper\_rejects\_none\_content\_with\_finish\_reason \\
+10 & test\_groq\_wrapper\_returns\_provider\_usage\_metadata \\
+\end{longtable}
+\subsection*{\texttt{test\_api\_diagnostics.py} (4)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & TestDiagnoseLlmBoundary > test\_503\_when\_llm\_not\_live \\
+2 & TestDiagnoseLlmBoundary > test\_404\_when\_no\_history \\
+3 & TestDiagnoseCitations > test\_flags\_invented\_ids\_keeps\_real \\
+4 & TestDiagnoseCitations > test\_all\_valid\_when\_only\_graph\_ids \\
+\end{longtable}
+\subsection*{\texttt{test\_api\_maintenance.py} (27)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & TestDomains > test\_returns\_two\_domains \\
+2 & TestDomains > test\_software\_is\_default \\
+3 & TestDomains > test\_maintenance\_not\_default \\
+4 & TestDomains > test\_domain\_has\_required\_fields \\
+5 & TestHealthMaintenance > test\_health\_includes\_domains \\
+6 & TestHealthMaintenance > test\_health\_includes\_maintenance\_fields \\
+7 & TestHealthMaintenance > test\_health\_maintenance\_false\_before\_ingest \\
+8 & TestHealthMaintenance > test\_health\_uses\_count\_query\_not\_record\_materialization \\
+9 & TestAssetsEmpty > test\_returns\_empty\_list \\
+10 & TestAssetsEmpty > test\_unknown\_asset\_history\_is\_404 \\
+11 & TestAssetsEmpty > test\_ingest\_rejects\_non\_positive\_limit \\
+12 & TestAssetsEmpty > test\_record\_processing\_rejects\_invalid\_threshold \\
+13 & TestIngestAndQuery > test\_assets\_listed\_after\_seed \\
+14 & TestIngestAndQuery > test\_asset\_history\_returned \\
+15 & TestIngestAndQuery > test\_legacy\_perfect\_score\_is\_returned\_as\_not\_analysed \\
+16 & TestIngestAndQuery > test\_review\_queue\_returns\_needs\_review \\
+17 & TestIngestAndQuery > test\_accept\_changes\_status \\
+18 & TestIngestAndQuery > test\_reject\_requires\_note \\
+19 & TestIngestAndQuery > test\_reject\_disallows\_blank\_note \\
+20 & TestIngestAndQuery > test\_reject\_with\_note\_succeeds \\
+21 & TestIngestAndQuery > test\_reject\_cannot\_overwrite\_completed\_review \\
+22 & TestIngestAndQuery > test\_conflict\_detection\_on\_seeded\_record \\
+23 & TestConflictAnalysisApi > test\_status\_counts\_and\_records\_list\_limit\_validation \\
+24 & TestConflictAnalysisApi > test\_analysis\_run\_requires\_token\_and\_live\_llm \\
+25 & TestConflictAnalysisApi > test\_no\_candidate\_is\_analysed\_without\_model\_call\_and\_scored\_is\_skipped \\
+26 & TestConflictAnalysisApi > test\_analysis\_run\_stops\_cleanly\_at\_persistent\_budget \\
+27 & TestConflictAnalysisApi > test\_corrections\_endpoint\_returns\_live\_summary \\
+\end{longtable}
+\subsection*{\texttt{test\_backfill\_conflict\_scores.py} (6)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_backfill\_refuses\_to\_run\_without\_live\_groq \\
+2 & test\_resume\_uses\_analysis\_state\_only[record0-True] \\
+3 & test\_resume\_uses\_analysis\_state\_only[record1-False] \\
+4 & test\_resume\_uses\_analysis\_state\_only[record2-False] \\
+5 & test\_resume\_uses\_analysis\_state\_only[record3-False] \\
+6 & test\_resume\_uses\_analysis\_state\_only[record4-True] \\
+\end{longtable}
+\subsection*{\texttt{test\_citation\_validation.py} (6)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & TestExtractRecordIdCandidates > test\_real\_faa\_shapes \\
+2 & TestExtractRecordIdCandidates > test\_dedupes\_preserving\_order \\
+3 & TestExtractRecordIdCandidates > test\_ignores\_short\_or\_underscore\_ids \\
+4 & TestValidateCitations > test\_all\_valid \\
+5 & TestValidateCitations > test\_invented\_id\_flagged \\
+6 & TestValidateCitations > test\_empty\_text \\
+\end{longtable}
+\subsection*{\texttt{test\_conflict\_analysis\_migration.py} (3)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_dry\_run\_does\_not\_mutate\_and\_apply\_is\_idempotent \\
+2 & test\_genuinely\_scored\_record\_is\_never\_reset \\
+3 & test\_restore\_uses\_legacy\_confidence\_only\_if\_still\_unscored \\
+\end{longtable}
+\subsection*{\texttt{test\_conflict\_cascade.py} (11)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_answer\_key\_is\_removed\_from\_screen\_and\_date\_is\_not\_a\_feature \\
+2 & test\_containment\_first\_ranks\_true\_full\_text\_above\_recent\_sparse\_match \\
+3 & test\_cascade\_stops\_after\_two\_agreeing\_votes\_and\_meters\_each\_vote \\
+4 & test\_cascade\_escalates\_disagreement\_and\_persistent\_split\_routes\_review \\
+5 & test\_cascade\_screen\_skips\_model\_and\_persists\_method\_metadata \\
+6 & test\_positive\_above\_screen\_threshold\_is\_retained\_for\_model \\
+7 & test\_legacy\_mode\_preserves\_five\_pass\_golden\_output \\
+8 & test\_vote\_agreement\_changes\_cascade\_confidence\_without\_using\_pass\_count \\
+9 & test\_daily\_budget\_persists\_and\_rolls\_over\_at\_utc\_midnight \\
+10 & test\_daily\_budget\_stops\_before\_token\_reserve\_would\_cross\_cap \\
+11 & test\_cached\_classification\_is\_backward\_compatible\_and\_does\_not\_bill \\
+\end{longtable}
+\subsection*{\texttt{test\_conflict\_engine.py} (32)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & TestFindCandidatePairs > test\_returns\_only\_same\_asset\_records \\
+2 & TestFindCandidatePairs > test\_respects\_max\_candidates \\
+3 & TestFindCandidatePairs > test\_excludes\_same\_asset\_records\_with\_no\_pairing\_signal \\
+4 & TestFindCandidatePairs > test\_excludes\_self \\
+5 & TestFindCandidatePairs > test\_only\_older\_records\_are\_candidates \\
+6 & TestClassifyConflict > test\_each\_classification\_label[no\_conflict] \\
+7 & TestClassifyConflict > test\_each\_classification\_label[scope\_disjoint] \\
+8 & TestClassifyConflict > test\_each\_classification\_label[supersedes] \\
+9 & TestClassifyConflict > test\_each\_classification\_label[partial\_supersedes] \\
+10 & TestClassifyConflict > test\_each\_classification\_label[contradicts] \\
+11 & TestClassifyConflict > test\_parse\_failure\_handled \\
+12 & TestClassifyConflict > test\_invalid\_label\_defaults\_to\_no\_conflict \\
+13 & TestAdjudicate > test\_prefers\_later\_record\_at\_equal\_authority \\
+14 & TestAdjudicate > test\_action\_supersedes\_on\_explicit\_citation \\
+15 & TestAdjudicate > test\_action\_no\_action\_when\_no\_evidence \\
+16 & TestScoreConfidence > test\_bounded\_above\_at\_1 \\
+17 & TestScoreConfidence > test\_bounded\_below\_at\_0 \\
+18 & TestScoreConfidence > test\_explicit\_citation\_is\_highest\_weight \\
+19 & TestRoute > test\_at\_threshold\_is\_auto\_accepted \\
+20 & TestRoute > test\_just\_below\_threshold\_is\_needs\_review \\
+21 & TestRoute > test\_just\_above\_threshold\_is\_auto\_accepted \\
+22 & TestRoute > test\_zero\_confidence\_is\_needs\_review \\
+23 & TestRoute > test\_max\_confidence\_is\_auto\_accepted \\
+24 & TestRoute > test\_contradicts\_always\_needs\_review \\
+25 & TestRoute > test\_partial\_supersedes\_always\_needs\_review \\
+26 & TestRoute > test\_no\_action\_for\_no\_conflict\_and\_scope\_disjoint \\
+27 & TestProcessRecord > test\_raises\_when\_not\_live\_and\_no\_stub \\
+28 & TestProcessRecord > test\_succeeds\_with\_allow\_stub \\
+29 & TestProcessRecord > test\_parse\_failure\_counted \\
+30 & TestProcessRecord > test\_applies\_link\_when\_auto\_accepted \\
+31 & TestProcessRecord > test\_no\_candidates\_is\_scored\_without\_model\_classification \\
+32 & TestProcessRecord > test\_no\_candidates\_dry\_run\_does\_not\_persist\_score \\
+\end{longtable}
+\subsection*{\texttt{test\_diagnostic\_retrieval.py} (26)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & TestAssetHistoryContext > test\_returns\_correct\_count \\
+2 & TestAssetHistoryContext > test\_newest\_first \\
+3 & TestAssetHistoryContext > test\_all\_have\_record\_id \\
+4 & TestAssetHistoryContext > test\_superseded\_flagged \\
+5 & TestAssetHistoryContext > test\_limit\_respected \\
+6 & TestAssetHistoryContext > test\_unknown\_asset\_returns\_empty \\
+7 & TestAssetHistoryContext > test\_null\_confidence\_is\_preserved\_without\_error \\
+8 & TestSimilarSymptomRecords > test\_excludes\_own\_asset \\
+9 & TestSimilarSymptomRecords > test\_returns\_fleet\_match \\
+10 & TestSimilarSymptomRecords > test\_jasc\_boost \\
+11 & TestSimilarSymptomRecords > test\_all\_have\_record\_id \\
+12 & TestSimilarSymptomRecords > test\_superseded\_flagged \\
+13 & TestResolutionOutcomes > test\_basic \\
+14 & TestResolutionOutcomes > test\_superseded\_labelled \\
+15 & TestResolutionOutcomes > test\_missing\_id\_skipped \\
+16 & TestResolutionOutcomes > test\_empty\_list \\
+17 & TestBuildDiagnosticContext > test\_returns\_all\_keys \\
+18 & TestBuildDiagnosticContext > test\_asset\_id\_matches \\
+19 & TestBuildDiagnosticContext > test\_fleet\_excludes\_own\_asset \\
+20 & TestBuildDiagnosticContext > test\_resolution\_outcomes\_non\_empty \\
+21 & TestBuildDiagnosticContext > test\_all\_provenance\_fields\_present \\
+22 & TestBuildDiagnosticContext > test\_context\_size\_accurate \\
+23 & TestRankDiagnosticChecks > test\_ranks\_have\_provenance \\
+24 & TestRankDiagnosticChecks > test\_stable\_tie\_break\_by\_part\_name \\
+25 & TestRankDiagnosticChecks > test\_deterministic\_across\_calls \\
+26 & TestRankDiagnosticChecks > test\_skips\_blank\_part\_names \\
+\end{longtable}
+\subsection*{\texttt{test\_graph\_maintenance.py} (49)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & TestFindOrCreateAsset > test\_creates\_new\_asset[memory] \\
+2 & TestFindOrCreateAsset > test\_creates\_new\_asset[neo4j] \\
+3 & TestFindOrCreateAsset > test\_returns\_existing\_on\_repeat[memory] \\
+4 & TestFindOrCreateAsset > test\_returns\_existing\_on\_repeat[neo4j] \\
+5 & TestFindOrCreateAsset > test\_different\_tails\_are\_different\_assets[memory] \\
+6 & TestFindOrCreateAsset > test\_different\_tails\_are\_different\_assets[neo4j] \\
+7 & TestCreateServiceRecord > test\_creates\_record[memory] \\
+8 & TestCreateServiceRecord > test\_creates\_record[neo4j] \\
+9 & TestCreateServiceRecord > test\_idempotent\_on\_record\_id[memory] \\
+10 & TestCreateServiceRecord > test\_idempotent\_on\_record\_id[neo4j] \\
+11 & TestCreateServiceRecord > test\_custom\_status[memory] \\
+12 & TestCreateServiceRecord > test\_custom\_status[neo4j] \\
+13 & TestGetServiceRecord > test\_returns\_record[memory] \\
+14 & TestGetServiceRecord > test\_returns\_record[neo4j] \\
+15 & TestGetServiceRecord > test\_returns\_none\_for\_unknown[memory] \\
+16 & TestGetServiceRecord > test\_returns\_none\_for\_unknown[neo4j] \\
+17 & TestLinkRecordAboutAsset > test\_link\_creates\_retrievable\_history[memory] \\
+18 & TestLinkRecordAboutAsset > test\_link\_creates\_retrievable\_history[neo4j] \\
+19 & TestLinkRecordAboutAsset > test\_repeated\_link\_is\_idempotent[memory] \\
+20 & TestLinkRecordAboutAsset > test\_repeated\_link\_is\_idempotent[neo4j] \\
+21 & TestCountServiceRecords > test\_counts\_nodes\_including\_unlinked\_records[memory] \\
+22 & TestCountServiceRecords > test\_counts\_nodes\_including\_unlinked\_records[neo4j] \\
+23 & TestCountServiceRecords > test\_neo4j\_count\_query\_returns\_only\_aggregate \\
+24 & TestListAssetsWithCounts > test\_returns\_sorted\_assets\_and\_counts[memory] \\
+25 & TestListAssetsWithCounts > test\_returns\_sorted\_assets\_and\_counts[neo4j] \\
+26 & TestListAssetHistory > test\_ascending\_order[memory] \\
+27 & TestListAssetHistory > test\_ascending\_order[neo4j] \\
+28 & TestListAssetHistory > test\_limit\_respected[memory] \\
+29 & TestListAssetHistory > test\_limit\_respected[neo4j] \\
+30 & TestListAssetHistory > test\_recent\_newest\_first\_and\_limited[memory] \\
+31 & TestListAssetHistory > test\_recent\_newest\_first\_and\_limited[neo4j] \\
+32 & TestLinkRecordSupersedes > test\_supersedes\_edge\_created[memory] \\
+33 & TestLinkRecordSupersedes > test\_supersedes\_edge\_created[neo4j] \\
+34 & TestListServiceRecords > test\_filter\_by\_status[memory] \\
+35 & TestListServiceRecords > test\_filter\_by\_status[neo4j] \\
+36 & TestListServiceRecords > test\_filter\_by\_asset[memory] \\
+37 & TestListServiceRecords > test\_filter\_by\_asset[neo4j] \\
+38 & TestUpdateServiceRecord > test\_partial\_update[memory] \\
+39 & TestUpdateServiceRecord > test\_partial\_update[neo4j] \\
+40 & TestUpdateServiceRecord > test\_update\_nonexistent\_returns\_none[memory] \\
+41 & TestUpdateServiceRecord > test\_update\_nonexistent\_returns\_none[neo4j] \\
+42 & TestFleetRecordPage > test\_filters\_orders\_and\_paginates[memory] \\
+43 & TestFleetRecordPage > test\_filters\_orders\_and\_paginates[neo4j] \\
+44 & TestFleetRecordPage > test\_analysis\_status\_counts\_states\_and\_labels[memory] \\
+45 & TestFleetRecordPage > test\_analysis\_status\_counts\_states\_and\_labels[neo4j] \\
+46 & TestCorrectionsPage > test\_summary\_component\_change\_and\_filters[memory] \\
+47 & TestCorrectionsPage > test\_summary\_component\_change\_and\_filters[neo4j] \\
+48 & TestNeo4jPaginationQueryShape > test\_records\_filters\_count\_and\_page\_in\_cypher \\
+49 & TestNeo4jPaginationQueryShape > test\_corrections\_summary\_and\_page\_are\_computed\_in\_cypher \\
+\end{longtable}
+\subsection*{\texttt{test\_maintenance\_agent.py} (10)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_creates\_asset\_and\_record \\
+2 & test\_asset\_linked\_to\_record \\
+3 & test\_idempotent\_second\_run \\
+4 & test\_duplicate\_retry\_repairs\_missing\_about\_link\_without\_duplication \\
+5 & test\_skip\_blank\_tail \\
+6 & test\_skip\_bad\_date \\
+7 & test\_preceded\_by\_chain \\
+8 & test\_mixed\_rows \\
+9 & test\_empty\_records \\
+10 & test\_multiple\_records\_same\_asset \\
+\end{longtable}
+\subsection*{\texttt{test\_ops.py} (3)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_ops\_version\_public \\
+2 & test\_ops\_logs\_requires\_token \\
+3 & test\_ops\_logs\_unconfigured \\
+\end{longtable}
+\subsection*{\texttt{test\_regression\_software.py} (7)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_health\_ok \\
+2 & test\_api\_health\_ok \\
+3 & test\_decisions\_lists\_seeded \\
+4 & test\_graph\_overview\_returns\_structure \\
+5 & test\_ingest\_document\_creates\_decision \\
+6 & test\_alerts\_responds \\
+7 & test\_invalidation\_flags\_linked\_decision \\
+\end{longtable}
+\normalsize
+\section{Frontend tests (171 tests)}\label{app:tests-frontend}
+\small
+\subsection*{\texttt{AssetHistory.test.jsx} (12)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & AssetHistory deep links to a record scrolls to the linked record and marks it \\
+2 & AssetHistory deep links to a record decodes a URL-encoded record id in the hash \\
+3 & AssetHistory deep links to a record says so when the linked record is not in this aircraft history \\
+4 & AssetHistory deep links to a record does nothing special without a hash \\
+5 & AssetHistory honesty and failure states does not invent a superseding record or rationale the backend did not provide \\
+6 & AssetHistory honesty and failure states shows a missing date plainly and puts undated records last \\
+7 & AssetHistory honesty and failure states 404: says the aircraft was not found (not "no records"), no retry \\
+8 & AssetHistory honesty and failure states network failure: reports it, and Try again recovers \\
+9 & AssetHistory honesty and failure states still shows the empty state when the aircraft genuinely has no records \\
+10 & AssetHistory shows the conflict-engine and ingest fields the backend returns shows confidence, JASC code and source on each record \\
+11 & AssetHistory shows the conflict-engine and ingest fields the backend returns shows nothing extra for fields the backend did not send \\
+12 & AssetHistory shows the conflict-engine and ingest fields the backend returns never renders a numeric confidence for an unscored record \\
+\end{longtable}
+\subsection*{\texttt{Assets.test.jsx} (3)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Assets renders assets \\
+2 & AssetHistory renders empty state \\
+3 & AssetHistory renders populated and superseded records \\
+\end{longtable}
+\subsection*{\texttt{Diagnostics.test.jsx} (29)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Diagnostics renders ranked list, evidence links, and handles rare-case expansion \\
+2 & Diagnostics renders error state on API failure \\
+3 & Diagnostics loading and submission shows a progress state and blocks duplicate submissions \\
+4 & Diagnostics loading and submission keeps Run disabled until an aircraft and a symptom are present \\
+5 & Diagnostics loading and submission names the asset and symptom the result belongs to \\
+6 & Diagnostics loading and submission clears the symptom and result with the Clear button \\
+7 & Diagnostics failure states (no invented diagnosis) 503: model unavailable, with technical detail and a retry that re-sends the same request \\
+8 & Diagnostics failure states (no invented diagnosis) 404: aircraft has no history; offers no retry \\
+9 & Diagnostics failure states (no invented diagnosis) 429: rate limited, retryable \\
+10 & Diagnostics failure states (no invented diagnosis) 500: reports a server error with the status, retryable \\
+11 & Diagnostics failure states (no invented diagnosis) 422: flattens FastAPI validation detail (an array) instead of crashing \\
+12 & Diagnostics failure states (no invented diagnosis) network failure: says the API is unreachable \\
+13 & Diagnostics response states 200 with no evidence: says so, and still shows the model text, labelled as unsupported (never hidden) \\
+14 & Diagnostics response states renders the warnings field and the citation-validation status \\
+15 & Diagnostics response states flags unverified citations instead of reporting them as verified \\
+16 & Diagnostics response states shows readable text when the backend returns the raw model JSON as the explanation \\
+17 & Diagnostics response states tolerates missing optional fields in the response \\
+18 & Diagnostics response states always states that this is decision support \\
+19 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) lets a ranked check's evidence record ids open the history when the record is known \\
+20 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) caps long record lists per check and says how many more there are \\
+21 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) shows each check's rank score, labelled as a rank score and not a probability \\
+22 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) omits the rank score when the backend does not send one (no invented number) \\
+23 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) shows the server time from context\_size.wall\_clock\_s \\
+24 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) lets the reader expand a check to see every record id, not just the first few \\
+25 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) styles [UNVERIFIED:ID] markers as warnings \\
+26 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) does not call citations verified when all\_valid is false, even with no invalid ids listed \\
+27 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) says so when the model returns no explanation but a ranking exists (not a silent omission) \\
+28 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) does not show the no-explanation notice when an explanation is present \\
+29 & Diagnostics contract with the backend (docs/mid1/12\_u4\_u5\_diagnostics\_handoff.md) warns that a fresh diagnosis can be slow while it is loading \\
+\end{longtable}
+\subsection*{\texttt{DiagnosticsCopilot.test.jsx} (4)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Diagnostics copilot defaults to All fleet and carries accumulated case state across turns \\
+2 & Diagnostics copilot shows model-unavailable output and retries a network failure without a blank success \\
+3 & Diagnostics copilot saves, resumes, and deletes a local session \\
+4 & Diagnostics copilot deep-links evidence to the matching aircraft history record \\
+\end{longtable}
+\subsection*{\texttt{DomainContext.test.jsx} (3)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & DomainContext is locked to the maintenance domain \\
+2 & DomainContext ignores a stale software value left in localStorage by the old switcher \\
+3 & DomainContext cannot be switched to the software domain \\
+\end{longtable}
+\subsection*{\texttt{Graph.test.jsx} (18)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Graph page asks the backend for enough nodes rather than its 200-node default \\
+2 & Graph page opens on the aircraft with the most records and shows only its real subgraph \\
+3 & Graph page states the true node and edge counts and no longer claims a 2000-node cap \\
+4 & Graph page warns when the loaded cap is reached because the graph may be incomplete \\
+5 & Graph page never shows legacy software nodes \\
+6 & Graph page marks aircraft that have a stored correction in the selector \\
+7 & Graph page switches aircraft and shows that aircraft only \\
+8 & Graph page explains each stored relationship and counts the ones in view \\
+9 & Graph page draws SUPERSEDES corrections apart from other edges \\
+10 & Graph page settles a small layout before the first frame so the camera fits the final positions \\
+11 & Graph page keeps large views to a short animated settle instead of blocking on a long warm-up \\
+12 & Graph page labels nodes by tail number and record id, not by UUID \\
+13 & Graph page reports a load failure with retry and no stale "port 8000" advice \\
+14 & Graph page warns that the whole fleet is too dense to read \\
+15 & GraphSidePanel shows a record's stored fields and links to its asset history entry \\
+16 & GraphSidePanel does not show the stored confidence, which can be a legacy 1.00 placeholder \\
+17 & GraphSidePanel shows no link for a record whose aircraft cannot be resolved \\
+18 & GraphSidePanel links an aircraft node to its own history \\
+\end{longtable}
+\subsection*{\texttt{MaintenanceIngest.test.jsx} (17)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Corpus ingest (server file) renders corpus ingest and processes result \\
+2 & Corpus ingest (server file) sends the path and limit it was given \\
+3 & Corpus ingest (server file) shows a failure inline and never as a browser alert \\
+4 & CSV upload selecting a file writes nothing until the user confirms \\
+5 & CSV upload posts the file as multipart form data under the field name "file" \\
+6 & CSV upload shows the backend counts with honest labels and a link to the new records \\
+7 & CSV upload says so when no record was created \\
+8 & CSV upload says so when everything was already in the graph \\
+9 & CSV upload rejects a non-CSV file before sending anything \\
+10 & CSV upload rejects a file over the size limit before sending anything \\
+11 & CSV upload shows the backend reason when the server refuses the file \\
+12 & CSV upload reports a server failure honestly and keeps the file so it can be retried \\
+13 & CSV upload does not blame a stopped API when an upload fails without a readable reply \\
+14 & CSV upload lets the user drop the chosen file \\
+15 & CSV upload tells the user the date format the backend accepts \\
+16 & CSV upload warns that ingesting writes to the graph and is safe to repeat \\
+17 & Single record submission shows a failure inline and never as a browser alert \\
+\end{longtable}
+\subsection*{\texttt{ReviewQueue.test.jsx} (18)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Detected corrections tab defaults the corrections aircraft filter to All aircraft and renders live summary \\
+2 & Detected corrections tab filters corrections by aircraft \\
+3 & ReviewQueue renders queued item and pruning line \\
+4 & ReviewQueue loading the queue a failed fetch is reported as a failure, never as an empty queue \\
+5 & ReviewQueue loading the queue an analysed empty queue states the analysed count \\
+6 & ReviewQueue loading the queue an unanalysed empty queue states the remaining count \\
+7 & ReviewQueue loading the queue uses the backend history\_size and skips the extra history request \\
+8 & ReviewQueue loading the queue explains what the conflict label means \\
+9 & ReviewQueue loading the queue links the incoming and prior record to the asset history by asset UUID \\
+10 & ReviewQueue loading the queue shows no history link rather than a broken one when the asset cannot be resolved \\
+11 & ReviewQueue finding details never shows the previous record's finding when the next one fails to load \\
+12 & ReviewQueue finding details Retry re-requests the finding \\
+13 & ReviewQueue accept and reject change real data, so the UI waits for the server does not remove the record or announce success until the server confirms \\
+14 & ReviewQueue accept and reject change real data, so the UI waits for the server keeps the record in the queue and shows the server reason when accept fails \\
+15 & ReviewQueue accept and reject change real data, so the UI waits for the server requires a note to reject and sends nothing without one \\
+16 & ReviewQueue accept and reject change real data, so the UI waits for the server rejects with the note once the server confirms \\
+17 & ReviewQueue accept and reject change real data, so the UI waits for the server a stray key press cannot accept or reject a record \\
+18 & ReviewQueue accept and reject change real data, so the UI waits for the server says plainly that neither action deletes the record \\
+\end{longtable}
+\subsection*{\texttt{ServiceRecords.test.jsx} (22)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & confidence and status states renders unscored without a numeric score \\
+2 & confidence and status states renders a flagged legacy 1.00 placeholder as not analysed \\
+3 & confidence and status states renders no-conflict comparisons without a numeric score \\
+4 & confidence and status states renders a relation as a heuristic score \\
+5 & confidence and status states explains screen and adaptive model methods in the score tooltip \\
+6 & confidence and status states hides confidence for superseded records \\
+7 & ServiceRecords fleet view defaults to All aircraft \\
+8 & ServiceRecords fleet view makes exactly two page-initiated calls on first load \\
+9 & ServiceRecords fleet view renders tail number on every row and the fleet total \\
+10 & ServiceRecords fleet view keeps record deep links on the asset UUID and record ID \\
+11 & ServiceRecords fleet view preselects an asset from a shareable URL \\
+12 & ServiceRecords fleet view highlights a linked record from a shareable URL \\
+13 & ServiceRecords fleet view sends aircraft filter changes to the fleet endpoint \\
+14 & ServiceRecords fleet view sends the Search records filter through URL-backed params \\
+15 & ServiceRecords fleet view sends the Status filter through URL-backed params \\
+16 & ServiceRecords fleet view sends the Analysis state filter through URL-backed params \\
+17 & ServiceRecords fleet view sends the Component filter through URL-backed params \\
+18 & ServiceRecords fleet view sends the Date from filter through URL-backed params \\
+19 & ServiceRecords fleet view sends the Date to filter through URL-backed params \\
+20 & ServiceRecords fleet view loads the next page and appends records \\
+21 & ServiceRecords fleet view shows a corrected-by banner with a link \\
+22 & ServiceRecords fleet view reports a records failure and can retry \\
+\end{longtable}
+\subsection*{\texttt{Settings.test.jsx} (6)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Settings system status mirrors /api/health shows the runtime-honesty fields the backend reports \\
+2 & Settings system status mirrors /api/health flags a degraded runtime instead of presenting it as healthy \\
+3 & Settings system status mirrors /api/health omits fields the backend did not send rather than showing them as "No" \\
+4 & Settings system status mirrors /api/health does not show a version when the backend reports "unknown" \\
+5 & Settings system status mirrors /api/health exposes no control that can wipe the graph \\
+6 & Settings system status mirrors /api/health says plainly when the backend is unreachable \\
+\end{longtable}
+\subsection*{\texttt{Sidebar.test.jsx} (3)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Sidebar renders the maintenance destinations \\
+2 & Sidebar does not expose dropped software-domain screens or a domain switcher \\
+3 & Sidebar shows the review count badge only when records await review \\
+\end{longtable}
+\subsection*{\texttt{diagnosticsUtils.test.js} (24)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & formatDetail passes strings through \\
+2 & formatDetail flattens FastAPI validation arrays to text \\
+3 & formatDetail returns null for empty or unusable detail \\
+4 & describeDiagnosticError maps HTTP 404 to no-history (retryable: false) \\
+5 & describeDiagnosticError maps HTTP 422 to validation (retryable: false) \\
+6 & describeDiagnosticError maps HTTP 503 to model-unavailable (retryable: true) \\
+7 & describeDiagnosticError maps HTTP 429 to rate-limited (retryable: true) \\
+8 & describeDiagnosticError maps HTTP 500 to server-error (retryable: true) \\
+9 & describeDiagnosticError maps HTTP 502 to server-error (retryable: true) \\
+10 & describeDiagnosticError keeps the backend detail for 503 so the limitation is explained \\
+11 & describeDiagnosticError always returns strings, never objects, even for array detail \\
+12 & describeDiagnosticError detects a network failure \\
+13 & describeDiagnosticError does not call an unrelated thrown error a network failure \\
+14 & describeDiagnosticError falls back to the backend detail when there is no status \\
+15 & extractExplanation returns ordinary prose untouched \\
+16 & extractExplanation unwraps a raw JSON blob from the model \\
+17 & extractExplanation unwraps JSON inside a markdown fence \\
+18 & extractExplanation recovers the explanation from truncated JSON \\
+19 & extractExplanation leaves JSON without an explanation key alone \\
+20 & extractExplanation handles non-string input \\
+21 & splitUnverified returns one plain segment when there are no markers \\
+22 & splitUnverified flags [UNVERIFIED:ID] and bare [UNVERIFIED] markers and keeps the surrounding text in order \\
+23 & splitUnverified does not flag lookalikes \\
+24 & splitUnverified handles empty and non-string input \\
+\end{longtable}
+\subsection*{\texttt{dummy.test.jsx} (1)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & Dummy test should pass \\
+\end{longtable}
+\subsection*{\texttt{graphScope.test.js} (10)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & maintenanceGraph drops non-maintenance nodes and the edges that touched them \\
+2 & maintenanceGraph tolerates empty or missing data \\
+3 & maintenanceGraph understands edges whose ends were already resolved to objects by the force graph \\
+4 & aircraftOptions counts the stored corrections per aircraft \\
+5 & aircraftOptions lists aircraft by record count, then tail number \\
+6 & focusAircraft keeps one aircraft, its records and only the stored edges between them \\
+7 & focusAircraft never invents an edge \\
+8 & focusAircraft returns the whole graph when no aircraft is chosen \\
+9 & focusAircraft returns an empty graph for an unknown aircraft \\
+10 & countBy counts, bucketing missing keys as Other \\
+\end{longtable}
+\subsection*{\texttt{ingestClient.test.js} (1)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & maintenanceAPI.ingestFile posts to the multipart upload route, not the JSON csv\_path route \\
+\end{longtable}
+\normalsize

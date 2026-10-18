@@ -1,0 +1,7 @@
+\begin{tikzpicture}[scale=0.95,transform shape]
+\node[draw,rounded corners=2pt,align=left,font=\footnotesize,inner sep=5pt] (asset) at (0,0) {\begin{tabular}{@{}l@{}}\textbf{Asset}\\\hline \code{id} (UUID)\\ \code{tail_number}\\ \code{make}, \code{model}\\ \code{serial_number}\\ \code{created_at}, \code{updated_at}\end{tabular}};
+\node[draw,rounded corners=2pt,align=left,font=\footnotesize,inner sep=5pt] (sr) at (8.2,0) {\begin{tabular}{@{}l@{}}\textbf{ServiceRecord}\\\hline \code{id} (UUID), \code{record_id} (FAA)\\ \code{asset_key} (tail number)\\ \code{occurred_at}, \code{submitted_at}\\ \code{part_name}, \code{part_condition}, \code{part_location}\\ \code{jasc_code}, \code{text}, \code{source}\\ \code{status}, \code{analysis_state}, \code{confidence}\\ classification label, rationale, method, model\end{tabular}};
+\draw[arr] (sr.west) -- node[lab,above]{ABOUT} node[lab,below]{many to one} (asset.east);
+\draw[arr] ([xshift=-1cm]sr.north) to[out=90,in=90,looseness=3.2] node[above,lab,pos=0.5]{PRECEDED\_BY: earlier record, same aircraft (0..1)} ([xshift=1cm]sr.north);
+\draw[arr] ([xshift=-1cm]sr.south) to[out=-90,in=-90,looseness=3.2] node[below,lab,pos=0.5]{SUPERSEDES: newer $\rightarrow$ older, computed (0..*)} ([xshift=1cm]sr.south);
+\end{tikzpicture}

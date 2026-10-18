@@ -1,0 +1,151 @@
+\chapter{Testing and Early Validation}\label{ch:testing}
+
+\section{Testing Strategy}
+We test at four levels and add manual end-to-end checks against the running system. The aim is that every claim in this report maps to a test, a measurement or a screenshot, and that a failure is reported instead of hidden.
+\begin{enumerate}
+\item \textbf{Unit tests} of backend services with the language model replaced by a fake, so classification, routing, ranking and citation rules are tested deterministically.
+\item \textbf{API tests} that call the routes through FastAPI's test client, including the failure codes (404, 409, 422, 503).
+\item \textbf{Repository contract tests} that run the same graph operations against the in-memory store and a real Neo4j service.
+\item \textbf{Component tests} of the React pages with the API mocked, covering every response shape and every error state.
+\item \textbf{Smoke and end-to-end checks.} A Docker Compose job in CI starts the whole stack and verifies health, the loaded corpus and the maintenance APIs; the acceptance tests T01--T16 are run by hand against a running system.
+\end{enumerate}
+For the frontend work added late in the iteration we also applied \emph{mutation checks}: after writing a test, we deliberately broke the code it protects (for example, removed a size limit or reverted a label) and confirmed that the test failed, then restored the code.
+
+\section{Test Levels and Techniques}
+\begin{longtable}{p{0.34\textwidth}p{0.12\textwidth}p{0.44\textwidth}}
+\caption{Automated tests by area (commit \texttt{36a98a3})}\label{tab:testcounts}\\
+\toprule \textbf{File} & \textbf{Tests} & \textbf{What it covers} \\ \midrule \endfirsthead
+\toprule \textbf{File} & \textbf{Tests} & \textbf{What it covers} \\ \midrule \endhead
+\multicolumn{3}{l}{\textit{Backend (PyTest): 194 tests, of which 145 need no database}} \\
+\code{test_conflict_engine.py} & 32 & Candidate pairing, classification parsing, adjudication, confidence, routing \\
+\code{test_conflict_cascade.py} & 11 & Cost cascade: screen, voting, budget \\
+\code{test_api_maintenance.py} & 27 & Maintenance endpoints and failure paths \\
+\code{test_diagnostic_retrieval.py} & 26 & Bounded retrieval, ranking, tie-breaks, copilot ranking \\
+\code{test_api_copilot.py} & 10 & Copilot contract and failure behaviour \\
+\code{test_maintenance_agent.py} & 10 & Ingest: validation, duplicates, orphan repair \\
+\code{test_citation_validation.py} & 6 & Identifier extraction and checking \\
+\code{test_backfill_conflict_scores.py} & 6 & Resume, budget stop, bounded retries \\
+\code{test_api_diagnostics.py}, \code{test_ops.py}, \code{test_conflict_analysis_migration.py} & 4, 3, 3 & Diagnose contract, operations endpoints, legacy-placeholder migration \\
+\code{test_regression_software.py} & 7 & Frozen legacy domain still works \\
+\code{test_graph_maintenance.py} & 49 & Repository contract against memory and real Neo4j (runs in CI) \\
+\midrule
+\multicolumn{3}{l}{\textit{Frontend (Vitest): 171 tests in 15 files}} \\
+\code{Diagnostics.test.jsx}, \code{DiagnosticsCopilot.test.jsx}, \code{diagnosticsUtils.test.js} & 29, 4, 24 & Diagnose and Copilot states, safety, contract \\
+\code{ServiceRecords.test.jsx} & 22 & Fleet list, filters, pagination, deep links \\
+\code{ReviewQueue.test.jsx} & 18 & Queue, server-confirmed actions, corrections \\
+\code{Graph.test.jsx}, \code{graphScope.test.js} & 18, 10 & Graph selection, counts, edge styling \\
+\code{MaintenanceIngest.test.jsx}, \code{ingestClient.test.js} & 17, 1 & CSV upload flow and errors \\
+\code{AssetHistory.test.jsx}, \code{Assets.test.jsx} & 12, 3 & History, failure states, list \\
+\code{Settings}, \code{Sidebar}, \code{DomainContext}, \code{dummy} & 6, 3, 3, 1 & Navigation and system status \\
+\bottomrule
+\end{longtable}
+
+\section{Test Cases}
+\subsection{End-to-end acceptance tests}
+The team defined T01--T16 before the iteration (owner in brackets). Table~\ref{tab:accept} gives each result and its evidence.
+\begin{longtable}{p{0.06\textwidth}p{0.27\textwidth}p{0.11\textwidth}p{0.46\textwidth}}
+\caption{Acceptance tests and results}\label{tab:accept}\\
+\toprule \textbf{ID} & \textbf{Scenario} & \textbf{Result} & \textbf{Evidence and caveat} \\ \midrule \endfirsthead
+\toprule \textbf{ID} & \textbf{Scenario} & \textbf{Result} & \textbf{Evidence and caveat} \\ \midrule \endhead
+T01 & Application opens the maintenance workspace & Pass & Route smoke log; \code{Sidebar} tests. Browser console was not audited systematically \\
+T02 & API lists loaded assets & Pass & \code{test_api_maintenance}; staging lists 118 aircraft \\
+T03 & Selected asset history is displayed & Pass & \code{AssetHistory} tests; Figure~\ref{fig:shot-history} \\
+T04 & Diagnosis returns graph-backed evidence and ranking & Partly & Full result with a live model locally (Figure~\ref{fig:shot-diag}); on staging fresh diagnoses returned no explanation text on 16 Oct (not re-checked) \\
+T05 & Explanation cites a real record that opens & Pass & \code{test_citation_validation}; Figure~\ref{fig:shot-cite}, ``12 cited record IDs verified'' \\
+T06 & Unknown asset request & Pass & Controlled 404, ``Aircraft not found'', no invented history \\
+T07 & Model unavailable & Pass & HTTP 503 with a reason; Figure~\ref{fig:shot-fail} \\
+T08 & Empty or ambiguous evidence & Pass & Explicit ``no relevant history'' result; ranking withheld when there is no evidence \\
+T09 & Review queue shows a known case & Pass & Figure~\ref{fig:shot-review} \\
+T10 & Review action on a test case & Pass & \code{ReviewQueue} and API tests (confirmation, 409, required note). Accept and reject were \emph{not} exercised live on shared data, on purpose \\
+T11 & Frontend tests and build & Pass & 171 tests pass; production build passes \\
+T12 & Backend tests & Pass & 194 tests pass in CI \\
+T13 & Pull-request CI runs and passes & Pass & Checks run on every pull request; run 39068741787 on \code{36a98a3} succeeded \\
+T14 & Real graph health & Pass & Staging reports Neo4j graph mode, live model, 2,079 records (18 Oct); Compose smoke test \\
+T15 & Setup on a clean machine & Partly & CI builds the stack from a clean checkout; nobody outside the team has followed the guide \\
+T16 & Legacy screen isolation & Pass & \code{Sidebar} and \code{DomainContext} tests; legacy URLs redirect \\
+\bottomrule
+\end{longtable}
+Appendix~\ref{app:tests} lists every automated test by name.
+
+\section{Test Results}
+At commit \code{36a98a3} the CI run (id 39068741787) reported: backend \textbf{194 passed}; frontend \textbf{171 passed} in 15 files; the Docker Compose real-graph smoke test passed; the staging deployment that followed succeeded. Code coverage has \textbf{not been measured} (NFR-04), so no coverage figure is claimed.
+
+\section{Acceptance Testing / Validation}
+\subsection{One-aircraft analysis run}\label{sec:oneaircraft}
+To show scores, corrections and a review queue on real records, and to test the conflict engine on a bounded input, we analysed one aircraft, 800NN (13 records, three FAA-recorded correction pairs), on a throwaway Neo4j graph. Shared staging was not touched. The records were loaded through the new upload route and analysed in the original (\code{legacy}) mode with \code{openai/gpt-oss-120b} and the 0.50 threshold, with an empty classification cache so every result came from a real model call.
+
+\begin{center}
+\begin{tabular}{lr}
+\toprule \textbf{Measure} & \textbf{Result} \\ \midrule
+Records processed & 13 \\
+Model classifications / screened without a model & 11 / 2 \\
+Successful model requests & 55 \\
+Tokens used & 29,386 \\
+Rate-limit (HTTP 429) responses, all retried successfully & 27 \\
+\code{SUPERSEDES} edges created & 4 \\
+Status: no\_action / auto\_accepted / needs\_review & 7 / 4 / 2 \\
+FAA-recorded pairs found & \textbf{3 of 3} \\
+Edges not in the FAA list & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The FAA ground-truth file lists only corrections the FAA reporters themselves recorded, so the one extra edge is \emph{unverified, not shown to be wrong}. We do not compute a precision from one aircraft. Two records were sent to human review. These figures describe this aircraft only: about 2,260 tokens and 4.2 requests per record must not be extrapolated to the full corpus. The method and results are in \pth{docs/mid1/23_single_aircraft_analysis_evidence.md}.
+
+\subsection{Earlier offline evaluation of conflict detection}
+An earlier evaluation measured the conflict engine on 350 pairs (141 FAA-recorded positives and 209 sampled negatives, one evaluation per superseding record), with \code{openai/gpt-oss-120b} at threshold 0.50:
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule \textbf{System} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{False-conflict rate} \\ \midrule
+Baseline (most recent prior) & 0.380 & 0.908 & 0.536 & 1.000 \\
+Engine (threshold 0.50) & 0.903 & 0.660 & 0.762 & 0.048 \\
+\bottomrule
+\end{tabular}
+\end{center}
+The baseline reaches its recall by asserting a supersession on every pair it sees, which is why its false-conflict rate is 1.000. Measured at pair level over the 141 FAA-recorded pairs, precision is 0.788 and recall 0.660; the two precision figures answer different questions and must not be mixed.
+
+\textbf{How far this evidence goes.} It is \emph{historical}: it comes from saved result files of the older run, with a model that is not the one now configured on staging. It measures conflict detection and is \textbf{not} a measure of diagnostic accuracy. The full-corpus counts published with it (121 detected, 117 auto-resolved, 4 for review, 1,617 without candidates) cannot be reproduced from the current code and are not used here.
+
+\section{Edge and Failure Cases}
+\begin{longtable}{p{0.3\textwidth}p{0.62\textwidth}}
+\caption{Edge and failure cases, and the behaviour tested}\label{tab:edge}\\
+\toprule \textbf{Case} & \textbf{Behaviour} \\ \midrule \endfirsthead
+\toprule \textbf{Case} & \textbf{Behaviour} \\ \midrule \endhead
+Unknown aircraft & 404 and ``Aircraft not found'', never an empty history \\
+Aircraft looked up by tail number & The history route takes the UUID; a tail number returns 404 (recorded in the contract) \\
+No live model & HTTP 503 with a reason; Copilot returns an empty reply but keeps ranking and evidence \\
+Empty model output & Explicit 503, never a blank success \\
+Invented record identifier & Marked \code{[UNVERIFIED]} and left out of the valid list \\
+Rate limit & Bounded retries; a daily budget stops runs cleanly \\
+Superseded record in the Copilot & Visible as evidence, excluded from recommendations \\
+Legacy confidence 1.0 & Reported as unscored with null confidence \\
+Review action on a record that is not reviewable & HTTP 409; the queue is unchanged \\
+Reject without a note & Rejected by validation (HTTP 422) \\
+Oversize or non-CSV upload & Rejected in the browser before anything is sent \\
+Re-upload of the same CSV & Every record counted as already stored; nothing changes \\
+Unreadable CSV (for example empty) & Backend raises an unhandled error (HTTP 500 without CORS headers), which the browser reports as a network failure; the interface words the message to say so (open issue) \\
+Browser storage denied or corrupt & Copilot remains usable; a warning is shown \\
+\bottomrule
+\end{longtable}
+
+\section{Defects and Corrective Actions}
+\begin{longtable}{p{0.04\textwidth}p{0.43\textwidth}p{0.4\textwidth}p{0.08\textwidth}}
+\caption{Defects found and their resolution}\label{tab:defects}\\
+\toprule \textbf{\#} & \textbf{Defect} & \textbf{Corrective action} & \textbf{State} \\ \midrule \endfirsthead
+\toprule \textbf{\#} & \textbf{Defect} & \textbf{Corrective action} & \textbf{State} \\ \midrule \endhead
+1 & Frontend CI failed: a review-queue test mock lacked \code{getRecord} & Mock fixed; storage shim added for the test environment & Fixed \\
+2 & Review-queue ``Open in asset history'' links used tail numbers and led to 404 & Resolve the aircraft UUID; show no link if it cannot be resolved & Fixed \\
+3 & Deep link did not scroll when the page was still showing its loading skeleton & Scroll effect depends on the loading state & Fixed \\
+4 & Service Records issued 1 + 118 requests on load & Fleet-wide paginated endpoint; two page-initiated calls & Fixed \\
+5 & Assets list was slow (one history query per aircraft) & Single aggregation query; about 1.0\,s on staging & Fixed \\
+6 & Placeholder confidence 1.0 and ``auto-accepted'' shown as a real result & Honest analysis state; placeholders reported as unscored & Fixed \\
+7 & Graph requested 200 nodes yet claimed ``Capped at 2000'' & Request 3,000; truthful counts; warning when the cap is hit & Fixed \\
+8 & CSV upload client posted to a route that accepts only a server path; nothing used it & Posts to the upload route; new upload panel & Fixed \\
+9 & Small graphs hid their edges behind large nodes & Spacing and node size changed & Fixed \\
+10 & Staging fresh diagnoses returned no explanation text & Cause not established (the staging model is smaller); the API reports empty output as 503 & Open \\
+11 & Unreadable CSV returns an unhandled HTTP 500 & Interface wording only; backend change belongs to its owner & Open \\
+12 & One staging record has no \code{ABOUT} link & Re-running ingest repairs it; not applied to shared data without approval & Open \\
+\bottomrule
+\end{longtable}
+
+\section{Current Validation Status}
+\textbf{Validated:} the code paths covered by 365 automated tests; the end-to-end slice on real records; the failure behaviour in Table~\ref{tab:edge}; the engine on one aircraft against the FAA's own labels (3 of 3). \textbf{Not validated:} diagnostic accuracy of the ranking; retrieval quality against baselines; the engine on the full corpus or with the staging model; usability with real technicians; load performance; code coverage; setup by an outside person. These are planned in Chapter~\ref{ch:remaining}.
