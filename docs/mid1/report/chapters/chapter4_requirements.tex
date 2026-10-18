@@ -139,10 +139,10 @@ FR-12 & Flag ambiguous or invalid fields & Rows with no tail, a bad date or no i
 \textbf{NFR-08:} task completion and a usability score are measured. \emph{Status:} \textbf{not measured}; no user test was run. Design rules applied instead: errors name the cause, unanalysed records say so, scores carry their meaning, and destructive actions need confirmation.
 
 \subsection{Performance}
-\textbf{NFR-02:} non-generation requests meet a p95 of 500~ms. \emph{Measured:} the assets list took about 0.99~s as a single request on staging, \textbf{which exceeds the target}; no load test was run. The Service Records first load makes two page-initiated requests instead of 119. \textbf{NFR-03:} diagnostic latency is measured under a controlled workload; \emph{not measured}, because fresh diagnoses call an external model.
+\textbf{NFR-02:} non-generation requests meet a p95 of 500~ms. \emph{Measured:} one observed request for the assets list took about 0.99~s on staging, \textbf{which exceeds 500~ms}. A p95 cannot be established from a single measurement and no load test was run, so the target is neither shown to be met nor met for that endpoint. The Service Records first load makes two page-initiated requests instead of 119. \textbf{NFR-03:} diagnostic latency is measured under a controlled workload; \emph{not measured}, because fresh diagnoses call an external model.
 
 \subsection{Security}
-\textbf{NFR-05} (no cross-tenant access) does not apply yet because there is no authentication or tenancy. What exists: the batch analysis and the log-retrieval endpoints need a secret operations token; secrets live in ignored environment files; the settings page no longer offers to wipe the graph. \textbf{Known risk:} \pth{DELETE /api/graph/reset} remains reachable without authentication (Section~\ref{sec:risks}).
+\textbf{NFR-05} (no cross-tenant access) does not apply yet because there is no authentication or tenancy. What exists: the batch analysis and the log-retrieval endpoints need a secret operations token; secrets live in ignored environment files; the settings page no longer offers to wipe the graph. The graph-reset route, previously reachable without authentication, now needs the operations token and, for a real Neo4j database, a typed confirmation (Section~\ref{sec:risks}).
 
 \section{Acceptance Criteria}
 The acceptance criteria are the checks above and the end-to-end acceptance tests T01 to T16 in Chapter~\ref{ch:testing}, which the team defined before the iteration.
@@ -158,7 +158,7 @@ FR-06, 08 & Asset history API and page & \code{maintenance.py}, \code{AssetHisto
 FR-13 & Graph schema, ingest & \code{maintenance_agent.py}, \code{queries.py} & \code{test_maintenance_agent} (10) \\
 FR-14, 15 & Graph view & \code{Graph.jsx}, \code{graphScope.js} & \code{Graph.test} (18), \code{graphScope.test} (10) \\
 FR-17, 18, 19 & Retrieval and ranking & \code{diagnostic_retrieval.py} & \code{test_diagnostic_retrieval} (26) \\
-FR-21 & Citation validation & \code{citation_validation.py} & \code{test_citation_validation} (6) \\
+FR-21 & Citation validation & \code{citation_validation.py} & \code{test_citation_validation} (6), \code{test_diagnose_prompt} (2) \\
 FR-23, 24, 25 & Conflict engine & \code{conflict_engine.py} & \code{test_conflict_engine} (32), \code{test_conflict_cascade} (11) \\
 FR-26 & Review actions & \code{maintenance.py}, \code{ReviewQueue.jsx} & \code{ReviewQueue.test} (18) \\
 FR-09, 12 & CSV upload & \code{MaintenanceIngest.jsx}, \code{CsvUploader.jsx} & \code{MaintenanceIngest.test} (17) \\

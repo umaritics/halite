@@ -2,9 +2,9 @@
 \section*{How to verify the figures in this report}
 \begin{lstlisting}
 git clone https://github.com/umaritics/halite && cd halite
-git checkout 36a98a3                         # the commit the counts refer to
-git rev-list --count HEAD                     # 115 commits
-git rev-list --no-merges --count HEAD         # 98 commits
+git checkout 06bc614                         # the commit the counts refer to
+git rev-list --count HEAD                     # 119 commits
+git rev-list --no-merges --count HEAD         # 100 commits
 git shortlog -sn --no-merges HEAD             # commits by author identity
 git log --format='%ad' --date=short | sort | uniq -c   # commits per day
 \end{lstlisting}
@@ -17,19 +17,19 @@ git log --format='%ad' --date=short | sort | uniq -c   # commits per day
 17 Aug & 2 & 15 Oct & 9 \\
 18 Aug & 2 & 16 Oct & 43 \\
 8 Sep & 16 & 17 Oct & 17 \\
- & & 18 Oct & 8 \\
+ & & 18 Oct & 12 \\
 \bottomrule
 \end{longtable}
-Total 115, of which 17 are merge commits.
+Total 119, of which 19 are merge commits.
 
 \section*{Continuous integration}
-Run 39068741787 on commit \code{36a98a3} (branch \code{main}): backend tests 194 passed (Python 3.11 with a Neo4j 5 service), frontend tests 171 passed with a successful build (Node 20), Docker Compose real-graph smoke test passed. The staging deployment workflow ran after it and succeeded.
+Run 39143888904 on commit \code{06bc614} (branch \code{main}): backend tests 200 passed (Python 3.11 with a Neo4j 5 service), frontend tests 171 passed with a successful build (Node 20), Docker Compose real-graph smoke test passed. The staging deployment workflow ran after it, and the public version endpoint then reported \code{06bc614}.
 
 \section*{Branches merged into \texttt{main}}
-\pth{feat/maintenance-domain}, \pth{fix/mid1-backend-release-hygiene}, \pth{umar/mid1-graph-diagnostics}, \code{usman}, \pth{feat/mid1/frontend-diagnostics}, \pth{feat/mid1/show-backend-outputs}, \pth{feat/mid1/diagnostic-copilot}, \pth{feat/mid1/confidence-and-corrections}, \pth{feat/mid1/analysis-cost-cascade}, \pth{feat/mid1/graph-aircraft-focus}, \pth{feat/mid1/ingest-upload-ui}, \pth{fix/mid1/graph-spacing}, \pth{docs/mid1/sync-after-prs-6-7}, \pth{docs/mid1/single-aircraft-analysis}, \pth{docs/mid1/evidence-refresh}.
+\pth{feat/maintenance-domain}, \pth{fix/mid1-backend-release-hygiene}, \pth{umar/mid1-graph-diagnostics}, \code{usman}, \pth{feat/mid1/frontend-diagnostics}, \pth{feat/mid1/show-backend-outputs}, \pth{feat/mid1/diagnostic-copilot}, \pth{feat/mid1/confidence-and-corrections}, \pth{feat/mid1/analysis-cost-cascade}, \pth{feat/mid1/graph-aircraft-focus}, \pth{feat/mid1/ingest-upload-ui}, \pth{fix/mid1/graph-spacing}, \pth{docs/mid1/sync-after-prs-6-7}, \pth{docs/mid1/single-aircraft-analysis}, \pth{docs/mid1/evidence-refresh}, \pth{fix/mid1/protect-graph-reset}, \pth{fix/mid1/restore-diagnose-prompt}.
 
 \section*{Release tag}
-\confirm{release tag name, the commit it marks, and the date it was created}
+The annotated tag \code{mid1-submission} was created on 18 October 2026 on the \code{main} commit that contains this report. The code and tests described in the report were evaluated at commit \code{06bc614}; the commits after it add this report and its source (documents only).
 
 \section*{Pull requests and contributions}
 The pull requests, with their authors and states, are in Table~\ref{tab:prs}; the activity of each member is in Table~\ref{tab:activity}; the milestone log is Table~\ref{tab:milestones}.

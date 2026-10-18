@@ -41,7 +41,7 @@ cd ../frontend && npm test && npm run build
 \code{backend/services} & Retrieval, ranking, citation check, conflict engine, budget, model client \\
 \code{backend/agents} & Ingest agent \\
 \code{backend/graph} & Schema, repository (queries), Neo4j client, in-memory store \\
-\code{backend/tests} & 194 PyTest tests \\
+\code{backend/tests} & 200 PyTest tests \\
 \code{frontend/src} & Pages, components, hooks, utilities, API client; 171 Vitest tests in \code{src/test} \\
 \code{knowledge/} & Context, flows, decision records \\
 \code{docs/mid1/} & Dated evidence: audits, measurements, screenshots \\
@@ -76,7 +76,7 @@ where $J$ is the Jaccard similarity of the two word sets \citep{jaccard1912}; re
 \]
 with $H_c$ the aircraft's own recent records for component $c$ (position $i$ counted from the newest, starting at 0) and $F_c$ the fleet matches. Ties are broken by evidence count (higher first), then by component name, so the order is the same on every run. The weights (0.4, 0.6, 0.3) are constants chosen by the team and are not fitted to data; the score is a ranking aid, not a probability, and the interface says so.
 
-\textbf{Copilot.} The Copilot repeats retrieval over all symptoms and observations the user has accumulated, excludes components the user has ruled out, excludes superseded records from recommendations (they stay visible as evidence), and reports which checks moved up, moved down, appeared or dropped since the previous turn.
+\textbf{Copilot.} In the Copilot a model first extracts new facts from each message into a strict case-state structure (symptoms, observations, checks done, ruled-out components, open questions); if its output is invalid the raw message is kept. The ranking itself stays deterministic. The Copilot repeats retrieval over all symptoms and observations the user has accumulated, excludes components the user has ruled out, excludes superseded records from recommendations (they stay visible as evidence), and reports which checks moved up, moved down, appeared or dropped since the previous turn.
 
 \subsection{Citation validation}
 Every token shaped like an FAA identifier (two to six capital letters followed by at least six digits) in the model's text is looked up in the graph. Those found are \code{valid}; the rest are \code{invalid} and are wrapped as \code{[UNVERIFIED:id]} in the displayed text. This confirms that a record exists; it does not confirm that the sentence citing it is supported, and the interface says that too.

@@ -27,7 +27,7 @@ The proposal's later iterations stand: \textbf{Iteration 2 (FYP-1 Final)}, an in
 \textbf{Iteration 2 (FYP-1 Final).} Tasks are ordered by dependency; owners follow the ownership in Table~\ref{tab:owners}.
 \begin{longtable}{p{0.05\textwidth}p{0.5\textwidth}p{0.14\textwidth}p{0.21\textwidth}}
 \toprule \textbf{\#} & \textbf{Task} & \textbf{Owner} & \textbf{Done when} \\ \midrule \endhead
-1 & Close the open defects in Table~\ref{tab:defects}: staging explanations, an HTTP 400 for unreadable CSV, the orphan record, protection of the graph-reset route & Usman, Umar & Each has a test or a recorded check \\
+1 & Close the open defects in Table~\ref{tab:defects} (an HTTP 400 for unreadable CSV; the orphan record) and add a live-model check to the release routine, because continuous integration cannot catch a defect that only a live model exposes & Usman, Umar & Each has a test or a recorded check \\
 2 & Measure live token use on a bounded sample and project the full-corpus cost; decide the default analysis mode & Usman & Measured numbers in an evidence document \\
 3 & Embedding-based retrieval and a hybrid ranker behind a switch & Umar & Runs on the corpus; unit tests \\
 4 & Diagnostic evaluation harness and baselines (keyword, lexical, semantic, graph-only, hybrid, direct model) & Umar, Usman & Metrics reproducible from a script \\
@@ -56,7 +56,7 @@ To avoid leakage the evaluation will use a different year of FAA data than the o
 The staging deployment, with its recorded rollback and approval gate, is the model for later releases. For FYP-2 the plan is a production-style deployment of the same pipeline with backups of the graph before any migration, read-only demonstrations on shared data, and a prerecorded backup of every demonstration.
 
 \section{Tentative Timeline}
-Dates follow the university calendar once it is published; the weeks below are relative to the FYP-1 Final evaluation.
+Dates follow the university calendar once it is published; the weeks below are targets relative to the FYP-1 Final evaluation, not commitments, and each depends on the task numbers above.
 \begin{longtable}{p{0.18\textwidth}p{0.72\textwidth}}
 \toprule \textbf{Period} & \textbf{Work} \\ \midrule \endhead
 Weeks 1--2 & Close open defects (task 1); live token measurement (task 2); lint and coverage in CI (task 8) \\

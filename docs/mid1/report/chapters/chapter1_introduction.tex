@@ -36,7 +36,7 @@ The proposal lists thirteen objectives. Table~\ref{tab:objectives} states each o
 10 & Recurring-fault and fleet analytics & Not started & FYP-2 \\
 11 & Secure multi-user SaaS application & Not started & No authentication yet \\
 12 & Evaluation against controlled baselines & Partial & Historical conflict evaluation exists; diagnostic baselines not yet run \\
-13 & Deployment with automated testing and CI/CD & Done & GitHub Actions on every push; CI-gated staging deploy \\
+13 & Deployment with automated testing and CI/CD & Done & GitHub Actions on pushes to \code{main} and three named branches and on every pull request; CI-gated staging deploy \\
 \bottomrule
 \end{longtable}
 
@@ -70,7 +70,7 @@ The four modules in scope are summarised below; their design is in Chapter~\ref{
 \begin{description}
 \item[M02 Assets.] Lists the 118 aircraft with record counts, shows each aircraft's records in date order with their FAA identifiers, and provides a fleet-wide, filterable, paginated record list.
 \item[M03 Knowledge graph.] Stores aircraft and service records and the relationships between them. The interface draws one aircraft at a time and separates relationships created at ingest from the ones computed by the conflict engine.
-\item[M04 Diagnostics.] Retrieves bounded graph context for a symptom, ranks inspection checks with a deterministic heuristic, asks a language model only to phrase the result, and verifies each cited record identifier against the graph.
+\item[M04 Diagnostics.] Retrieves bounded graph context for a symptom, ranks inspection checks with a deterministic heuristic, and verifies each cited record identifier against the graph. A language model phrases the explanation; in the multi-turn Copilot it also extracts structured facts from each message, but it never decides the ranking.
 \item[M05 Conflict intelligence.] Compares a record with earlier records on the same aircraft, classifies the relationship, scores confidence, and sends uncertain cases to a human reviewer.
 \end{description}
 

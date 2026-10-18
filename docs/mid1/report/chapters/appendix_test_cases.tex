@@ -1,6 +1,6 @@
 \chapter{Detailed Test Cases}\label{app:tests}
 These lists are generated from the test runners by \texttt{gen\_appendix\_tests.py}; they are not typed by hand. Test names describe the behaviour checked. The Neo4j repository-contract file is collected here and executed only in CI, against a real Neo4j service.
-\section{Backend tests (194 tests)}\label{app:tests-backend}
+\section{Backend tests (200 tests)}\label{app:tests-backend}
 \small
 \subsection*{\texttt{test\_api\_copilot.py} (10)}
 \begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
@@ -125,6 +125,11 @@ These lists are generated from the test runners by \texttt{gen\_appendix\_tests.
 31 & TestProcessRecord > test\_no\_candidates\_is\_scored\_without\_model\_classification \\
 32 & TestProcessRecord > test\_no\_candidates\_dry\_run\_does\_not\_persist\_score \\
 \end{longtable}
+\subsection*{\texttt{test\_diagnose\_prompt.py} (2)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_build\_prompt\_returns\_a\_complete\_prompt \\
+2 & test\_diagnose\_sends\_the\_prompt\_to\_the\_model\_and\_returns\_its\_explanation \\
+\end{longtable}
 \subsection*{\texttt{test\_diagnostic\_retrieval.py} (26)}
 \begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
 1 & TestAssetHistoryContext > test\_returns\_correct\_count \\
@@ -205,6 +210,13 @@ These lists are generated from the test runners by \texttt{gen\_appendix\_tests.
 47 & TestCorrectionsPage > test\_summary\_component\_change\_and\_filters[neo4j] \\
 48 & TestNeo4jPaginationQueryShape > test\_records\_filters\_count\_and\_page\_in\_cypher \\
 49 & TestNeo4jPaginationQueryShape > test\_corrections\_summary\_and\_page\_are\_computed\_in\_cypher \\
+\end{longtable}
+\subsection*{\texttt{test\_graph\_reset\_guard.py} (4)}
+\begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}
+1 & test\_reset\_without\_token\_is\_denied\_and\_changes\_nothing \\
+2 & test\_reset\_is\_unavailable\_when\_no\_token\_is\_configured \\
+3 & test\_reset\_with\_token\_clears\_the\_in\_memory\_graph \\
+4 & test\_neo4j\_wipe\_needs\_the\_token\_and\_a\_typed\_confirmation \\
 \end{longtable}
 \subsection*{\texttt{test\_maintenance\_agent.py} (10)}
 \begin{longtable}{p{0.05\textwidth}p{0.9\textwidth}}

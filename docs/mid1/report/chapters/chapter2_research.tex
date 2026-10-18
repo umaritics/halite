@@ -25,6 +25,9 @@ Graph retrieval represents entities and their relationships explicitly and uses 
 \subsection{Case-based reasoning}
 Case-based reasoning solves a new problem by retrieving similar past cases and adapting their solutions \citep{aamodt1994cbr}. Our diagnostic ranking is case-based: a symptom is compared with earlier records and the components they implicate are ranked. We add record validity (a superseded case counts for less) and evidence provenance (every case is a citable record).
 
+\subsection{Related research on technical and aviation text}
+Two lines of published work are close to the data we use. Technical language processing argues that maintenance text (work orders, logs and similar free text) needs processing designed for engineering language, and that the information in it is under-used in asset management \citep{brundage2021tlp}. Work on aviation safety reports applies language-processing methods to classify and retrieve incident reports and to support the analysts who study them \citep{tanguy2016aviation}. We have read these at the level of their published abstracts and use them to position our work, not to claim a comparison of results. Both address finding and organising technical text; neither, as described, represents a later report as a \emph{correction} of a specific earlier one, which is the relationship our graph stores explicitly and our ranking uses.
+
 \section{Comparison of Existing Solutions}
 Table~\ref{tab:compare} compares the approaches on criteria that matter for this problem. The last column states what is \emph{implemented in this iteration}, not what is planned.
 

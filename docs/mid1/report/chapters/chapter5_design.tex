@@ -1,7 +1,7 @@
 \chapter{System Design}\label{ch:design}
 
 \section{System Architecture}
-Halite is a client--server web application (Figure~\ref{fig:arch}). A React single-page application, hosted on Vercel, calls a FastAPI backend over JSON. The backend runs in Docker on a shared virtual machine and reads and writes a Neo4j graph database. A language model on the Groq API is called by the backend for two jobs only: phrasing an explanation, and proposing a classification for a pair of records. The model never determines the diagnostic ranking.
+Halite is a client--server web application (Figure~\ref{fig:arch}). A React single-page application, hosted on Vercel, calls a FastAPI backend over JSON. The backend runs in Docker on a shared virtual machine and reads and writes a Neo4j graph database. A language model on the Groq API is called by the backend for three jobs only: phrasing an explanation, extracting structured facts from a technician's message in the multi-turn Copilot, and proposing a classification for a pair of records. The model never determines the diagnostic ranking.
 
 \begin{figure}[H]
 \centering
@@ -53,6 +53,7 @@ POST & \pth{/api/maintenance/diagnose} & One-shot diagnosis; 404 unknown or empt
 POST & \pth{/api/maintenance/copilot/turn} & Multi-turn copilot; state carried by the client \\
 GET & \code{/api/graph/overview} & Nodes and edges for the graph view; \code{limit} sets the node cap (default 200) \\
 GET & \code{/api/ops/version}, \code{/api/ops/logs} & Deployed commit; recent log lines (token required) \\
+DELETE & \code{/api/graph/reset} & Wipes the graph. Needs the operations token (503 if none is configured) and, for Neo4j, \code{confirm=WIPE} \\
 \bottomrule
 \end{longtable}
 
@@ -83,6 +84,7 @@ Fleet-wide paginated records (17 Oct) & Replaced a 119-request fan-out with one 
 Opt-in cost cascade (17 Oct) & Pre-registered, off by default: a deterministic text screen before the model, and adaptive voting, to cut requests without tuning against the evaluation \\
 Diagnostic copilot scope waiver (16 Oct) & A named, limited exception to file ownership so the copilot could be built across route, retrieval and UI without touching the conflict engine, ingest or CI \\
 Graph shows one aircraft (17 Oct) & The whole graph is too dense to read; one aircraft's stored subgraph is readable and every drawn edge is a stored edge \\
+Graph reset protected (18 Oct) & A destructive route had no authentication; it now needs the operations token and a typed confirmation, and regression tests prove an unauthenticated call changes nothing \\
 Knowledge bank and agent protocol (16 Oct) & A written, versioned memory of context, flows and decisions that every contributor and every AI assistant must read first and update in the same change \\
 \bottomrule
 \end{longtable}

@@ -13,10 +13,10 @@ For the frontend work added late in the iteration we also applied \emph{mutation
 
 \section{Test Levels and Techniques}
 \begin{longtable}{p{0.34\textwidth}p{0.12\textwidth}p{0.44\textwidth}}
-\caption{Automated tests by area (commit \texttt{36a98a3})}\label{tab:testcounts}\\
+\caption{Automated tests by area (commit \texttt{06bc614})}\label{tab:testcounts}\\
 \toprule \textbf{File} & \textbf{Tests} & \textbf{What it covers} \\ \midrule \endfirsthead
 \toprule \textbf{File} & \textbf{Tests} & \textbf{What it covers} \\ \midrule \endhead
-\multicolumn{3}{l}{\textit{Backend (PyTest): 194 tests, of which 145 need no database}} \\
+\multicolumn{3}{l}{\textit{Backend (PyTest): 200 tests, of which 151 need no database}} \\
 \code{test_conflict_engine.py} & 32 & Candidate pairing, classification parsing, adjudication, confidence, routing \\
 \code{test_conflict_cascade.py} & 11 & Cost cascade: screen, voting, budget \\
 \code{test_api_maintenance.py} & 27 & Maintenance endpoints and failure paths \\
@@ -27,6 +27,8 @@ For the frontend work added late in the iteration we also applied \emph{mutation
 \code{test_backfill_conflict_scores.py} & 6 & Resume, budget stop, bounded retries \\
 \code{test_api_diagnostics.py}, \code{test_ops.py}, \code{test_conflict_analysis_migration.py} & 4, 3, 3 & Diagnose contract, operations endpoints, legacy-placeholder migration \\
 \code{test_regression_software.py} & 7 & Frozen legacy domain still works \\
+\code{test_graph_reset_guard.py} & 4 & The graph-reset route: unauthenticated or unconfigured calls change nothing; the wipe query is not run without token and confirmation \\
+\code{test_diagnose_prompt.py} & 2 & The one-shot diagnosis sends the model a real, complete prompt (regression for a defect found on 18 Oct) \\
 \code{test_graph_maintenance.py} & 49 & Repository contract against memory and real Neo4j (runs in CI) \\
 \midrule
 \multicolumn{3}{l}{\textit{Frontend (Vitest): 171 tests in 15 files}} \\
@@ -50,7 +52,7 @@ The team defined T01--T16 before the iteration (owner in brackets). Table~\ref{t
 T01 & Application opens the maintenance workspace & Pass & Route smoke log; \code{Sidebar} tests. Browser console was not audited systematically \\
 T02 & API lists loaded assets & Pass & \code{test_api_maintenance}; staging lists 118 aircraft \\
 T03 & Selected asset history is displayed & Pass & \code{AssetHistory} tests; Figure~\ref{fig:shot-history} \\
-T04 & Diagnosis returns graph-backed evidence and ranking & Partly & Full result with a live model locally (Figure~\ref{fig:shot-diag}); on staging fresh diagnoses returned no explanation text on 16 Oct (not re-checked) \\
+T04 & Diagnosis returns graph-backed evidence and ranking & Pass & Local real stack, live model (18 Oct): HTTP 200, 13 cited records verified, 0 invalid (Figure~\ref{fig:shot-diag}; Section~\ref{sec:revalidation}). Shared staging at \code{06bc614} (18 Oct, one call, \code{gpt-oss-20b}): HTTP 200 in 7.8\,s, 1,657-character explanation, 14 verified citations, 0 invalid. The earlier empty-explanation observation (16 Oct) was not reproduced \\
 T05 & Explanation cites a real record that opens & Pass & \code{test_citation_validation}; Figure~\ref{fig:shot-cite}, ``12 cited record IDs verified'' \\
 T06 & Unknown asset request & Pass & Controlled 404, ``Aircraft not found'', no invented history \\
 T07 & Model unavailable & Pass & HTTP 503 with a reason; Figure~\ref{fig:shot-fail} \\
@@ -58,9 +60,9 @@ T08 & Empty or ambiguous evidence & Pass & Explicit ``no relevant history'' resu
 T09 & Review queue shows a known case & Pass & Figure~\ref{fig:shot-review} \\
 T10 & Review action on a test case & Pass & \code{ReviewQueue} and API tests (confirmation, 409, required note). Accept and reject were \emph{not} exercised live on shared data, on purpose \\
 T11 & Frontend tests and build & Pass & 171 tests pass; production build passes \\
-T12 & Backend tests & Pass & 194 tests pass in CI \\
-T13 & Pull-request CI runs and passes & Pass & Checks run on every pull request; run 39068741787 on \code{36a98a3} succeeded \\
-T14 & Real graph health & Pass & Staging reports Neo4j graph mode, live model, 2,079 records (18 Oct); Compose smoke test \\
+T12 & Backend tests & Pass & 200 tests pass in CI \\
+T13 & Pull-request CI runs and passes & Pass & Checks run on every pull request; run 39143888904 on \code{06bc614} succeeded \\
+T14 & Real graph health & Pass & Local stack and staging report Neo4j graph mode, a live model and 2,079 records (18 Oct); Compose smoke test \\
 T15 & Setup on a clean machine & Partly & CI builds the stack from a clean checkout; nobody outside the team has followed the guide \\
 T16 & Legacy screen isolation & Pass & \code{Sidebar} and \code{DomainContext} tests; legacy URLs redirect \\
 \bottomrule
@@ -68,9 +70,34 @@ T16 & Legacy screen isolation & Pass & \code{Sidebar} and \code{DomainContext} t
 Appendix~\ref{app:tests} lists every automated test by name.
 
 \section{Test Results}
-At commit \code{36a98a3} the CI run (id 39068741787) reported: backend \textbf{194 passed}; frontend \textbf{171 passed} in 15 files; the Docker Compose real-graph smoke test passed; the staging deployment that followed succeeded. Code coverage has \textbf{not been measured} (NFR-04), so no coverage figure is claimed.
+At commit \code{06bc614} the CI run (id 39143888904) reported: backend \textbf{200 passed}; frontend \textbf{171 passed} in 15 files; the Docker Compose real-graph smoke test passed. The staging deployment of that commit followed and the public version endpoint reported it. Code coverage has \textbf{not been measured} (NFR-04), so no coverage figure is claimed.
+
+\textbf{What CI does not prove.} CI never calls a live model. A defect in the one-shot diagnosis therefore passed 194 backend tests and was found only by a live check (Section~\ref{sec:revalidation}).
 
 \section{Acceptance Testing / Validation}
+\subsection{Live re-validation, 18 October}\label{sec:revalidation}
+Because the acceptance tests rest on a live demonstration, the diagnosis path was re-run on the real local stack (Neo4j with the full corpus and a live model, \code{openai/gpt-oss-120b}) and, once, on shared staging. The full record is \pth{docs/mid1/24_live_revalidation_2026-10-18.md}.
+
+\textbf{A defect found.} The first live one-shot diagnosis returned HTTP 503. The model provider had rejected the request because the user message was empty: the function that builds the prompt had lost its body in the Copilot change of 16 October and returned nothing. The existing tests passed because their fake model ignored its input. The function was restored, two tests now inspect what the model is actually sent (both fail on the broken version), and the fix was deployed to staging.
+
+\begin{longtable}{p{0.34\textwidth}p{0.6\textwidth}}
+\caption{Live re-validation results (local real stack unless stated)}\label{tab:reval}\\
+\toprule \textbf{Check} & \textbf{Result} \\ \midrule \endfirsthead
+\toprule \textbf{Check} & \textbf{Result} \\ \midrule \endhead
+Health & Neo4j, live model, 2,079 records, 118 aircraft \\
+History of 813SK (by UUID) & 153 records, oldest first \\
+Unknown aircraft; tail number instead of UUID & HTTP 404 in both cases \\
+One-shot diagnosis, 813SK & HTTP 200; DRAG ANGLE ranked first; 1,045-character explanation; 13 cited records valid, 0 invalid; 10 evidence records \\
+Copilot, two turns & Reply produced; the ruled-out component (FRAME) is no longer recommended; a ranking change is reported \\
+Copilot, an invented record identifier & The identifier is listed as invalid \\
+Copilot, unknown aircraft; blank message & 404; 422 \\
+No live model (key blank), uncached symptom & Diagnosis: HTTP 503 with a reason. Copilot: HTTP 200, no reply, ranking and 20 evidence records still returned \\
+Review queue; corrections; analysis state & 9 items; 125 corrections (component changed in 55.2\%); all records unanalysed \\
+\textbf{Shared staging, one call at \code{06bc614}} & One-shot diagnosis for 813SK: HTTP 200 in 7.8\,s with \code{gpt-oss-20b}; 1,657-character explanation; 14 verified citations, 0 invalid; 10 evidence records \\
+\bottomrule
+\end{longtable}
+These are single runs. They show that the path works end to end; they are not an accuracy measure. Accept and reject were not exercised on shared data, and the graph-reset route was deliberately not called against staging.
+
 \subsection{One-aircraft analysis run}\label{sec:oneaircraft}
 To show scores, corrections and a review queue on real records, and to test the conflict engine on a bounded input, we analysed one aircraft, 800NN (13 records, three FAA-recorded correction pairs), on a throwaway Neo4j graph. Shared staging was not touched. The records were loaded through the new upload route and analysed in the original (\code{legacy}) mode with \code{openai/gpt-oss-120b} and the 0.50 threshold, with an empty classification cache so every result came from a real model call.
 
@@ -120,6 +147,8 @@ Superseded record in the Copilot & Visible as evidence, excluded from recommenda
 Legacy confidence 1.0 & Reported as unscored with null confidence \\
 Review action on a record that is not reviewable & HTTP 409; the queue is unchanged \\
 Reject without a note & Rejected by validation (HTTP 422) \\
+Graph reset without the operations token, or with none configured & HTTP 401 or 503; the graph is unchanged (regression tests) \\
+Model sent an empty prompt & Prevented: tests inspect the prompt; a provider rejection is reported as 503 with the reason \\
 Oversize or non-CSV upload & Rejected in the browser before anything is sent \\
 Re-upload of the same CSV & Every record counted as already stored; nothing changes \\
 Unreadable CSV (for example empty) & Backend raises an unhandled error (HTTP 500 without CORS headers), which the browser reports as a network failure; the interface words the message to say so (open issue) \\
@@ -141,11 +170,13 @@ Browser storage denied or corrupt & Copilot remains usable; a warning is shown \
 7 & Graph requested 200 nodes yet claimed ``Capped at 2000'' & Request 3,000; truthful counts; warning when the cap is hit & Fixed \\
 8 & CSV upload client posted to a route that accepts only a server path; nothing used it & Posts to the upload route; new upload panel & Fixed \\
 9 & Small graphs hid their edges behind large nodes & Spacing and node size changed & Fixed \\
-10 & Staging fresh diagnoses returned no explanation text & Cause not established (the staging model is smaller); the API reports empty output as 503 & Open \\
+10 & Staging fresh diagnoses returned no explanation text (16 Oct) & Re-tested on 18 Oct at \code{06bc614}: one fresh diagnosis succeeded with a full explanation. The 16 October observation was not reproduced and its cause was never established & Not reproduced \\
 11 & Unreadable CSV returns an unhandled HTTP 500 & Interface wording only; backend change belongs to its owner & Open \\
 12 & One staging record has no \code{ABOUT} link & Re-running ingest repairs it; not applied to shared data without approval & Open \\
+13 & Every fresh one-shot diagnosis failed with HTTP 503: the prompt builder returned nothing (introduced 16 Oct, found 18 Oct by live re-validation) & Body restored; two regression tests that fail on the broken version; verified live locally and on staging (PR \#17) & Fixed \\
+14 & The graph-reset route could wipe the database with no authentication & Operations token required, typed confirmation for Neo4j, four regression tests (PR \#16); not exercised against staging & Fixed \\
 \bottomrule
 \end{longtable}
 
 \section{Current Validation Status}
-\textbf{Validated:} the code paths covered by 365 automated tests; the end-to-end slice on real records; the failure behaviour in Table~\ref{tab:edge}; the engine on one aircraft against the FAA's own labels (3 of 3). \textbf{Not validated:} diagnostic accuracy of the ranking; retrieval quality against baselines; the engine on the full corpus or with the staging model; usability with real technicians; load performance; code coverage; setup by an outside person. These are planned in Chapter~\ref{ch:remaining}.
+\textbf{Validated:} the code paths covered by 371 automated tests; the diagnosis path live on the real stack and on staging (Section~\ref{sec:revalidation}); the end-to-end slice on real records; the failure behaviour in Table~\ref{tab:edge}; the engine on one aircraft against the FAA's own labels (3 of 3). \textbf{Not validated:} diagnostic accuracy of the ranking; retrieval quality against baselines; the engine on the full corpus or with the staging model; usability with real technicians; load performance; code coverage; setup by an outside person. These are planned in Chapter~\ref{ch:remaining}.

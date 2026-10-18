@@ -1,14 +1,14 @@
 \chapter{Proposal Feedback and Iteration Plan}\label{ch:plan}
 
 \section{Proposal Feedback Summary}
-No panel feedback or required changes were issued at the proposal stage, so there is no panel action to answer. The supervisor can confirm this. The team nevertheless identified and corrected three statements of its own proposal before this report, listed in Section~\ref{sec:register}.
+The FYP proposal defense of project F26-131 (Halite) was approved by the FYP committee on 14 September 2026. The panel communicated no comments or recommended modifications, so there are no mandatory panel-directed corrective actions outstanding. The committee later communicated an absolute proposal-defense score of 24.83 out of 30 on 7 October 2026. The team has nevertheless documented three internally identified refinements, T1 to T3, in the action register in Section~\ref{sec:register}; they are voluntary clarifications, not changes requested by the panel.
 
 \section{Proposal Action Register}\label{sec:register}
-\begin{longtable}{p{0.05\textwidth}p{0.23\textwidth}p{0.3\textwidth}p{0.1\textwidth}p{0.2\textwidth}}
+\begin{longtable}{p{0.05\textwidth}p{0.2\textwidth}p{0.31\textwidth}p{0.11\textwidth}p{0.25\textwidth}}
 \caption{Proposal action register}\label{tab:register}\\
 \toprule \textbf{No.} & \textbf{Feedback / required change} & \textbf{Action taken} & \textbf{Status} & \textbf{Evidence} \\ \midrule \endfirsthead
 \toprule \textbf{No.} & \textbf{Feedback / required change} & \textbf{Action taken} & \textbf{Status} & \textbf{Evidence} \\ \midrule \endhead
--- & None issued by the proposal panel & Not applicable & Not applicable & Team statement; supervisor can confirm \\ \midrule
+\multicolumn{5}{p{0.96\textwidth}}{\textit{No panel action: the proposal defense was approved on 14 September 2026 with no comments or recommended modifications (score 24.83/30, communicated 7 October 2026).}} \\ \midrule
 \multicolumn{5}{l}{\textit{Corrections the team made to its own proposal}} \\ \midrule
 T1 & Proposal describes embedding-based and hybrid retrieval (its \S10.4) & Mid-I addendum states these are planned for FYP-1 Final, not implemented; the prototype uses lexical matching over a bounded candidate set & Corrected & \pth{docs/mid1/15_report_mid1_addendum.md}; Table~\ref{tab:compare} \\
 T2 & Proposal gives about 60 airframes & The proof-of-concept corpus keeps every aircraft that has a ground-truth pair before adding others, giving 2,079 records and 118 aircraft & Corrected & \pth{docs/dataset_profile.md}; Section~\ref{sec:data} \\
@@ -57,6 +57,7 @@ A3 & GitHub Actions and repository health & Usman & Done \\
 A4 & Backend wiring and documentation & Usman & Done \\
 -- & Diagnostic Copilot (multi-turn), confidence and corrections, conflict-analysis cost cascade (PRs \#5--\#7) & Usman & Done after the packages above \\
 -- & Knowledge graph view, CSV upload, evidence refresh, WebGL fallback (PRs \#9--\#14) & Shahmeer & Done; \#14 open at the time of writing \\
+-- & Live re-validation; restoring the one-shot diagnosis prompt; protecting the graph-reset route (PRs \#16, \#17) & Shahmeer & Done; merged 18 Oct \\
 \bottomrule
 \end{longtable}
 Member contributions are described in Chapter~\ref{ch:evidence}.
@@ -74,8 +75,8 @@ Member contributions are described in Chapter~\ref{ch:evidence}.
 6 & Ranked investigation suggestions & Done (heuristic) & Deterministic ranking with documented weights \\
 7 & Conflict review capability & Done & Review queue, corrections view (Figures~\ref{fig:shot-review}, \ref{fig:shot-corr}) \\
 8 & API integration & Done & Axios client to the FastAPI routes; contract tests \\
-9 & Automated tests & Done & 194 backend and 171 frontend tests pass in CI \\
-10 & GitHub Actions CI/CD & Done & CI on every push; CI-gated staging deploy \\
+9 & Automated tests & Done & 200 backend and 171 frontend tests pass in CI \\
+10 & GitHub Actions CI/CD & Done & CI on pushes to \code{main} and three named branches and on every pull request; staging deployment only after CI succeeds on \code{main} \\
 \bottomrule
 \end{longtable}
 
@@ -85,24 +86,24 @@ Member contributions are described in Chapter~\ref{ch:evidence}.
 \toprule \textbf{} & \textbf{Gate item} & \textbf{Result} & \textbf{Evidence and caveat} \\ \midrule \endfirsthead
 \toprule \textbf{} & \textbf{Gate item} & \textbf{Result} & \textbf{Evidence and caveat} \\ \midrule \endhead
 A & Functional app with real asset and graph history & Met & Staging health: Neo4j graph mode, live model, 2,079 records (checked 18 October 2026) \\
-B & Diagnosis succeeds with a live model or reports a limitation & Partly met & Full explanations with a live model locally; on staging fresh diagnoses returned no explanation text on 16 October (cause not established, not re-checked). The limitation is reported by the API, not hidden \\
+B & Diagnosis succeeds with a live model or reports a limitation & Met & Re-validated on 18 October. Local real stack with a live model: one-shot diagnosis and Copilot succeed (\code{docs/mid1/24}). Shared staging at \code{06bc614}: one fresh diagnosis returned HTTP 200, a 1,657-character explanation and 14 verified citations. This re-validation also found and fixed a defect that made every fresh one-shot diagnosis fail (PR \#17) \\
 C & A cited record opens the real source record & Met & Deep links from evidence to the history page; tests in \code{AssetHistory} and \code{Diagnostics} \\
 D & Conflict workflow visible and testable & Met & Review queue and corrections tabs; 32 conflict-engine tests \\
-E & Tests and build run in GitHub Actions & Met & Run 39068741787 on commit \code{36a98a3}: backend 194 passed, frontend 171 passed, Docker smoke passed \\
-F & Tag or commit, setup, tests, evidence, contributions documented & Partly met & Setup guide, evidence documents and this report exist. \confirm{release tag name and commit once created} \\
+E & Tests and build run in GitHub Actions & Met & Run 39143888904 on commit \code{06bc614}: backend 200 passed, frontend 171 passed, Docker smoke passed \\
+F & Tag or commit, setup, tests, evidence, contributions documented & Met & Setup guide, evidence documents, this report, and the annotated release tag \code{mid1-submission} (Chapter~\ref{ch:evidence}, Appendix~\ref{app:repo}) \\
 G & Every member can defend their own code & To be shown & A property of the evaluation meeting, not of this document \\
 \bottomrule
 \end{longtable}
 
 \section{Delays, Deviations and Recovery Plan}\label{sec:timeline}
-\textbf{The commit timeline is uneven and we state it plainly.} At commit \code{36a98a3} the repository has 115 commits (98 excluding merges), in three phases:
+\textbf{The commit timeline is uneven and we state it plainly.} At commit \code{06bc614} the repository has 119 commits (100 excluding merges), in three phases:
 \begin{longtable}{p{0.2\textwidth}p{0.12\textwidth}p{0.55\textwidth}}
-\caption{Commits by phase (counts at \texttt{36a98a3})}\label{tab:phases}\\
+\caption{Commits by phase (counts at \texttt{06bc614})}\label{tab:phases}\\
 \toprule \textbf{Dates (2026)} & \textbf{Commits} & \textbf{What the work was} \\ \midrule \endfirsthead
 \toprule \textbf{Dates (2026)} & \textbf{Commits} & \textbf{What the work was} \\ \midrule \endhead
 11 Jul -- 18 Aug & 9 & An earlier software-engineering prototype of the same stack (graph, chat, deploy configuration). It was later set aside; its code remains as frozen legacy with regression tests \\
 8 -- 10 Sep & 29 & The maintenance proof of concept: domain registry, FAA data acquisition, the conflict engine, an evaluation harness, a first set of maintenance screens, diagnostic endpoints \\
-15 -- 18 Oct & 77 & Mid-I integration: contract freeze, hardening, the frontend rework, copilot, confidence and corrections, the cost cascade, CI on \code{main}, evidence \\
+15 -- 18 Oct & 81 & Mid-I integration: contract freeze, hardening, the frontend rework, copilot, confidence and corrections, the cost cascade, CI on \code{main}, evidence \\
 \bottomrule
 \end{longtable}
 Most of the code that this report describes was therefore merged in the last days. This is the pattern the evaluation rubric names as a red flag, so we do not hide it: the report assigns each module to a named owner (Chapter~\ref{ch:evidence}), every member must be able to walk through their own code, and the decision records explain why each non-obvious choice was made.

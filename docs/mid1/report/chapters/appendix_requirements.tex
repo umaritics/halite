@@ -50,7 +50,7 @@ FR-35 & Distinguish descriptive statistics from predictions & Deferred & FYP-2 \
 \toprule \textbf{ID} & \textbf{Requirement} & \textbf{Mid status} & \textbf{Evidence or reason} \\ \midrule \endfirsthead
 \toprule \textbf{ID} & \textbf{Requirement} & \textbf{Mid status} & \textbf{Evidence or reason} \\ \midrule \endhead
 NFR-01 & Availability & Partial & Staging reachable at each check; no uptime monitoring \\
-NFR-02 & API performance, p95 $\le$ 500 ms & Not met / not measured & Assets list 0.99 s as one request; no load test \\
+NFR-02 & API performance, p95 $\le$ 500 ms & Not shown to be met & One observed 0.99 s request exceeds 500 ms; a p95 cannot be established from one measurement; no load test \\
 NFR-03 & Diagnostic latency measured & Not measured & Fresh diagnoses call an external model \\
 NFR-04 & 80\% coverage of core backend modules & Not measured & No coverage run; test counts only \\
 NFR-05 & No unauthorised tenant access & Deferred & No tenancy yet \\
