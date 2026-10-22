@@ -56,7 +56,7 @@ To avoid leakage the evaluation will use a different year of FAA data than the o
 The staging deployment, with its recorded rollback and approval gate, is the model for later releases. For FYP-2 the plan is a production-style deployment of the same pipeline with backups of the graph before any migration, read-only demonstrations on shared data, and a prerecorded backup of every demonstration.
 
 \section{Tentative Timeline}
-Dates follow the university calendar once it is published; the weeks below are targets relative to the FYP-1 Final evaluation, not commitments, and each depends on the task numbers above.
+Dates follow the university calendar once it is published; the weeks below are targets relative to the FYP-1 Final evaluation, not commitments, each depends on the task numbers above, and each ends with a demonstrable milestone recorded in the milestone log.
 \begin{longtable}{p{0.18\textwidth}p{0.72\textwidth}}
 \toprule \textbf{Period} & \textbf{Work} \\ \midrule \endhead
 Weeks 1--2 & Close open defects (task 1); live token measurement (task 2); lint and coverage in CI (task 8) \\
@@ -66,7 +66,5 @@ Weeks 6--7 & Server-side session history (task 6); full-corpus analysis on a scr
 Week 8 & Integration, regression, updated requirements and design specification, rehearsal \\
 \bottomrule
 \end{longtable}
-Each week ends with a demonstrable milestone, recorded with its evidence in the milestone log, so that progress is checkable against the demonstration and not against a task list.
-
 \section{Expected Final Deliverables}
 A deployed, tested and documented multi-user system with the nine modules; a reproducible evaluation against baselines with stated limits; the repository with tags, setup instructions and decision records; the final report; and a demonstration that every member can explain.
