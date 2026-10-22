@@ -1,0 +1,485 @@
+\chapter{Detailed Test Cases}
+
+These lists are generated from the test runners by \texttt{gen\_appendix\_tests.py}; they are not typed by hand. Test names describe the behaviour checked. The Neo4j repository contract file is collected here and executed only in CI, against a real Neo4j service.
+
+\section{Backend tests (194 tests)}
+
+\subsubsection*{\texttt{test\_api\_copilot.py (10 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_second_turn_reranks_accumulated_case_and_reports_delta}
+\item \path{test_ruled_out_component_is_not_recommended}
+\item \path{test_invalid_citation_is_flagged_and_never_verified}
+\item \path{test_superseded_record_is_marked_but_not_used_in_ranked_recommendations}
+\item \path{test_validation_unknown_asset_and_model_failure_states}
+\item \path{test_fleet_only_mode_and_deterministic_record_report_selection}
+\item \path{test_period_and_topic_report_selects_only_matching_asset_records}
+\item \path{test_diagnose_empty_explanation_regression_is_explicit_503}
+\item \path{test_groq_wrapper_rejects_none_content_with_finish_reason}
+\item \path{test_groq_wrapper_returns_provider_usage_metadata}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_api\_diagnostics.py (4 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{TestDiagnoseLlmBoundary > test_503_when_llm_not_live}
+\item \path{TestDiagnoseLlmBoundary > test_404_when_no_history}
+\item \path{TestDiagnoseCitations > test_flags_invented_ids_keeps_real}
+\item \path{TestDiagnoseCitations > test_all_valid_when_only_graph_ids}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_api\_maintenance.py (27 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{TestDomains > test_returns_two_domains}
+\item \path{TestDomains > test_software_is_default}
+\item \path{TestDomains > test_maintenance_not_default}
+\item \path{TestDomains > test_domain_has_required_fields}
+\item \path{TestHealthMaintenance > test_health_includes_domains}
+\item \path{TestHealthMaintenance > test_health_includes_maintenance_fields}
+\item \path{TestHealthMaintenance > test_health_maintenance_false_before_ingest}
+\item \path{TestHealthMaintenance > test_health_uses_count_query_not_record_materialization}
+\item \path{TestAssetsEmpty > test_returns_empty_list}
+\item \path{TestAssetsEmpty > test_unknown_asset_history_is_404}
+\item \path{TestAssetsEmpty > test_ingest_rejects_non_positive_limit}
+\item \path{TestAssetsEmpty > test_record_processing_rejects_invalid_threshold}
+\item \path{TestIngestAndQuery > test_assets_listed_after_seed}
+\item \path{TestIngestAndQuery > test_asset_history_returned}
+\item \path{TestIngestAndQuery > test_legacy_perfect_score_is_returned_as_not_analysed}
+\item \path{TestIngestAndQuery > test_review_queue_returns_needs_review}
+\item \path{TestIngestAndQuery > test_accept_changes_status}
+\item \path{TestIngestAndQuery > test_reject_requires_note}
+\item \path{TestIngestAndQuery > test_reject_disallows_blank_note}
+\item \path{TestIngestAndQuery > test_reject_with_note_succeeds}
+\item \path{TestIngestAndQuery > test_reject_cannot_overwrite_completed_review}
+\item \path{TestIngestAndQuery > test_conflict_detection_on_seeded_record}
+\item \path{TestConflictAnalysisApi > test_status_counts_and_records_list_limit_validation}
+\item \path{TestConflictAnalysisApi > test_analysis_run_requires_token_and_live_llm}
+\item \path{TestConflictAnalysisApi > test_no_candidate_is_analysed_without_model_call_and_scored_is_skipped}
+\item \path{TestConflictAnalysisApi > test_analysis_run_stops_cleanly_at_persistent_budget}
+\item \path{TestConflictAnalysisApi > test_corrections_endpoint_returns_live_summary}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_backfill\_conflict\_scores.py (6 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_backfill_refuses_to_run_without_live_groq}
+\item \path{test_resume_uses_analysis_state_only[record0-True]}
+\item \path{test_resume_uses_analysis_state_only[record1-False]}
+\item \path{test_resume_uses_analysis_state_only[record2-False]}
+\item \path{test_resume_uses_analysis_state_only[record3-False]}
+\item \path{test_resume_uses_analysis_state_only[record4-True]}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_citation\_validation.py (6 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{TestExtractRecordIdCandidates > test_real_faa_shapes}
+\item \path{TestExtractRecordIdCandidates > test_dedupes_preserving_order}
+\item \path{TestExtractRecordIdCandidates > test_ignores_short_or_underscore_ids}
+\item \path{TestValidateCitations > test_all_valid}
+\item \path{TestValidateCitations > test_invented_id_flagged}
+\item \path{TestValidateCitations > test_empty_text}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_conflict\_analysis\_migration.py (3 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_dry_run_does_not_mutate_and_apply_is_idempotent}
+\item \path{test_genuinely_scored_record_is_never_reset}
+\item \path{test_restore_uses_legacy_confidence_only_if_still_unscored}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_conflict\_cascade.py (11 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_answer_key_is_removed_from_screen_and_date_is_not_a_feature}
+\item \path{test_containment_first_ranks_true_full_text_above_recent_sparse_match}
+\item \path{test_cascade_stops_after_two_agreeing_votes_and_meters_each_vote}
+\item \path{test_cascade_escalates_disagreement_and_persistent_split_routes_review}
+\item \path{test_cascade_screen_skips_model_and_persists_method_metadata}
+\item \path{test_positive_above_screen_threshold_is_retained_for_model}
+\item \path{test_legacy_mode_preserves_five_pass_golden_output}
+\item \path{test_vote_agreement_changes_cascade_confidence_without_using_pass_count}
+\item \path{test_daily_budget_persists_and_rolls_over_at_utc_midnight}
+\item \path{test_daily_budget_stops_before_token_reserve_would_cross_cap}
+\item \path{test_cached_classification_is_backward_compatible_and_does_not_bill}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_conflict\_engine.py (32 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{TestFindCandidatePairs > test_returns_only_same_asset_records}
+\item \path{TestFindCandidatePairs > test_respects_max_candidates}
+\item \path{TestFindCandidatePairs > test_excludes_same_asset_records_with_no_pairing_signal}
+\item \path{TestFindCandidatePairs > test_excludes_self}
+\item \path{TestFindCandidatePairs > test_only_older_records_are_candidates}
+\item \path{TestClassifyConflict > test_each_classification_label[no_conflict]}
+\item \path{TestClassifyConflict > test_each_classification_label[scope_disjoint]}
+\item \path{TestClassifyConflict > test_each_classification_label[supersedes]}
+\item \path{TestClassifyConflict > test_each_classification_label[partial_supersedes]}
+\item \path{TestClassifyConflict > test_each_classification_label[contradicts]}
+\item \path{TestClassifyConflict > test_parse_failure_handled}
+\item \path{TestClassifyConflict > test_invalid_label_defaults_to_no_conflict}
+\item \path{TestAdjudicate > test_prefers_later_record_at_equal_authority}
+\item \path{TestAdjudicate > test_action_supersedes_on_explicit_citation}
+\item \path{TestAdjudicate > test_action_no_action_when_no_evidence}
+\item \path{TestScoreConfidence > test_bounded_above_at_1}
+\item \path{TestScoreConfidence > test_bounded_below_at_0}
+\item \path{TestScoreConfidence > test_explicit_citation_is_highest_weight}
+\item \path{TestRoute > test_at_threshold_is_auto_accepted}
+\item \path{TestRoute > test_just_below_threshold_is_needs_review}
+\item \path{TestRoute > test_just_above_threshold_is_auto_accepted}
+\item \path{TestRoute > test_zero_confidence_is_needs_review}
+\item \path{TestRoute > test_max_confidence_is_auto_accepted}
+\item \path{TestRoute > test_contradicts_always_needs_review}
+\item \path{TestRoute > test_partial_supersedes_always_needs_review}
+\item \path{TestRoute > test_no_action_for_no_conflict_and_scope_disjoint}
+\item \path{TestProcessRecord > test_raises_when_not_live_and_no_stub}
+\item \path{TestProcessRecord > test_succeeds_with_allow_stub}
+\item \path{TestProcessRecord > test_parse_failure_counted}
+\item \path{TestProcessRecord > test_applies_link_when_auto_accepted}
+\item \path{TestProcessRecord > test_no_candidates_is_scored_without_model_classification}
+\item \path{TestProcessRecord > test_no_candidates_dry_run_does_not_persist_score}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_diagnostic\_retrieval.py (26 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{TestAssetHistoryContext > test_returns_correct_count}
+\item \path{TestAssetHistoryContext > test_newest_first}
+\item \path{TestAssetHistoryContext > test_all_have_record_id}
+\item \path{TestAssetHistoryContext > test_superseded_flagged}
+\item \path{TestAssetHistoryContext > test_limit_respected}
+\item \path{TestAssetHistoryContext > test_unknown_asset_returns_empty}
+\item \path{TestAssetHistoryContext > test_null_confidence_is_preserved_without_error}
+\item \path{TestSimilarSymptomRecords > test_excludes_own_asset}
+\item \path{TestSimilarSymptomRecords > test_returns_fleet_match}
+\item \path{TestSimilarSymptomRecords > test_jasc_boost}
+\item \path{TestSimilarSymptomRecords > test_all_have_record_id}
+\item \path{TestSimilarSymptomRecords > test_superseded_flagged}
+\item \path{TestResolutionOutcomes > test_basic}
+\item \path{TestResolutionOutcomes > test_superseded_labelled}
+\item \path{TestResolutionOutcomes > test_missing_id_skipped}
+\item \path{TestResolutionOutcomes > test_empty_list}
+\item \path{TestBuildDiagnosticContext > test_returns_all_keys}
+\item \path{TestBuildDiagnosticContext > test_asset_id_matches}
+\item \path{TestBuildDiagnosticContext > test_fleet_excludes_own_asset}
+\item \path{TestBuildDiagnosticContext > test_resolution_outcomes_non_empty}
+\item \path{TestBuildDiagnosticContext > test_all_provenance_fields_present}
+\item \path{TestBuildDiagnosticContext > test_context_size_accurate}
+\item \path{TestRankDiagnosticChecks > test_ranks_have_provenance}
+\item \path{TestRankDiagnosticChecks > test_stable_tie_break_by_part_name}
+\item \path{TestRankDiagnosticChecks > test_deterministic_across_calls}
+\item \path{TestRankDiagnosticChecks > test_skips_blank_part_names}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_graph\_maintenance.py (49 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{TestFindOrCreateAsset > test_creates_new_asset[memory]}
+\item \path{TestFindOrCreateAsset > test_creates_new_asset[neo4j]}
+\item \path{TestFindOrCreateAsset > test_returns_existing_on_repeat[memory]}
+\item \path{TestFindOrCreateAsset > test_returns_existing_on_repeat[neo4j]}
+\item \path{TestFindOrCreateAsset > test_different_tails_are_different_assets[memory]}
+\item \path{TestFindOrCreateAsset > test_different_tails_are_different_assets[neo4j]}
+\item \path{TestCreateServiceRecord > test_creates_record[memory]}
+\item \path{TestCreateServiceRecord > test_creates_record[neo4j]}
+\item \path{TestCreateServiceRecord > test_idempotent_on_record_id[memory]}
+\item \path{TestCreateServiceRecord > test_idempotent_on_record_id[neo4j]}
+\item \path{TestCreateServiceRecord > test_custom_status[memory]}
+\item \path{TestCreateServiceRecord > test_custom_status[neo4j]}
+\item \path{TestGetServiceRecord > test_returns_record[memory]}
+\item \path{TestGetServiceRecord > test_returns_record[neo4j]}
+\item \path{TestGetServiceRecord > test_returns_none_for_unknown[memory]}
+\item \path{TestGetServiceRecord > test_returns_none_for_unknown[neo4j]}
+\item \path{TestLinkRecordAboutAsset > test_link_creates_retrievable_history[memory]}
+\item \path{TestLinkRecordAboutAsset > test_link_creates_retrievable_history[neo4j]}
+\item \path{TestLinkRecordAboutAsset > test_repeated_link_is_idempotent[memory]}
+\item \path{TestLinkRecordAboutAsset > test_repeated_link_is_idempotent[neo4j]}
+\item \path{TestCountServiceRecords > test_counts_nodes_including_unlinked_records[memory]}
+\item \path{TestCountServiceRecords > test_counts_nodes_including_unlinked_records[neo4j]}
+\item \path{TestCountServiceRecords > test_neo4j_count_query_returns_only_aggregate}
+\item \path{TestListAssetsWithCounts > test_returns_sorted_assets_and_counts[memory]}
+\item \path{TestListAssetsWithCounts > test_returns_sorted_assets_and_counts[neo4j]}
+\item \path{TestListAssetHistory > test_ascending_order[memory]}
+\item \path{TestListAssetHistory > test_ascending_order[neo4j]}
+\item \path{TestListAssetHistory > test_limit_respected[memory]}
+\item \path{TestListAssetHistory > test_limit_respected[neo4j]}
+\item \path{TestListAssetHistory > test_recent_newest_first_and_limited[memory]}
+\item \path{TestListAssetHistory > test_recent_newest_first_and_limited[neo4j]}
+\item \path{TestLinkRecordSupersedes > test_supersedes_edge_created[memory]}
+\item \path{TestLinkRecordSupersedes > test_supersedes_edge_created[neo4j]}
+\item \path{TestListServiceRecords > test_filter_by_status[memory]}
+\item \path{TestListServiceRecords > test_filter_by_status[neo4j]}
+\item \path{TestListServiceRecords > test_filter_by_asset[memory]}
+\item \path{TestListServiceRecords > test_filter_by_asset[neo4j]}
+\item \path{TestUpdateServiceRecord > test_partial_update[memory]}
+\item \path{TestUpdateServiceRecord > test_partial_update[neo4j]}
+\item \path{TestUpdateServiceRecord > test_update_nonexistent_returns_none[memory]}
+\item \path{TestUpdateServiceRecord > test_update_nonexistent_returns_none[neo4j]}
+\item \path{TestFleetRecordPage > test_filters_orders_and_paginates[memory]}
+\item \path{TestFleetRecordPage > test_filters_orders_and_paginates[neo4j]}
+\item \path{TestFleetRecordPage > test_analysis_status_counts_states_and_labels[memory]}
+\item \path{TestFleetRecordPage > test_analysis_status_counts_states_and_labels[neo4j]}
+\item \path{TestCorrectionsPage > test_summary_component_change_and_filters[memory]}
+\item \path{TestCorrectionsPage > test_summary_component_change_and_filters[neo4j]}
+\item \path{TestNeo4jPaginationQueryShape > test_records_filters_count_and_page_in_cypher}
+\item \path{TestNeo4jPaginationQueryShape > test_corrections_summary_and_page_are_computed_in_cypher}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_maintenance\_agent.py (10 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_creates_asset_and_record}
+\item \path{test_asset_linked_to_record}
+\item \path{test_idempotent_second_run}
+\item \path{test_duplicate_retry_repairs_missing_about_link_without_duplication}
+\item \path{test_skip_blank_tail}
+\item \path{test_skip_bad_date}
+\item \path{test_preceded_by_chain}
+\item \path{test_mixed_rows}
+\item \path{test_empty_records}
+\item \path{test_multiple_records_same_asset}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_ops.py (3 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_ops_version_public}
+\item \path{test_ops_logs_requires_token}
+\item \path{test_ops_logs_unconfigured}
+\end{enumerate}
+
+\subsubsection*{\texttt{test\_regression\_software.py (7 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{test_health_ok}
+\item \path{test_api_health_ok}
+\item \path{test_decisions_lists_seeded}
+\item \path{test_graph_overview_returns_structure}
+\item \path{test_ingest_document_creates_decision}
+\item \path{test_alerts_responds}
+\item \path{test_invalidation_flags_linked_decision}
+\end{enumerate}
+
+\section{Frontend tests (171 tests)}
+
+\subsubsection*{\texttt{AssetHistory.test.jsx (12 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{AssetHistory deep links to a record scrolls to the linked record and marks it}
+\item \path{AssetHistory deep links to a record decodes a URL-encoded record id in the hash}
+\item \path{AssetHistory deep links to a record says so when the linked record is not in this aircraft history}
+\item \path{AssetHistory deep links to a record does nothing special without a hash}
+\item \path{AssetHistory honesty and failure states does not invent a superseding record or rationale the backend did not provide}
+\item \path{AssetHistory honesty and failure states shows a missing date plainly and puts undated records last}
+\item \path{AssetHistory honesty and failure states 404: says the aircraft was not found (not "no records"), no retry}
+\item \path{AssetHistory honesty and failure states network failure: reports it, and Try again recovers}
+\item \path{AssetHistory honesty and failure states still shows the empty state when the aircraft genuinely has no records}
+\item \path{AssetHistory shows the conflict-engine and ingest fields the backend returns shows con- fidence, JASC code and source on each record}
+\item \path{AssetHistory shows the conflict-engine and ingest fields the backend returns shows nothing extra for fields the backend did not send}
+\item \path{AssetHistory shows the conflict-engine and ingest fields the backend returns never renders a numeric confidence for an unscored record}
+\end{enumerate}
+
+\subsubsection*{\texttt{Assets.test.jsx (3 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Assets renders assets}
+\item \path{AssetHistory renders empty state}
+\item \path{AssetHistory renders populated and superseded records}
+\end{enumerate}
+
+\subsubsection*{\texttt{Diagnostics.test.jsx (29 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Diagnostics renders ranked list, evidence links, and handles rare-case expansion}
+\item \path{Diagnostics renders error state on API failure}
+\item \path{Diagnostics loading and submission shows a progress state and blocks duplicate submissions}
+\item \path{Diagnostics loading and submission keeps Run disabled until an aircraft and a symptom are present}
+\item \path{Diagnostics loading and submission names the asset and symptom the result belongs to}
+\item \path{Diagnostics loading and submission clears the symptom and result with the Clear button}
+\item \path{Diagnostics failure states (no invented diagnosis) 503: model unavailable, with technical detail and a retry that re-sends the same request}
+\item \path{Diagnostics failure states (no invented diagnosis) 404: aircraft has no history; offers no retry}
+\item \path{Diagnostics failure states (no invented diagnosis) 429: rate limited, retryable}
+\item \path{Diagnostics failure states (no invented diagnosis) 500: reports a server error with the status, retryable}
+\item \path{Diagnostics failure states (no invented diagnosis) 422: flattens FastAPI validation detail (an array) instead of crashing}
+\item \path{Diagnostics failure states (no invented diagnosis) network failure: says the API is unreachable}
+\item \path{Diagnostics response states 200 with no evidence: says so, and still shows the model text, labelled as unsupported (never hidden)}
+\item \path{Diagnostics response states renders the warnings field and the citation-validation status}
+\item \path{Diagnostics response states flags unverified citations instead of reporting them as verified}
+\item \path{Diagnostics response states shows readable text when the backend returns the raw model JSON as the explanation}
+\item \path{Diagnostics response states tolerates missing optional fields in the response}
+\item \path{Diagnostics response states always states that this is decision support}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) lets a ranked check's evidence record ids open the history when the record is known}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) caps long record lists per check and says how many more there are}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) shows each check's rank score, labelled as a rank score and not a probability}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) omits the rank score when the backend does not send one (no invented number)}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) shows the server time from context_size.wall_clock_s}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) lets the reader expand a check to see every record id, not just the first few}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) styles [UNVERIFIED:ID] markers as warnings}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) does not call citations verified when all_valid is false, even with no invalid ids listed}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) says so when the model returns no explanation but a ranking exists (not a silent omission)}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) does not show the no-explanation notice when an explanation is present}
+\item \path{Diagnostics contract with the backend (docs/mid1/12_u4_u5_diagnostics_handoff.md) warns that a fresh diagnosis can be slow while it is loading}
+\end{enumerate}
+
+\subsubsection*{\texttt{DiagnosticsCopilot.test.jsx (4 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Diagnostics copilot defaults to All fleet and carries accumulated case state across turns}
+\item \path{Diagnostics copilot shows model-unavailable output and retries a network failure without a blank success}
+\item \path{Diagnostics copilot saves, resumes, and deletes a local session}
+\item \path{Diagnostics copilot deep-links evidence to the matching aircraft history record}
+\end{enumerate}
+
+\subsubsection*{\texttt{DomainContext.test.jsx (3 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{DomainContext is locked to the maintenance domain}
+\item \path{DomainContext ignores a stale software value left in localStorage by the old switcher}
+\item \path{DomainContext cannot be switched to the software domain}
+\end{enumerate}
+
+\subsubsection*{\texttt{Graph.test.jsx (18 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Graph page asks the backend for enough nodes rather than its 200-node default}
+\item \path{Graph page opens on the aircraft with the most records and shows only its real subgraph}
+\item \path{Graph page states the true node and edge counts and no longer claims a 2000-node cap}
+\item \path{Graph page warns when the loaded cap is reached because the graph may be incomplete}
+\item \path{Graph page never shows legacy software nodes}
+\item \path{Graph page marks aircraft that have a stored correction in the selector}
+\item \path{Graph page switches aircraft and shows that aircraft only}
+\item \path{Graph page explains each stored relationship and counts the ones in view}
+\item \path{Graph page draws SUPERSEDES corrections apart from other edges}
+\item \path{Graph page settles a small layout before the first frame so the camera fits the final positions}
+\item \path{Graph page keeps large views to a short animated settle instead of blocking on a long warm-up}
+\item \path{Graph page labels nodes by tail number and record id, not by UUID}
+\item \path{Graph page reports a load failure with retry and no stale "port 8000" advice}
+\item \path{Graph page warns that the whole fleet is too dense to read}
+\item \path{GraphSidePanel shows a record's stored fields and links to its asset history entry}
+\item \path{GraphSidePanel does not show the stored confidence, which can be a legacy 1.00 placeholder}
+\item \path{GraphSidePanel shows no link for a record whose aircraft cannot be resolved}
+\item \path{GraphSidePanel links an aircraft node to its own history}
+\end{enumerate}
+
+\subsubsection*{\texttt{MaintenanceIngest.test.jsx (17 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Corpus ingest (server file) renders corpus ingest and processes result}
+\item \path{Corpus ingest (server file) sends the path and limit it was given}
+\item \path{Corpus ingest (server file) shows a failure inline and never as a browser alert}
+\item \path{CSV upload selecting a file writes nothing until the user confirms}
+\item \path{CSV upload posts the file as multipart form data under the field name "file"}
+\item \path{CSV upload shows the backend counts with honest labels and a link to the new records}
+\item \path{CSV upload says so when no record was created}
+\item \path{CSV upload says so when everything was already in the graph}
+\item \path{CSV upload rejects a non-CSV file before sending anything}
+\item \path{CSV upload rejects a file over the size limit before sending anything}
+\item \path{CSV upload shows the backend reason when the server refuses the file}
+\item \path{CSV upload reports a server failure honestly and keeps the file so it can be retried}
+\item \path{CSV upload does not blame a stopped API when an upload fails without a readable reply}
+\item \path{CSV upload lets the user drop the chosen file}
+\item \path{CSV upload tells the user the date format the backend accepts}
+\item \path{CSV upload warns that ingesting writes to the graph and is safe to repeat}
+\item \path{Single record submission shows a failure inline and never as a browser alert}
+\end{enumerate}
+
+\subsubsection*{\texttt{ReviewQueue.test.jsx (18 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Detected corrections tab defaults the corrections aircraft filter to All aircraft and renders live summary}
+\item \path{Detected corrections tab filters corrections by aircraft}
+\item \path{ReviewQueue renders queued item and pruning line}
+\item \path{ReviewQueue loading the queue a failed fetch is reported as a failure, never as an empty queue}
+\item \path{ReviewQueue loading the queue an analysed empty queue states the analysed count}
+\item \path{ReviewQueue loading the queue an unanalysed empty queue states the remaining count}
+\item \path{ReviewQueue loading the queue uses the backend history_size and skips the extra history request}
+\item \path{ReviewQueue loading the queue explains what the conflict label means}
+\item \path{ReviewQueue loading the queue links the incoming and prior record to the asset history by asset UUID}
+\item \path{ReviewQueue loading the queue shows no history link rather than a broken one when the asset cannot be resolved}
+\item \path{ReviewQueue finding details never shows the previous record's finding when the next one fails to load}
+\item \path{ReviewQueue finding details Retry re-requests the finding}
+\item \path{ReviewQueue accept and reject change real data, so the UI waits for the server does not remove the record or announce success until the server confirms}
+\item \path{ReviewQueue accept and reject change real data, so the UI waits for the server keeps the record in the queue and shows the server reason when accept fails}
+\item \path{ReviewQueue accept and reject change real data, so the UI waits for the server requires a note to reject and sends nothing without one}
+\item \path{ReviewQueue accept and reject change real data, so the UI waits for the server rejects with the note once the server confirms}
+\item \path{ReviewQueue accept and reject change real data, so the UI waits for the server a stray key press cannot accept or reject a record}
+\item \path{ReviewQueue accept and reject change real data, so the UI waits for the server says plainly that neither action deletes the record}
+\end{enumerate}
+
+\subsubsection*{\texttt{ServiceRecords.test.jsx (22 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{confidence and status states renders unscored without a numeric score}
+\item \path{confidence and status states renders a flagged legacy 1.00 placeholder as not analysed}
+\item \path{confidence and status states renders no-conflict comparisons without a numeric score}
+\item \path{confidence and status states renders a relation as a heuristic score}
+\item \path{confidence and status states explains screen and adaptive model methods in the score tooltip}
+\item \path{confidence and status states hides confidence for superseded records}
+\item \path{ServiceRecords fleet view defaults to All aircraft}
+\item \path{ServiceRecords fleet view makes exactly two page-initiated calls on first load}
+\item \path{ServiceRecords fleet view renders tail number on every row and the fleet total}
+\item \path{ServiceRecords fleet view keeps record deep links on the asset UUID and record ID}
+\item \path{ServiceRecords fleet view preselects an asset from a shareable URL}
+\item \path{ServiceRecords fleet view highlights a linked record from a shareable URL}
+\item \path{ServiceRecords fleet view sends aircraft filter changes to the fleet endpoint}
+\item \path{ServiceRecords fleet view sends the Search records filter through URL-backed params}
+\item \path{ServiceRecords fleet view sends the Status filter through URL-backed params}
+\item \path{ServiceRecords fleet view sends the Analysis state filter through URL-backed params}
+\item \path{ServiceRecords fleet view sends the Component filter through URL-backed params}
+\item \path{ServiceRecords fleet view sends the Date from filter through URL-backed params}
+\item \path{ServiceRecords fleet view sends the Date to filter through URL-backed params}
+\item \path{ServiceRecords fleet view loads the next page and appends records}
+\item \path{ServiceRecords fleet view shows a corrected-by banner with a link}
+\item \path{ServiceRecords fleet view reports a records failure and can retry}
+\end{enumerate}
+
+\subsubsection*{\texttt{Settings.test.jsx (6 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Settings system status mirrors /api/health shows the runtime-honesty fields the backend reports}
+\item \path{Settings system status mirrors /api/health flags a degraded runtime instead of presenting it as healthy}
+\item \path{Settings system status mirrors /api/health omits fields the backend did not send rather than showing them as "No"}
+\item \path{Settings system status mirrors /api/health does not show a version when the backend reports "unknown"}
+\item \path{Settings system status mirrors /api/health exposes no control that can wipe the graph}
+\item \path{Settings system status mirrors /api/health says plainly when the backend is unreachable}
+\end{enumerate}
+
+\subsubsection*{\texttt{Sidebar.test.jsx (3 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Sidebar renders the maintenance destinations}
+\item \path{Sidebar does not expose dropped software-domain screens or a domain switcher}
+\item \path{Sidebar shows the review count badge only when records await review}
+\end{enumerate}
+
+\subsubsection*{\texttt{diagnosticsUtils.test.js (24 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{formatDetail passes strings through}
+\item \path{formatDetail flattens FastAPI validation arrays to text}
+\item \path{formatDetail returns null for empty or unusable detail}
+\item \path{describeDiagnosticError maps HTTP 404 to no-history (retryable: false)}
+\item \path{describeDiagnosticError maps HTTP 422 to validation (retryable: false)}
+\item \path{describeDiagnosticError maps HTTP 503 to model-unavailable (retryable: true)}
+\item \path{describeDiagnosticError maps HTTP 429 to rate-limited (retryable: true)}
+\item \path{describeDiagnosticError maps HTTP 500 to server-error (retryable: true)}
+\item \path{describeDiagnosticError maps HTTP 502 to server-error (retryable: true)}
+\item \path{describeDiagnosticError keeps the backend detail for 503 so the limitation is explained}
+\item \path{describeDiagnosticError always returns strings, never objects, even for array detail}
+\item \path{describeDiagnosticError detects a network failure}
+\item \path{describeDiagnosticError does not call an unrelated thrown error a network failure}
+\item \path{describeDiagnosticError falls back to the backend detail when there is no status}
+\item \path{extractExplanation returns ordinary prose untouched}
+\item \path{extractExplanation unwraps a raw JSON blob from the model}
+\item \path{extractExplanation unwraps JSON inside a markdown fence}
+\item \path{extractExplanation recovers the explanation from truncated JSON}
+\item \path{extractExplanation leaves JSON without an explanation key alone}
+\item \path{extractExplanation handles non-string input}
+\item \path{splitUnverified returns one plain segment when there are no markers}
+\item \path{splitUnverified flags [UNVERIFIED:ID] and bare [UNVERIFIED] markers and keeps the surrounding text in order}
+\item \path{splitUnverified does not flag lookalikes}
+\item \path{splitUnverified handles empty and non-string input}
+\end{enumerate}
+
+\subsubsection*{\texttt{dummy.test.jsx (1 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{Dummy test should pass}
+\end{enumerate}
+
+\subsubsection*{\texttt{graphScope.test.js (10 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{maintenanceGraph drops non-maintenance nodes and the edges that touched them}
+\item \path{maintenanceGraph tolerates empty or missing data}
+\item \path{maintenanceGraph understands edges whose ends were already resolved to objects by the force graph}
+\item \path{aircraftOptions counts the stored corrections per aircraft}
+\item \path{aircraftOptions lists aircraft by record count, then tail number}
+\item \path{focusAircraft keeps one aircraft, its records and only the stored edges between them}
+\item \path{focusAircraft never invents an edge}
+\item \path{focusAircraft returns the whole graph when no aircraft is chosen}
+\item \path{focusAircraft returns an empty graph for an unknown aircraft}
+\item \path{countBy counts, bucketing missing keys as Other}
+\end{enumerate}
+
+\subsubsection*{\texttt{ingestClient.test.js (1 tests)}}
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.08em,topsep=0.2em,parsep=0pt,rightmargin=0pt]
+\item \path{maintenanceAPI.ingestFile posts to the multipart upload route, not the JSON csv_path route}
+\end{enumerate}
+

@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\caption{How findings shaped the design}
+\label{tab:findings-design}
+\small
+\begin{tabularx}{\textwidth}{@{}L L@{}}
+\toprule
+Finding & Design decision \\
+\midrule
+Corrections change the component in 65.2\% of FAA-recorded pairs & Represent SUPERSEDES explicitly; down-weight superseded records in ranking (factor 0.3); show the corrector next to a corrected record \\
+Exhaustive pairing is quadratic & Only compare within the same aircraft, only with earlier records, only when at least one matching signal exists, at most 25 candidates \\
+Models disagree and fail & Ranking is deterministic and needs no model; the model only phrases it; failures are reported, not hidden \\
+Model-generated identifiers can be invented & Every identifier in the text is checked against the graph; unmatched ones are marked unverified \\
+Analysis is expensive and rate-limited & Ingest stores records as unanalysed; analysis is a separate, resumable, budgeted step; the interface shows ``Not analysed'' honestly \\
+Labels come free from the data & Use FAA-recorded supplemental pairs as ground truth rather than hand labels \\
+\bottomrule
+\end{tabularx}
+\end{table}

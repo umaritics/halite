@@ -1,0 +1,20 @@
+\begin{table}[H]
+\centering
+\caption{Traceability of central requirements}
+\label{tab:traceability}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.12\textwidth} L L >{\raggedright\arraybackslash}p{0.22\textwidth}@{}}
+\toprule
+FR & Design element & Implementation & Tests \\
+\midrule
+FR-06, 08 & Asset history API and page & \texttt{maintenance.py}, \texttt{AssetHistory.jsx} & \texttt{test\_api\_maintenance}; AssetHistory.test (12) \\
+FR-13 & Graph schema, ingest & \texttt{maintenance\_agent.py}, \texttt{queries.py} & \texttt{test\_maintenance\_agent} (10) \\
+FR-14, 15 & Graph view & \texttt{Graph.jsx}, \texttt{graphScope.js} & Graph.test (18), graphScope.test (10) \\
+FR-17--19 & Retrieval and ranking & \texttt{diagnostic\_retrieval.py} & \texttt{test\_diagnostic\_retrieval} (26) \\
+FR-21 & Citation validation & \texttt{citation\_validation.py} & \texttt{test\_citation\_validation} (6) \\
+FR-23--25 & Conflict engine & \texttt{conflict\_engine.py} & \texttt{test\_conflict\_engine} (32), cascade (11) \\
+FR-26 & Review actions & \texttt{maintenance.py}, \texttt{ReviewQueue.jsx} & ReviewQueue.test (18) \\
+FR-09, 12 & CSV upload & \texttt{MaintenanceIngest.jsx} & MaintenanceIngest.test (17) \\
+\bottomrule
+\end{tabularx}
+\end{table}

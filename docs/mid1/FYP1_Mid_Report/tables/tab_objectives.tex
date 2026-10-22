@@ -1,0 +1,25 @@
+\begin{table}[H]
+\centering
+\caption{Project objectives and their status at FYP-1 Mid}
+\label{tab:objectives}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} L@{}}
+\toprule
+\# & Objective & Status & Measurable check \\
+\midrule
+1 & Structured maintenance knowledge graph & Done (Mid scope) & 2{,}079 records and 118 aircraft in Neo4j; relationships ABOUT, PRECEDED\_BY, SUPERSEDES \\
+2 & Record ingestion and normalisation & Partial & CSV ingest with explicit skip counts and duplicate safety; no free-text extraction \\
+3 & Asset-aware historical retrieval & Done & Retrieval bounded to aircraft history plus a capped fleet scan \\
+4 & Semantic retrieval & Not started & Planned for FYP-1 Final; not claimed \\
+5 & Evidence-aware diagnostic ranking & Done (heuristic) & Deterministic, documented weights; scores are not probabilities \\
+6 & Interactive conversational investigation & Done (basic) & Multi-turn Copilot with carried case state \\
+7 & Detect superseded and contradictory findings & Done & Five-label classifier with confidence and routing \\
+8 & Human review for uncertain decisions & Done & Review queue with accept and reject; notes stored \\
+9 & Educational diagnostic scenarios & Not started & Training module is FYP-2 \\
+10 & Recurring-fault and fleet analytics & Not started & FYP-2 \\
+11 & Secure multi-user SaaS application & Not started & No authentication yet \\
+12 & Evaluation against controlled baselines & Partial & Historical conflict evaluation exists; diagnostic baselines not yet run \\
+13 & Deployment with automated testing and CI/CD & Done & GitHub Actions on every push; CI-gated staging deploy \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,82 @@
+% Front matter — roman page numbers; no blank filler pages
+\pagestyle{frontmatter}
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\chapter*{Students' Submission}
+\addcontentsline{toc}{chapter}{Students' Submission}
+
+This report, entitled \emph{Halite: AI-Powered Maintenance Diagnostics and Asset Intelligence Platform}, is submitted as the FYP-I mid-report of BS Computer Science (2023--2027), FAST School of Computing, National University of Computer and Emerging Sciences, Islamabad.
+
+\vspace{1.5em}
+\begin{tabular}{@{}p{0.62\linewidth}p{0.32\linewidth}@{}}
+Shahmeer Atif (23I-0711) & Signature: \hrulefill \\[1.6em]
+Muhammad Umar (23I-0782) & Signature: \hrulefill \\[1.6em]
+Muhammad Usman Al Haq (23I-0585) & Signature: \hrulefill \\
+\end{tabular}
+
+\clearpage
+\chapter*{Anti-Plagiarism Statement}
+\addcontentsline{toc}{chapter}{Anti-Plagiarism Statement}
+
+The authors certify that this report is their own work and that all external sources, tools and components used in its preparation are appropriately acknowledged. The authors accept responsibility for the originality and correctness of the submitted material.
+
+\clearpage
+\chapter*{Authors' Declaration}
+\addcontentsline{toc}{chapter}{Authors' Declaration}
+
+We declare that this report documents work completed through FYP-I Mid. The code, tests and submitted evidence originate from the Halite team and its repository. Claude Code, Cursor and OpenAI Codex were used as development and documentation assistants; their use and member ownership are declared in Section~8.7. Reported research and implementation results are bounded by the evidence and limitations discussed in the report.
+
+\clearpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Maintenance teams maintain large archives of service reports whose diagnostic value is difficult to recover because the records are free text, scattered and sometimes corrected by later reports. Halite develops an evidence-aware knowledge graph over maintenance records, using graph-constrained retrieval and explicit record validity to connect historical evidence to investigation support. The FYP-I Mid iteration loads 2,079 public FAA Service Difficulty Reports spanning 118 aircraft into Neo4j, provides chronological asset histories, ranks investigative checks using a documented deterministic heuristic, verifies cited record identifiers against the graph, and offers conflict analysis with human review. A React frontend integrates these functions with a FastAPI backend. At the evaluated commit, CI reported 194 passing backend and 171 passing frontend tests. A bounded single-aircraft run found three of three FAA-recorded correction pairs for that aircraft. This is not a claim of diagnostic accuracy: the current ranker is heuristic, semantic retrieval is not implemented and most of the corpus has not been analysed. FYP-I Final targets hybrid retrieval, diagnostic baseline evaluation, role-based access and diagnostic session history; FYP-II targets technician training, analytics, wider validation and deployment hardening.
+
+\clearpage
+\chapter*{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
+
+The project team acknowledges its supervisor, Syed Muhammad Saad Salman, and the FAST School of Computing for guidance and academic review. We acknowledge the United States Federal Aviation Administration for making Service Difficulty Report data publicly available, and the open-source software maintainers whose components support this work.
+
+\clearpage
+\chapter*{Executive Summary}
+\addcontentsline{toc}{chapter}{Executive Summary}
+
+\textbf{Problem.} Historical maintenance reports often do not reveal whether a seemingly relevant repair attempt was later corrected. Keyword matching alone does not represent changing evidence and provenance.
+
+\textbf{Implemented scope.} Halite's FYP-I Mid iteration demonstrates a real-data vertical slice: asset histories; a Neo4j maintenance graph; bounded, heuristic diagnostic retrieval and citation verification; maintenance report upload; and conflict review. It does not yet provide semantic retrieval, authentication or multi-tenant administration, training simulation, or fleet analytics.
+
+\textbf{Research and evaluation.} The selected corpus contains 2,079 public FAA reports for 118 aircraft. A bounded experiment on aircraft 800NN processed 13 records and recovered three of three FAA-recorded correction pairs. The team's CI workflow at commit \texttt{36a98a3} reported 365 passing backend and frontend tests, plus a real-graph smoke test. This does not establish general diagnostic accuracy. The earlier offline conflict-evaluation figures are reported separately, with their limited scope.
+
+\textbf{Limitations and next iteration.} The diagnostic ranker is deterministic and lexical, not a calibrated probabilistic model. Most of the staging corpus has not been subjected to model-assisted conflict analysis. Authentication, semantic retrieval, structured session persistence and comprehensive research baselines remain planned work. Security and staging limitations are disclosed rather than omitted.
+
+\clearpage
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+
+\begin{description}[leftmargin=5.5em,style=sameline,font=\bfseries]
+\item[API] Application Programming Interface
+\item[CI/CD] Continuous Integration / Continuous Deployment
+\item[FAA] Federal Aviation Administration
+\item[FYP] Final Year Project
+\item[JASC] Joint Aircraft System/Component code
+\item[LLM] Large Language Model
+\item[Neo4j] Graph database used for maintenance records
+\item[RAG] Retrieval-Augmented Generation
+\item[SDR] Service Difficulty Report
+\item[SRS] Software Requirements Specification
+\item[UI/UX] User Interface / User Experience
+\end{description}
+
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\setcounter{page}{1}

@@ -1,0 +1,24 @@
+\begin{table}[H]
+\centering
+\caption{Defects found and their resolution}
+\label{tab:defects}
+\small
+\begin{tabularx}{\textwidth}{@{}c L L >{\raggedright\arraybackslash}p{0.10\textwidth}@{}}
+\toprule
+\# & Defect & Corrective action & State \\
+\midrule
+1 & Frontend CI failed: review-queue test mock lacked \texttt{getRecord} & Mock fixed; storage shim added & Fixed \\
+2 & Review-queue history links used tail numbers and led to 404 & Resolve aircraft UUID; hide link if unresolved & Fixed \\
+3 & Deep link did not scroll while loading skeleton was shown & Scroll effect depends on loading state & Fixed \\
+4 & Service Records issued 1+118 requests on load & Fleet-wide paginated endpoint; two page-initiated calls & Fixed \\
+5 & Assets list was slow (one history query per aircraft) & Single aggregation query; $\approx$1.0\,s on staging & Fixed \\
+6 & Placeholder confidence 1.0 shown as a real result & Honest analysis state; placeholders reported as unscored & Fixed \\
+7 & Graph requested 200 nodes yet claimed ``Capped at 2000'' & Request 3{,}000; truthful counts; warning when cap is hit & Fixed \\
+8 & CSV upload client posted to a path-only route & Posts to the upload route; new upload panel & Fixed \\
+9 & Small graphs hid edges behind large nodes & Spacing and node size changed & Fixed \\
+10 & Staging fresh diagnoses returned no explanation text & Diagnose-prompt bug; API reports empty output as 503. Fixed after \texttt{36a98a3} (Appendix~D) & Closed after eval \\
+11 & Unreadable CSV returns unhandled HTTP 500 & Interface wording only; backend change still open & Open \\
+12 & One staging record has no ABOUT link & Re-running ingest repairs it; not applied without approval & Open \\
+\bottomrule
+\end{tabularx}
+\end{table}

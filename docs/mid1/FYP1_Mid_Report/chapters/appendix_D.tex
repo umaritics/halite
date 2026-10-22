@@ -1,0 +1,27 @@
+\chapter{Repository and Contribution Evidence}
+
+\section*{Evaluated revision and reproducibility}
+
+The evaluated revision for the counts and outcomes in this report is Git commit \texttt{36a98a3} of \path{https://github.com/umaritics/halite}. Quantitative claims (test counts, commit activity, CI run) are anchored to that SHA. A later release tag \texttt{mid1-submission} may exist on the remote for packaging; it is not used as the measurement anchor. The recorded hosted CI run is \path{https://github.com/umaritics/halite/actions/runs/39068741787}.
+
+\paragraph{Fixes after the evaluated commit.}
+After \texttt{36a98a3}, subsequent main-line work closed two issues that this report still documents as open at evaluation time: (1)~empty staging diagnose explanations caused by a diagnose-prompt bug, and (2)~hardening of the unauthenticated \texttt{DELETE /api/graph/reset} path. Those closures are outside the evaluated SHA and are not re-measured here.
+
+\begin{verbatim}
+git clone https://github.com/umaritics/halite.git
+cd halite
+git checkout 36a98a3
+git rev-list --count HEAD
+# 115 commits in the documented history
+git rev-list --no-merges --count HEAD
+# 98 non-merge commits in the documented history
+git shortlog -sn --no-merges HEAD
+\end{verbatim}
+
+\section*{Version control and quality evidence}
+
+Of the 115 documented commits, 17 are merge commits. Development includes an earlier software prototype in July--August, the September maintenance proof of concept and the October FYP-I Mid integration. The latest documented workflow reported 194 backend tests passing on Python~3.11, 171 frontend tests passing with a production build on Node~20, and a Docker Compose smoke test with a real Neo4j service. The staging deployment succeeded after these checks.
+
+\section*{Individual ownership}
+
+The initial division assigned Shahmeer frontend and UX, Umar graph/retrieval/diagnostic ranking, and Usman dataset/ingest/conflict testing/CI and deployment. Changes and shared integration work that occurred later are reflected in Chapter~8's contribution narratives. Commit counts and pull requests document activity but are not treated as a numerical measure of intellectual contribution.

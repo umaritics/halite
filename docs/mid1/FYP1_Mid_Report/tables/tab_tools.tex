@@ -1,0 +1,27 @@
+\begin{table}[H]
+\centering
+\caption{External components and tools}
+\label{tab:tools}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.18\textwidth} L@{}}
+\toprule
+Component & Version & Purpose \\
+\midrule
+FastAPI, Uvicorn & 0.111.0, 0.30.1 & Backend web framework and server \\
+Pydantic Settings & 2.3.1 & Configuration and request validation \\
+Neo4j (database, Python driver) & 5, 5.20.0 & Graph storage and queries \\
+Groq Python client & 0.9.0 & Calls to the hosted language model \\
+pandas & 2.2.2 & CSV loading and data preparation \\
+PyTest, pytest-cov & 8.2.2, 5.0.0 & Backend tests \\
+React, React Router & 18.3, 6.24 & Frontend framework and routing \\
+Vite, Tailwind CSS & 5.3, 3.4 & Build tool and styling \\
+Axios & 1.7 & HTTP client \\
+react-force-graph-3d, three & 1.24, 0.185 & Interactive 3D graph \\
+Vitest, Testing Library, jsdom & 2.1, 16, 29 & Frontend tests \\
+Docker Compose & v2 & Local and CI full-stack runs \\
+GitHub Actions & --- & CI and staging deployment \\
+Vercel & --- & Frontend hosting and previews \\
+Groq-hosted model & openai/gpt-oss-120b (eval); gpt-oss-20b (staging default) & Phrasing and classification; replaceable \\
+\bottomrule
+\end{tabularx}
+\end{table}

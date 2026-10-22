@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\caption{Design as proposed against design as built}
+\label{tab:design-evolution}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth} L L@{}}
+\toprule
+Aspect & Proposal & Built at Mid, and why \\
+\midrule
+Retrieval & Graph-constrained plus embedding-based hybrid & Graph-bounded with lexical (Jaccard) similarity; embeddings deferred so the baseline is measured first \\
+Ranking & Hybrid evidence score with a historical correction penalty & Deterministic: recency and similarity weights, factor 0.3 for superseded records \\
+Conflict engine & Five-label classifier with human review & As proposed; plus stored analysis state, daily budget, and opt-in cost cascade after measuring 9{,}175 projected requests \\
+Tenancy and identity & PostgreSQL, organisations, roles & Not built; reviewer identity is therefore not recorded \\
+Sessions & Server-side diagnostic session storage & Client-side state only; the server is stateless \\
+Interface & Chat-centred workspace & Asset-first workspace with a Copilot tab; one-shot diagnose kept as the stable contract \\
+Corpus & About 60 airframes & 118 aircraft, because every aircraft with a ground-truth pair is kept first \\
+\bottomrule
+\end{tabularx}
+\end{table}

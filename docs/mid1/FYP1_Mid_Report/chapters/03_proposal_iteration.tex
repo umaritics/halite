@@ -1,0 +1,91 @@
+\chapter{Proposal Feedback and Iteration Plan}
+
+\section{Proposal Feedback Summary}
+
+No panel feedback or required changes were issued at the proposal stage, so there is no panel action to answer. The committee approved the proposal on 14~September 2026 and issued no recommended modifications. The team nevertheless identified and corrected three statements of its own proposal before this report, listed in Section~3.2.
+
+\section{Proposal Action Register}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.07\linewidth}>{\raggedright\arraybackslash}p{0.24\linewidth}>{\raggedright\arraybackslash}p{0.34\linewidth}>{\raggedright\arraybackslash}p{0.27\linewidth}@{}}
+\caption{Proposal action register}\label{tab:panel-actions}\\
+\toprule
+ID & Original statement or feedback & Clarification or action & Status / evidence \\
+\midrule
+\endfirsthead
+\toprule
+ID & Original statement or feedback & Clarification or action & Status / evidence \\
+\midrule
+\endhead
+-- & Proposal panel issued no requested changes & No mandatory correction required (14~September 2026 approval). & Not applicable; committee email. \\
+T1 & Proposed embedding and hybrid retrieval & FYP-I Mid uses bounded lexical retrieval; hybrid semantic retrieval is planned for FYP-I Final. & Clarified; Sections~2.3 and~6.7; \path{docs/mid1/15_report_mid1_addendum.md}. \\
+T2 & Approximately 60 airframes in proposal & Selected real-data corpus comprises 2{,}079 records from 118 aircraft. & Clarified; \path{docs/dataset_profile.md}, Section~5.7. \\
+T3 & Overall nine-module product scope & Mid delivers a working vertical slice of the core modules; deferred modules remain planned. & Clarified; Chapter~1 and Chapter~9. \\
+\bottomrule
+\end{longtable}
+
+\section{Iteration Strategy}
+
+Development is iterative and incremental, as the FYP handbook prescribes \citep{fast2026}. Three practices shaped this iteration.
+
+\begin{itemize}
+\item \textbf{Ownership with a controlled interface.} Each member owns a set of files (frontend; graph, retrieval and ranking; ingest, conflict engine, CI). Shared contracts such as the diagnose request and response were frozen early, and a change to another owner's file needed an explicit hand-off decision.
+\item \textbf{Pull requests with automated checks.} In this iteration work reaches main by pull request. GitHub Actions runs the backend tests (with a real Neo4j service), the frontend tests and build, and a Docker Compose smoke test on every push; the staging deployment runs only after CI succeeds.
+\item \textbf{A written knowledge bank.} A \texttt{knowledge/} folder records context, flows with dependency diagrams, and short decision records for non-obvious choices. A rule file (\texttt{AGENTS.md}) requires it to be updated in the same change as the code, so design documents cannot drift from the implementation.
+\end{itemize}
+
+\section{Iteration 1 Plan}
+
+\textbf{Objective.} Demonstrate a working maintenance diagnostic vertical slice on real historical data.
+
+\textbf{Selected features} (from the proposal): a maintenance-focused interface; an asset history browser; a live knowledge graph; symptom-based diagnostic input; historical evidence retrieval; ranked investigation suggestions; conflict review; API integration; automated tests; GitHub Actions CI/CD.
+
+\textbf{Planned demonstration flow:} open an asset, view its history, enter a symptom, retrieve related records, generate an evidence-backed response, display real source references, show a relevant historical correction, and show CI results.
+
+\textbf{Deliverables and evidence.} The running application, the tests and CI runs, the evidence documents under \texttt{docs/mid1/}, and this report.
+
+\section{Iteration 2 Plan}
+
+FYP-1 Final targets an integrated minimum viable product: improved diagnostic ranking, hybrid (graph and semantic) retrieval, multi-turn sessions with server-side history, an asset and component graph, role-based access, a deployed demonstration, and an updated requirements and design specification with an initial algorithm evaluation. Chapter~9 gives the detailed plan, including what slipped from this iteration.
+
+\section{Work Breakdown and Responsibilities}
+
+\input{tables/tab_work_packages}
+
+Member contributions are described in Chapter~8.
+
+\section{Progress Against Plan}
+
+\input{tables/tab_progress}
+
+\subsection{Team pass gate}
+
+\begin{longtable}{@{}p{0.05\linewidth}p{0.30\linewidth}p{0.14\linewidth}p{0.42\linewidth}@{}}
+\caption{Mid-I pass gate and evidence}\label{tab:mid-pass-gate}\\
+\toprule
+ID & Gate item & Status & Verifiable evidence or qualification \\
+\midrule
+\endfirsthead
+\toprule
+ID & Gate item & Status & Evidence / qualification \\
+\midrule
+\endhead
+A & Functional app with real asset and graph history & Met & Neo4j graph mode, live model and 2{,}079 records on staging, as checked 18~October 2026. \\
+B & Diagnosis succeeds with a live model or reports a limitation & Partial & Live-model explanations worked locally; fresh staging explanations were empty on 16~October in the evaluated evidence (later attributed to a diagnose-prompt bug and fixed after \texttt{36a98a3}; see Appendix~D). API does not conceal the limitation. \\
+C & Cited record opens original history & Met & Evidence deep links and relevant Assets/Diagnostics component tests. \\
+D & Conflict workflow visible and testable & Met & Review queue, detected corrections and conflict-engine tests. \\
+E & Tests/build execute in hosted CI & Met & GitHub Actions run \texttt{39068741787}: 194 backend tests, 171 frontend tests and real-graph Docker smoke all passed on \texttt{36a98a3}. \\
+F & Evaluated revision, setup and ownership recorded & Met as documented & Git revision \texttt{36a98a3} is the evaluation anchor; setup, tests, evidence and contributions are recorded. A later packaging tag may exist; measurement remains on this SHA (Appendix~D). \\
+G & Individual technical preparation & Completed (team-reported) & Members state that preparation, technical ownership and presentation readiness have been completed. Their individual implementation contributions appear in Chapter~8. \\
+\bottomrule
+\end{longtable}
+
+\section{Delays, Deviations and Recovery Plan}
+
+The commit timeline is uneven and we state it plainly. At commit \texttt{36a98a3} the repository has 115 commits (98 excluding merges), in three phases summarised in Table~\ref{tab:commits-phase}:
+
+\input{tables/tab_commits_phase}
+
+\begin{itemize}
+\item The full corpus has not been analysed. Analysis costs days of model quota on the free tier. Recovery: the cascade reduces projected requests; a bounded run on one aircraft was done and is reported in Section~7.5.1; a full run is planned only after live token measurement.
+\item Authentication, training and analytics are outside this iteration by the scope decision in Table~\ref{tab:scope-modules}.
+\end{itemize}

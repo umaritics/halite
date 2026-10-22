@@ -1,0 +1,48 @@
+\begin{longtable}{@{}c >{\raggedright\arraybackslash}p{0.30\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} p{0.40\textwidth}@{}}
+\caption{All functional requirements and their Mid status}\label{tab:all-fr}\\
+\toprule
+ID & Requirement & Mid status & Evidence or reason \\
+\midrule
+\endfirsthead
+\toprule
+ID & Requirement & Mid status & Evidence or reason \\
+\midrule
+\endhead
+\midrule\multicolumn{4}{r@{}}{\emph{Continued}}\\\midrule\endfoot
+\bottomrule\endlastfoot
+FR-01 & Authenticate authorised users & Deferred & No authentication yet \\
+FR-02 & Associate users with organisations & Deferred & No organisations yet \\
+FR-03 & Enforce role-based permissions & Deferred & FYP-1 Final \\
+FR-04 & Prevent cross-tenant access & Deferred & No tenancy \\
+FR-05 & Register maintenance assets & Partial & Assets created by ingest; no registration screen \\
+FR-06 & Show chronological records for an asset & Met & AssetHistory.test (12); API 404 for unknown asset \\
+FR-07 & Search assets by identifier & Met & Assets.test \\
+FR-08 & Show record-linked diagnostic and conflict information & Met & Corrected-by banner; ServiceRecords.test (22) \\
+FR-09 & Accept supported report formats & Partial & FAA CSV by upload or path; single record; no PDF/DOCX \\
+FR-10 & Extract available fields & Partial & Structured CSV fields only; no free-text extraction \\
+FR-11 & Retain the original source record & Met & Text and identifier stored; reject never deletes \\
+FR-12 & Flag ambiguous or invalid fields & Partial & Skipped rows counted by reason; no per-field flags \\
+FR-13 & Create relationships among entities & Met & \texttt{test\_maintenance\_agent} (10) \\
+FR-14 & Traverse related historical cases & Met & Graph.test, graphScope.test \\
+FR-15 & Expose provenance of graph results & Met & Edge legend; record source \\
+FR-16 & Accept natural-language symptoms & Met & \texttt{test\_api\_diagnostics}, \texttt{test\_api\_copilot} \\
+FR-17 & Retrieve relevant historical evidence & Met (lexical) & \texttt{test\_diagnostic\_retrieval} (26) \\
+FR-18 & Rank hypotheses when evidence suffices & Met (heuristic) & Deterministic ranking tests \\
+FR-19 & Display supporting record references & Met & Evidence links; Diagnostics.test (29) \\
+FR-20 & Request clarification when information is missing & Partial & Copilot asks at most one question \\
+FR-21 & Distinguish unsupported from verified & Met & \texttt{test\_citation\_validation} (6) \\
+FR-22 & Preserve diagnostic session history & Partial & Browser storage only \\
+FR-23 & Compare new records with prior records & Met & \texttt{test\_conflict\_engine} (32) \\
+FR-24 & Classify potential conflicts & Met & Five labels; parse-failure routing \\
+FR-25 & Route uncertain cases for review & Met & Routing tests; threshold 0.50 \\
+FR-26 & Record supervisor review decisions & Met & No reviewer identity \\
+FR-27 & Audit trail of status changes & Partial & Status and note stored; no actor or event log \\
+FR-28 & Start a training case & Deferred & FYP-2 \\
+FR-29 & Record learner steps & Deferred & FYP-2 \\
+FR-30 & Feedback linked to case evidence & Deferred & FYP-2 \\
+FR-31 & Store training completion history & Deferred & FYP-2 \\
+FR-32 & Display recorded fault trends & Deferred & FYP-2 \\
+FR-33 & Identify repeated faults on the same asset & Deferred & FYP-2 \\
+FR-34 & Filters by asset, component and date range & Partial & Service Records filters exist; no analytics view \\
+FR-35 & Distinguish descriptive statistics from predictions & Deferred & FYP-2 \\
+\end{longtable}

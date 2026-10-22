@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\caption{Technical challenges met in this iteration}
+\label{tab:tech-challenges}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} L@{}}
+\toprule
+Challenge & What we found and did \\
+\midrule
+Query fan-out & The first service-record view issued one request per aircraft (1+118 on load). It now loads two page-initiated calls; the assets list is one aggregation query ($\approx$1.0\,s on staging). \\
+Cost of conflict analysis & On the real corpus, 1{,}835 of 2{,}079 records have a candidate. Five-vote classification projects to 9{,}175 model requests vs a free-tier limit of 1{,}000/day. An opt-in cascade projects to 2{,}062--5{,}155 requests. Full-corpus token cost is not yet measured. \\
+Model instability & On one pair, two models gave different labels. We record method, model and votes for every classification and do not tune thresholds to look better. \\
+Legacy placeholder data & Early ingest carried confidence 1.0 without analysis. The API now reports such untouched values as unanalysed. \\
+Provider limits & HTTP 429 is normal (27 on a 13-record run). Retries are bounded; a daily budget stops runs cleanly; a missing live model fails closed. \\
+Empty model output & Staging fresh diagnoses returned no explanation text. Empty model output is an explicit HTTP 503, never a blank success. \\
+Dense graphs & The largest aircraft produces a 305-edge subgraph; the interface shows one aircraft at a time. \\
+\bottomrule
+\end{tabularx}
+\end{table}

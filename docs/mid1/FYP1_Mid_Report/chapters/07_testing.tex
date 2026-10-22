@@ -1,0 +1,147 @@
+\chapter{Testing and Early Validation}
+
+\section{Testing Strategy}
+
+We test at four levels and add manual end-to-end checks against the running system. The aim is that every claim in this report maps to a test, a measurement or a screenshot, and that a failure is reported instead of hidden.
+
+\begin{enumerate}
+\item Unit tests of backend services with the language model replaced by a fake, so classification, routing, ranking and citation rules are tested deterministically.
+\item API tests that call the routes through FastAPI's test client, including the failure codes (404, 409, 422, 503).
+\item Repository contract tests that run the same graph operations against the in-memory store and a real Neo4j service.
+\item Component tests of the React pages with the API mocked, covering every response shape and every error state.
+\item Smoke and end-to-end checks. A Docker Compose job in CI starts the whole stack and verifies health, the loaded corpus and the maintenance APIs; the acceptance tests T01--T16 are run by hand against a running system.
+\end{enumerate}
+
+For the frontend work added late in the iteration we also applied mutation checks: after writing a test, we deliberately broke the code it protects (for example, removed a size limit or reverted a label) and confirmed that the test failed, then restored the code.
+
+\section{Test Levels and Techniques}
+
+Table~\ref{tab:tests-by-area} summarises the automated tests by area at the evaluated commit.
+
+\begin{table}[H]
+\centering
+\caption{Automated tests by area (commit \texttt{36a98a3})}
+\label{tab:tests-by-area}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\ttfamily\raggedright\arraybackslash}p{0.42\textwidth} c L@{}}
+\toprule
+\normalfont File & Tests & What it covers \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textbf{Backend (PyTest)} --- 194 tests, of which 145 need no database} \\
+\midrule
+test\_conflict\_engine.py & 32 & Candidate pairing, classification, confidence, routing \\
+test\_diagnostic\_retrieval.py & 26 & Bounded retrieval, fleet scoring, ranking tie-break \\
+test\_graph\_maintenance.py & 49 & Schema, ingest links, Neo4j/memory contract \\
+test\_api\_maintenance.py & 27 & Assets, history, records, ingest, review APIs \\
+test\_maintenance\_agent.py & 10 & CSV parsing, skip categories, idempotent ingest \\
+test\_conflict\_cascade.py & 11 & Deterministic screen, voting, cascade budget \\
+test\_citation\_validation.py & 6 & Identifier shape, graph lookup, unverified marking \\
+test\_api\_copilot.py & 10 & Multi-turn state, deltas, 503 empty explanation \\
+test\_backfill\_conflict\_scores.py & 6 & Resume, budget stop, bounded retries \\
+test\_api\_diagnostics.py & 4 & Diagnose contract and LLM gate \\
+test\_ops.py & 3 & Version and ops log endpoints \\
+test\_conflict\_analysis\_migration.py & 3 & Legacy-placeholder migration \\
+test\_regression\_software.py & 7 & Frozen software-domain adapter isolation \\
+\midrule
+\multicolumn{3}{@{}l@{}}{\textbf{Frontend (Vitest)} --- 171 tests in 15 files} \\
+\midrule
+Diagnostics.test.jsx & 29 & Diagnose states, citations, evidence links \\
+ServiceRecords.test.jsx & 22 & Fleet list, filters, pagination, deep links \\
+ReviewQueue.test.jsx & 18 & Accept/reject confirmation, 409, required note \\
+Graph.test.jsx & 18 & Graph selection, counts, edge styling \\
+MaintenanceIngest.test.jsx & 17 & Upload confirmation, counts, error states \\
+AssetHistory.test.jsx & 12 & Chronology, corrected-by banner, deep links \\
+graphScope.test.js & 10 & Scope filtering helpers \\
+diagnosticsUtils.test.js & 24 & Ranking/citation display helpers \\
+DiagnosticsCopilot.test.jsx & 4 & Multi-turn UI state \\
+Settings / Sidebar / DomainContext / dummy & 13 & Navigation and system status \\
+Assets.test.jsx & 3 & Asset list and search \\
+ingestClient.test.js & 1 & Upload client helper \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Test Cases}
+
+\subsection{End-to-end acceptance tests}
+
+The team defined T01--T16 before the iteration (owner in brackets). Table~\ref{tab:acceptance} gives each result and its evidence.
+
+\input{tables/tab_acceptance}
+
+Appendix~C lists every automated test by name.
+
+\section{Test Results}
+
+At commit \texttt{36a98a3} the CI run (id \texttt{39068741787}) reported: backend 194 passed; frontend 171 passed in 15 files; the Docker Compose real-graph smoke test passed; the staging deployment that followed succeeded. Code coverage has not been measured (NFR-04), so no coverage figure is claimed.
+
+\section{Acceptance Testing / Validation}
+
+\subsection{One-aircraft analysis run}
+
+To show scores, corrections and a review queue on real records, and to test the conflict engine on a bounded input, we analysed one aircraft, 800NN (13 records, three FAA-recorded correction pairs), on a throwaway Neo4j graph. Shared staging was not touched. The records were loaded through the new upload route and analysed in the original (legacy) mode with \texttt{openai/gpt-oss-120b} and the 0.50 threshold, with an empty classification cache so every result came from a real model call.
+
+\begin{table}[!htbp]
+\centering
+\caption{Single-aircraft analysis results (800NN)}
+\label{tab:single-aircraft}
+\small
+\begin{tabularx}{\textwidth}{@{}L r@{}}
+\toprule
+Measure & Result \\
+\midrule
+Records processed & 13 \\
+Model classifications / screened without a model & 11 / 2 \\
+Successful model requests & 55 \\
+Tokens used & 29{,}386 \\
+Rate-limit (HTTP 429) responses, all retried successfully & 27 \\
+SUPERSEDES edges created & 4 \\
+Status: no\_action / auto\_accepted / needs\_review & 7 / 4 / 2 \\
+FAA-recorded pairs found & 3 of 3 \\
+Edges not in the FAA list & 1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The FAA ground-truth file lists only corrections the FAA reporters themselves recorded, so the one extra edge is unverified, not shown to be wrong. We do not compute a precision from one aircraft. Two records were sent to human review. These figures describe this aircraft only: about 2{,}260 tokens and 4.2 requests per record must not be extrapolated to the full corpus. The method and results are in \path{docs/mid1/23_single_aircraft_analysis_evidence.md}.
+
+\subsection{Earlier offline evaluation of conflict detection}
+
+An earlier evaluation measured the conflict engine on 350 pairs (141 FAA-recorded positives and 209 sampled negatives, one evaluation per superseding record), with \texttt{openai/gpt-oss-120b} at threshold 0.50:
+
+\begin{table}[!htbp]
+\centering
+\caption{Offline conflict-detection evaluation}
+\label{tab:offline-eval}
+\small
+\begin{tabularx}{\textwidth}{@{}L c c c c@{}}
+\toprule
+System & Precision & Recall & F1 & False-conflict rate \\
+\midrule
+Baseline (most recent prior) & 0.380 & 0.908 & 0.536 & 1.000 \\
+Engine (threshold 0.50) & 0.903 & 0.660 & 0.762 & 0.048 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The baseline reaches its recall by asserting a supersession on every pair it sees, which is why its false-conflict rate is 1.000. Measured at pair level over the 141 FAA-recorded pairs, precision is 0.788 and recall 0.660; the two precision figures answer different questions and must not be mixed.
+
+\textbf{How far this evidence goes.} It is historical: it comes from saved result files of the older run, with a model that is not the one now configured on staging. It measures conflict detection and is not a measure of diagnostic accuracy. The full-corpus counts published with it (121 detected, 117 auto-resolved, 4 for review, 1{,}617 without candidates) cannot be reproduced from the current code and are not used here.
+
+\section{Edge and Failure Cases}
+
+Table~\ref{tab:edge-cases} records the edge and failure cases exercised in this iteration and the behaviour under test.
+
+\input{tables/tab_edge_cases}
+
+\section{Defects and Corrective Actions}
+
+Table~\ref{tab:defects} lists defects found during the iteration and their resolution state.
+
+\input{tables/tab_defects}
+
+\section{Current Validation Status}
+
+\textbf{Validated:} the code paths covered by 365 automated tests; the end-to-end slice on real records; the failure behaviour in Table~\ref{tab:edge-cases}; the engine on one aircraft against the FAA's own labels (3 of 3).
+
+\textbf{Not validated:} diagnostic accuracy of the ranking; retrieval quality against baselines; the engine on the full corpus or with the staging model; usability with real technicians; load performance; code coverage; setup by an outside person. These are planned in Chapter~9.

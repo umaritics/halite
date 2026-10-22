@@ -1,0 +1,93 @@
+\chapter{Introduction and Project Vision}
+
+\section{Project Overview}
+
+Halite is a maintenance diagnostics and asset-intelligence platform. It organises historical service records around the aircraft they describe, links each record to the record before it and to any later record that corrects it, and uses that structure to answer a technician's question: given this aircraft and this symptom, what has been seen before, what was examined, and what should be checked next? Every answer names the records it rests on, and the system states plainly when it cannot answer.
+
+Halite is decision support. It does not approve repairs, certify airworthiness, or replace licensed inspectors.
+
+\section{Problem Statement}
+
+Given an identified asset, a natural-language symptom, a corpus of historical service reports, and the possibility that some reports have been superseded or contradicted by later ones, design a system that retrieves relevant evidence, ranks investigative possibilities, and explains its recommendations without treating unsupported model output as fact. The system must preserve provenance, identify conflicting historical claims, and allow a human to intervene.
+
+\section{Problem Context and Motivation}
+
+Maintenance organisations accumulate service reports, inspection findings and corrective actions over the life of each asset. These records are free text, inconsistent in vocabulary, and sometimes wrong in hindsight. A retrieved report may describe a repair that did not work, or a finding that a later report corrected. In the FAA data we use, reporters sometimes file a ``supplemental report'' that names the earlier record it replaces, and the replacement may name a different component from the original. A search tool that returns the original as if it still stood misleads the technician; the correction is itself diagnostic evidence.
+
+This is therefore not only a document-search problem. It is a problem of reasoning over evidence that changes over time, which is what motivates a graph that records order and correction explicitly, rather than a flat index of text.
+
+\section{Project Vision}
+
+To turn fragmented maintenance records into an accessible, explainable diagnostic knowledge system that helps maintenance teams investigate failures, understand earlier interventions, and learn from historical cases.
+
+\section{Project Objectives}
+
+The proposal lists thirteen objectives. Table~\ref{tab:objectives} states each one's status at this mid-report, with the measurable check we apply.
+
+\input{tables/tab_objectives}
+
+\section{Project Scope}
+
+\subsection{Included at FYP-1 Mid}
+
+The iteration is a vertical slice: one working path from real data to a cited answer, not a small piece of every module. A technician chooses a real aircraft, reads its dated records, enters a symptom, receives a ranked, evidence-linked investigation, opens a cited record, and sees a real correction or conflict example. The same commit has automated tests and a CI run.
+
+\subsection{Excluded at FYP-1 Mid}
+
+Authentication and organisations, the technician training module, analytics dashboards, semantic or hybrid retrieval, trained predictive models, and parts-demand forecasting are excluded. Performance claims for industries other than aviation are excluded because only FAA data has been used. Table~\ref{tab:scope-modules} gives the scope decision for every module so that this report, the proposal and the demonstration agree.
+
+\input{tables/tab_scope_modules}
+
+\section{Project Modules}
+
+The core Mid modules are summarised below (M02--M05 in full vertical-slice scope; M06 report ingest is Partial). Their design is in Chapter~5 and their implementation in Chapter~6.
+
+\begin{description}
+\item[M02 Assets.] Lists the 118 aircraft with record counts, shows each aircraft's records in date order with their FAA identifiers, and provides a fleet-wide, filterable, paginated record list.
+\item[M03 Knowledge graph.] Stores aircraft and service records and the relationships between them. The interface draws one aircraft at a time and separates relationships created at ingest from the ones computed by the conflict engine.
+\item[M04 Diagnostics.] Retrieves bounded graph context for a symptom, ranks inspection checks with a deterministic heuristic, asks a language model only to phrase the result, and verifies each cited record identifier against the graph.
+\item[M05 Conflict intelligence.] Compares a record with earlier records on the same aircraft, classifies the relationship, scores confidence, and sends uncertain cases to a human reviewer.
+\end{description}
+
+\section{Stakeholders and User Classes}
+
+Table~\ref{tab:stakeholders} summarises the stakeholders relevant to this iteration and what each needs from the system.
+
+\input{tables/tab_stakeholders}
+
+\section{Success Criteria}
+
+Success at FYP-1 Mid is defined by the team's own pass gate, agreed before this iteration:
+
+\begin{enumerate}[label=\Alph*.]
+\item A functional application with real asset and graph history.
+\item A diagnosis path that succeeds with a live model, or reports a clearly explained limitation.
+\item At least one cited record that opens the real source record.
+\item The existing conflict workflow is visible and testable.
+\item Backend and frontend tests and the build run automatically in GitHub Actions.
+\item A repository tag or commit, setup instructions, tests, evidence and individual contributions are documented.
+\item Every member can defend their own code and explain an integration failure.
+\end{enumerate}
+
+Section~3.7.1 reports each item with its evidence.
+
+\section{Constraints and Assumptions}
+
+\begin{itemize}
+\item \textbf{Time and team.} Three students and one academic term for the first iteration.
+\item \textbf{Data.} Public FAA SDR data does not confirm the true root cause of every fault; correction pairs are those the FAA reporters wrote themselves.
+\item \textbf{External services.} The language model (Groq) has request and token limits per day and can be unavailable. The design therefore never depends on it for the ranking, and it fails visibly (HTTP 503) when it is needed and absent.
+\item \textbf{Hosting.} A shared staging backend (a virtual machine with a managed Neo4j instance) and Vercel for the frontend; staging data is shared, so destructive actions on it are avoided.
+\item \textbf{Assumption.} The corpus is a historical sample of 2,079 records; claims about it are not claims about all aviation maintenance.
+\end{itemize}
+
+\section{Ethical, Legal and DEI Considerations}
+
+\begin{itemize}
+\item \textbf{Safety boundary.} Output is investigative support. The interface labels ranking scores as heuristic, not probabilities, and a citation check as confirming that a record exists, not that a statement is supported.
+\item \textbf{Data licence.} FAA Service Difficulty Reports are works of the United States government and are in the public domain (17~U.S.C.~\S{}105). Raw and processed data are excluded from version control and downloaded by script.
+\item \textbf{Privacy and secrets.} The data contains no personal data about Halite's users. API keys and operations tokens are kept in ignored environment files; none is committed.
+\item \textbf{Honest presentation.} Records that have not been analysed are shown as ``Not analysed'', never as a confident result. A legacy placeholder confidence of 1.0 in old data is reported as unanalysed rather than as a real score.
+\item \textbf{Accessibility.} The interface uses plain language and error messages that say what failed. A formal accessibility audit has not been done.
+\item \textbf{Generative AI.} AI coding assistants were used and are disclosed in Section~8.7.
+\end{itemize}

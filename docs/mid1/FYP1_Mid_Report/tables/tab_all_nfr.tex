@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\caption{All non-functional requirements and their Mid status}
+\label{tab:all-nfr}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}p{0.28\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} L@{}}
+\toprule
+ID & Requirement & Mid status & Evidence or reason \\
+\midrule
+NFR-01 & Availability & Partial & Staging reachable at each check; no uptime monitoring \\
+NFR-02 & API performance, p95 $\leq$500\,ms & Not met / not measured & Assets list 0.99\,s as one request; no load test \\
+NFR-03 & Diagnostic latency measured & Not measured & Fresh diagnoses call an external model \\
+NFR-04 & 80\% coverage of core backend modules & Not measured & No coverage run; test counts only \\
+NFR-05 & No unauthorised tenant access & Deferred & No tenancy yet \\
+NFR-06 & Failed external operations reported and retried safely & Met & Bounded retries; 503; failure states \\
+NFR-07 & Citations resolve to real record IDs & Met & Citation validation and tests \\
+NFR-08 & Usability measured & Not measured & No user study \\
+NFR-09 & Independent setup succeeds & Partial & Setup guide and CI Compose smoke; no outside run \\
+NFR-10 & Review changes traceable to actor and time & Partial & No actor recorded \\
+\bottomrule
+\end{tabularx}
+\end{table}

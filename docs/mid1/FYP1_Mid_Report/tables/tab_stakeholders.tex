@@ -1,0 +1,18 @@
+\begin{table}[H]
+\centering
+\caption{Stakeholders and what each needs}
+\label{tab:stakeholders}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} L L@{}}
+\toprule
+Stakeholder & Role in the system & Need \\
+\midrule
+Maintenance technician & Reads aircraft history, enters symptoms, opens cited records & Find relevant past cases quickly; avoid repeating a failed repair \\
+Maintenance supervisor & Reviews records the system could not resolve & See both records and the reasoning; accept or reject with a note \\
+Technician (uploading reports) & Loads new records from a CSV or a single entry & Know exactly how many records were created, skipped or duplicated \\
+Project supervisor (evaluator) & Assesses progress & Demonstrable claims that match the code and tests \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+{\footnotesize Only the technician and maintenance-supervisor roles are exercised in this iteration, and they are not yet separated by authentication.\par}

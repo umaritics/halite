@@ -1,0 +1,19 @@
+\begin{table}[H]
+\centering
+\caption{Architectural comparison of retrieval approaches}
+\label{tab:retrieval-compare}
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.16\textwidth} >{\raggedright\arraybackslash}p{0.12\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} >{\raggedright\arraybackslash}p{0.14\textwidth} L@{}}
+\toprule
+Capability & Keyword & Semantic RAG & Graph RAG & Halite (at Mid) \\
+\midrule
+Natural-language input & Limited & Yes & Yes & Yes (lexical matching only) \\
+Asset-specific context & Manual & Filter & Graph & Graph (aircraft history plus capped fleet scan) \\
+Historical corrections & No & Not intrinsic & Possible & Explicit SUPERSEDES edges; superseded records down-weighted \\
+Ranked hypotheses & No & Generated text & Generated text & Deterministic, documented heuristic \\
+Evidence checking & Manual & Partial & Partial & Every cited record identifier checked against the graph \\
+Uncertainty handling & No & Model-based & Model-based & Heuristic labelled not-a-probability; unanalysed state shown; model failure reported \\
+Semantic similarity & No & Yes & Yes & Not implemented (planned) \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,241 @@
+\chapter{Iteration 1: Design and Implementation}
+
+\section{Iteration Objectives}
+
+Deliver a working vertical slice on real data: a technician selects a real aircraft, reads its dated records, enters a symptom, receives a ranked, evidence-linked investigation, opens a cited record, and sees a real correction or conflict. The same commit has automated tests and a continuous-integration run, and every failure path is reported honestly.
+
+\section{Selected Use Cases / Features}
+
+UC-03 (view history), UC-04 (upload report), UC-05 (start diagnosis), UC-06 (ask follow-up), UC-07 (inspect evidence), UC-08 (review conflict) and UC-09 (explore graph), as defined in Chapter~4.
+
+\section{Design}
+
+The design is in Chapter~5. Three iteration-specific design rules governed the work:
+
+\begin{enumerate}
+\item The interface reflects the backend and never improves on it. It may add labels and warnings; it may not hide, alter or invent a value.
+\item Real data or a stated reason. A missing live model or graph is reported, never replaced by a stub that looks like a result.
+\item One owner per file, contracts frozen. The diagnose request and response were fixed early so that three people could build in parallel.
+\end{enumerate}
+
+\section{Implementation}
+
+\subsection{Reproducing the system}
+
+The full guide is \texttt{docs/mid1\_setup.md}. In outline, with Docker, Python~3.11 and Node~20:
+
+\begin{verbatim}
+# 1. Graph database
+docker compose up -d neo4j
+
+# 2. Backend (secrets in backend/.env, never committed)
+cd backend && python -m venv venv && . venv/bin/activate
+pip install -r requirements.txt
+python scripts/fetch_sdr_data.py   # FAA 2025 file + corpus
+uvicorn main:app --port 8000       # DEMO_MODE=false, Neo4j, GROQ_API_KEY
+curl -X POST localhost:8000/api/maintenance/ingest
+
+# 3. Frontend
+cd ../frontend && npm ci && npm run dev   # http://localhost:5173
+
+# 4. Checks
+cd ../backend && python -m pytest -q
+cd ../frontend && npm test && npm run build
+\end{verbatim}
+
+\texttt{GET /api/health} must report \texttt{graph\_mode: neo4j} and a non-zero record count before any claim of ``real data'' is made. A Docker Compose smoke test in CI starts the whole stack and checks health, the corpus and the maintenance APIs. We have not yet had a person outside the team follow the guide on a clean machine (acceptance test T15).
+
+\subsection{Repository layout}
+
+Table~\ref{tab:repo-layout} summarises the main repository paths used in this iteration.
+
+\begin{table}[H]
+\centering
+\caption{Repository layout}
+\label{tab:repo-layout}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\ttfamily\raggedright\arraybackslash}p{0.32\textwidth} L@{}}
+\toprule
+\normalfont Path & Content \\
+\midrule
+backend/api/routes & HTTP routes \\
+backend/services & Retrieval, ranking, citation check, conflict engine, budget, model client \\
+backend/agents & Ingest agent \\
+backend/graph & Schema, repository (queries), Neo4j client, in-memory store \\
+backend/tests & 194 PyTest tests \\
+frontend/src & Pages, components, hooks, utilities, API client; 171 Vitest tests in \texttt{src/test} \\
+knowledge/ & Context, flows, decision records \\
+docs/mid1/ & Dated evidence: audits, measurements, screenshots \\
+.github/workflows & CI, staging deployment, log retrieval \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Completed Features / Module}
+
+\begin{description}
+\item[M02 Assets.] Assets lists 118 aircraft with record counts from one aggregation query, searchable by tail number. AssetHistory shows an aircraft's records oldest first with identifiers, a ``Corrected by'' banner when a later record supersedes one, and deep links (\texttt{\#\#recordId}) that scroll to and mark a record. ServiceRecords is a fleet-wide, URL-backed, paginated list with filters for text, status, analysis state, component and date.
+\item[M03 Knowledge graph.] Graph loads the stored graph and shows one aircraft's subgraph: the aircraft, its records, and the edges between them. It states the true counts and draws SUPERSEDES apart from the other edges, with a legend that says where each comes from. A fallback for browsers without WebGL is in an open pull request and is not part of the commit this report cites.
+\item[M04 Diagnostics.] Diagnostics has a multi-turn Copilot and a one-shot ``Quick diagnose''. Both show the ranked checks, the evidence records (each a link), the model's explanation when one exists, and the citation status.
+\item[M05 Conflict intelligence.] ReviewQueue shows the incoming record beside the retrieved prior record with the label, score and rationale, and offers accept and reject. A second tab lists detected corrections with a component-change rate.
+\item[M06 Report intelligence.] MaintenanceIngest uploads a CSV (explicit confirmation step, backend counts) or submits one record.
+\end{description}
+
+\section{Technical Implementation Details}
+
+\subsection{Ingest}
+
+MaintenanceAgent reads the CSV with every column as a string (a tail number such as 26226 must not become an integer). For each row it checks the tail, the date and the identifier, finds or creates the Asset, skips a record whose identifier already exists (reasserting its ABOUT link), creates the ServiceRecord as unscored, links it to its aircraft, and links it to the previous record on that aircraft with PRECEDED\_BY, in date order. It returns counts: records created, duplicates skipped, rows skipped for no tail, and rows skipped for a bad date or missing identifier.
+
+\subsection{Retrieval and ranking}
+
+\textbf{Context.} For a diagnosis the backend takes the aircraft's most recent records (default 30) and scans up to 2{,}500 records from other aircraft. Each fleet record is scored by
+\[
+s_{\mathrm{fleet}} = 0.5\,[\text{JASC equal}] + 0.3\,J(\text{symptom},\text{part name}) + 0.2\,J(\text{symptom},\text{record text}),
+\]
+where $J$ is the Jaccard similarity of the two word sets \citep{jaccard1912}; records scoring below 0.05 are dropped and the best 20 are kept.
+
+\textbf{Ranking.} Each component (part name) receives the sum of its evidence weights:
+\[
+\operatorname{score}(c)=\sum_{i\in H_c}\frac{0.4}{i+1}p_i
++\sum_{r\in F_c}0.6\,s_{\mathrm{fleet}}(r)\,p_r,
+\qquad
+p=\begin{cases}0.3&\text{if record superseded}\\1&\text{otherwise.}\end{cases}
+\]
+with $H_c$ the aircraft's own recent records for component $c$ (position $i$ counted from the newest, starting at 0) and $F_c$ the fleet matches. Ties are broken by evidence count (higher first), then by component name, so the order is the same on every run. The weights (0.4, 0.6, 0.3) are constants chosen by the team and are not fitted to data; the score is a ranking aid, not a probability, and the interface says so.
+
+\textbf{Copilot.} The Copilot repeats retrieval over all symptoms and observations the user has accumulated, excludes components the user has ruled out, excludes superseded records from recommendations (they stay visible as evidence), and reports which checks moved up, moved down, appeared or dropped since the previous turn.
+
+\subsection{Citation validation}
+
+Every token shaped like an FAA identifier (two to six capital letters followed by at least six digits) in the model's text is looked up in the graph. Those found are valid; the rest are invalid and are wrapped as \texttt{[UNVERIFIED:id]} in the displayed text. This confirms that a record exists; it does not confirm that the sentence citing it is supported, and the interface says that too.
+
+\subsection{Conflict engine}
+
+\textbf{Candidates.} For a record $r$ on aircraft $a$, every earlier record on $a$ is scored: same part name $+3$, same JASC code $+2$, same location $+1$, within 30 days $+1$. Only records with a positive score are candidates; ties are ordered by date (newest first) and identifier; at most 25 are kept. Records from the future are never compared, which prevents leakage.
+
+\textbf{Classification.} The model returns a label (\texttt{no\_conflict}, \texttt{scope\_disjoint}, \texttt{supersedes}, \texttt{partial\_supersedes}, \texttt{contradicts}) and a one-sentence rationale for the top candidate. An unparseable reply is flagged and routed to review.
+
+\textbf{Confidence.} Signals are summed with weights that depend on whether the new record contains the FAA phrase ``SUPPLEMENTAL REPORT FOR'':
+
+\begin{table}[!htbp]
+\centering
+\caption{Conflict confidence signal weights}
+\label{tab:confidence-weights}
+\small
+\begin{tabularx}{\textwidth}{@{}L c c@{}}
+\toprule
+Signal & With phrase & Without \\
+\midrule
+Explicit supersession language & 0.40 & 0 \\
+Model says supersedes / partially & 0.20 & 0.35 \\
+New record is clearly later & 0.15 & 0.25 \\
+Source authority not lower & 0.10 & 0.15 \\
+Same part and JASC code & 0.10 & 0.15 \\
+Within 30 days & 0.05 & 0.10 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The result is clamped to $[0,1]$. In cascade mode the model signal is scaled by vote agreement.
+
+\textbf{Routing.} An unparseable reply, \texttt{contradicts} and \texttt{partial\_supersedes} always go to review; \texttt{no\_conflict} and \texttt{scope\_disjoint} need no action; \texttt{supersedes} is accepted automatically only when confidence reaches the threshold 0.50, which the earlier evaluation selected and which we did not change to improve a demonstration. Only an accepted supersession creates a SUPERSEDES edge and marks the older record superseded.
+
+\subsection{Honest analysis state and the cost cascade}
+
+Ingest never invents a score: records start unscored with a null confidence. Analysis runs separately (a command-line resume, or a batch endpoint limited to 25 records and protected by an operations token), needs a live model, and stops cleanly at 90\% of a per-day request or token budget. Records ingested by an early version that carry an untouched confidence of 1.0 are reported by the API as unscored instead of as a perfect score.
+
+The cascade is off by default and was pre-registered before it was evaluated. A deterministic text and scope screen (threshold 0.79) removes pairs that need no model request; for the rest, two votes are taken and escalated to five only on disagreement; a persistent split goes to review. Method, model, votes, passes and token use are stored with every result.
+
+\subsection{Frontend technical decisions}
+
+\begin{itemize}
+\item \textbf{One failure model.} A single helper turns a failed request into a plain message (unreachable, not found, service unavailable, server error), so no page shows an empty state when the real cause is a failure.
+\item \textbf{Selection, never invention.} The graph page only selects nodes and edges the backend stored (one aircraft, maintenance nodes only); it never creates an edge.
+\item \textbf{Server-confirmed actions.} Accept and reject update the screen only after a successful response; buttons lock while a request is pending.
+\item \textbf{Two-step upload.} Choosing a CSV changes nothing; ingesting is a separate confirmed action because it writes to the graph.
+\end{itemize}
+
+\section{Algorithms and Technical Decisions}
+
+The algorithms are described in the subsections above; the reasons for the main choices are in Table~2.3 and Table~5.3. Two limits matter for how the results may be read. The ranking weights are not tuned and have not been evaluated against baselines. The confidence threshold was selected on an earlier evaluation with a different model from the one now configured on staging.
+
+\section{Tools, Frameworks and Technologies}
+
+\input{tables/tab_tools}
+
+The model is an external component. Replacing it changes classification quality but not the ranking, the graph, the citation check or the review workflow.
+
+\section{Demonstration Evidence}
+
+The figures below are screenshots of the running application. Figures~6.1 to~6.5 were captured on 16~October against a local stack holding the full corpus with a live model. Figures~6.6 to~6.11 were captured on 18~October against a local scratch graph that holds only aircraft 800NN, which was analysed for this purpose (Section~7.5.1); they are not staging.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p72_68.pdf}
+\caption{Assets: the real corpus with record counts.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p72_345.pdf}
+\caption{Quick diagnose for aircraft 813SK: ranked inspection order with sources.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p73_68.pdf}
+\caption{The model's explanation, the line ``12 cited record IDs verified against the graph'', and the evidence records, each a link.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p73_360.pdf}
+\caption{Asset History opened on a cited record, marked as the linked record.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p74_68.pdf}
+\caption{Failure case: the model is unavailable. The backend's real HTTP 503 reason is shown and no diagnosis is invented.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p74_360.pdf}
+\caption{Service Records for aircraft 800NN after analysis: label, score (marked heuristic, not a probability) and status per record.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p75_68.pdf}
+\caption{Asset History: the older DOOR TRACK record is greyed and reads ``Corrected by \ldots\ component changed DOOR TRACK $\rightarrow$ DOOR''.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p75_360.pdf}
+\caption{Review Queue: the incoming record beside the retrieved prior record, with the model's rationale and the accept and reject actions (not used on this data).}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p76_68.pdf}
+\caption{Detected corrections: four found, three with a component change.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p76_345.pdf}
+\caption{Knowledge Graph for aircraft 800NN: 14 nodes and 29 edges; the four SUPERSEDES corrections are thick and amber, the superseded record is grey.}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{illustrations/fig_p77_68.pdf}
+\caption{Ingest: re-uploading rows that are already stored reports zero new records and the duplicates, and changes nothing.}
+\end{figure}
+
+\section{Iteration Outcome}
+
+Every feature planned for the iteration is implemented at the level stated in Table~3.3, with three qualifications: retrieval is lexical, the ranking is a heuristic that has not been evaluated against baselines, and the full corpus has not been analysed. The slice runs on real data, is covered by automated tests, and reports its own failures.

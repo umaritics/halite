@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\caption{Selected architecture and process decisions}
+\label{tab:decisions}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth} L@{}}
+\toprule
+Decision (date) & Rationale \\
+\midrule
+Maintenance-only frontend (16 Oct) & The product is maintenance diagnostics; legacy software screens stay in the repository but are unreachable \\
+Frontend reflects backend outputs (16 Oct) & The interface may add labels and warnings but must never hide, alter or invent a backend value \\
+Review actions are server-confirmed (16 Oct) & Accept/reject change real data; the screen updates only after the server confirms \\
+Centralised staging and CI-gated release (16 Oct) & One shared staging API; only a commit that passed full CI on main is deployed, with recorded rollback \\
+Honest analysis state (17 Oct) & Analysis state is stored separately from confidence; ``unscored'' is never shown as a confident result \\
+Fleet-wide paginated records (17 Oct) & Replaced a 119-request fan-out with one paginated, filterable endpoint \\
+Opt-in cost cascade (17 Oct) & Pre-registered, off by default: deterministic text screen before the model, then adaptive voting \\
+Diagnostic copilot scope waiver (16 Oct) & Limited ownership exception so the copilot could be built across route, retrieval and UI \\
+Graph shows one aircraft (17 Oct) & Whole graph is too dense; one aircraft's stored subgraph is readable and every drawn edge is stored \\
+Knowledge bank and agent protocol (16 Oct) & Versioned memory of context, flows and decisions updated in the same change as the code \\
+\bottomrule
+\end{tabularx}
+\end{table}

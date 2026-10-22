@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\caption{Planned Iteration 1 features against delivered state}
+\label{tab:progress}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}p{0.24\textwidth} >{\raggedright\arraybackslash}p{0.16\textwidth} L@{}}
+\toprule
+\# & Planned feature & Status & Delivered state and evidence \\
+\midrule
+1 & Maintenance-focused UI & Done & Sidebar lists only maintenance screens; legacy URLs redirect \\
+2 & Asset history browser & Done & 118 aircraft; dated history with FAA identifiers \\
+3 & Live knowledge graph & Done & Neo4j graph; interactive 3D view of one aircraft's subgraph \\
+4 & Symptom-based diagnostic input & Done & One-shot diagnose and multi-turn Copilot \\
+5 & Historical evidence retrieval & Done (lexical) & Bounded retrieval; semantic retrieval not built \\
+6 & Ranked investigation suggestions & Done (heuristic) & Deterministic ranking with documented weights \\
+7 & Conflict review capability & Done & Review queue, corrections view \\
+8 & API integration & Done & Axios client to FastAPI routes; contract tests \\
+9 & Automated tests & Done & 194 backend and 171 frontend tests pass in CI \\
+10 & GitHub Actions CI/CD & Done & CI on designated branches and PRs; CI-gated staging deploy \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,26 @@
+\begin{table}[H]
+\centering
+\caption{Edge and failure cases, and the behaviour tested}
+\label{tab:edge-cases}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth} L@{}}
+\toprule
+Case & Behaviour \\
+\midrule
+Unknown aircraft & 404 and ``Aircraft not found'', never an empty history \\
+Aircraft looked up by tail number & History route takes the UUID; a tail number returns 404 \\
+No live model & HTTP 503 with a reason; Copilot returns an empty reply but keeps ranking and evidence \\
+Empty model output & Explicit 503, never a blank success \\
+Invented record identifier & Marked \texttt{[UNVERIFIED]} and left out of the valid list \\
+Rate limit & Bounded retries; a daily budget stops runs cleanly \\
+Superseded record in the Copilot & Visible as evidence, excluded from recommendations \\
+Legacy confidence 1.0 & Reported as unscored with null confidence \\
+Review action on a non-reviewable record & HTTP 409; the queue is unchanged \\
+Reject without a note & Rejected by validation (HTTP 422) \\
+Oversize or non-CSV upload & Rejected in the browser before anything is sent \\
+Re-upload of the same CSV & Every record counted as already stored; nothing changes \\
+Unreadable CSV & Backend may raise HTTP 500; interface wording discloses this (open issue) \\
+Browser storage denied or corrupt & Copilot remains usable; a warning is shown \\
+\bottomrule
+\end{tabularx}
+\end{table}

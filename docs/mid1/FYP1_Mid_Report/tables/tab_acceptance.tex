@@ -1,0 +1,28 @@
+\begin{table}[H]
+\centering
+\caption{Acceptance tests and results}
+\label{tab:acceptance}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}p{0.26\textwidth} >{\raggedright\arraybackslash}p{0.10\textwidth} L@{}}
+\toprule
+ID & Scenario & Result & Evidence and caveat \\
+\midrule
+T01 & Application opens the maintenance workspace & Pass & Route smoke log; Sidebar tests. Browser console was not audited systematically \\
+T02 & API lists loaded assets & Pass & \texttt{test\_api\_maintenance}; staging lists 118 aircraft \\
+T03 & Selected asset history is displayed & Pass & AssetHistory tests; Figure~6.7 \\
+T04 & Diagnosis returns graph-backed evidence and ranking & Partly & Full result with a live model locally (Figure~6.2); on staging fresh diagnoses returned no explanation text on 16~Oct \\
+T05 & Explanation cites a real record that opens & Pass & \texttt{test\_citation\_validation}; Figure~6.3 \\
+T06 & Unknown asset request & Pass & Controlled 404, ``Aircraft not found'', no invented history \\
+T07 & Model unavailable & Pass & HTTP 503 with a reason; Figure~6.5 \\
+T08 & Empty or ambiguous evidence & Pass & Explicit ``no relevant history''; ranking withheld when there is no evidence \\
+T09 & Review queue shows a known case & Pass & Figure~6.8 \\
+T10 & Review action on a test case & Pass & ReviewQueue and API tests; accept/reject not exercised live on shared data \\
+T11 & Frontend tests and build & Pass & 171 tests pass; production build passes \\
+T12 & Backend tests & Pass & 194 tests pass in CI \\
+T13 & Pull-request CI runs and passes & Pass & Run \texttt{39068741787} on \texttt{36a98a3} succeeded \\
+T14 & Real graph health & Pass & Staging reports Neo4j, live model, 2{,}079 records (18~Oct); Compose smoke \\
+T15 & Setup on a clean machine & Partly & CI builds from a clean checkout; nobody outside the team has followed the guide \\
+T16 & Legacy screen isolation & Pass & Sidebar and DomainContext tests; legacy URLs redirect \\
+\bottomrule
+\end{tabularx}
+\end{table}

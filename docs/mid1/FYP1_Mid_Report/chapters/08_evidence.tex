@@ -1,0 +1,120 @@
+\chapter{Project Management and Development Evidence}
+
+\section{Work Completed}
+
+\begin{itemize}
+\item The data pipeline: FAA acquisition, ground-truth extraction, a validated idempotent ingest, 2{,}079 records on 118 aircraft in Neo4j.
+\item The backend: maintenance, diagnostics, graph and operations routes; deterministic retrieval and ranking; citation validation; the conflict engine with an honest analysis state, a budget and an opt-in cost cascade.
+\item The frontend: assets, history, fleet records, diagnostics (Copilot and Quick diagnose), review queue and corrections, knowledge graph, CSV ingest, system status.
+\item Quality and delivery: 365 automated tests, CI on designated pushes and pull requests, a CI-gated staging deployment, decision records and a knowledge bank, and dated evidence under \texttt{docs/mid1/}.
+\end{itemize}
+
+\section{Work Remaining}
+
+Hybrid retrieval and its evaluation; role-based access and organisations; server-side session history; the training and analytics modules; analysis of the full corpus; usability testing; coverage measurement; and the open defects in Table~\ref{tab:defects}. Chapter~9 gives the plan.
+
+\section{Individual Responsibilities}
+
+Table~\ref{tab:ownership} records file ownership and work-package assignment at Mid.
+
+\input{tables/tab_ownership}
+
+\section{Contribution of Each Team Member}
+
+Commit and pull-request counts below are evidence of activity, not a measure of contribution; the proposal states the same. They are counted at commit \texttt{36a98a3}, excluding merge commits. GitHub attributes the commits made under the author name ``Your Name'' (email \texttt{i230585@isb.nu.edu.pk}) to Usman's account; Shahmeer's commits carry two author identities.
+
+\input{tables/tab_activity}
+
+The final ownership descriptions reflect the work allocation at the start of the iteration and the subsequent integration and implementation changes documented in the repository.
+
+\textbf{Shahmeer Atif} rebuilt the maintenance frontend against the frozen backend contract (work packages S1--S5): maintenance-only navigation, asset and history pages with dependable evidence deep links, diagnostics states, a server-confirmed review queue, and the fleet-wide records page that replaced a 119-request fan-out. He then added the one-aircraft knowledge graph, the CSV upload page and the evidence and demonstration documents, and ran and recorded the one-aircraft analysis (Section~7.5.1). Can demonstrate and explain: the page code and its tests; the failure model; how each screen reflects a backend field.
+
+\textbf{Muhammad Umar} audited the existing diagnostics (U1), made retrieval bounded on the real Neo4j corpus (U2), wrote the deterministic ranking with a stable tie-break (U3), the citation boundary and its failure behaviour (U4) and the diagnostic backend tests (U5), and set up the shared staging deployment, the operations API and the knowledge bank. Can demonstrate and explain: the ranking formula, the retrieval bounds, the citation validation and the staging release path.
+
+\textbf{Muhammad Usman Al Haq} built the maintenance proof of concept in September (domain registry, FAA acquisition with 141 ground-truth pairs, ingest, the conflict engine and its evaluation) and, in October, the maintenance APIs and hosted CI (A1--A4), then the diagnostic copilot, the honest analysis state with corrections, and the cost cascade. Can demonstrate and explain: the conflict pipeline and its routing, the ingest agent, the budget and cascade, and the CI workflows.
+
+\section{Repository and Version Control Evidence}
+
+The repository is \url{https://github.com/umaritics/halite}. Work is organised in feature branches and pull requests; each pull request ran the CI checks before merge. Table~\ref{tab:prs} lists them.
+
+\input{tables/tab_prs}
+
+\section{Milestones and Commit Evidence}
+
+Table~\ref{tab:milestones} lists the Mid milestones with the evidence that supports each entry.
+
+\input{tables/tab_milestones}
+
+\section{Tools and Tool-Assisted Development}
+
+The team disclosed the use of generative-AI development assistants during the first iteration. Human contributors retain responsibility for selecting, integrating, testing, and explaining the resulting work. The historical Git activity and issue/PR evidence are the basis for the contribution descriptions rather than the names of assistants alone.
+
+\begin{longtable}{@{}p{0.20\linewidth}p{0.16\linewidth}p{0.56\linewidth}@{}}
+\caption{Declared AI-assistant use and human ownership}\label{tab:ai-tools}\\
+\toprule
+Member & Assistant & Declared application and human ownership \\
+\midrule
+\endfirsthead
+\toprule
+Member & Assistant & Declared application and human ownership \\
+\midrule
+\endhead
+Shahmeer Atif & Claude Code & Frontend work, React pages and component tests, integration with the established API responses, evidence preparation, and report compilation. \\
+Muhammad Umar & Cursor & Graph and diagnostic backend development: retrieval, deterministic ranking, citation-verification path, service interfaces, tests, and associated integration and deployment tasks. \\
+Muhammad Usman Al Haq & OpenAI Codex; Cursor (occasional co-author) & FAA-data processing, maintenance APIs, conflict intelligence, CI/CD and DevOps tasks, technical integration, audits, and supporting engineering documentation. \\
+\bottomrule
+\end{longtable}
+
+\paragraph{Use and validation boundary.}
+Generative assistants were used in development and technical documentation; they were not independent project authors. Verification is represented by the tracked changes, the committed test suite, reproducible CI jobs and the bounded real-data experiment, rather than by unreviewed assistant responses. The team reports 194 passing backend tests, 171 passing frontend tests, and a passing Compose smoke test on commit \texttt{36a98a3}; this establishes observed test execution, not a formal proof of correctness. The assistants' use does not establish algorithmic novelty or diagnostic accuracy. The Groq-hosted language model is an external system dependency rather than one of the team's code-generation assistants.
+
+\section{External Components and Dependencies}
+
+The runtime and development dependencies are in Table~\ref{tab:tools}. The data source is the FAA Service Difficulty Report collection \citep{faa2025}, public domain, downloaded by script and excluded from version control. The language model is called over the network, is rate limited, and can be replaced without changing the ranking, the graph or the citation check.
+
+\section{Risks and Mitigation}
+
+Table~\ref{tab:risks} is the risk register for this iteration, including mitigation and outcome.
+
+\begin{table}[H]
+\centering
+\caption{Risk register and outcome}
+\label{tab:risks}
+\small
+\begin{tabularx}{\textwidth}{@{}c >{\raggedright\arraybackslash}p{0.22\textwidth} L >{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\toprule
+ID & Risk & Mitigation and what happened & State \\
+\midrule
+R1 & Too much new code in too little time & Occurred in part: 77 commits in four days; ownership, tests and decision records bound the risk & Residual \\
+R2 & Graph unavailable & Compose smoke test; health endpoint reports graph mode; memory mode labelled & Mitigated \\
+R3 & Live model or key unavailable & 503 and failure screens; empty staging explanations observed 16~Oct at evaluation (prompt bug fixed after \texttt{36a98a3}; Appendix~D) & Mitigated after eval \\
+R4 & Different JSON assumptions between owners & Contract freeze and recorded fixtures; one miss caught in review & Mitigated \\
+R5 & Merge conflicts from several people and tools & One owner per file, hand-off decisions, small pull requests & Mitigated \\
+R6 & Exposed secrets & Secrets only in ignored files; audit by Usman; \texttt{.env.local} was found not to be in \texttt{.gitignore} and was fixed & Residual \\
+R7 & Wrong dataset version & Dataset profile and counts recorded with the file year & Mitigated \\
+R8 & No hosted CI proof & CI on main; run \texttt{39068741787} & Mitigated \\
+R9 & Legacy software scope leaks into the interface & Isolation by routing; regression tests & Mitigated \\
+R10 & Conflict metrics presented as diagnostic accuracy & Addendum and this report keep them apart & Mitigated \\
+R11 & Missing university artefacts & This report; evidence documents & Mitigated \\
+R12 & Shared staging data changed by a demonstration & Staging read-only for demos; analysis on a scratch graph & Mitigated \\
+R13 & Model quota and cost & Daily budget, bounded retries, opt-in cascade; full run deferred & Residual \\
+R14 & Unauthenticated destructive endpoint (\texttt{DELETE /api/graph/reset}) & Removed from the interface at evaluation; route hardening continued after \texttt{36a98a3} (Appendix~D) & Mitigated after eval \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Security and Privacy Considerations}
+
+No personal data about users is stored; the corpus holds public FAA reports. Secrets (model key, database password, operations token, deployment keys) are read from environment files that are not committed. The batch analysis endpoint and the log endpoint require an operations token. Authentication and authorisation for ordinary users do not exist yet. The graph-reset route is the known gap in Table~\ref{tab:risks}. Staging is shared, so the team avoids writing to it for demonstrations.
+
+\section{Current Limitations}
+
+\begin{itemize}
+\item The ranking is a heuristic with unevaluated weights; semantic retrieval is not built.
+\item The full corpus has not been analysed; on staging every record is unanalysed.
+\item No authentication, organisations or reviewer identity; the audit trail records status and a note, not who acted.
+\item Copilot sessions live in the browser only.
+\item No usability study, load test or coverage measurement.
+\item The staging model differs from the model used for the evaluation; staging explanations were empty on 16~October at the evaluated commit (later fixed; Appendix~D).
+\item The graph side panel was verified by unit tests, not by a live click.
+\end{itemize}

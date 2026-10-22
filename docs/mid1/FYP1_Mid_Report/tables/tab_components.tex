@@ -1,0 +1,22 @@
+\begin{table}[H]
+\centering
+\caption{Components and responsibilities}
+\label{tab:components}
+\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.22\textwidth} L >{\raggedright\arraybackslash}p{0.28\textwidth}@{}}
+\toprule
+Component & Responsibility & Main files \\
+\midrule
+React application & Pages for assets, history, service records, diagnostics, review, graph, ingest; every failure state shown honestly & \texttt{frontend/src/pages}, \texttt{components}, \texttt{utils} \\
+API client & One Axios instance and the functions for every endpoint & \texttt{frontend/src/api/client.js} \\
+API routes & HTTP contracts, validation, controlled errors (404, 409, 422, 503) & \texttt{backend/api/routes} \\
+Ingest agent & Validated, idempotent loading of FAA records; explicit skip counts & \texttt{agents/maintenance\_agent.py} \\
+Retrieval and ranking & Bounded graph context; deterministic ranking; copilot context and ranking delta & \texttt{services/diagnostic\_retrieval.py} \\
+Citation validation & Extract FAA-shaped identifiers and check them against the graph & \texttt{services/citation\_validation.py} \\
+Conflict engine & Candidate pairing, classification, adjudication, confidence, routing & \texttt{services/conflict\_engine.py}, \texttt{conflict\_screen.py} \\
+Analysis state and budget & Honest unanalysed state; per-day request and token budget & \texttt{analysis\_state.py}, \texttt{analysis\_budget.py} \\
+Model client & Calls Groq; rejects empty content; bounded retries & \texttt{services/groq\_service.py} \\
+Graph repository & One query layer over Neo4j or the in-memory store & \texttt{graph/queries.py}, \texttt{schema.py} \\
+\bottomrule
+\end{tabularx}
+\end{table}

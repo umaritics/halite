@@ -1,0 +1,80 @@
+\chapter{Research and Existing Solutions}
+
+\section{Research Method / Approach}
+
+The research combined reading with measurement on our own data, and each stage fed a design decision (Section~2.8).
+
+\begin{enumerate}
+\item \textbf{Literature and software review.} We reviewed maintenance-management software categories, keyword and semantic retrieval, retrieval-augmented generation \citep{asai2023,lewis2020}, graph-based retrieval \citep{edge2024} and case-based reasoning \citep{aamodt1994}. The review is architectural: it compares how approaches are designed and does not claim measured superiority of any of them, nor does it make claims about specific commercial products.
+\item \textbf{Data profiling.} We downloaded the 2025 FAA SDR file and profiled it with \texttt{scripts/fetch\_sdr\_data.py}: 67{,}637 raw rows, 66{,}658 after removing duplicates (1.45\%), spread over 8{,}550 aircraft with a median of 4 and a maximum of 153 records per aircraft.
+\item \textbf{Ground truth from the data itself.} Reporters sometimes file a supplemental report that begins ``SUPPLEMENTAL REPORT FOR (record id)''. Extracting these gave 141 valid correction pairs (six more were discarded: five cite a record outside the corpus, one crosses aircraft). No labels were written by the team \citep{faa2025}.
+\item \textbf{A working prototype and measurement.} We built the pipeline, measured the conflict classifier on the 141 positive and 209 negative pairs, and measured the cost of running it over the corpus (Section~2.7).
+\end{enumerate}
+
+\section{Existing Solutions / Products}
+
+\subsection{Maintenance-management systems}
+
+Computerised maintenance management systems administer assets, work orders, schedules and inspection history. Their strength is record keeping and workflow. Searching history is usually by field or keyword, and a later correction is a separate record that the system does not connect to the one it corrects. We do not review specific vendors; a formal product comparison is outside this iteration.
+
+\subsection{Keyword retrieval}
+
+Matching literal terms is cheap and easy to explain, but two technicians describing the same condition in different words are not matched, and nothing in the result says whether a record was later corrected.
+
+\subsection{Semantic retrieval and retrieval-augmented generation}
+
+Embedding-based retrieval finds records whose meaning is close even when the words differ, and retrieval-augmented generation lets a language model answer from retrieved text \citep{lewis2020}. Variants add self-critique of the retrieved passages \citep{asai2023}. These methods rank by similarity; similarity says nothing about whether the retrieved intervention worked or has since been superseded.
+
+\subsection{Graph-based retrieval}
+
+Graph retrieval represents entities and their relationships explicitly and uses them to narrow and structure retrieval \citep{edge2024}. This is the closest published approach to ours: Halite adapts the idea to maintenance records, where the relationship that matters most is correction.
+
+\subsection{Case-based reasoning}
+
+Case-based reasoning solves a new problem by retrieving similar past cases and adapting their solutions \citep{aamodt1994}. Our diagnostic ranking is case-based: a symptom is compared with earlier records and the components they implicate are ranked. We add record validity (a superseded case counts for less) and evidence provenance (every case is a citable record).
+
+\section{Comparison of Existing Solutions}
+
+Table~\ref{tab:retrieval-compare} compares the approaches on criteria that matter for this problem. The last column states what is implemented in this iteration, not what is planned.
+
+\input{tables/tab_retrieval_compare}
+
+\section{Limitations and Gaps}
+
+Existing approaches treat a record's relevance as similarity and its validity as someone else's problem. Three gaps follow.
+
+\begin{enumerate}
+\item \textbf{Validity is invisible.} A retrieved record may have been corrected by a later one; nothing tells the technician.
+\item \textbf{Corrections change the component.} In the 141 FAA-recorded pairs, the superseding record names a different part from the one it supersedes in 92 cases (65.2\%), a different ATA/JASC code in 60 (42.6\%) and a different location in 67 (47.5\%). This does not show that the earlier report was wrong; it shows that the follow-up often points at a different component, so a system that ignores later records will often surface the wrong one.
+\item \textbf{Generated text is not evidence.} A language model can cite a record that does not exist. Each cited identifier needs checking against the data.
+\end{enumerate}
+
+\section{Proposed Solution}
+
+Halite records order and correction in a graph, retrieves evidence only from a bounded neighbourhood of that graph, ranks components with a deterministic heuristic, lets a model phrase (not decide) the answer, and checks every cited record identifier against the graph. Records that cannot be resolved with confidence go to a human reviewer. The design is described in Chapter~5.
+
+\section{Complex Computing Problem}
+
+How can a diagnostic system identify, rank and explain plausible fault hypotheses from heterogeneous, temporally evolving and possibly contradictory maintenance records, while preserving evidence provenance and avoiding unsupported high-confidence conclusions?
+
+It is a complex problem for the following reasons, each of which we met in this iteration.
+
+\begin{itemize}
+\item \textbf{Heterogeneous text.} Free-text reports with inconsistent abbreviations, and fields such as component and location that are sometimes blank or UNKNOWN.
+\item \textbf{Conflicting and evolving evidence.} A diagnosis can change after a later inspection, so order matters and a record's validity depends on records that came after it.
+\item \textbf{A large candidate space.} Comparing every record with every earlier record is quadratic; the largest aircraft alone has 153 records and 11{,}628 pairs.
+\item \textbf{Conflicting objectives.} Finding corrections (recall) trades against asserting false corrections (the baseline we measured asserts one on every pair).
+\item \textbf{Evidence accountability.} Each displayed conclusion needs a traceable record.
+\end{itemize}
+
+\section{Technical Challenges}
+
+These are challenges we encountered and what happened.
+
+\input{tables/tab_tech_challenges}
+
+\section{Research Findings and Design Decisions}
+
+Table~\ref{tab:findings-design} maps each research finding from this iteration to the design decision it motivated.
+
+\input{tables/tab_findings_design}
