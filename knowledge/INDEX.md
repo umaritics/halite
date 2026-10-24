@@ -23,6 +23,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | Asset, ServiceRecord, ABOUT, PRECEDED_BY, SUPERSEDES | context/04_data_and_graph.md |
 | diagnose, copilot, multi-turn, case_state, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py`, docs/mid1/08–13, docs/mid1/17_diagnostic_copilot_evidence.md |
 | diagnostic evidence, provenance, same aircraft, fleet evidence, evidence grouping | context/modules/frontend.md, context/modules/diagnostics.md, flows/FLOW-diagnose.md, decisions/DEC-20261025-evidence-provenance.md |
+| diagnostic composer, Continue investigation, active draft, composer restoration | context/modules/frontend.md, flows/FLOW-diagnose.md, decisions/DEC-20261025-diagnostic-composer-state.md |
 | mid1 umar audit, U1–U5 | docs/mid1/08_umar_progress.md (+ 09–13 handoffs) |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
 | conflict, analysis_state, unscored, needs_review, confidence gate, cascade, daily budget, migration | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, decisions/DEC-20261017-conflict-analysis-state.md, decisions/DEC-20261017-analysis-cost-cascade.md, docs/mid1/19_confidence_and_corrections_evidence.md, docs/mid1/21_analysis_cascade_evidence.md |

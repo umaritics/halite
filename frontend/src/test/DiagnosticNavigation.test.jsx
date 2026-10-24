@@ -128,6 +128,7 @@ describe('active diagnostic navigation', () => {
     rail.scrollTop = 72;
     fireEvent.scroll(history);
     fireEvent.scroll(rail);
+    fireEvent.click(screen.getByRole('button', { name: 'Continue investigation' }));
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'unsent inspection note' } });
 
     HTMLElement.prototype.animate.mockClear();
@@ -162,6 +163,8 @@ describe('active diagnostic navigation', () => {
 
     await screen.findByText(/Inspect the drag angle using/);
     expect(within(screen.getByRole('region', { name: 'Live investigation ranking' })).getByRole('button', { name: 'Inspect evidence for DRAG ANGLE' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Continue investigation' })).toBeDefined();
+    expect(screen.queryByTestId('copilot-composer')).toBeNull();
     expect(client.maintenanceAPI.copilotTurn).toHaveBeenCalledTimes(1);
   });
 
@@ -183,6 +186,7 @@ describe('active diagnostic navigation', () => {
   it('restores across refresh, preserves manual sessions, and lets New investigation clear only the active workspace', async () => {
     const firstRender = renderRoutes();
     await establishInvestigation();
+    fireEvent.click(screen.getByRole('button', { name: 'Continue investigation' }));
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'draft survives refresh' } });
     fireEvent.click(screen.getByRole('button', { name: 'Save session' }));
     firstRender.unmount();

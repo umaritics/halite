@@ -21,6 +21,7 @@ const snapshot = {
   caseState: {
     symptoms: ['crack found'], observations: [], checks_done: [], ruled_out: [], open_questions: [],
   },
+  composerExpanded: true,
   scroll: { conversation: 48, investigation: 72, followConversation: false },
 };
 
@@ -36,6 +37,20 @@ describe('active diagnostic workspace persistence', () => {
     expect(storeActiveDiagnosticWorkspace(snapshot, 1000)).toBe(true);
     expect(loadActiveDiagnosticWorkspace(1000)).toEqual(snapshot);
     expect(window.localStorage.getItem('halite-diagnostic-copilot-sessions')).toBe(manualSessions);
+  });
+
+  it('migrates prior snapshots to the compact state after a completed turn but keeps drafts expanded', () => {
+    const priorSnapshot = { ...snapshot };
+    delete priorSnapshot.composerExpanded;
+    window.localStorage.setItem(ACTIVE_DIAGNOSTIC_WORKSPACE_KEY, JSON.stringify({
+      ...priorSnapshot, draft: '', version: ACTIVE_DIAGNOSTIC_WORKSPACE_VERSION, updatedAt: 1000,
+    }));
+    expect(loadActiveDiagnosticWorkspace(1000).composerExpanded).toBe(false);
+
+    window.localStorage.setItem(ACTIVE_DIAGNOSTIC_WORKSPACE_KEY, JSON.stringify({
+      ...priorSnapshot, version: ACTIVE_DIAGNOSTIC_WORKSPACE_VERSION, updatedAt: 1000,
+    }));
+    expect(loadActiveDiagnosticWorkspace(1000).composerExpanded).toBe(true);
   });
 
   it('clears empty, corrupt, expired, and incompatible snapshots safely', () => {
