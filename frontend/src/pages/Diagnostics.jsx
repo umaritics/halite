@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { maintenanceAPI } from '../api/client';
+import CopilotMarkdown from '../components/CopilotMarkdown';
 import { describeDiagnosticError, extractExplanation, splitUnverified } from '../utils/diagnostics';
 
 const MAX_IDS_PER_CHECK = 5;
@@ -548,11 +549,194 @@ function copilotError(err) {
   return described;
 }
 
-function movementFor(partName, delta = {}) {
-  if ((delta.new ?? []).some(item => item.part_name === partName)) return 'new';
-  if ((delta.moved_up ?? []).some(item => item.part_name === partName)) return 'moved up';
-  if ((delta.moved_down ?? []).some(item => item.part_name === partName)) return 'moved down';
-  return null;
+function InvestigationUpdates({ delta = {}, rankedChecks = [], evidence = [], openRecord }) {
+  const safeDelta = delta ?? {};
+  const movedUp = safeDelta.moved_up ?? [];
+  const movedDown = safeDelta.moved_down ?? [];
+  const introduced = safeDelta.new ?? [];
+  const dropped = safeDelta.dropped ?? [];
+  const newlyCited = [...new Set(safeDelta.newly_cited_records ?? [])];
+  const movementCount = movedUp.length + movedDown.length + introduced.length + dropped.length;
+  const introducedByPart = new Map(introduced.map(item => [item.part_name, item.rank]));
+  const initialRanking = rankedChecks.length > 0
+    && introduced.length >= rankedChecks.length
+    && rankedChecks.every(check => introducedByPart.get(check.part_name) === check.rank)
+    && movedUp.length === 0
+    && movedDown.length === 0
+    && dropped.length === 0;
+  const initialRankingCount = Math.max(rankedChecks.length, introduced.length);
+  const displayedRankingCount = rankedChecks.length;
+  const topChecks = rankedChecks.slice(0, 3);
+  const evidenceById = Object.fromEntries(evidence.map(record => [record.record_id, record]));
+  const visibleEvidenceIds = initialRanking ? [] : newlyCited.slice(0, 3);
+  const remainingEvidenceIds = initialRanking ? newlyCited : newlyCited.slice(3);
+
+  const movements = [
+    ...movedUp.map(item => ({
+      ...item,
+      kind: 'up',
+      label: 'Moved up',
+      symbol: '↑',
+      position: `Rank ${item.from_rank} → Rank ${item.to_rank}`,
+      className: 'border-accent/35 bg-accent/5',
+    })),
+    ...introduced.map(item => ({
+      ...item,
+      kind: 'new',
+      label: 'Newly introduced',
+      symbol: '+',
+      position: `Entered at rank ${item.rank}`,
+      className: 'border-sky-500/35 bg-sky-500/5',
+    })),
+    ...movedDown.map(item => ({
+      ...item,
+      kind: 'down',
+      label: 'Moved down',
+      symbol: '↓',
+      position: `Rank ${item.from_rank} → Rank ${item.to_rank}`,
+      className: 'border-amber-500/35 bg-amber-500/5',
+    })),
+    ...dropped.map(item => ({
+      ...item,
+      kind: 'dropped',
+      label: 'Dropped from ranking',
+      symbol: '×',
+      position: `Previously rank ${item.from_rank} · no longer ranked`,
+      className: 'border-theme bg-page/20',
+    })),
+  ];
+  const prominent = movements.slice(0, 3);
+  const remaining = movements.slice(3);
+
+  const renderMovement = item => (
+    <li key={`${item.kind}-${item.part_name}`} className={`rounded-lg border p-3 ${item.className}`}>
+      <div className="flex items-start gap-3">
+        <span aria-hidden="true" className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-current font-sans text-sm font-bold text-accent">
+          {item.symbol}
+        </span>
+        <div className="min-w-0">
+          <p className="font-sans text-sm font-medium text-primary">{item.part_name}</p>
+          <p className="mt-0.5 flex flex-wrap gap-x-1 font-sans text-xs text-secondary">
+            <span className="font-medium text-primary">{item.label}</span>
+            <span aria-hidden="true">·</span>
+            <span>{item.position}</span>
+          </p>
+        </div>
+      </div>
+    </li>
+  );
+
+  const renderEvidenceId = recordId => evidenceById[recordId] ? (
+    <button
+      key={recordId}
+      type="button"
+      onClick={() => openRecord(evidenceById[recordId])}
+      className="rounded border border-theme px-2 py-1 font-mono text-xs text-accent hover:border-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+    >
+      {recordId}
+    </button>
+  ) : (
+    <span key={recordId} className="rounded border border-theme px-2 py-1 font-mono text-xs text-secondary">
+      {recordId}
+    </span>
+  );
+
+  let summary = 'Ranking unchanged after this update.';
+  if (movementCount > 0) {
+    summary = `${movementCount} ranking update${movementCount === 1 ? '' : 's'} from the previous turn.`;
+  } else if (newlyCited.length > 0) {
+    summary = 'Ranking unchanged; new supporting records were added.';
+  }
+
+  return (
+    <section aria-label="Investigation Updates" className="rounded-xl border border-accent/30 bg-accent/[0.04] p-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h4 className="font-brand text-base text-primary">Investigation Updates</h4>
+        {!initialRanking && movementCount === 0 && (
+          <span className="rounded-full border border-theme px-2 py-0.5 font-sans text-[11px] font-medium uppercase tracking-wide text-secondary">
+            No rank change
+          </span>
+        )}
+      </div>
+
+      {initialRanking ? (
+        <div className="mt-2 space-y-3">
+          <div>
+            <p className="font-sans text-sm font-semibold text-primary">Initial ranking established</p>
+            <p className="mt-0.5 font-sans text-xs text-secondary">
+              {initialRankingCount} ranked component{initialRankingCount === 1 ? '' : 's'}
+              {' · '}{displayedRankingCount} displayed below
+            </p>
+          </div>
+
+          {topChecks.length > 0 && (
+            <div>
+              <p className="eyebrow">Top checks</p>
+              <ol className="mt-1 flex flex-wrap gap-2">
+                {topChecks.map(check => (
+                  <li key={check.part_name} className="rounded border border-theme bg-surface px-2 py-1 font-sans text-xs text-primary">
+                    <span className="mr-1 text-secondary">#{check.rank}</span>{check.part_name}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          <p className="font-sans text-xs text-secondary">
+            {newlyCited.length} newly cited evidence record{newlyCited.length === 1 ? '' : 's'}
+          </p>
+        </div>
+      ) : (
+        <p className="mt-1 font-sans text-sm text-secondary">{summary}</p>
+      )}
+
+      {!initialRanking && prominent.length > 0 && (
+        <ul aria-label="Most important ranking updates" className="mt-3 grid gap-2 sm:grid-cols-2">
+          {prominent.map(renderMovement)}
+        </ul>
+      )}
+
+      {!initialRanking && remaining.length > 0 && (
+        <details className="mt-3 rounded-lg border border-theme px-3 py-2">
+          <summary className="cursor-pointer font-sans text-sm font-medium text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+            Show {remaining.length} more ranking update{remaining.length === 1 ? '' : 's'}
+          </summary>
+          <ul aria-label="Additional ranking updates" className="mt-3 grid gap-2 sm:grid-cols-2">
+            {remaining.map(renderMovement)}
+          </ul>
+        </details>
+      )}
+
+      {newlyCited.length > 0 && (
+        <div className="mt-3 border-t border-theme pt-3">
+          {!initialRanking && (
+            <>
+              <p className="eyebrow">New supporting records</p>
+              <p className="mt-1 font-sans text-xs text-secondary">
+                {newlyCited.length} newly cited evidence record{newlyCited.length === 1 ? '' : 's'}
+              </p>
+              <div aria-label="Newly cited evidence records" className="mt-2 flex flex-wrap gap-2">
+                {visibleEvidenceIds.map(renderEvidenceId)}
+              </div>
+            </>
+          )}
+
+          {remainingEvidenceIds.length > 0 && (
+            <details className={initialRanking ? '' : 'mt-2'}>
+              <summary className="cursor-pointer font-sans text-xs font-medium text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                {initialRanking
+                  ? `View ${remainingEvidenceIds.length} evidence record ID${remainingEvidenceIds.length === 1 ? '' : 's'}`
+                  : `Show ${remainingEvidenceIds.length} more evidence record${remainingEvidenceIds.length === 1 ? '' : 's'}`}
+              </summary>
+              <div aria-label={initialRanking ? 'Initial evidence records' : 'Additional evidence records'} className="mt-2 flex flex-wrap gap-2">
+                {remainingEvidenceIds.map(renderEvidenceId)}
+              </div>
+            </details>
+          )}
+        </div>
+      )}
+    </section>
+  );
 }
 
 function Copilot() {
@@ -710,17 +894,20 @@ function Copilot() {
             </div>
           ) : (
             <article key={index} className="space-y-3 rounded-xl border border-theme bg-surface p-4">
+              <InvestigationUpdates
+                delta={turn.response.ranking_delta}
+                rankedChecks={turn.response.ranked_checks ?? []}
+                evidence={turn.response.evidence ?? []}
+                openRecord={openRecord}
+              />
+
               {turn.response.llm_status === 'unavailable' || !turn.content ? (
                 <div role="alert" className="rounded border border-amber-500/30 bg-amber-500/5 p-3">
                   <p className="font-sans text-sm font-medium text-amber-400">Language model unavailable</p>
                   <p className="font-sans text-xs text-primary">No narrative was invented. Deterministic ranking and evidence are still shown below.</p>
                 </div>
               ) : (
-                <p className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-primary">
-                  {splitUnverified(turn.content).map((segment, partIndex) => segment.flagged ? (
-                    <mark key={partIndex} data-unverified="true" className="bg-amber-500/20 text-amber-400">{segment.text}</mark>
-                  ) : <Fragment key={partIndex}>{segment.text}</Fragment>)}
-                </p>
+                <CopilotMarkdown>{turn.content}</CopilotMarkdown>
               )}
 
               {(turn.response.warnings ?? []).length > 0 && (
@@ -733,13 +920,10 @@ function Copilot() {
                 <div>
                   <h4 className="eyebrow mb-2">Ranked checks</h4>
                   <ol className="space-y-2">
-                    {turn.response.ranked_checks.map(check => {
-                      const movement = movementFor(check.part_name, turn.response.ranking_delta);
-                      return (
+                    {turn.response.ranked_checks.map(check => (
                         <li key={check.part_name} className="rounded border border-theme p-2">
                           <div className="flex flex-wrap items-center gap-2 font-sans text-sm text-primary">
                             <span>{check.rank}. {check.part_name}</span>
-                            {movement && <span className="rounded bg-accent/10 px-1.5 text-xs text-accent">{movement}</span>}
                             <span className="text-xs text-secondary">evidence score (heuristic) {Number(check.score).toFixed(2)}</span>
                           </div>
                           <div className="mt-1 flex flex-wrap gap-2">
@@ -757,8 +941,7 @@ function Copilot() {
                             </div>
                           )}
                         </li>
-                      );
-                    })}
+                    ))}
                   </ol>
                 </div>
               )}
