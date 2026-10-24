@@ -81,6 +81,13 @@ provenance rather than filtering or reranking them.
 - Live Groq required for fresh diagnose unless a valid diag cache hit exists.
 - Missing live model → controlled **503** (or clear cache path), never silent fake diagnosis.
 - Citations: `services/citation_validation.py` — FAA-shaped tokens verified against graph; fabricated IDs → `[UNVERIFIED:…]` and `citation_validation.invalid_ids`.
+- Copilot applies a second current-turn boundary after graph verification: a real
+  graph ID is also marked `[UNVERIFIED:…]` when it is absent from the returned
+  `evidence[]`. `_collect_evidence` orders IDs from the top ten ranked checks and
+  caps evidence at 20 records, while `RANKED_CHECKS` can still expose additional
+  evidence IDs to the model. `valid_ids` therefore means “exists and was in this
+  turn's bounded evidence,” not “supports every associated prose claim.” The API
+  currently combines nonexistent and out-of-context IDs in `invalid_ids`.
 - Tests: `test_citation_validation.py`, `test_api_diagnostics.py`. Handoff: [docs/mid1/12_u4_u5_diagnostics_handoff.md](../../../docs/mid1/12_u4_u5_diagnostics_handoff.md).
 
 ## Contract freeze (diagnose)

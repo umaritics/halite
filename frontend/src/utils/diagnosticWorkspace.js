@@ -25,6 +25,12 @@ function finiteScroll(value) {
   return Number.isFinite(value) && value >= 0 ? value : 0;
 }
 
+function defaultComposerExpanded(parsed) {
+  if (typeof parsed.composerExpanded === 'boolean') return parsed.composerExpanded;
+  if (parsed.draft) return true;
+  return !parsed.thread.some(turn => turn.role === 'assistant');
+}
+
 export function hasActiveDiagnosticWorkspace(snapshot) {
   return Boolean(
     snapshot
@@ -67,6 +73,7 @@ export function loadActiveDiagnosticWorkspace(now = Date.now()) {
       inspectorRecords: parsed.inspectorRecords,
       thread: parsed.thread,
       caseState: parsed.caseState,
+      composerExpanded: defaultComposerExpanded(parsed),
       scroll: {
         conversation: finiteScroll(parsed.scroll?.conversation),
         investigation: finiteScroll(parsed.scroll?.investigation),
@@ -105,6 +112,7 @@ export function storeActiveDiagnosticWorkspace(snapshot, now = Date.now()) {
       inspectorRecords: snapshot.inspectorRecords || {},
       thread: snapshot.thread,
       caseState: snapshot.caseState,
+      composerExpanded: snapshot.composerExpanded !== false,
       scroll: {
         conversation: finiteScroll(snapshot.scroll?.conversation),
         investigation: finiteScroll(snapshot.scroll?.investigation),

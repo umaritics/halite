@@ -46,7 +46,9 @@ the browser sends the structured case state on every request.
 10. The current unsaved workspace is versioned and persisted separately from
     named saved sessions. Route remounts and refreshes hydrate it directly—without
     inference or ranking animation—and source-aware Asset History links return to
-    `/app/diagnostics`. **New investigation** explicitly clears the active snapshot.
+    `/app/diagnostics`. Composer visibility is part of the snapshot: new/draft
+    work is expanded, successful completed turns become compact, and reopening is
+    local UI state only. **New investigation** explicitly clears the active snapshot.
 11. Named local sessions are saved/resumed/deleted with guarded `localStorage` calls.
 
 ## Quick-diagnose path
@@ -66,6 +68,7 @@ the browser sends the structured case state on every request.
 | Copilot model unavailable/rate-limited/empty | 200, `llm_status:"unavailable"`, `reply:null`; ranking/evidence retained |
 | No relevant records | Explicit no-relevant-history response; no invented records |
 | Invalid or out-of-context citation | ID marked unverified and omitted from `valid_ids` |
+| Existing ID outside bounded `evidence[]` | Marked unverified; current response metadata does not distinguish it from a missing ID |
 | Superseded record | Visible as superseded evidence, absent from recommendation inputs |
 | Browser storage denied/corrupt | Chat remains usable; session persistence warning |
 | Quick diagnose empty model output | 503 with explicit detail |

@@ -1145,6 +1145,8 @@ function Copilot() {
   const navigate = useNavigate();
   const [restoredWorkspace] = useState(loadActiveDiagnosticWorkspace);
   const conversationHistoryRef = useRef(null);
+  const composerInputRef = useRef(null);
+  const focusComposerOnExpandRef = useRef(false);
   const investigationRailRef = useRef(null);
   const followConversationRef = useRef(restoredWorkspace?.scroll.followConversation ?? true);
   const workspaceScrollRef = useRef({
@@ -1169,6 +1171,7 @@ function Copilot() {
   const [rankingTransitionKey, setRankingTransitionKey] = useState(0);
   const [selectedPartName, setSelectedPartName] = useState(restoredWorkspace?.selectedPartName ?? null);
   const [inspectorRecords, setInspectorRecords] = useState(restoredWorkspace?.inspectorRecords ?? {});
+  const [composerExpanded, setComposerExpanded] = useState(restoredWorkspace?.composerExpanded ?? true);
 
   activeWorkspaceRef.current = {
     assetId,
@@ -1178,6 +1181,7 @@ function Copilot() {
     sessionId,
     selectedPartName,
     inspectorRecords,
+    composerExpanded,
     scroll: {
       ...workspaceScrollRef.current,
       followConversation: followConversationRef.current,
@@ -1209,7 +1213,13 @@ function Copilot() {
       explicitClearRef.current = false;
     }, 120);
     return () => clearTimeout(timer);
-  }, [assetId, message, thread, caseState, sessionId, selectedPartName, inspectorRecords]);
+  }, [assetId, message, thread, caseState, sessionId, selectedPartName, inspectorRecords, composerExpanded]);
+
+  useEffect(() => {
+    if (!composerExpanded || !focusComposerOnExpandRef.current) return;
+    composerInputRef.current?.focus();
+    focusComposerOnExpandRef.current = false;
+  }, [composerExpanded]);
 
   useEffect(() => () => {
     clearTimeout(scrollPersistTimerRef.current);
@@ -1282,9 +1292,11 @@ function Copilot() {
         setRankingTransitionKey(key => key + 1);
       }
       setMessage('');
+      setComposerExpanded(false);
     } catch (requestError) {
       setError(copilotError(requestError));
       setFailedTurn({ message: text, caseState: stateForTurn });
+      setComposerExpanded(true);
     } finally {
       setLoading(false);
     }
@@ -1310,6 +1322,7 @@ function Copilot() {
     setAssetId('');
     setSelectedPartName(null);
     setInspectorRecords({});
+    setComposerExpanded(true);
   };
 
   const saveSession = () => {
@@ -1341,6 +1354,12 @@ function Copilot() {
     setInspectorRecords({});
     setMessage('');
     setError(null);
+    setComposerExpanded(!(Array.isArray(saved.thread) && saved.thread.some(turn => turn.role === 'assistant')));
+  };
+
+  const expandComposer = () => {
+    focusComposerOnExpandRef.current = true;
+    setComposerExpanded(true);
   };
 
   const deleteSession = (id) => {
@@ -1413,7 +1432,7 @@ function Copilot() {
       <div data-testid="copilot-workspace" className="grid min-w-0 items-start gap-5 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1fr)_23rem] xl:items-stretch xl:overflow-hidden">
         <main className="order-2 flex min-w-0 flex-col gap-4 xl:order-none xl:col-start-1 xl:row-start-1 xl:h-full xl:min-h-0 xl:overflow-hidden">
 
-        <section aria-label="Diagnostic conversation" className="halite-card min-h-80 p-5 xl:min-h-0 xl:flex-1 xl:overflow-hidden">
+        <section aria-label="Diagnostic conversation" className="halite-card flex min-h-80 flex-col p-5 xl:min-h-0 xl:flex-1 xl:overflow-hidden">
           <div
             ref={conversationHistoryRef}
             role="log"
@@ -1422,7 +1441,7 @@ function Copilot() {
             tabIndex="0"
             onScroll={trackConversationPosition}
             data-testid="conversation-history"
-            className="space-y-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:h-full xl:min-h-0 xl:overflow-y-auto xl:overscroll-contain xl:pr-2 [overflow-anchor:auto]"
+            className="min-h-0 flex-1 space-y-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:overflow-y-auto xl:overscroll-contain xl:pr-2 [overflow-anchor:auto]"
           >
             {thread.length === 0 && (
               <div className="py-12 text-center">
@@ -1468,6 +1487,17 @@ function Copilot() {
             ))}
             {loading && <div role="status" className="font-sans text-sm text-secondary">Retrieving and reranking the accumulated case…</div>}
           </div>
+          {!composerExpanded && (
+            <div data-testid="compact-composer" className="mt-4 shrink-0 border-t border-theme pt-3">
+              <button
+                type="button"
+                onClick={expandComposer}
+                className="halite-btn w-full justify-center text-sm motion-safe:transition-colors motion-safe:duration-150 sm:w-auto"
+              >
+                Continue investigation
+              </button>
+            </div>
+          )}
         </section>
 
         {error && (
@@ -1481,19 +1511,33 @@ function Copilot() {
           </div>
         )}
 
-        <form onSubmit={submit} data-testid="copilot-composer" className="halite-card p-4 xl:shrink-0">
-          <label htmlFor="copilot-message" className="eyebrow">Message</label>
-          <textarea
-            id="copilot-message"
-            maxLength={4000}
-            value={message}
-            onChange={event => setMessage(event.target.value)}
-            placeholder="e.g. crack found on drag angle during inspection"
-            className="halite-input mt-1 w-full resize-none"
-            rows={3}
-          />
-          <button type="submit" disabled={!message.trim() || loading} className="halite-btn-primary mt-3 disabled:opacity-50">Send</button>
-        </form>
+        {composerExpanded && (
+          <form onSubmit={submit} data-testid="copilot-composer" className="halite-card p-4 xl:shrink-0">
+            <div className="flex items-center justify-between gap-3">
+              <label htmlFor="copilot-message" className="eyebrow">Message</label>
+              <button
+                type="button"
+                onClick={() => setComposerExpanded(false)}
+                disabled={loading}
+                aria-label="Minimize message composer"
+                className="halite-btn px-3 py-1 text-xs disabled:opacity-50 motion-safe:transition-colors motion-safe:duration-150"
+              >
+                Minimize
+              </button>
+            </div>
+            <textarea
+              ref={composerInputRef}
+              id="copilot-message"
+              maxLength={4000}
+              value={message}
+              onChange={event => setMessage(event.target.value)}
+              placeholder="e.g. crack found on drag angle during inspection"
+              className="halite-input mt-1 w-full resize-none"
+              rows={3}
+            />
+            <button type="submit" disabled={!message.trim() || loading} className="halite-btn-primary mt-3 disabled:opacity-50">Send</button>
+          </form>
+        )}
         </main>
 
         <aside ref={investigationRailRef} onScroll={trackInvestigationPosition} aria-label="Investigation workspace panels" tabIndex="0" className="order-1 min-w-0 self-start space-y-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:order-none xl:col-start-2 xl:row-start-1 xl:h-full xl:min-h-0 xl:self-stretch xl:overflow-y-auto xl:overscroll-contain xl:pr-1">

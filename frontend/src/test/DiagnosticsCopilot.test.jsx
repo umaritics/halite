@@ -55,6 +55,8 @@ function renderPage(withLocation = false) {
 }
 
 async function send(text) {
+  const compactComposer = screen.queryByRole('button', { name: 'Continue investigation' });
+  if (compactComposer) fireEvent.click(compactComposer);
   fireEvent.change(screen.getByLabelText('Message'), { target: { value: text } });
   fireEvent.click(screen.getByRole('button', { name: 'Send' }));
 }
@@ -85,6 +87,74 @@ describe('Diagnostics copilot', () => {
     else delete HTMLElement.prototype.animate;
     if (originalMatchMedia) window.matchMedia = originalMatchMedia;
     else delete window.matchMedia;
+  });
+
+  it('starts expanded, collapses after success, and reclaims conversation height', async () => {
+    client.maintenanceAPI.copilotTurn.mockResolvedValue({ data: baseTurn });
+    renderPage();
+
+    const conversation = screen.getByRole('region', { name: 'Diagnostic conversation' });
+    const history = screen.getByRole('log', { name: 'Conversation history' });
+    expect(screen.getByTestId('copilot-composer')).toBeDefined();
+    expect(conversation).toHaveClass('flex', 'flex-col', 'xl:flex-1');
+    expect(history).toHaveClass('min-h-0', 'flex-1', 'xl:overflow-y-auto');
+
+    await send('crack found on drag angle');
+    await screen.findByText(/Inspect the drag angle/);
+
+    expect(screen.queryByTestId('copilot-composer')).toBeNull();
+    const compact = screen.getByTestId('compact-composer');
+    expect(conversation).toContainElement(compact);
+    expect(within(compact).getByRole('button', { name: 'Continue investigation' })).toHaveClass('w-full', 'sm:w-auto');
+  });
+
+  it('preserves a draft across manual minimize and restores keyboard focus without requests or animation', () => {
+    renderPage();
+    fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'unsent inspection note' } });
+    client.maintenanceAPI.copilotTurn.mockClear();
+    animateMock.mockClear();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Minimize message composer' }));
+    expect(screen.queryByTestId('copilot-composer')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Continue investigation' }));
+
+    expect(screen.getByLabelText('Message')).toHaveValue('unsent inspection note');
+    expect(screen.getByLabelText('Message')).toHaveFocus();
+    expect(client.maintenanceAPI.copilotTurn).not.toHaveBeenCalled();
+    expect(animateMock).not.toHaveBeenCalled();
+  });
+
+  it('prevents duplicate sends while loading and collapses again after every successful turn', async () => {
+    let resolveFirst;
+    client.maintenanceAPI.copilotTurn
+      .mockImplementationOnce(() => new Promise(resolve => { resolveFirst = resolve; }))
+      .mockResolvedValueOnce({ data: { ...baseTurn, reply: 'Second completed response.' } });
+    renderPage();
+
+    await send('first turn');
+    expect(screen.getByRole('button', { name: 'Send' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Minimize message composer' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    expect(client.maintenanceAPI.copilotTurn).toHaveBeenCalledTimes(1);
+
+    await act(async () => resolveFirst({ data: baseTurn }));
+    await screen.findByRole('button', { name: 'Continue investigation' });
+    await send('second turn');
+    await screen.findByText('Second completed response.');
+    expect(screen.queryByTestId('copilot-composer')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Continue investigation' })).toBeDefined();
+  });
+
+  it('keeps the failed draft and expanded composer available for retry', async () => {
+    client.maintenanceAPI.copilotTurn.mockRejectedValue({ code: 'ERR_NETWORK', message: 'Network Error', request: {} });
+    renderPage();
+
+    await send('draft that failed');
+    await screen.findByText('Cannot reach the Halite API');
+
+    expect(screen.getByTestId('copilot-composer')).toBeDefined();
+    expect(screen.getByLabelText('Message')).toHaveValue('draft that failed');
+    expect(screen.queryByRole('button', { name: 'Continue investigation' })).toBeNull();
   });
 
   it('defaults to All fleet and carries accumulated case state across turns', async () => {
@@ -290,6 +360,8 @@ describe('Diagnostics copilot', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'crack found on drag angle' }));
     expect(screen.getByText(/Inspect the drag angle/)).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Continue investigation' })).toBeDefined();
+    expect(screen.queryByTestId('copilot-composer')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Delete crack found on drag angle' }));
     expect(screen.queryByRole('button', { name: 'crack found on drag angle' })).toBeNull();
   });
@@ -344,6 +416,7 @@ describe('Diagnostics copilot', () => {
     fireEvent.scroll(history);
     fireEvent.scroll(investigationRail);
 
+    fireEvent.click(screen.getByRole('button', { name: 'Continue investigation' }));
     fireEvent.change(screen.getByLabelText('Message'), { target: { value: 'draft remains visible' } });
     expect(history.scrollTop).toBe(48);
     expect(investigationRail.scrollTop).toBe(72);
@@ -921,7 +994,7 @@ describe('Diagnostics copilot', () => {
     expect(historical).toHaveAttribute('open');
     expect(within(historical).getByText('1. DRAG ANGLE')).toBeDefined();
     expect(screen.getByText(/support angle is now/i)).toBeDefined();
-    expect(screen.getByTestId('copilot-composer')).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Continue investigation' })).toBeDefined();
     fireEvent.click(within(historical).getAllByRole('button', { name: 'SWIA2024010100001' })[0]);
     expect(screen.getByTestId('location')).toHaveTextContent('/app/asset-history/1#SWIA2024010100001');
     expect(screen.getByText('Current turn details · Turn 2')).toBeDefined();
