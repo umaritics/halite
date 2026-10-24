@@ -1,11 +1,18 @@
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { maintenanceAPI } from '../api/client';
 import CopilotMarkdown from '../components/CopilotMarkdown';
+import DiagnosticEvidenceInspector from '../components/DiagnosticEvidenceInspector';
 import { describeDiagnosticError, extractExplanation, splitUnverified } from '../utils/diagnostics';
+import {
+  clearActiveDiagnosticWorkspace,
+  loadActiveDiagnosticWorkspace,
+  storeActiveDiagnosticWorkspace,
+} from '../utils/diagnosticWorkspace';
 
 const MAX_IDS_PER_CHECK = 5;
+const MAX_PERSISTED_INSPECTOR_RECORDS = 50;
 
 // G4: Diagnostic chat page
 // Layout:
@@ -739,25 +746,510 @@ function InvestigationUpdates({ delta = {}, rankedChecks = [], evidence = [], op
   );
 }
 
+const LIVE_RANKING_PREVIEW_COUNT = 5;
+const RANKING_TRANSITION_MS = 320;
+const MOVEMENT_INDICATOR_MS = 2400;
+
+function componentIdentity(check) {
+  return check?.part_name;
+}
+
+function hasRankingChanges(delta = {}) {
+  return ['moved_up', 'moved_down', 'new', 'dropped']
+    .some(field => (delta?.[field] ?? []).length > 0);
+}
+
+function prefersReducedMotion() {
+  return typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function rankingAnnouncement(delta = {}) {
+  const changes = [];
+  for (const item of delta.moved_up ?? []) {
+    const places = Math.max(0, Number(item.from_rank) - Number(item.to_rank));
+    changes.push(`${item.part_name} moved up ${places} ${places === 1 ? 'place' : 'places'}, from rank ${item.from_rank} to ${item.to_rank}.`);
+  }
+  for (const item of delta.moved_down ?? []) {
+    const places = Math.max(0, Number(item.to_rank) - Number(item.from_rank));
+    changes.push(`${item.part_name} moved down ${places} ${places === 1 ? 'place' : 'places'}, from rank ${item.from_rank} to ${item.to_rank}.`);
+  }
+  for (const item of delta.new ?? []) changes.push(`${item.part_name} entered at rank ${item.rank}.`);
+  for (const item of delta.dropped ?? []) changes.push(`${item.part_name} was removed from the current ranking.`);
+  if ((delta.dropped ?? []).length > 0) {
+    changes.push('Other components may move up because a check was removed, not because its failure probability increased.');
+  }
+  return changes.length > 0 ? `Ranking updated. ${changes.join(' ')}` : '';
+}
+
+function movementForCheck(partName, delta = {}) {
+  const movedUp = (delta?.moved_up ?? []).find(item => item.part_name === partName);
+  if (movedUp) {
+    const places = Math.max(0, Number(movedUp.from_rank) - Number(movedUp.to_rank));
+    return { label: `Moved up ${places}`, detail: `Rank ${movedUp.from_rank} → Rank ${movedUp.to_rank}`, symbol: '↑', kind: 'moved-up' };
+  }
+  const movedDown = (delta?.moved_down ?? []).find(item => item.part_name === partName);
+  if (movedDown) {
+    const places = Math.max(0, Number(movedDown.to_rank) - Number(movedDown.from_rank));
+    return { label: `Moved down ${places}`, detail: `Rank ${movedDown.from_rank} → Rank ${movedDown.to_rank}`, symbol: '↓', kind: 'moved-down' };
+  }
+  const introduced = (delta?.new ?? []).find(item => item.part_name === partName);
+  if (introduced) return { label: 'New', detail: `Entered at rank ${introduced.rank}`, symbol: '+', kind: 'new' };
+  return null;
+}
+
+function scoreLabel(score) {
+  const numericScore = Number(score);
+  return Number.isFinite(numericScore) ? numericScore.toFixed(2) : 'Not available';
+}
+
+function RankingItem({ check, delta, showMovement, selected, onSelect, onMarkDone, onRuleOut, setItemRef, hidden = false }) {
+  const movement = check.__exiting
+    ? { label: 'Removed', detail: `Previously rank ${check.rank}`, symbol: '−', kind: 'dropped' }
+    : showMovement ? movementForCheck(check.part_name, delta) : null;
+  return (
+    <li
+      ref={setItemRef}
+      hidden={hidden}
+      data-component-id={componentIdentity(check)}
+      data-ranking-animation={movement?.kind ?? 'none'}
+      className={`overflow-hidden rounded-lg border bg-surface p-3 will-change-transform ${
+        check.__exiting ? 'border-red-500/50' : selected ? 'border-accent ring-1 ring-accent/30' : 'border-theme'
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent/50 font-brand text-sm text-accent" aria-label={`Rank ${check.rank}`}>
+          {check.rank}
+        </span>
+        <div className="min-w-0 flex-1">
+          {!check.__exiting && onSelect ? (
+            <button
+              type="button"
+              aria-label={`Inspect evidence for ${check.part_name}`}
+              aria-pressed={selected}
+              onClick={() => onSelect(check.part_name)}
+              className="block w-full rounded text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              <span className="block break-words font-sans text-sm font-semibold text-primary">{check.part_name}</span>
+              <span className="mt-0.5 block font-sans text-xs text-secondary">Heuristic score {scoreLabel(check.score)}</span>
+              <span className="mt-1 block font-sans text-[11px] font-medium text-accent">{selected ? 'Evidence selected' : 'Inspect evidence'}</span>
+            </button>
+          ) : (
+            <>
+              <p className="break-words font-sans text-sm font-semibold text-primary">{check.part_name}</p>
+              <p className="mt-0.5 font-sans text-xs text-secondary">Heuristic score {scoreLabel(check.score)}</p>
+            </>
+          )}
+          {movement && (
+            <p className="mt-1 flex flex-wrap items-center gap-x-1 font-sans text-xs text-primary">
+              <span aria-hidden="true" className="font-semibold text-accent">{movement.symbol}</span>
+              <span className="font-medium">{movement.label}</span>
+              <span aria-hidden="true">·</span>
+              <span>{movement.detail}</span>
+            </p>
+          )}
+          {check.__exiting && (
+            <p className="mt-1 font-sans text-xs leading-5 text-secondary">
+              Removed from the current ranking. Other checks may shift upward because space was removed, not because their failure probability increased.
+            </p>
+          )}
+          {!check.__exiting && (onMarkDone || onRuleOut) && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {onMarkDone && (
+                <button type="button" aria-label={`Mark ${check.part_name} done`} onClick={() => onMarkDone(check.part_name)} className="halite-btn text-xs">
+                  Mark done
+                </button>
+              )}
+              {onRuleOut && (
+                <button type="button" aria-label={`Rule out ${check.part_name}`} onClick={() => onRuleOut(check.part_name)} className="halite-btn text-xs">
+                  Rule out
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function LiveRankingPanel({ response, transitionKey, loading, selectedPartName, inspectorRecords, assets, onSelect, onOpenRecord, onRecordsResolved, onMarkDone, onRuleOut }) {
+  const checks = response?.ranked_checks ?? [];
+  const [displayChecks, setDisplayChecks] = useState(checks);
+  const [expanded, setExpanded] = useState(false);
+  const [showMovement, setShowMovement] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
+  const itemRefs = useRef(new Map());
+  const displayChecksRef = useRef(checks);
+  const handledTransitionRef = useRef(transitionKey);
+  const pendingAnimationRef = useRef(null);
+  const animationsRef = useRef([]);
+  const removalTimerRef = useRef(null);
+  const indicatorTimerRef = useRef(null);
+
+  useEffect(() => {
+    displayChecksRef.current = displayChecks;
+  }, [displayChecks]);
+
+  useEffect(() => () => {
+    animationsRef.current.forEach(animation => animation.cancel());
+    clearTimeout(removalTimerRef.current);
+    clearTimeout(indicatorTimerRef.current);
+  }, []);
+
+  useLayoutEffect(() => {
+    const nextChecks = response?.ranked_checks ?? [];
+    const currentChecks = displayChecksRef.current.filter(check => !check.__exiting);
+    const shouldAnimate = transitionKey !== handledTransitionRef.current
+      && currentChecks.length > 0
+      && hasRankingChanges(response?.ranking_delta)
+      && !prefersReducedMotion();
+
+    handledTransitionRef.current = transitionKey;
+    animationsRef.current.forEach(animation => animation.cancel());
+    animationsRef.current = [];
+    clearTimeout(removalTimerRef.current);
+    clearTimeout(indicatorTimerRef.current);
+    pendingAnimationRef.current = null;
+
+    if (!shouldAnimate) {
+      displayChecksRef.current = nextChecks;
+      setDisplayChecks(nextChecks);
+      setShowMovement(false);
+      setAnnouncement('');
+      return;
+    }
+
+    const firstPositions = new Map();
+    itemRefs.current.forEach((node, identity) => {
+      if (!node.hidden) firstPositions.set(identity, node.getBoundingClientRect());
+    });
+
+    const nextIdentities = new Set(nextChecks.map(componentIdentity));
+    const droppedByIdentity = new Map((response.ranking_delta?.dropped ?? []).map(item => [item.part_name, item]));
+    const exiting = currentChecks
+      .map((check, index) => ({ check, index }))
+      .filter(({ check }) => !nextIdentities.has(componentIdentity(check)) && droppedByIdentity.has(componentIdentity(check)));
+    const stagedChecks = nextChecks.map(check => ({ ...check }));
+    exiting.forEach(({ check, index }) => {
+      stagedChecks.splice(Math.min(index, stagedChecks.length), 0, { ...check, __exiting: true });
+    });
+
+    pendingAnimationRef.current = {
+      firstPositions,
+      nextChecks,
+      transitionKey,
+      newIdentities: new Set((response.ranking_delta?.new ?? []).map(item => item.part_name)),
+      movedUpIdentities: new Set((response.ranking_delta?.moved_up ?? []).map(item => item.part_name)),
+      movedDownIdentities: new Set((response.ranking_delta?.moved_down ?? []).map(item => item.part_name)),
+    };
+    displayChecksRef.current = stagedChecks;
+    setDisplayChecks(stagedChecks);
+    setShowMovement(true);
+    setAnnouncement(rankingAnnouncement(response.ranking_delta));
+    indicatorTimerRef.current = setTimeout(() => setShowMovement(false), MOVEMENT_INDICATOR_MS);
+  }, [response, transitionKey]);
+
+  useLayoutEffect(() => {
+    const pending = pendingAnimationRef.current;
+    if (!pending || pending.transitionKey !== transitionKey) return;
+    pendingAnimationRef.current = null;
+
+    itemRefs.current.forEach((node, identity) => {
+      if (node.hidden || typeof node.animate !== 'function') return;
+      const check = displayChecksRef.current.find(item => componentIdentity(item) === identity);
+      let keyframes;
+      if (check?.__exiting) {
+        const height = Math.max(node.getBoundingClientRect().height, node.scrollHeight, 1);
+        keyframes = [
+          { opacity: 1, maxHeight: `${height}px` },
+          { opacity: 0, maxHeight: '0px', paddingTop: '0px', paddingBottom: '0px', marginTop: '0px' },
+        ];
+      } else {
+        const first = pending.firstPositions.get(identity);
+        const last = node.getBoundingClientRect();
+        const offset = first ? first.top - last.top : 0;
+        if (offset) keyframes = [{ transform: `translateY(${offset}px)` }, { transform: 'translateY(0)' }];
+        else if (pending.newIdentities.has(identity)) keyframes = [{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'translateY(0)' }];
+        else if (pending.movedUpIdentities.has(identity)) keyframes = [{ transform: 'translateY(16px)' }, { transform: 'translateY(0)' }];
+        else if (pending.movedDownIdentities.has(identity)) keyframes = [{ transform: 'translateY(-16px)' }, { transform: 'translateY(0)' }];
+      }
+      if (keyframes) {
+        animationsRef.current.push(node.animate(keyframes, {
+          duration: RANKING_TRANSITION_MS,
+          easing: 'cubic-bezier(0.2, 0, 0, 1)',
+          fill: 'both',
+        }));
+      }
+    });
+
+    removalTimerRef.current = setTimeout(() => {
+      animationsRef.current.forEach(animation => animation.cancel());
+      displayChecksRef.current = pending.nextChecks;
+      setDisplayChecks(pending.nextChecks);
+      animationsRef.current = [];
+    }, RANKING_TRANSITION_MS);
+  }, [displayChecks, transitionKey]);
+
+  const remainingCount = Math.max(0, checks.length - LIVE_RANKING_PREVIEW_COUNT);
+
+  return (
+    <section aria-label="Live investigation ranking" className="halite-card p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow">Current recommendations</p>
+          <h3 className="mt-1 font-brand text-lg text-primary">Live ranking</h3>
+        </div>
+        {response && <span className="rounded-full border border-accent/40 px-2 py-0.5 font-sans text-[11px] font-medium uppercase tracking-wide text-accent">Latest</span>}
+      </div>
+
+      {announcement && <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">{announcement}</p>}
+
+      {!response ? (
+        <div className="mt-4 rounded-lg border border-dashed border-theme p-4">
+          <p className="font-sans text-sm font-medium text-primary">No completed ranking yet</p>
+          <p className="mt-1 font-sans text-xs leading-5 text-secondary">Complete a Copilot turn to populate current inspection recommendations.</p>
+        </div>
+      ) : checks.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-theme p-4">
+          <p className="font-sans text-sm font-medium text-primary">No active recommendations</p>
+          <p className="mt-1 font-sans text-xs leading-5 text-secondary">The latest completed turn did not return ranked checks.</p>
+        </div>
+      ) : (
+        <>
+          <p className="mt-2 font-sans text-xs leading-5 text-secondary">
+            Latest completed turn · {checks.length} active ranked check{checks.length === 1 ? '' : 's'}
+          </p>
+          <ol id="additional-current-ranked-checks" aria-label="Current ranked checks" className="mt-3 space-y-2">
+            {displayChecks.map((check, index) => (
+              <RankingItem
+                key={componentIdentity(check)}
+                check={check}
+                delta={response.ranking_delta}
+                showMovement={showMovement}
+                selected={selectedPartName === check.part_name}
+                onSelect={onSelect}
+                onMarkDone={onMarkDone}
+                onRuleOut={onRuleOut}
+                setItemRef={node => {
+                  const identity = componentIdentity(check);
+                  if (node) itemRefs.current.set(identity, node);
+                  else itemRefs.current.delete(identity);
+                }}
+                {...(!expanded && index >= LIVE_RANKING_PREVIEW_COUNT ? { hidden: true } : {})}
+              />
+            ))}
+          </ol>
+          {showMovement && (response.ranking_delta?.dropped ?? []).length > 0 && (
+            <p className="mt-2 font-sans text-[11px] leading-4 text-secondary">
+              Remaining checks may shift upward because a ranked item was removed; this does not mean their failure probability increased.
+            </p>
+          )}
+          {remainingCount > 0 && (
+            <button
+              type="button"
+              aria-expanded={expanded}
+              aria-controls="additional-current-ranked-checks"
+              onClick={() => setExpanded(value => !value)}
+              className="mt-3 w-full rounded-lg border border-theme px-3 py-2 text-left font-sans text-sm font-medium text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              {expanded ? 'Show fewer current checks' : `Show ${remainingCount} more current check${remainingCount === 1 ? '' : 's'}`}
+            </button>
+          )}
+        </>
+      )}
+
+      {loading && response && <p role="status" className="mt-3 border-t border-theme pt-3 font-sans text-xs text-secondary">Updating after the current case change…</p>}
+      <p className="mt-3 border-t border-theme pt-3 font-sans text-[11px] leading-4 text-secondary">Scores are heuristic ranking signals, not failure probabilities or confidence.</p>
+      <DiagnosticEvidenceInspector
+        response={response}
+        selectedPartName={selectedPartName}
+        assets={assets}
+        onOpenRecord={onOpenRecord}
+        initialRecords={inspectorRecords}
+        onRecordsResolved={onRecordsResolved}
+      />
+    </section>
+  );
+}
+
+function TurnSnapshot({ response, turnNumber, isCurrent, openRecord }) {
+  const evidence = response.evidence ?? [];
+  const evidenceById = Object.fromEntries(evidence.map(record => [record.record_id, record]));
+  const rankedChecks = response.ranked_checks ?? [];
+  const invalidIds = response.citation_validation?.invalid_ids ?? [];
+  const validIds = response.citation_validation?.valid_ids ?? [];
+
+  return (
+    <details className="rounded-lg border border-theme px-3 py-2">
+      <summary className="cursor-pointer font-sans text-sm font-medium text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+        {isCurrent ? 'Current turn details' : 'Historical ranking snapshot'} · Turn {turnNumber}
+      </summary>
+      <div className="mt-3 space-y-4 border-t border-theme pt-3">
+        <div>
+          <h4 className="eyebrow mb-2">Full ranked checks</h4>
+          {rankedChecks.length === 0 ? <p className="font-sans text-xs text-secondary">No ranked checks returned for this turn.</p> : (
+            <ol className="space-y-2">
+              {rankedChecks.map(check => (
+                <li key={check.part_name} className="rounded border border-theme p-2">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-sm text-primary">
+                    <span>{check.rank}. {check.part_name}</span>
+                    <span className="text-xs text-secondary">Heuristic score {scoreLabel(check.score)}</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap gap-2">
+                    {(check.evidence_record_ids ?? []).map(recordId => {
+                      const record = evidenceById[recordId];
+                      return record ? (
+                        <button key={recordId} type="button" onClick={() => openRecord(record)} className="break-all font-mono text-xs text-accent hover:underline">{recordId}</button>
+                      ) : <span key={recordId} className="break-all font-mono text-xs text-secondary">{recordId}</span>;
+                    })}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+
+        <div>
+          <h4 className="eyebrow mb-2">Turn evidence</h4>
+          {evidence.length === 0 ? <p className="font-sans text-xs text-secondary">No evidence records returned for this turn.</p> : (
+            <div className="flex flex-wrap gap-2">
+              {evidence.map(record => (
+                <button
+                  key={record.record_id}
+                  type="button"
+                  onClick={() => openRecord(record)}
+                  className={`break-all rounded border px-2 py-1 font-mono text-xs ${record.is_superseded ? 'border-amber-500/40 text-amber-400' : 'border-theme text-accent'}`}
+                >
+                  {record.record_id}{record.is_superseded ? ' · superseded' : ''}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <p className="font-sans text-xs text-secondary">
+          {invalidIds.length > 0
+            ? `Not verified against current evidence: ${invalidIds.join(', ')}`
+            : validIds.length > 0
+              ? `Verified record IDs: ${validIds.join(', ')}`
+              : 'No record IDs cited in the narrative.'}
+        </p>
+      </div>
+    </details>
+  );
+}
+
 function Copilot() {
   const navigate = useNavigate();
+  const [restoredWorkspace] = useState(loadActiveDiagnosticWorkspace);
+  const conversationHistoryRef = useRef(null);
+  const investigationRailRef = useRef(null);
+  const followConversationRef = useRef(restoredWorkspace?.scroll.followConversation ?? true);
+  const workspaceScrollRef = useRef({
+    conversation: restoredWorkspace?.scroll.conversation ?? 0,
+    investigation: restoredWorkspace?.scroll.investigation ?? 0,
+  });
+  const restoreScrollRef = useRef(Boolean(restoredWorkspace));
+  const activeWorkspaceRef = useRef(null);
+  const scrollPersistTimerRef = useRef(null);
+  const explicitClearRef = useRef(false);
   const [assets, setAssets] = useState([]);
-  const [assetId, setAssetId] = useState('');
-  const [message, setMessage] = useState('');
-  const [thread, setThread] = useState([]);
-  const [caseState, setCaseState] = useState(EMPTY_CASE);
-  const [sessionId, setSessionId] = useState(null);
+  const [assetId, setAssetId] = useState(restoredWorkspace?.assetId ?? '');
+  const [message, setMessage] = useState(restoredWorkspace?.draft ?? '');
+  const [thread, setThread] = useState(restoredWorkspace?.thread ?? []);
+  const [caseState, setCaseState] = useState(restoredWorkspace?.caseState ?? EMPTY_CASE);
+  const [sessionId, setSessionId] = useState(restoredWorkspace?.sessionId ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [failedTurn, setFailedTurn] = useState(null);
   const [sessions, setSessions] = useState(loadSessions);
   const [storageWarning, setStorageWarning] = useState('');
+  const [rankingTransitionKey, setRankingTransitionKey] = useState(0);
+  const [selectedPartName, setSelectedPartName] = useState(restoredWorkspace?.selectedPartName ?? null);
+  const [inspectorRecords, setInspectorRecords] = useState(restoredWorkspace?.inspectorRecords ?? {});
+
+  activeWorkspaceRef.current = {
+    assetId,
+    draft: message,
+    thread: loading && thread.at(-1)?.role === 'user' ? thread.slice(0, -1) : thread,
+    caseState,
+    sessionId,
+    selectedPartName,
+    inspectorRecords,
+    scroll: {
+      ...workspaceScrollRef.current,
+      followConversation: followConversationRef.current,
+    },
+  };
 
   useEffect(() => {
     maintenanceAPI.assets().then(res => setAssets(res.data)).catch(() => {});
   }, []);
 
-  const latest = [...thread].reverse().find(item => item.role === 'assistant')?.response;
+  const latestAssistantIndex = thread.reduce((latestIndex, item, index) => item.role === 'assistant' ? index : latestIndex, -1);
+  const latest = latestAssistantIndex >= 0 ? thread[latestAssistantIndex].response : null;
+
+  useLayoutEffect(() => {
+    if (!restoreScrollRef.current) return;
+    if (conversationHistoryRef.current) {
+      conversationHistoryRef.current.scrollTop = workspaceScrollRef.current.conversation;
+    }
+    if (investigationRailRef.current) {
+      investigationRailRef.current.scrollTop = workspaceScrollRef.current.investigation;
+    }
+    restoreScrollRef.current = false;
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const stored = storeActiveDiagnosticWorkspace(activeWorkspaceRef.current);
+      if (!stored) setStorageWarning('Browser storage is unavailable. The active investigation will not survive navigation or refresh.');
+      explicitClearRef.current = false;
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [assetId, message, thread, caseState, sessionId, selectedPartName, inspectorRecords]);
+
+  useEffect(() => () => {
+    clearTimeout(scrollPersistTimerRef.current);
+    if (explicitClearRef.current) clearActiveDiagnosticWorkspace();
+    else storeActiveDiagnosticWorkspace(activeWorkspaceRef.current);
+  }, []);
+
+  useEffect(() => {
+    const history = conversationHistoryRef.current;
+    if (!history || !latest || !followConversationRef.current) return;
+    const reducedMotion = typeof window.matchMedia === 'function'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof history.scrollTo === 'function') {
+      history.scrollTo({ top: history.scrollHeight, behavior: reducedMotion ? 'auto' : 'smooth' });
+    } else {
+      history.scrollTop = history.scrollHeight;
+    }
+  }, [latest]);
+
+  const trackConversationPosition = (event) => {
+    const history = event.currentTarget;
+    const distanceFromBottom = history.scrollHeight - history.scrollTop - history.clientHeight;
+    followConversationRef.current = distanceFromBottom <= 96;
+    workspaceScrollRef.current.conversation = history.scrollTop;
+    activeWorkspaceRef.current.scroll = {
+      ...workspaceScrollRef.current,
+      followConversation: followConversationRef.current,
+    };
+    clearTimeout(scrollPersistTimerRef.current);
+    scrollPersistTimerRef.current = setTimeout(() => storeActiveDiagnosticWorkspace(activeWorkspaceRef.current), 120);
+  };
+
+  const trackInvestigationPosition = (event) => {
+    workspaceScrollRef.current.investigation = event.currentTarget.scrollTop;
+    activeWorkspaceRef.current.scroll = {
+      ...workspaceScrollRef.current,
+      followConversation: followConversationRef.current,
+    };
+    clearTimeout(scrollPersistTimerRef.current);
+    scrollPersistTimerRef.current = setTimeout(() => storeActiveDiagnosticWorkspace(activeWorkspaceRef.current), 120);
+  };
 
   const persist = (nextSessions) => {
     setSessions(nextSessions);
@@ -785,6 +1277,9 @@ function Copilot() {
       setSessionId(data.session_id);
       setCaseState(data.case_state ?? stateForTurn);
       setThread(items => [...items, { role: 'assistant', response: data, content: data.reply }]);
+      if (latest && hasRankingChanges(data.ranking_delta)) {
+        setRankingTransitionKey(key => key + 1);
+      }
       setMessage('');
     } catch (requestError) {
       setError(copilotError(requestError));
@@ -800,6 +1295,11 @@ function Copilot() {
   };
 
   const newInvestigation = () => {
+    explicitClearRef.current = true;
+    clearTimeout(scrollPersistTimerRef.current);
+    clearActiveDiagnosticWorkspace();
+    followConversationRef.current = true;
+    workspaceScrollRef.current = { conversation: 0, investigation: 0 };
     setThread([]);
     setCaseState(EMPTY_CASE);
     setSessionId(null);
@@ -807,6 +1307,8 @@ function Copilot() {
     setError(null);
     setFailedTurn(null);
     setAssetId('');
+    setSelectedPartName(null);
+    setInspectorRecords({});
   };
 
   const saveSession = () => {
@@ -820,16 +1322,23 @@ function Copilot() {
       assetId,
       thread,
       caseState,
+      selectedPartName,
     };
     persist([snapshot, ...sessions.filter(item => item.id !== id)]);
     setSessionId(id);
   };
 
   const resumeSession = (saved) => {
+    followConversationRef.current = true;
+    workspaceScrollRef.current = { conversation: 0, investigation: 0 };
+    if (investigationRailRef.current) investigationRailRef.current.scrollTop = 0;
     setSessionId(saved.id);
     setAssetId(saved.assetId || '');
     setThread(Array.isArray(saved.thread) ? saved.thread : []);
     setCaseState(saved.caseState || EMPTY_CASE);
+    setSelectedPartName(saved.selectedPartName || null);
+    setInspectorRecords({});
+    setMessage('');
     setError(null);
   };
 
@@ -856,55 +1365,87 @@ function Copilot() {
 
   const openRecord = (record) => {
     const uuid = assets.find(asset => asset.tail_number === record.asset_id)?.id || record.asset_id;
-    navigate(`/app/asset-history/${uuid}#${record.record_id}`);
+    if (conversationHistoryRef.current) workspaceScrollRef.current.conversation = conversationHistoryRef.current.scrollTop;
+    if (investigationRailRef.current) workspaceScrollRef.current.investigation = investigationRailRef.current.scrollTop;
+    activeWorkspaceRef.current.scroll = {
+      ...workspaceScrollRef.current,
+      followConversation: followConversationRef.current,
+    };
+    storeActiveDiagnosticWorkspace(activeWorkspaceRef.current);
+    navigate(`/app/asset-history/${uuid}#${record.record_id}`, {
+      state: { from: 'diagnostics', returnTo: '/app/diagnostics' },
+    });
   };
 
-  return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_19rem]">
-      <div className="space-y-4">
-        <div className="halite-card flex flex-wrap items-end gap-3 p-4">
-          <label className="min-w-48 flex-1 font-sans text-sm text-primary">
-            Aircraft filter
-            <select
-              aria-label="Aircraft filter"
-              value={assetId}
-              onChange={event => setAssetId(event.target.value)}
-              className="halite-input mt-1 w-full"
-            >
-              <option value="">All fleet</option>
-              {assets.map(asset => (
-                <option key={asset.id} value={asset.id}>{asset.tail_number}</option>
-              ))}
-            </select>
-          </label>
-          <button type="button" onClick={newInvestigation} className="halite-btn text-sm">New investigation</button>
-          <button type="button" onClick={saveSession} disabled={!thread.length} className="halite-btn text-sm disabled:opacity-50">Save session</button>
-        </div>
+  const retainInspectorRecords = useCallback((records) => {
+    setInspectorRecords(current => {
+      const merged = { ...current };
+      Object.entries(records).forEach(([recordId, record]) => {
+        delete merged[recordId];
+        merged[recordId] = record;
+      });
+      return Object.fromEntries(Object.entries(merged).slice(-MAX_PERSISTED_INSPECTOR_RECORDS));
+    });
+  }, []);
 
-        <section aria-label="Diagnostic conversation" className="halite-card min-h-80 space-y-4 p-5">
-          {thread.length === 0 && (
-            <div className="py-12 text-center">
-              <h3 className="font-brand text-lg text-primary">Start an evidence-grounded investigation</h3>
-              <p className="mt-2 font-sans text-sm text-secondary">Describe a symptom, observation, completed check, or ask about a service record.</p>
-            </div>
-          )}
-          {thread.map((turn, index) => turn.role === 'user' ? (
-            <div key={index} className="ml-auto max-w-[85%] rounded-xl bg-accent/10 p-3 font-sans text-sm text-primary">
-              {turn.content}
-            </div>
-          ) : (
-            <article key={index} className="space-y-3 rounded-xl border border-theme bg-surface p-4">
-              <InvestigationUpdates
-                delta={turn.response.ranking_delta}
-                rankedChecks={turn.response.ranked_checks ?? []}
-                evidence={turn.response.evidence ?? []}
-                openRecord={openRecord}
-              />
+  return (
+    <div data-testid="copilot-layout" className="flex min-h-0 flex-col gap-4 xl:flex-1">
+      <section aria-label="Investigation controls" data-testid="copilot-controls" className="halite-card flex shrink-0 flex-wrap items-end gap-3 p-4">
+        <label className="min-w-48 flex-1 font-sans text-sm text-primary">
+          Aircraft filter
+          <select
+            aria-label="Aircraft filter"
+            value={assetId}
+            onChange={event => setAssetId(event.target.value)}
+            className="halite-input mt-1 w-full"
+          >
+            <option value="">All fleet</option>
+            {assets.map(asset => (
+              <option key={asset.id} value={asset.id}>{asset.tail_number}</option>
+            ))}
+          </select>
+        </label>
+        <button type="button" onClick={newInvestigation} className="halite-btn text-sm">New investigation</button>
+        <button type="button" onClick={saveSession} disabled={!thread.length} className="halite-btn text-sm disabled:opacity-50">Save session</button>
+      </section>
+
+      <div data-testid="copilot-workspace" className="grid min-w-0 items-start gap-5 xl:min-h-0 xl:flex-1 xl:grid-cols-[minmax(0,1fr)_23rem] xl:items-stretch xl:overflow-hidden">
+        <main className="order-2 flex min-w-0 flex-col gap-4 xl:order-none xl:col-start-1 xl:row-start-1 xl:h-full xl:min-h-0 xl:overflow-hidden">
+
+        <section aria-label="Diagnostic conversation" className="halite-card min-h-80 p-5 xl:min-h-0 xl:flex-1 xl:overflow-hidden">
+          <div
+            ref={conversationHistoryRef}
+            role="log"
+            aria-label="Conversation history"
+            aria-live="polite"
+            tabIndex="0"
+            onScroll={trackConversationPosition}
+            data-testid="conversation-history"
+            className="space-y-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:h-full xl:min-h-0 xl:overflow-y-auto xl:overscroll-contain xl:pr-2 [overflow-anchor:auto]"
+          >
+            {thread.length === 0 && (
+              <div className="py-12 text-center">
+                <h3 className="font-brand text-lg text-primary">Start an evidence-grounded investigation</h3>
+                <p className="mt-2 font-sans text-sm text-secondary">Describe a symptom, observation, completed check, or ask about a service record.</p>
+              </div>
+            )}
+            {thread.map((turn, index) => turn.role === 'user' ? (
+              <div key={index} className="ml-auto max-w-[85%] rounded-xl bg-accent/10 p-3 font-sans text-sm text-primary">
+                {turn.content}
+              </div>
+            ) : (
+              <article key={index} className="space-y-3 rounded-xl border border-theme bg-surface p-4">
+                <InvestigationUpdates
+                  delta={turn.response.ranking_delta}
+                  rankedChecks={turn.response.ranked_checks ?? []}
+                  evidence={turn.response.evidence ?? []}
+                  openRecord={openRecord}
+                />
 
               {turn.response.llm_status === 'unavailable' || !turn.content ? (
                 <div role="alert" className="rounded border border-amber-500/30 bg-amber-500/5 p-3">
                   <p className="font-sans text-sm font-medium text-amber-400">Language model unavailable</p>
-                  <p className="font-sans text-xs text-primary">No narrative was invented. Deterministic ranking and evidence are still shown below.</p>
+                  <p className="font-sans text-xs text-primary">No narrative was invented. Deterministic ranking and evidence remain available in the live ranking and turn details.</p>
                 </div>
               ) : (
                 <CopilotMarkdown>{turn.content}</CopilotMarkdown>
@@ -916,64 +1457,16 @@ function Copilot() {
                 </ul>
               )}
 
-              {(turn.response.ranked_checks ?? []).length > 0 && (
-                <div>
-                  <h4 className="eyebrow mb-2">Ranked checks</h4>
-                  <ol className="space-y-2">
-                    {turn.response.ranked_checks.map(check => (
-                        <li key={check.part_name} className="rounded border border-theme p-2">
-                          <div className="flex flex-wrap items-center gap-2 font-sans text-sm text-primary">
-                            <span>{check.rank}. {check.part_name}</span>
-                            <span className="text-xs text-secondary">evidence score (heuristic) {Number(check.score).toFixed(2)}</span>
-                          </div>
-                          <div className="mt-1 flex flex-wrap gap-2">
-                            {(check.evidence_record_ids ?? []).map(recordId => {
-                              const record = (turn.response.evidence ?? []).find(item => item.record_id === recordId);
-                              return record ? (
-                                <button key={recordId} type="button" onClick={() => openRecord(record)} className="font-mono text-xs text-accent hover:underline">{recordId}</button>
-                              ) : <span key={recordId} className="font-mono text-xs text-secondary">{recordId}</span>;
-                            })}
-                          </div>
-                          {index === thread.length - 1 && (
-                            <div className="mt-2 flex gap-2">
-                              <button type="button" onClick={() => updateCaseAndRerun('checks_done', check.part_name)} className="halite-btn text-xs">Mark done</button>
-                              <button type="button" onClick={() => updateCaseAndRerun('ruled_out', check.part_name)} className="halite-btn text-xs">Rule out</button>
-                            </div>
-                          )}
-                        </li>
-                    ))}
-                  </ol>
-                </div>
-              )}
-
-              {(turn.response.evidence ?? []).length > 0 && (
-                <div>
-                  <h4 className="eyebrow mb-2">Evidence</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {turn.response.evidence.map(record => (
-                      <button
-                        key={record.record_id}
-                        type="button"
-                        onClick={() => openRecord(record)}
-                        className={`rounded border px-2 py-1 font-mono text-xs ${record.is_superseded ? 'border-amber-500/40 text-amber-400' : 'border-theme text-accent'}`}
-                      >
-                        {record.record_id}{record.is_superseded ? ' · superseded' : ''}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <p className="font-sans text-xs text-secondary">
-                {(turn.response.citation_validation?.invalid_ids ?? []).length > 0
-                  ? `Unverified IDs: ${turn.response.citation_validation.invalid_ids.join(', ')}`
-                  : (turn.response.citation_validation?.valid_ids ?? []).length > 0
-                    ? `Verified record IDs: ${turn.response.citation_validation.valid_ids.join(', ')}`
-                    : 'No record IDs cited in the narrative.'}
-              </p>
-            </article>
-          ))}
-          {loading && <div role="status" className="font-sans text-sm text-secondary">Retrieving and reranking the accumulated case…</div>}
+                <TurnSnapshot
+                  response={turn.response}
+                  turnNumber={thread.slice(0, index + 1).filter(item => item.role === 'assistant').length}
+                  isCurrent={index === latestAssistantIndex}
+                  openRecord={openRecord}
+                />
+              </article>
+            ))}
+            {loading && <div role="status" className="font-sans text-sm text-secondary">Retrieving and reranking the accumulated case…</div>}
+          </div>
         </section>
 
         {error && (
@@ -987,7 +1480,7 @@ function Copilot() {
           </div>
         )}
 
-        <form onSubmit={submit} className="halite-card p-4">
+        <form onSubmit={submit} data-testid="copilot-composer" className="halite-card p-4 xl:shrink-0">
           <label htmlFor="copilot-message" className="eyebrow">Message</label>
           <textarea
             id="copilot-message"
@@ -1000,10 +1493,24 @@ function Copilot() {
           />
           <button type="submit" disabled={!message.trim() || loading} className="halite-btn-primary mt-3 disabled:opacity-50">Send</button>
         </form>
-        <p className="font-sans text-xs text-secondary">Decision support only. Evidence scores are heuristic rankings, not probabilities or confidence.</p>
-      </div>
+        <p className="font-sans text-xs text-secondary xl:shrink-0">Decision support only. Evidence scores are heuristic rankings, not probabilities or confidence.</p>
+        </main>
 
-      <aside className="space-y-4">
+        <aside ref={investigationRailRef} onScroll={trackInvestigationPosition} aria-label="Investigation workspace panels" tabIndex="0" className="order-1 min-w-0 self-start space-y-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:order-none xl:col-start-2 xl:row-start-1 xl:h-full xl:min-h-0 xl:self-stretch xl:overflow-y-auto xl:overscroll-contain xl:pr-1">
+          <LiveRankingPanel
+            response={latest}
+            transitionKey={rankingTransitionKey}
+            loading={loading}
+            selectedPartName={selectedPartName}
+            inspectorRecords={inspectorRecords}
+            assets={assets}
+            onSelect={setSelectedPartName}
+            onOpenRecord={openRecord}
+            onRecordsResolved={retainInspectorRecords}
+            onMarkDone={partName => updateCaseAndRerun('checks_done', partName)}
+            onRuleOut={partName => updateCaseAndRerun('ruled_out', partName)}
+          />
+
         <section className="halite-card p-4">
           <h3 className="font-brand text-primary">Case state</h3>
           {['symptoms', 'observations', 'checks_done', 'ruled_out'].map(field => (
@@ -1039,7 +1546,8 @@ function Copilot() {
             </ul>
           )}
         </section>
-      </aside>
+        </aside>
+      </div>
     </div>
   );
 }
@@ -1047,8 +1555,8 @@ function Copilot() {
 export default function Diagnostics() {
   const [tab, setTab] = useState('copilot');
   return (
-    <div className="h-full overflow-y-auto">
-      <header className="border-b border-theme px-6 py-4">
+    <div className="h-full overflow-y-auto xl:flex xl:min-h-0 xl:flex-col xl:overflow-hidden">
+      <header className="shrink-0 border-b border-theme px-6 py-4">
         <div className="flex items-center gap-3">
           <MagnifyingGlassIcon className="h-5 w-5 text-accent" />
           <div>
@@ -1061,7 +1569,7 @@ export default function Diagnostics() {
           <button role="tab" aria-selected={tab === 'quick'} onClick={() => setTab('quick')} className="halite-btn text-sm">Quick diagnose</button>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl p-6">
+      <div className="mx-auto w-full max-w-[96rem] p-4 sm:p-6 xl:flex xl:min-h-0 xl:flex-1 xl:flex-col">
         {tab === 'copilot' ? <Copilot /> : <QuickDiagnose />}
       </div>
     </div>

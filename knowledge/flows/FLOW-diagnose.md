@@ -3,7 +3,7 @@ id: flow-diagnose
 title: Diagnostic investigation flow
 status: active
 owners: [Umar, Shahmeer]
-updated: 2026-10-17
+updated: 2026-10-25
 ---
 
 # FLOW-diagnose — evidence-grounded investigation
@@ -34,8 +34,15 @@ the browser sends the structured case state on every request.
 8. The model phrases a reply only from supplied records and asks at most one
    question. Citation validation flags unknown or out-of-context IDs.
 9. The UI shows the thread, editable case state, movement badges, evidence,
-   citation status, and deep links into aircraft history.
-10. Local sessions are saved/resumed/deleted with guarded `localStorage` calls.
+   citation status, and deep links into aircraft history. Selecting a current
+   ranked component scopes the inspector strictly to that check's evidence IDs;
+   the turn evidence is shown immediately and read-only asset-history/record-list
+   APIs can resolve the original record without invoking the record conflict endpoint.
+10. The current unsaved workspace is versioned and persisted separately from
+    named saved sessions. Route remounts and refreshes hydrate it directly—without
+    inference or ranking animation—and source-aware Asset History links return to
+    `/app/diagnostics`. **New investigation** explicitly clears the active snapshot.
+11. Named local sessions are saved/resumed/deleted with guarded `localStorage` calls.
 
 ## Quick-diagnose path
 
