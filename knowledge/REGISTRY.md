@@ -3,7 +3,7 @@ id: technical-registry
 title: Module registry (code ↔ ownership ↔ docs)
 status: active
 owners: [all]
-updated: 2026-10-17
+updated: 2026-10-25
 ---
 
 # Module registry
@@ -15,7 +15,7 @@ updated: 2026-10-17
 | Conflict engine + analysis migration/backfill | Usman (cross-owner waiver for this task) | `backend/services/conflict_engine.py`, `backend/services/conflict_screen.py`, `backend/services/analysis_budget.py`, `backend/scripts/migrate_conflict_analysis_state.py`, `backend/scripts/backfill_conflict_scores.py` | [modules/conflict_engine.md](context/modules/conflict_engine.md) | [FLOW-conflict-review.md](flows/FLOW-conflict-review.md) |
 | Maintenance APIs (records/analysis/corrections/assets/history/review/ingest) | Usman (cross-owner waiver for this task) | `backend/api/routes/maintenance.py`, `backend/agents/maintenance_agent.py` | [modules/maintenance_api.md](context/modules/maintenance_api.md) | FLOW-ingest, FLOW-conflict-review |
 | App wiring / health | Usman | `backend/main.py`, `backend/config.py` | [modules/devops.md](context/modules/devops.md) | FLOW-ci |
-| Frontend maintenance UX | Shahmeer | `frontend/src/pages/*`, `frontend/src/utils/*`, `frontend/src/api/client.js`, `frontend/.env.development` | [modules/frontend.md](context/modules/frontend.md) | FLOW-diagnose, FLOW-conflict-review |
+| Frontend maintenance UX | Shahmeer | `frontend/src/pages/*`, `frontend/src/components/*`, `frontend/src/utils/*`, `frontend/src/api/client.js`, `frontend/.env.development` | [modules/frontend.md](context/modules/frontend.md) | FLOW-diagnose, FLOW-conflict-review |
 | CI / Compose | Usman | `.github/workflows/ci.yml`, `docker-compose.yml` | modules/devops.md | [FLOW-ci.md](flows/FLOW-ci.md) |
 | Shared staging deploy / ops | Umar + Usman | `.github/workflows/deploy-staging.yml`, `fetch-staging-logs.yml`, `docker-compose.vm.yml`, `backend/api/routes/ops.py` | [modules/remote_backend.md](context/modules/remote_backend.md) | [FLOW-deploy.md](flows/FLOW-deploy.md) |
 | Domain registry | shared (freeze) | `backend/domains/*` | [03_architecture.md](context/03_architecture.md) | — |
