@@ -26,12 +26,17 @@ The software-domain screens still exist in the repo but are **not reachable** (s
 | Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `diagnosticWorkspace.js` (versioned active-workspace persistence), `format.js` (dates), `loadError.js` |
 | Tests | `frontend/src/test/*` (Vitest, API mocked) |
 | Runtime target | `frontend/.env.development` (staging) · override with local `.env.local` |
+| Hosted routing | root `vercel.json` (API to backend service; `/app/*` SPA fallback inside the frontend service) |
 
 ## Routes
 
 `/app` → `/app/assets`. Maintenance routes: `assets`, `asset-history/:uuid[#record_id]`, `records[?asset=<uuid>]`,
 `diagnostics`, `review-queue`, `maintenance-ingest`, `graph`, `settings`. `chat`, `decisions`, `ingest`, `alerts`
 and unknown paths redirect to `/app/assets`.
+
+Vercel sends `/api/*` to the backend service before its frontend catch-all. Inside the frontend service, `/app/*`
+is rewritten to `index.html` so `BrowserRouter` can resolve direct links and browser refreshes. The scoped fallback does
+not capture `/api/*` or `/assets/*`.
 
 ## Contracts the UI relies on
 
