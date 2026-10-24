@@ -81,6 +81,24 @@ describe('AssetHistory deep links to a record', () => {
     expect(screen.queryByRole('status')).toBeNull();
     expect(Element.prototype.scrollIntoView).not.toHaveBeenCalled();
   });
+
+  it('only offers an investigation return for an explicit Diagnostics origin', async () => {
+    client.maintenanceAPI.assetHistory.mockResolvedValue({ data: history });
+    const view = renderAt('/app/asset-history/813SK#R2');
+    await screen.findByText('WING');
+    expect(screen.queryByRole('link', { name: /Back to investigation/i })).toBeNull();
+    expect(screen.getByRole('link', { name: /Back to Assets/i })).toBeDefined();
+    view.unmount();
+
+    renderAt({
+      pathname: '/app/asset-history/813SK',
+      hash: '#R2',
+      state: { from: 'diagnostics', returnTo: '/app/diagnostics' },
+    });
+    await screen.findByText('WING');
+    expect(screen.getByRole('link', { name: /Back to investigation/i })).toHaveAttribute('href', '/app/diagnostics');
+    expect(screen.getByRole('link', { name: /Back to Assets/i })).toBeDefined();
+  });
 });
 
 describe('AssetHistory honesty and failure states', () => {
