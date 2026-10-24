@@ -16,7 +16,10 @@ vi.mock('../api/client', () => ({
   },
 }));
 
-const assets = [{ id: '1', tail_number: 'N813SK', record_count: 3 }];
+const assets = [
+  { id: '1', tail_number: 'N813SK', record_count: 3 },
+  { id: '2', tail_number: 'N173US', record_count: 10 },
+];
 const originalAnimate = HTMLElement.prototype.animate;
 const originalMatchMedia = window.matchMedia;
 let animateMock;
@@ -481,19 +484,137 @@ describe('Diagnostics copilot', () => {
     expect(select).toHaveAttribute('aria-pressed', 'true');
 
     const inspector = within(liveRanking).getByRole('region', { name: 'Component evidence inspector' });
-    expect(within(inspector).getByRole('heading', { name: 'DRAG ANGLE' })).toBeDefined();
-    expect(within(inspector).getByText('Rank 1')).toBeDefined();
-    expect(within(inspector).getByText('Crack grows under load')).toBeDefined();
+    expect(within(inspector).getByRole('heading', { name: 'Evidence for DRAG ANGLE' })).toBeDefined();
+    expect(within(inspector).queryByText('Rank 1')).toBeNull();
+    expect(within(inspector).queryByText('Heuristic score 0.42')).toBeNull();
+    expect(within(inspector).queryByText('Crack grows under load')).toBeNull();
+    expect(screen.getAllByText('Crack grows under load')).toHaveLength(1);
     expect(within(inspector).getByText('SWIA2024010100001')).toBeDefined();
     expect(within(inspector).queryByText(secondRecordId)).toBeNull();
     await within(inspector).findByText('Original FAA maintenance narrative for the drag angle.');
-    expect(within(inspector).getByText('CRACKED · LH FUSELAGE')).toBeDefined();
+    expect(within(inspector).getAllByText('CRACKED').length).toBeGreaterThan(0);
+    expect(within(inspector).getByText('LH FUSELAGE')).toBeDefined();
     expect(client.maintenanceAPI.assetHistory).toHaveBeenCalledWith('1');
     expect(animateMock).not.toHaveBeenCalled();
 
     fireEvent.click(within(inspector).getByRole('button', { name: /Open full record view/ }));
     expect(screen.getByTestId('location')).toHaveTextContent('/app/asset-history/1#SWIA2024010100001');
     expect(screen.getByRole('complementary', { name: 'Investigation workspace panels' })).toHaveClass('xl:overflow-y-auto');
+  });
+
+  it('groups repetitive records with exact dates, progressive disclosure, and explicit aircraft provenance', async () => {
+    const fleetIds = Array.from({ length: 4 }, (_, index) => `AALA20250303000${index + 1}`);
+    const fleetRecords = fleetIds.map((recordId, index) => ({
+      record_id: recordId,
+      asset_id: 'N173US',
+      occurred_at: `2025-03-0${index + 1}`,
+      part_name: 'SUPPORT FRAME',
+      part_condition: 'EXCESSIVE PLAY',
+      text: `EXCESSIVE PLAY REPORTED IN AILERON HINGE SUPPORT FRAME ${index + 1}.`,
+      is_superseded: false,
+    }));
+    const sameAircraft = {
+      record_id: 'SAME202504010001',
+      asset_id: 'N813SK',
+      occurred_at: '2025-04-01',
+      part_name: 'SUPPORT FRAME',
+      part_condition: 'CRACKED',
+      text: 'CRACK REPORTED AT THE SUPPORT FRAME.',
+      is_superseded: false,
+    };
+    const unknownAircraft = {
+      record_id: 'UNKNOWN20250501001',
+      occurred_at: '2025-05-01',
+      part_name: 'SUPPORT FRAME',
+      part_condition: 'CRACKED',
+      text: 'CRACK REPORTED; AIRCRAFT IDENTITY UNAVAILABLE.',
+      is_superseded: false,
+    };
+    const response = {
+      ...baseTurn,
+      case_state: { ...baseTurn.case_state, symptoms: [], observations: ['Crack observed near a wing support attachment'] },
+      ranked_checks: [{
+        ...baseTurn.ranked_checks[0],
+        part_name: 'SUPPORT FRAME',
+        evidence_count: 6,
+        evidence_record_ids: [...fleetIds, sameAircraft.record_id, unknownAircraft.record_id],
+      }],
+      evidence: [...fleetRecords, sameAircraft, unknownAircraft],
+    };
+    client.maintenanceAPI.copilotTurn.mockResolvedValue({ data: response });
+    client.maintenanceAPI.assetHistory.mockImplementation(assetId => Promise.resolve({
+      data: { records: assetId === '2' ? fleetRecords : assetId === '1' ? [sameAircraft] : [] },
+    }));
+
+    renderPage();
+    await screen.findByRole('option', { name: 'N813SK' });
+    fireEvent.change(screen.getByLabelText('Aircraft filter'), { target: { value: '1' } });
+    await send('crack observed near a wing support attachment');
+    const liveRanking = await screen.findByRole('region', { name: 'Live investigation ranking' });
+    fireEvent.click(within(liveRanking).getByRole('button', { name: 'Inspect evidence for SUPPORT FRAME' }));
+    const inspector = within(liveRanking).getByRole('region', { name: 'Component evidence inspector' });
+
+    expect(within(inspector).getByRole('heading', { name: 'Evidence for SUPPORT FRAME' })).toBeDefined();
+    expect(within(inspector).queryByText('Rank 1')).toBeNull();
+    expect(within(inspector).queryByText('Heuristic score 0.42')).toBeNull();
+    expect(within(inspector).queryByText('Crack observed near a wing support attachment')).toBeNull();
+    expect(screen.getAllByText('Crack observed near a wing support attachment')).toHaveLength(1);
+    expect(within(inspector).getByText('6 cited record IDs · 6 source records retrieved')).toBeDefined();
+
+    expect(within(inspector).getByRole('heading', { name: 'Aircraft N173US' })).toBeDefined();
+    expect(within(inspector).getByText('4 maintenance records')).toBeDefined();
+    expect(within(inspector).getByText('Other-aircraft / fleet evidence')).toBeDefined();
+    expect(within(inspector).getByText(/not a record from selected aircraft N813SK/i)).toBeDefined();
+    expect(within(inspector).getByText(/records concern excessive play; the current case includes crack/i)).toBeDefined();
+    expect(within(inspector).getByText('2025-03-01')).toBeDefined();
+    expect(within(inspector).getByText(fleetIds[0]).closest('details')).not.toHaveAttribute('open');
+    expect(within(inspector).queryByText(fleetIds[3])).toBeNull();
+
+    const remaining = within(inspector).getByRole('button', { name: 'Show remaining 1 record' });
+    remaining.focus();
+    expect(remaining).toHaveFocus();
+    expect(remaining).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(remaining);
+    expect(remaining).toHaveAttribute('aria-expanded', 'true');
+    expect(within(inspector).getByText(fleetIds[3])).toBeDefined();
+    expect(within(inspector).getByText('2025-03-04')).toBeDefined();
+
+    const firstReport = within(inspector).getByText(fleetIds[0]).closest('details');
+    fireEvent.click(firstReport.querySelector('summary'));
+    expect(firstReport).toHaveAttribute('open');
+    expect(within(firstReport).getByText('EXCESSIVE PLAY REPORTED IN AILERON HINGE SUPPORT FRAME 1.')).toBeDefined();
+    expect(within(inspector).getByText('Same-aircraft historical evidence')).toBeDefined();
+    expect(within(inspector).getByText('Aircraft identity unavailable or unverified')).toBeDefined();
+
+    expect(client.maintenanceAPI.copilotTurn).toHaveBeenCalledTimes(1);
+    expect(client.maintenanceAPI.records).not.toHaveBeenCalled();
+    expect(animateMock).not.toHaveBeenCalled();
+    expect(within(inspector).getAllByText('Historical condition')[0].closest('dl')).toHaveClass('sm:grid-cols-2');
+  });
+
+  it('preserves cited IDs when source details are only partially retrieved', async () => {
+    const availableId = 'AALA202506010001';
+    const missingId = 'AALA202506010002';
+    client.maintenanceAPI.copilotTurn.mockResolvedValue({ data: {
+      ...baseTurn,
+      ranked_checks: [{ ...baseTurn.ranked_checks[0], evidence_record_ids: [availableId, missingId] }],
+      evidence: [{ ...baseTurn.evidence[0], record_id: availableId, occurred_at: '2025-06-01' }],
+    } });
+    client.maintenanceAPI.records.mockResolvedValue({ data: { items: [], total: 0, next: null } });
+
+    renderPage();
+    await send('inspect partial evidence');
+    const liveRanking = await screen.findByRole('region', { name: 'Live investigation ranking' });
+    fireEvent.click(within(liveRanking).getByRole('button', { name: 'Inspect evidence for DRAG ANGLE' }));
+    const inspector = within(liveRanking).getByRole('region', { name: 'Component evidence inspector' });
+
+    await waitFor(() => expect(client.maintenanceAPI.records).toHaveBeenCalledWith({ q: missingId, limit: 1, offset: 0 }));
+    expect(within(inspector).getByText('2 cited record IDs · 1 source record retrieved')).toBeDefined();
+    expect(within(inspector).getByText(/available for 1 of 2 cited IDs/i)).toBeDefined();
+    expect(within(inspector).getByText(availableId)).toBeDefined();
+    expect(within(inspector).getByText(missingId)).toBeDefined();
+    fireEvent.click(within(inspector).getByText(missingId).closest('summary'));
+    expect(within(inspector).getByText(/no matching source record was retrieved/i)).toBeDefined();
   });
 
   it('shows honest empty, missing-record, and failed-history states with retry', async () => {
@@ -537,7 +658,7 @@ describe('Diagnostics copilot', () => {
     const alert = await within(inspector).findByRole('alert');
     expect(alert).toHaveTextContent('History temporarily unavailable');
     fireEvent.click(within(alert).getByRole('button', { name: 'Retry' }));
-    await within(inspector).findByText('CRACKED');
+    await within(inspector).findAllByText('CRACKED');
     await waitFor(() => expect(within(inspector).queryByRole('alert')).toBeNull());
   });
 
@@ -605,7 +726,8 @@ describe('Diagnostics copilot', () => {
     await screen.findByText('Drag angle moved after the current observation.');
     liveRanking = screen.getByRole('region', { name: 'Live investigation ranking' });
     let inspector = within(liveRanking).getByRole('region', { name: 'Component evidence inspector' });
-    expect(within(inspector).getByText('Rank 4')).toBeDefined();
+    expect(within(inspector).queryByText('Rank 4')).toBeNull();
+    expect(within(liveRanking).getByLabelText('Rank 4')).toBeDefined();
     expect(within(inspector).getByText(nextRecordId)).toBeDefined();
     expect(within(inspector).queryByText('SWIA2024010100001')).toBeNull();
 

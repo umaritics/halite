@@ -3,7 +3,7 @@ id: technical-index
 title: Topic and path index
 status: active
 owners: [all]
-updated: 2026-10-17
+updated: 2026-10-25
 ---
 
 # Technical index
@@ -22,6 +22,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | DomainAdapter, registry | context/03_architecture.md |
 | Asset, ServiceRecord, ABOUT, PRECEDED_BY, SUPERSEDES | context/04_data_and_graph.md |
 | diagnose, copilot, multi-turn, case_state, ranked_checks, citation | context/modules/diagnostics.md, modules/diagnostics_u1_audit.md, flows/FLOW-diagnose.md, `services/citation_validation.py`, docs/mid1/08–13, docs/mid1/17_diagnostic_copilot_evidence.md |
+| diagnostic evidence, provenance, same aircraft, fleet evidence, evidence grouping | context/modules/frontend.md, context/modules/diagnostics.md, flows/FLOW-diagnose.md, decisions/DEC-20261025-evidence-provenance.md |
 | mid1 umar audit, U1–U5 | docs/mid1/08_umar_progress.md (+ 09–13 handoffs) |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
 | conflict, analysis_state, unscored, needs_review, confidence gate, cascade, daily budget, migration | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, decisions/DEC-20261017-conflict-analysis-state.md, decisions/DEC-20261017-analysis-cost-cascade.md, docs/mid1/19_confidence_and_corrections_evidence.md, docs/mid1/21_analysis_cascade_evidence.md |
@@ -51,6 +52,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |
 | `backend/agents/maintenance_agent.py` | FLOW-ingest.md |
 | `frontend/src/pages/Diagnostics.jsx` | modules/frontend.md, FLOW-diagnose.md |
+| `frontend/src/components/DiagnosticEvidenceInspector.jsx`, `frontend/src/utils/diagnosticEvidence.js` | modules/frontend.md, FLOW-diagnose.md, decisions/DEC-20261025-evidence-provenance.md |
 | `frontend/src/pages/MaintenanceIngest.jsx`, `frontend/src/components/CsvUploader.jsx`, `frontend/src/components/IngestResult.jsx` | modules/frontend.md, flows/FLOW-ingest.md, decisions/DEC-20261017-ingest-csv-upload-ui.md |
 | `frontend/src/pages/Graph.jsx`, `frontend/src/utils/graphScope.js`, `frontend/src/components/GraphViewer.jsx` | modules/frontend.md, decisions/DEC-20261017-graph-aircraft-focus.md |
 | `frontend/src/pages/ReviewQueue.jsx`, `frontend/src/pages/ServiceRecords.jsx` | modules/frontend.md, FLOW-conflict-review.md, decisions/DEC-20261017-fleet-service-records.md |

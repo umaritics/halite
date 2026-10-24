@@ -1,32 +1,184 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { maintenanceAPI } from '../api/client';
-import { formatDate } from '../utils/format';
+import {
+  caseIssueLabels,
+  evidenceKey,
+  groupEvidenceRecords,
+  historicalIssueDiff,
+  resolveRecordAircraft,
+} from '../utils/diagnosticEvidence';
 import { describeLoadError } from '../utils/loadError';
 
-function evidenceKey(record) {
-  return String(record?.record_id ?? record?.id ?? '');
-}
+const GROUP_PREVIEW_COUNT = 3;
 
 function assetIdentifier(record, assets) {
-  const sourceAsset = record?.asset_id || record?.asset_key;
-  if (!sourceAsset) return '';
-  const asset = assets.find(item => item.id === sourceAsset || item.tail_number === sourceAsset);
-  return asset?.id || '';
+  return resolveRecordAircraft(record, assets).assetId;
 }
 
-function RecordField({ label, children, mono = false }) {
+function RecordField({ label, children }) {
   if (children === undefined || children === null || children === '') return null;
   return (
     <div>
       <dt className="font-sans text-[11px] uppercase tracking-wide text-secondary">{label}</dt>
-      <dd className={`mt-0.5 break-words text-sm text-primary ${mono ? 'font-mono' : 'font-sans'}`}>{children}</dd>
+      <dd className="mt-0.5 break-words font-sans text-sm text-primary">{children}</dd>
     </div>
+  );
+}
+
+function ProvenanceNotice({ group, currentIssues }) {
+  const { provenance } = group;
+  const issueDiff = historicalIssueDiff(group.condition, currentIssues);
+  let title = 'Aircraft identity unavailable or unverified';
+  let explanation = provenance.selectedAircraftLabel
+    ? `The available record fields do not verify whether this evidence belongs to selected aircraft ${provenance.selectedAircraftLabel}.`
+    : 'No investigation aircraft is selected, so this evidence cannot be classified as same- or other-aircraft history.';
+  let className = 'border-theme bg-page/20';
+
+  if (provenance.kind === 'same') {
+    title = 'Same-aircraft historical evidence';
+    explanation = `Historical evidence from selected aircraft ${provenance.selectedAircraftLabel}. It does not confirm the current root cause.`;
+    className = 'border-emerald-500/30 bg-emerald-500/5';
+  } else if (provenance.kind === 'other') {
+    title = 'Other-aircraft / fleet evidence';
+    explanation = `Historical evidence from aircraft ${provenance.aircraftLabel}. It is not a record from selected aircraft ${provenance.selectedAircraftLabel} and does not establish that aircraft’s root cause.`;
+    className = 'border-amber-500/30 bg-amber-500/5';
+  }
+
+  return (
+    <div className={`mt-3 rounded-lg border p-3 ${className}`}>
+      <p className="font-sans text-xs font-semibold text-primary">{title}</p>
+      <p className="mt-1 font-sans text-[11px] leading-4 text-secondary">{explanation}</p>
+      {issueDiff && (
+        <p className="mt-1 font-sans text-[11px] leading-4 text-secondary">
+          These records concern {issueDiff.historical.join(' and ')}; the current case includes {issueDiff.current.join(' and ')}.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function EvidenceRecord({ entry, assets, onOpenRecord, missingFromHistory, sourceMissing }) {
+  const { recordId, record } = entry;
+  const resolvedAssetId = assetIdentifier(record, assets);
+  const canOpen = Boolean(record && resolvedAssetId);
+  const sourceDate = String(record?.occurred_at ?? '').trim();
+
+  return (
+    <details className="rounded-lg border border-theme bg-page/20 px-3 py-2">
+      <summary className="cursor-pointer list-none rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+        <span className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+          <span className="break-all font-mono text-xs text-accent">{recordId}</span>
+          <span className="flex shrink-0 flex-wrap items-center gap-2 font-sans text-[11px] text-secondary">
+            {sourceDate && <time dateTime={sourceDate}>{sourceDate}</time>}
+            {record?.is_superseded || record?.status === 'superseded' ? (
+              <span className="text-amber-400">Superseded</span>
+            ) : null}
+            <span aria-hidden="true" className="text-accent">Details ↓</span>
+          </span>
+        </span>
+      </summary>
+
+      <div className="mt-3 border-t border-theme pt-3">
+        {record ? (
+          <>
+            <dl className="grid gap-3 sm:grid-cols-2">
+              <RecordField label="Aircraft / tail">{record.tail_number || record.asset_id || record.asset_key}</RecordField>
+              <RecordField label="Reported component">{record.part_name}</RecordField>
+              <RecordField label="Condition">{record.part_condition}</RecordField>
+              <RecordField label="Location">{record.part_location}</RecordField>
+            </dl>
+            {record.text && (
+              <div className="mt-3">
+                <p className="font-sans text-[11px] uppercase tracking-wide text-secondary">Original maintenance narrative</p>
+                <p className="mt-1 whitespace-pre-wrap break-words font-sans text-xs leading-5 text-primary">{record.text}</p>
+              </div>
+            )}
+            {canOpen && (
+              <button
+                type="button"
+                onClick={() => onOpenRecord(record)}
+                className="mt-3 font-sans text-xs font-medium text-accent underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                Open full record view →
+              </button>
+            )}
+            {missingFromHistory && (
+              <p role="status" className="mt-2 font-sans text-[11px] leading-4 text-amber-400">
+                This record was not found in the retrieved aircraft history. The fields above are the evidence snapshot returned with this Copilot turn.
+              </p>
+            )}
+          </>
+        ) : (
+          <p className="font-sans text-xs leading-5 text-secondary">
+            {sourceMissing
+              ? 'The cited identifier was preserved, but no matching source record was retrieved.'
+              : 'Only this cited record identifier is currently available.'}
+          </p>
+        )}
+      </div>
+    </details>
+  );
+}
+
+function EvidenceGroup({ group, assets, currentIssues, expanded, onToggle, onOpenRecord, missingFromHistory, sourceMissing }) {
+  const hiddenCount = Math.max(0, group.records.length - GROUP_PREVIEW_COUNT);
+  const visibleRecords = expanded ? group.records : group.records.slice(0, GROUP_PREVIEW_COUNT);
+  const groupTitle = group.aircraft ? `Aircraft ${group.aircraft}` : 'Aircraft not identified';
+
+  return (
+    <article className="rounded-xl border border-theme bg-surface p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h6 className="break-words font-sans text-sm font-semibold text-primary">{groupTitle}</h6>
+          <p className="mt-0.5 font-sans text-xs text-secondary">
+            {group.records.length} maintenance record{group.records.length === 1 ? '' : 's'}
+          </p>
+        </div>
+        <span className="rounded-full border border-theme px-2 py-0.5 font-sans text-[10px] uppercase tracking-wide text-secondary">
+          {group.provenance.kind === 'same' ? 'Same aircraft' : group.provenance.kind === 'other' ? 'Fleet evidence' : 'Unverified aircraft'}
+        </span>
+      </div>
+
+      {(group.component || group.condition) && (
+        <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+          <RecordField label="Reported component">{group.component}</RecordField>
+          <RecordField label="Historical condition">{group.condition}</RecordField>
+        </dl>
+      )}
+
+      <ProvenanceNotice group={group} currentIssues={currentIssues} />
+
+      <div className="mt-3 space-y-2" aria-label={`Individual reports for ${groupTitle}`}>
+        {visibleRecords.map(entry => (
+          <EvidenceRecord
+            key={entry.recordId}
+            entry={entry}
+            assets={assets}
+            onOpenRecord={onOpenRecord}
+            missingFromHistory={missingFromHistory(entry)}
+            sourceMissing={sourceMissing(entry.recordId)}
+          />
+        ))}
+      </div>
+
+      {hiddenCount > 0 && (
+        <button
+          type="button"
+          aria-expanded={expanded}
+          onClick={onToggle}
+          className="mt-3 w-full rounded-lg border border-theme px-3 py-2 text-left font-sans text-xs font-medium text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          {expanded ? 'Show fewer records' : `Show remaining ${hiddenCount} record${hiddenCount === 1 ? '' : 's'}`}
+        </button>
+      )}
+    </article>
   );
 }
 
 export default function DiagnosticEvidenceInspector({
   response,
   selectedPartName,
+  selectedAssetId,
   assets,
   onOpenRecord,
   initialRecords = {},
@@ -60,6 +212,11 @@ export default function DiagnosticEvidenceInspector({
   const [lookedUpRecords, setLookedUpRecords] = useState(new Map());
   const [recordLoadState, setRecordLoadState] = useState({ loading: false, errors: [], missing: [] });
   const [retryKey, setRetryKey] = useState(0);
+  const [expandedGroups, setExpandedGroups] = useState(new Set());
+
+  useEffect(() => {
+    setExpandedGroups(new Set());
+  }, [selectedPartName, responseEvidenceSignature]);
 
   useEffect(() => {
     const requestId = ++requestRef.current;
@@ -71,17 +228,17 @@ export default function DiagnosticEvidenceInspector({
     const sources = new Map();
     sourceEvidence.forEach(record => {
       const assetId = assetIdentifier(record, assets);
-      if (assetId) sources.set(assetId, record.asset_id || record.asset_key || assetId);
+      if (assetId) sources.set(assetId, record.tail_number || record.asset_id || record.asset_key || assetId);
     });
     if (sources.size === 0) return undefined;
 
     let cancelled = false;
     const cached = new Map();
-    const pending = [];
     sourceEvidence.forEach(record => {
       const recordId = evidenceKey(record);
       if (initialRecords[recordId]) cached.set(recordId, initialRecords[recordId]);
     });
+    const pending = [];
     sources.forEach((sourceLabel, assetId) => {
       const cachedHistory = historyCacheRef.current.get(assetId);
       if (cachedHistory?.signature === responseEvidenceSignature) {
@@ -165,16 +322,41 @@ export default function DiagnosticEvidenceInspector({
     return () => { cancelled = true; };
   }, [selectedCheck, missingEvidenceIds, retryKey, initialRecords, onRecordsResolved]);
 
-  if (!response) {
-    return null;
-  }
+  const recordsById = useMemo(() => {
+    const records = new Map();
+    recordIds.map(String).forEach(recordId => {
+      const turnRecord = evidenceById.get(recordId);
+      const enrichedRecord = historyRecords.get(recordId);
+      const lookedUpRecord = lookedUpRecords.get(recordId);
+      const initialRecord = initialRecords[recordId];
+      if (turnRecord) {
+        records.set(recordId, {
+          ...turnRecord,
+          ...(initialRecord ?? {}),
+          ...(enrichedRecord ?? {}),
+          asset_id: turnRecord.asset_id || enrichedRecord?.asset_id || initialRecord?.asset_id,
+        });
+      } else if (lookedUpRecord || initialRecord) {
+        records.set(recordId, lookedUpRecord ?? initialRecord);
+      }
+    });
+    return records;
+  }, [recordIds, evidenceById, historyRecords, lookedUpRecords, initialRecords]);
+
+  const groups = useMemo(
+    () => groupEvidenceRecords(recordIds, recordsById, selectedAssetId, assets),
+    [recordIds, recordsById, selectedAssetId, assets]
+  );
+  const currentIssues = useMemo(() => caseIssueLabels(response?.case_state), [response]);
+
+  if (!response) return null;
 
   if (!selectedPartName) {
     return (
       <section aria-label="Component evidence inspector" className="mt-4 border-t border-theme pt-4">
         <h4 className="font-brand text-base text-primary">Evidence inspector</h4>
         <p className="mt-2 font-sans text-xs leading-5 text-secondary">
-          Select a ranked component to inspect the historical records supporting its current heuristic position.
+          Select a ranked component to inspect its grounded historical records.
         </p>
       </section>
     );
@@ -185,8 +367,7 @@ export default function DiagnosticEvidenceInspector({
     const ruledOut = (response.case_state?.ruled_out ?? []).includes(selectedPartName);
     return (
       <section aria-label="Component evidence inspector" className="mt-4 border-t border-theme pt-4">
-        <p className="eyebrow">Selected component</p>
-        <h4 className="mt-1 break-words font-brand text-base text-primary">{selectedPartName}</h4>
+        <h4 className="break-words font-brand text-base text-primary">Evidence for {selectedPartName}</h4>
         <div role="status" className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
           <p className="font-sans text-sm font-medium text-amber-400">
             {ruledOut ? 'Ruled out of the current investigation' : 'No longer in the current ranking'}
@@ -200,112 +381,67 @@ export default function DiagnosticEvidenceInspector({
     );
   }
 
-  const observations = response.case_state?.observations ?? [];
+  const observationCount = response.case_state?.observations?.length ?? 0;
+  const retrievedCount = recordsById.size;
+  const missingFromHistory = ({ recordId, record }) => {
+    const resolvedAssetId = assetIdentifier(record, assets);
+    return Boolean(
+      evidenceById.has(recordId)
+      && resolvedAssetId
+      && historyCacheRef.current.get(resolvedAssetId)?.signature === responseEvidenceSignature
+      && !historyRecords.has(recordId)
+    );
+  };
 
   return (
     <section aria-label="Component evidence inspector" className="mt-4 border-t border-theme pt-4">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="eyebrow">Selected component</p>
-          <h4 className="mt-1 break-words font-brand text-base text-primary">{selectedCheck.part_name}</h4>
+      <h4 className="break-words font-brand text-base text-primary">Evidence for {selectedCheck.part_name}</h4>
+      <p className="mt-1 font-sans text-[11px] leading-4 text-secondary">
+        Case State contains {observationCount} model-extracted observation{observationCount === 1 ? '' : 's'}; original technician wording remains in the conversation.
+      </p>
+
+      <div className="mt-4">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h5 className="font-sans text-xs font-semibold uppercase tracking-wide text-primary">Historical evidence</h5>
+            <p className="mt-1 font-sans text-xs text-secondary">
+              {recordIds.length} cited record ID{recordIds.length === 1 ? '' : 's'} · {retrievedCount} source record{retrievedCount === 1 ? '' : 's'} retrieved
+            </p>
+          </div>
         </div>
-        <span className="rounded-full border border-accent/40 px-2 py-0.5 font-sans text-xs font-medium text-accent">
-          Rank {selectedCheck.rank}
-        </span>
-      </div>
-
-      <div className="mt-3 rounded-lg border border-theme bg-surface p-3">
-        <p className="font-sans text-xs font-medium text-primary">HALITE heuristic ranking</p>
-        <p className="mt-1 font-sans text-xs leading-5 text-secondary">
-          Score {Number.isFinite(Number(selectedCheck.score)) ? Number(selectedCheck.score).toFixed(2) : 'not available'} is a ranking signal, not a failure probability or confirmation of a root cause.
+        <p className="mt-2 font-sans text-[11px] leading-4 text-secondary">
+          Historical records help order checks; they are not probabilities and do not confirm the current aircraft&apos;s root cause.
         </p>
-      </div>
-
-      <div className="mt-4">
-        <h5 className="font-sans text-xs font-semibold uppercase tracking-wide text-primary">Current technician observations</h5>
-        {observations.length > 0 ? (
-          <ul className="mt-2 list-disc space-y-1 pl-5 font-sans text-xs leading-5 text-secondary">
-            {observations.map(observation => <li key={observation}>{observation}</li>)}
-          </ul>
-        ) : (
-          <p className="mt-1 font-sans text-xs text-secondary">No current observations are recorded in the case state.</p>
+        {retrievedCount < recordIds.length && (
+          <p role="status" className="mt-2 rounded-lg border border-amber-500/30 bg-amber-500/5 p-2 font-sans text-[11px] leading-4 text-amber-400">
+            Source details are currently available for {retrievedCount} of {recordIds.length} cited IDs. Every cited ID remains listed below.
+          </p>
         )}
-      </div>
-
-      <div className="mt-4">
-        <h5 className="font-sans text-xs font-semibold uppercase tracking-wide text-primary">Historical FAA SDR evidence</h5>
-        <p className="mt-1 font-sans text-[11px] leading-4 text-secondary">
-          Historical observations help order checks; they do not verify the current aircraft&apos;s root cause.
-        </p>
 
         {recordIds.length === 0 ? (
           <div className="mt-2 rounded-lg border border-dashed border-theme p-3 font-sans text-xs text-secondary">
             No supporting record IDs were returned for this component.
           </div>
         ) : (
-          <div className="mt-2 space-y-2">
-            {recordIds.map(recordId => {
-              const turnRecord = evidenceById.get(String(recordId));
-              const fullRecord = historyRecords.get(String(recordId));
-              const lookedUpRecord = lookedUpRecords.get(String(recordId));
-              const record = turnRecord
-                ? { ...turnRecord, ...fullRecord, asset_id: turnRecord.asset_id }
-                : lookedUpRecord ?? null;
-              const resolvedAssetId = assetIdentifier(record, assets);
-              const canOpen = Boolean(record && resolvedAssetId);
-              const missingFromHistory = Boolean(
-                turnRecord
-                && resolvedAssetId
-                && historyCacheRef.current.get(resolvedAssetId)?.signature === responseEvidenceSignature
-                && !fullRecord
-              );
-              return (
-                <article key={recordId} className="rounded-lg border border-theme bg-surface p-3">
-                  <div className="flex flex-wrap items-start justify-between gap-2">
-                    <span className="break-all font-mono text-xs text-accent">{recordId}</span>
-                    {record?.is_superseded || record?.status === 'superseded' ? (
-                      <span className="font-sans text-[11px] text-amber-400">Superseded historical record</span>
-                    ) : null}
-                  </div>
-                  {record ? (
-                    <>
-                      <dl className="mt-3 grid gap-3 sm:grid-cols-2">
-                        <RecordField label="Aircraft / tail">{record.tail_number || record.asset_id || record.asset_key}</RecordField>
-                        <RecordField label="Report date">{record.occurred_at ? formatDate(record.occurred_at) : null}</RecordField>
-                        <RecordField label="Reported component">{record.part_name}</RecordField>
-                        <RecordField label="Condition / location">{[record.part_condition, record.part_location].filter(Boolean).join(' · ')}</RecordField>
-                      </dl>
-                      {record.text && (
-                        <div className="mt-3">
-                          <p className="font-sans text-[11px] uppercase tracking-wide text-secondary">Maintenance report</p>
-                          <p className="mt-1 whitespace-pre-wrap break-words font-sans text-xs leading-5 text-primary">{record.text}</p>
-                        </div>
-                      )}
-                      {canOpen && (
-                        <button
-                          type="button"
-                          onClick={() => onOpenRecord(record)}
-                          className="mt-3 font-sans text-xs font-medium text-accent underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                        >
-                          Open full record view →
-                        </button>
-                      )}
-                      {missingFromHistory && (
-                        <p role="status" className="mt-2 font-sans text-[11px] leading-4 text-amber-400">
-                          This record was not found in the retrieved aircraft history. The fields above are the evidence snapshot returned with this Copilot turn.
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <p className="mt-2 font-sans text-xs leading-5 text-secondary">
-                      {recordLoadState.missing.includes(String(recordId))
-                        ? 'The record identifier was returned for this component, but no matching source record was found.'
-                        : 'Only this record identifier is available in the current Copilot response.'}
-                    </p>
-                  )}
-                </article>
-              );
-            })}
+          <div className="mt-3 space-y-3">
+            {groups.map(group => (
+              <EvidenceGroup
+                key={group.key}
+                group={group}
+                assets={assets}
+                currentIssues={currentIssues}
+                expanded={expandedGroups.has(group.key)}
+                onToggle={() => setExpandedGroups(current => {
+                  const next = new Set(current);
+                  if (next.has(group.key)) next.delete(group.key);
+                  else next.add(group.key);
+                  return next;
+                })}
+                onOpenRecord={onOpenRecord}
+                missingFromHistory={missingFromHistory}
+                sourceMissing={recordId => recordLoadState.missing.includes(String(recordId))}
+              />
+            ))}
           </div>
         )}
 

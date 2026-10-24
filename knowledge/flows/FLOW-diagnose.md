@@ -34,10 +34,15 @@ the browser sends the structured case state on every request.
 8. The model phrases a reply only from supplied records and asks at most one
    question. Citation validation flags unknown or out-of-context IDs.
 9. The UI shows the thread, editable case state, movement badges, evidence,
-   citation status, and deep links into aircraft history. Selecting a current
-   ranked component scopes the inspector strictly to that check's evidence IDs;
-   the turn evidence is shown immediately and read-only asset-history/record-list
-   APIs can resolve the original record without invoking the record conflict endpoint.
+   citation status, and deep links into aircraft history. Case State is the sole
+   structured list of extracted case facts; the inspector does not repeat it.
+   Selecting a current ranked component scopes the inspector strictly to that
+   check's evidence IDs. It deterministically groups records only when exact
+   aircraft identity, component, and condition agree; previews three exact-ID/date
+   reports; labels same-aircraft, other-aircraft/fleet, or unavailable provenance;
+   and expands each original narrative independently. Turn evidence is shown
+   immediately and read-only asset-history/record-list APIs can resolve the
+   original record without invoking the record conflict endpoint.
 10. The current unsaved workspace is versioned and persisted separately from
     named saved sessions. Route remounts and refreshes hydrate it directly—without
     inference or ranking animation—and source-aware Asset History links return to
@@ -71,6 +76,7 @@ the browser sends the structured case state on every request.
 flowchart TB
   subgraph frontend
     D[Diagnostics.jsx]
+    EI[DiagnosticEvidenceInspector + provenance/grouping helper]
     S[(guarded localStorage sessions)]
     C[api/client.js]
     H[AssetHistory deep link]
@@ -87,6 +93,7 @@ flowchart TB
     N[(Neo4j Asset/ServiceRecord)]
   end
   D -->|copilotTurn / diagnose| C --> R
+  D --> EI
   D <--> S
   R -->|accumulated case| RET --> QR --> N
   R --> G
@@ -98,6 +105,7 @@ flowchart TB
 ## File dependencies
 
 - `Diagnostics.jsx` → `client.js` → `diagnostics.py`
+- `Diagnostics.jsx` → `DiagnosticEvidenceInspector.jsx` → `utils/diagnosticEvidence.js`
 - `diagnostics.py` → additive copilot helpers in `diagnostic_retrieval.py`
 - `diagnostic_retrieval.py` → `queries.py` → Neo4j/memory store
 - `diagnostics.py` → `groq_service.py` + `citation_validation.py`

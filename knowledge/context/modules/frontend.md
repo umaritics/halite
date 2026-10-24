@@ -23,7 +23,7 @@ The software-domain screens still exist in the repo but are **not reachable** (s
 | Navigation | `frontend/src/components/Sidebar.jsx` (maintenance destinations only) |
 | API adapter | `frontend/src/api/client.js` (`maintenanceAPI`) |
 | Pages | `pages/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx`; Copilot evidence details are rendered by `components/DiagnosticEvidenceInspector.jsx` |
-| Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `diagnosticWorkspace.js` (versioned active-workspace persistence), `format.js` (dates), `loadError.js` |
+| Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `diagnosticEvidence.js` (exact aircraft provenance, discrepancy labels, deterministic evidence grouping), `diagnosticWorkspace.js` (versioned active-workspace persistence), `format.js` (dates), `loadError.js` |
 | Tests | `frontend/src/test/*` (Vitest, API mocked) |
 | Runtime target | `frontend/.env.development` (staging) · override with local `.env.local` |
 | Hosted routing | root `vercel.json` (API to backend service; `/app/*` SPA fallback inside the frontend service) |
@@ -65,6 +65,9 @@ not capture `/api/*` or `/assets/*`.
 | Evidence links from Diagnostics carry explicit router state. Asset History shows **Back to investigation** only for that source and always routes explicitly to `/app/diagnostics`; direct/Assets entry retains **Back to Assets** without claiming an investigation exists | `Diagnostics.jsx`, `AssetHistory.jsx` |
 | Live-ranking motion is driven only by successful-turn `ranked_checks` + `ranking_delta`; initial/session-restored/unchanged/error states do not animate, and reduced-motion disables movement | `Diagnostics.jsx` |
 | A live-ranked component's inspector is keyed only by that check's `evidence_record_ids`; it shows the turn's grounded evidence immediately, may enrich it from the read-only asset-history endpoint, and resolves ID-only entries through the read-only paginated records list. It never uses `GET /maintenance/records/{id}` because that endpoint can invoke the conflict model. Dropped/ruled-out selections never retain stale evidence | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
+| Case State is the sole structured presentation of model-extracted symptoms, observations, completed checks, and ruled-out components. The inspector shows only an observation count/reference; it does not repeat the facts. Original technician wording stays in the conversation. Symptoms and observations remain separate backend fields | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
+| Live Ranking owns rank, heuristic score, and the single score disclaimer. The inspector uses a contextual `Evidence for …` heading without repeating rank or score | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
+| Inspector evidence is grouped only when exact grounded aircraft identity, component, and condition agree. It previews three exact-ID/date reports, preserves every cited ID, distinguishes cited versus retrieved counts, and expands each original narrative individually. Same-aircraft, other-aircraft/fleet, and unavailable/unverified provenance use exact known identifiers—never substring matching | `components/DiagnosticEvidenceInspector.jsx`, `utils/diagnosticEvidence.js`, [DEC-20261025-evidence-provenance](../../decisions/DEC-20261025-evidence-provenance.md) |
 | **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
@@ -98,6 +101,9 @@ deep links containing a UUID are environment-specific.
 shape, not live integration. There is no linter. Evidence and live checks: `docs/mid1/02_frontend_evidence.md`.
 
 ## Open / known
+
+- D3B.2 audit: copilot fleet retrieval intentionally calls `similar_symptom_records(..., exclude_asset_id=asset_id)`, so other-aircraft evidence is expected ranking context rather than a frontend filter defect. The inspector labels it and does not filter or rerank it.
+- D3B.2 audit: a crack can exist under `case_state.observations` while `case_state.symptoms` is empty because the model extraction contract keeps the arrays separate. The frontend renders both as returned and does not promote every observation to a symptom. Extraction-taxonomy changes, if wanted, are a backend follow-up.
 
 - `npm audit --omit=dev`: 2 moderate react-router 6.x advisories remain; the fix is react-router 7 (breaking). See
   deferred scope.
