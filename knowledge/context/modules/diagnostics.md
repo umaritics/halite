@@ -50,9 +50,19 @@ raw message. Model failure returns HTTP 200 with `reply:null`, an unavailable
 status, and deterministic evidence/ranking. Unknown aircraft is 404; blank or
 oversized messages are 422.
 
+`symptoms` and `observations` are intentionally distinct extraction fields. A
+reported crack may therefore appear only as an observation while Symptoms is
+empty; the frontend must not promote it automatically. Changing that taxonomy
+belongs to the extraction contract, not presentation normalization.
+
 Explicit record IDs and aircraft/date/topic report requests are selected
 deterministically before the model summarizes them. Superseded records remain
 visible evidence but are excluded from copilot recommendations.
+
+When an aircraft is selected, fleet retrieval deliberately excludes that asset
+and can return other-aircraft matches. Those records are ranking context, not a
+claim about the selected aircraft; the frontend preserves them and labels their
+provenance rather than filtering or reranking them.
 
 ## Ranking honesty (Mid-I)
 

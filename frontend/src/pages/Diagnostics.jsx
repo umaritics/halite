@@ -873,7 +873,7 @@ function RankingItem({ check, delta, showMovement, selected, onSelect, onMarkDon
   );
 }
 
-function LiveRankingPanel({ response, transitionKey, loading, selectedPartName, inspectorRecords, assets, onSelect, onOpenRecord, onRecordsResolved, onMarkDone, onRuleOut }) {
+function LiveRankingPanel({ response, transitionKey, loading, selectedPartName, selectedAssetId, inspectorRecords, assets, onSelect, onOpenRecord, onRecordsResolved, onMarkDone, onRuleOut }) {
   const checks = response?.ranked_checks ?? [];
   const [displayChecks, setDisplayChecks] = useState(checks);
   const [expanded, setExpanded] = useState(false);
@@ -1064,6 +1064,7 @@ function LiveRankingPanel({ response, transitionKey, loading, selectedPartName, 
       <DiagnosticEvidenceInspector
         response={response}
         selectedPartName={selectedPartName}
+        selectedAssetId={selectedAssetId}
         assets={assets}
         onOpenRecord={onOpenRecord}
         initialRecords={inspectorRecords}
@@ -1273,7 +1274,7 @@ function Copilot() {
         message: text,
         case_state: stateForTurn,
       });
-      const data = response.data;
+      const data = { ...response.data, _investigation_asset_id: assetId };
       setSessionId(data.session_id);
       setCaseState(data.case_state ?? stateForTurn);
       setThread(items => [...items, { role: 'assistant', response: data, content: data.reply }]);
@@ -1493,7 +1494,6 @@ function Copilot() {
           />
           <button type="submit" disabled={!message.trim() || loading} className="halite-btn-primary mt-3 disabled:opacity-50">Send</button>
         </form>
-        <p className="font-sans text-xs text-secondary xl:shrink-0">Decision support only. Evidence scores are heuristic rankings, not probabilities or confidence.</p>
         </main>
 
         <aside ref={investigationRailRef} onScroll={trackInvestigationPosition} aria-label="Investigation workspace panels" tabIndex="0" className="order-1 min-w-0 self-start space-y-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent xl:order-none xl:col-start-2 xl:row-start-1 xl:h-full xl:min-h-0 xl:self-stretch xl:overflow-y-auto xl:overscroll-contain xl:pr-1">
@@ -1502,6 +1502,7 @@ function Copilot() {
             transitionKey={rankingTransitionKey}
             loading={loading}
             selectedPartName={selectedPartName}
+            selectedAssetId={latest?._investigation_asset_id ?? assetId}
             inspectorRecords={inspectorRecords}
             assets={assets}
             onSelect={setSelectedPartName}
@@ -1513,6 +1514,9 @@ function Copilot() {
 
         <section className="halite-card p-4">
           <h3 className="font-brand text-primary">Case state</h3>
+          <p className="mt-1 font-sans text-[11px] leading-4 text-secondary">
+            Structured case facts returned by Copilot extraction. Original technician wording remains in the conversation; observations are not automatically treated as symptoms.
+          </p>
           {['symptoms', 'observations', 'checks_done', 'ruled_out'].map(field => (
             <div key={field} className="mt-3">
               <h4 className="eyebrow">{field.replace('_', ' ')}</h4>
