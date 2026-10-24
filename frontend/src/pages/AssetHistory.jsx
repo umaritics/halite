@@ -19,17 +19,27 @@ function recordIdFromHash(hash) {
   }
 }
 
-function BackLink() {
+function BackLinks({ fromInvestigation }) {
   return (
-    <Link to="/app/assets" className="inline-flex items-center gap-2 text-accent hover:underline mb-4 font-sans text-sm font-medium">
-      <ArrowLeftIcon className="h-4 w-4" /> Back to Assets
-    </Link>
+    <nav aria-label="Return navigation" className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+      {fromInvestigation && (
+        <Link to="/app/diagnostics" className="inline-flex items-center gap-2 font-sans text-sm font-medium text-accent hover:underline">
+          <ArrowLeftIcon className="h-4 w-4" /> Back to investigation
+        </Link>
+      )}
+      <Link to="/app/assets" className={`inline-flex items-center gap-2 font-sans text-sm font-medium hover:underline ${fromInvestigation ? 'text-secondary' : 'text-accent'}`}>
+        {!fromInvestigation && <ArrowLeftIcon className="h-4 w-4" />} Back to Assets
+      </Link>
+    </nav>
   );
 }
 
 export default function AssetHistory() {
   const { assetId } = useParams();
-  const { hash } = useLocation();
+  const location = useLocation();
+  const { hash } = location;
+  const fromInvestigation = location.state?.from === 'diagnostics'
+    && location.state?.returnTo === '/app/diagnostics';
   const linkedRecordId = recordIdFromHash(hash);
 
   const [data, setData] = useState(null);
@@ -73,11 +83,14 @@ export default function AssetHistory() {
 
   if (loading) {
     return (
-      <div className="flex h-full flex-col p-6" role="status" aria-label="Loading service history">
-        <div className="h-8 w-32 bg-surface-dark/10 animate-pulse rounded mb-4"></div>
-        <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
-        <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
-        <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
+      <div className="flex h-full flex-col p-6">
+        <BackLinks fromInvestigation={fromInvestigation} />
+        <div role="status" aria-label="Loading service history">
+          <div className="h-8 w-32 bg-surface-dark/10 animate-pulse rounded mb-4"></div>
+          <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
+          <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
+          <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
+        </div>
       </div>
     );
   }
@@ -86,7 +99,7 @@ export default function AssetHistory() {
     const notFound = error.kind === 'not-found';
     return (
       <div className="flex h-full flex-col p-6">
-        <BackLink />
+        <BackLinks fromInvestigation={fromInvestigation} />
         <div role="alert" className="halite-card border border-red-500/30 bg-red-500/5 p-4 max-w-xl">
           <p className="font-sans text-sm font-medium text-red-400">
             {notFound ? 'Aircraft not found' : 'Could not load service history'}
@@ -109,7 +122,7 @@ export default function AssetHistory() {
   if (records.length === 0) {
     return (
       <div className="flex h-full flex-col p-6">
-        <BackLink />
+        <BackLinks fromInvestigation={fromInvestigation} />
         <p className="font-sans text-secondary">No records for this asset yet.</p>
       </div>
     );
@@ -121,9 +134,7 @@ export default function AssetHistory() {
     <div className="flex h-full flex-col">
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-theme px-6 py-4">
         <div>
-          <Link to="/app/assets" className="inline-flex items-center gap-2 text-accent hover:underline mb-2 font-sans text-sm font-medium">
-            <ArrowLeftIcon className="h-4 w-4" /> Back to Assets
-          </Link>
+          <BackLinks fromInvestigation={fromInvestigation} />
           <h2 className="font-brand text-xl text-primary">{tailNumber}</h2>
           <p className="font-sans text-sm text-secondary">{data.count ?? records.length} service records</p>
         </div>

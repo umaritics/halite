@@ -3,7 +3,7 @@ id: mod-frontend
 title: Frontend maintenance UX
 status: active
 owners: [Shahmeer]
-updated: 2026-10-24
+updated: 2026-10-25
 ---
 
 # Module: Frontend (maintenance)
@@ -22,8 +22,8 @@ The software-domain screens still exist in the repo but are **not reachable** (s
 | Domain lock | `frontend/src/context/DomainContext.jsx` (fixed to `maintenance`) |
 | Navigation | `frontend/src/components/Sidebar.jsx` (maintenance destinations only) |
 | API adapter | `frontend/src/api/client.js` (`maintenanceAPI`) |
-| Pages | `pages/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx` |
-| Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `format.js` (dates), `loadError.js` |
+| Pages | `pages/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx`; Copilot evidence details are rendered by `components/DiagnosticEvidenceInspector.jsx` |
+| Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `diagnosticWorkspace.js` (versioned active-workspace persistence), `format.js` (dates), `loadError.js` |
 | Tests | `frontend/src/test/*` (Vitest, API mocked) |
 | Runtime target | `frontend/.env.development` (staging) · override with local `.env.local` |
 | Hosted routing | root `vercel.json` (API to backend service; `/app/*` SPA fallback inside the frontend service) |
@@ -61,6 +61,10 @@ not capture `/api/*` or `/assets/*`.
 | Missing model output is stated ("No written explanation returned"), not silently omitted | `Diagnostics.jsx` |
 | Copilot `reply:null` is a visible model-unavailable state while deterministic ranking/evidence remain visible | `Diagnostics.jsx` |
 | Copilot sessions use guarded `localStorage`; storage failure does not disable the page | `Diagnostics.jsx` |
+| The unsaved active Copilot workspace uses a separate, versioned local-storage key with a seven-day maximum age. Route remount/refresh hydrates messages, case state, latest responses, aircraft, draft, selected evidence component, up to 50 recently inspected source records, and scroll intent without sending a Copilot turn. **New investigation** clears only this active snapshot; named saved sessions remain | `Diagnostics.jsx`, `utils/diagnosticWorkspace.js` |
+| Evidence links from Diagnostics carry explicit router state. Asset History shows **Back to investigation** only for that source and always routes explicitly to `/app/diagnostics`; direct/Assets entry retains **Back to Assets** without claiming an investigation exists | `Diagnostics.jsx`, `AssetHistory.jsx` |
+| Live-ranking motion is driven only by successful-turn `ranked_checks` + `ranking_delta`; initial/session-restored/unchanged/error states do not animate, and reduced-motion disables movement | `Diagnostics.jsx` |
+| A live-ranked component's inspector is keyed only by that check's `evidence_record_ids`; it shows the turn's grounded evidence immediately, may enrich it from the read-only asset-history endpoint, and resolves ID-only entries through the read-only paginated records list. It never uses `GET /maintenance/records/{id}` because that endpoint can invoke the conflict model. Dropped/ruled-out selections never retain stale evidence | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
 | **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
