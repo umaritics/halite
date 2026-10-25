@@ -31,6 +31,7 @@ showed none of a record's stored fields. Whole-fleet rendering is unreadable.
   legend explains each type and counts the ones in view.
 - Nodes are labelled by tail number or record id. The side panel shows the stored
   record or aircraft fields and links to Asset History.
+- A browser without WebGL, or a renderer error, shows a message instead of a blank page; the legend, selector and navigation still work.
 - Legacy software-domain nodes are filtered out (see
   [DEC-20261016-frontend-maintenance-only](DEC-20261016-frontend-maintenance-only.md)).
 
