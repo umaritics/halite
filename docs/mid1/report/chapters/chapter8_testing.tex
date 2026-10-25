@@ -133,6 +133,7 @@ The baseline reaches its recall by asserting a supersession on every pair it see
 \textbf{How far this evidence goes.} It is \emph{historical}: it comes from saved result files of the older run, with a model that is not the one now configured on staging. It measures conflict detection and is \textbf{not} a measure of diagnostic accuracy. The full-corpus counts published with it (121 detected, 117 auto-resolved, 4 for review, 1,617 without candidates) cannot be reproduced from the current code and are not used here.
 
 \section{Edge and Failure Cases}
+\begingroup\renewcommand{\tablefont}{\footnotesize}
 \begin{longtable}{p{0.3\textwidth}p{0.62\textwidth}}
 \caption{Edge and failure cases, and the behaviour tested}\label{tab:edge}\\
 \toprule \textbf{Case} & \textbf{Behaviour} \\ \midrule \endfirsthead
@@ -155,8 +156,10 @@ Unreadable CSV (for example empty) & Backend raises an unhandled error (HTTP 500
 Browser storage denied or corrupt & Copilot remains usable; a warning is shown \\
 \bottomrule
 \end{longtable}
+\endgroup
 
 \section{Defects and Corrective Actions}
+\begingroup\renewcommand{\tablefont}{\footnotesize}
 \begin{longtable}{p{0.04\textwidth}p{0.43\textwidth}p{0.4\textwidth}p{0.08\textwidth}}
 \caption{Defects found and their resolution}\label{tab:defects}\\
 \toprule \textbf{\#} & \textbf{Defect} & \textbf{Corrective action} & \textbf{State} \\ \midrule \endfirsthead
@@ -170,13 +173,14 @@ Browser storage denied or corrupt & Copilot remains usable; a warning is shown \
 7 & Graph requested 200 nodes yet claimed ``Capped at 2000'' & Request 3,000; truthful counts; warning when the cap is hit & Fixed \\
 8 & CSV upload client posted to a route that accepts only a server path; nothing used it & Posts to the upload route; new upload panel & Fixed \\
 9 & Small graphs hid their edges behind large nodes & Spacing and node size changed & Fixed \\
-10 & Staging fresh diagnoses returned no explanation text (16 Oct) & Re-tested on 18 Oct at \code{06bc614}: one fresh diagnosis succeeded with a full explanation. The 16 October observation was not reproduced and its cause was never established & Not reproduced \\
+10 & Staging fresh diagnoses returned no explanation text (16 Oct) & Re-tested 18 Oct at \code{06bc614}: a fresh diagnosis succeeded; the earlier observation was not reproduced and its cause was never established & Not reproduced \\
 11 & Unreadable CSV returns an unhandled HTTP 500 & Interface wording only; backend change belongs to its owner & Open \\
 12 & One staging record has no \code{ABOUT} link & Re-running ingest repairs it; not applied to shared data without approval & Open \\
-13 & Every fresh one-shot diagnosis failed with HTTP 503: the prompt builder returned nothing (introduced 16 Oct, found 18 Oct by live re-validation) & Body restored; two regression tests that fail on the broken version; verified live locally and on staging (PR \#17) & Fixed \\
-14 & The graph-reset route could wipe the database with no authentication & Operations token required, typed confirmation for Neo4j, four regression tests (PR \#16); not exercised against staging & Fixed \\
+13 & Every fresh one-shot diagnosis failed (HTTP 503): the prompt builder returned nothing (introduced 16 Oct, found 18 Oct) & Body restored; two tests that fail on the broken version; verified locally and on staging (PR \#17) & Fixed \\
+14 & The graph-reset route could wipe the database without authentication & Operations token and typed confirmation; four regression tests (PR \#16); not exercised on staging & Fixed \\
 \bottomrule
 \end{longtable}
+\endgroup
 
 \section{Current Validation Status}
-\textbf{Validated:} the code paths covered by 371 automated tests; the diagnosis path live on the real stack and on staging (Section~\ref{sec:revalidation}); the end-to-end slice on real records; the failure behaviour in Table~\ref{tab:edge}; the engine on one aircraft against the FAA's own labels (3 of 3). \textbf{Not validated:} diagnostic accuracy of the ranking; retrieval quality against baselines; the engine on the full corpus or with the staging model; usability with real technicians; load performance; code coverage; setup by an outside person. These are planned in Chapter~\ref{ch:remaining}.
+\textbf{Validated:} the code covered by 371 automated tests; the diagnosis path live on the real stack and on staging (Section~\ref{sec:revalidation}); the failure behaviour in Table~\ref{tab:edge}; the engine on one aircraft against the FAA's own labels (3 of 3). \textbf{Not validated:} diagnostic accuracy of the ranking; retrieval quality against baselines; the engine on the full corpus or the staging model; usability; load; coverage; outside setup (Chapter~\ref{ch:remaining}).
