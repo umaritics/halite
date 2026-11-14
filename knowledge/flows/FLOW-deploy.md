@@ -17,9 +17,9 @@ updated: 2026-10-16
    is the only manual-intent gate.
 3. The workflow records the currently deployed SHA for rollback evidence.
 4. GitHub Actions SSHes to the VM, which checks out the approved SHA and
-   rebuilds `halite-api` via `docker-compose.vm.yml`.
-5. Public `/api/health` and `/api/ops/version` must show the exact new SHA.
-6. Frontends using `VITE_API_URL=…/halite-api/api` see the new behavior.
+   rebuilds `halite-api` via `docker-compose.vm.yml` (non-root `10001:10001`, read-only rootfs, `noexec` tmpfs).
+5. `scripts/vm/remote_deploy.sh` and the workflow verify that public `/api/health` and `/api/ops/version` show the exact new SHA (`auth_enabled=true`, `openapi_enabled=false`), anonymous `/api/maintenance/assets` returns `401`, `/docs` returns `404`, `/api/webhook/gitea` returns `410`, and authenticated `Bearer <HALITE_API_KEY>` returns `200`.
+6. Frontends using `VITE_API_URL=…/halite-api/api` + `VITE_HALITE_API_KEY` see the new behavior.
 
 ## Log visibility path
 
@@ -45,7 +45,8 @@ flowchart TB
   Compose --> Image[backend Dockerfile + GIT_SHA]
   Image --> Caddy[Caddy → :8002]
   Caddy --> Public[https://dev1…/halite-api]
-  FE[frontend .env.local VITE_API_URL] --> Public
+  FE[frontend .env.local VITE_API_URL + VITE_HALITE_API_KEY] -->|Bearer key| Public
+  Public --> Sec[api/security.py + api/router.py]
 ```
 
 ## Failure modes
@@ -55,6 +56,8 @@ flowchart TB
 | Workflow fails “Missing secret” | Admin adds `VM_SSH_*` + `VM_DEPLOY_PATH` |
 | Health OK but maintenance 404 | Old image still running; redeploy current SHA |
 | Ops logs 503 | Set `OPS_TOKEN` in VM `backend/.env` and recreate container |
+| Protected `/api/*` 503 | `DEMO_MODE=false` without `HALITE_API_KEY` (fail-closed); set `HALITE_API_KEY` in VM `backend/.env` and recreate |
+| Protected `/api/*` 401 | Missing/wrong `Authorization: Bearer <HALITE_API_KEY>` (or `VITE_HALITE_API_KEY` missing in client env) |
 | Ops logs 401 | Wrong/missing `X-Ops-Token` header |
 | Frontend CI is red | Deployment remains blocked; fix on Shahmeer's branch, never bypass the gate |
 | Manual SHA is not a `main` ancestor | Dispatch fails before SSH |

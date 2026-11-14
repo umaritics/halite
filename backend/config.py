@@ -13,17 +13,34 @@ class Settings(BaseSettings):
     GROQ_API_KEY_FALLBACK: str = ""
     GROQ_MODEL: str = "openai/gpt-oss-20b"
 
+    # Deprecated: self-hosted Gitea was retired after the Nov 2026 VM incident.
+    # Routes fail closed (410 Gone) unless ENABLE_GITEA_INTEGRATION=true.
+    ENABLE_GITEA_INTEGRATION: bool = False
     GITEA_BASE_URL: str = ""
     GITEA_TOKEN: str = ""
     GITEA_WEBHOOK_SECRET: str = ""
 
     SECRET_KEY: str = "halite-dev-secret"
     FRONTEND_URL: str = "http://localhost:5173"
+    CORS_ALLOWED_ORIGINS: str = ""
+    CORS_ORIGIN_REGEX: str = r"^https://halite(?:-[a-z0-9-]+)?\.vercel\.app$"
 
     DEMO_MODE: bool = True
     MAX_UPLOAD_MB: int = 10
 
-    # Shared staging ops (partners use /api/ops/*; never commit the real token)
+    # Application-layer API authentication & public surface controls
+    # Required whenever DEMO_MODE=false (fail-closed 503 if unset).
+    HALITE_API_KEY: str = ""
+    # None -> enabled in DEMO_MODE=true, disabled (404) when DEMO_MODE=false
+    EXPOSE_OPENAPI: bool | None = None
+
+    # In-process sliding-window rate limits (per client IP)
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_API_PER_MINUTE: int = 180
+    RATE_LIMIT_LLM_PER_MINUTE: int = 20
+    RATE_LIMIT_AUTH_FAILURES_PER_MINUTE: int = 20
+
+    # Privileged operator secret (partners/ops use X-Ops-Token; never commit real value)
     OPS_TOKEN: str = ""
     GIT_SHA: str = "unknown"
     DEPLOYED_AT: str = ""
@@ -49,7 +66,42 @@ class Settings(BaseSettings):
 
     @property
     def gitea_configured(self) -> bool:
-        return bool(self.GITEA_BASE_URL and self.GITEA_TOKEN)
+        """Deprecated: Gitea integration is disabled unless ENABLE_GITEA_INTEGRATION=true."""
+        return bool(
+            self.ENABLE_GITEA_INTEGRATION and self.GITEA_BASE_URL and self.GITEA_TOKEN
+        )
+
+    @property
+    def api_key_configured(self) -> bool:
+        return bool((self.HALITE_API_KEY or "").strip())
+
+    @property
+    def api_auth_required(self) -> bool:
+        """Fail closed whenever DEMO_MODE is false, or whenever HALITE_API_KEY is configured."""
+        return self.api_key_configured or not self.DEMO_MODE
+
+    @property
+    def openapi_enabled(self) -> bool:
+        if self.EXPOSE_OPENAPI is not None:
+            return bool(self.EXPOSE_OPENAPI)
+        return bool(self.DEMO_MODE)
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        raw = [
+            self.FRONTEND_URL,
+            *(item.strip() for item in (self.CORS_ALLOWED_ORIGINS or "").split(",")),
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+        ]
+        seen: set[str] = set()
+        origins: list[str] = []
+        for origin in raw:
+            cleaned = (origin or "").strip().rstrip("/")
+            if cleaned and cleaned not in seen:
+                seen.add(cleaned)
+                origins.append(cleaned)
+        return origins
 
 
 settings = Settings()

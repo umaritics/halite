@@ -1,9 +1,39 @@
 import axios from 'axios';
 
+let sessionTokenGetter = null;
+
+/**
+ * Register a runtime token provider (used when website user auth / JWT sessions
+ * are enabled so user tokens take precedence over the static build-time API key).
+ */
+export function setSessionTokenGetter(getter) {
+  sessionTokenGetter = typeof getter === 'function' ? getter : null;
+}
+
+export function resolveClientBearerToken(envKey = import.meta.env.VITE_HALITE_API_KEY) {
+  const sessionToken = sessionTokenGetter ? String(sessionTokenGetter() || '').trim() : '';
+  if (sessionToken) return sessionToken;
+  return String(envKey || '').trim();
+}
+
+export function applyAuthHeaders(config, envKey = import.meta.env.VITE_HALITE_API_KEY) {
+  const next = { ...config, headers: { ...(config?.headers || {}) } };
+  const hasAuth = Object.keys(next.headers).some((k) => k.toLowerCase() === 'authorization');
+  if (!hasAuth) {
+    const token = resolveClientBearerToken(envKey);
+    if (token) {
+      next.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return next;
+}
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' },
 });
+
+api.interceptors.request.use((config) => applyAuthHeaders(config));
 
 export const chatAPI = {
   send: (message, history) => api.post('/chat', { message, conversation_history: history }),

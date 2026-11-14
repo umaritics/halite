@@ -384,6 +384,12 @@ The public template is [`backend/.env.example`](backend/.env.example). Never com
 | `MAINT_CONFIDENCE_THRESHOLD` | Conflict auto-accept threshold | `0.50`; do not tune for presentation optics |
 | `MAINT_MAX_CANDIDATES` | Maximum prior records per conflict comparison | `25` |
 | `FRONTEND_URL` | Allowed browser origin | `http://localhost:5173` |
+| `HALITE_API_KEY` | Primary API key (`Authorization: Bearer <key>` or `X-Halite-Api-Key`) | Required when `DEMO_MODE=false` (fails closed with HTTP `503` if unset); optional in `DEMO_MODE=true` (`docker-compose.yml` sets dev default `halite-local-dev-api-key`) |
+| `OPS_TOKEN` | Privileged operator secret (`X-Ops-Token`) for `/api/ops/logs`, graph reset, and batch analysis | Off (`503`) until configured on the server |
+| `EXPOSE_OPENAPI` | Controls `/docs`, `/redoc`, and `/openapi.json` | Enabled in `DEMO_MODE=true`; disabled (`404`) by default when `DEMO_MODE=false` |
+| `ENABLE_GITEA_INTEGRATION` | Legacy Gitea webhook/ingest switch | `false` (`410 Gone`); requires `GITEA_WEBHOOK_SECRET` HMAC if enabled |
+
+For public VM hardening, threat model, Caddy path rules, and verification commands, see [`docs/security-public-deployment.md`](docs/security-public-deployment.md).
 
 The service fails explicitly when an uncached model-dependent diagnostic is requested without a live model. `groq_configured=true` indicates that a key exists; it does not prove a successful live inference.
 

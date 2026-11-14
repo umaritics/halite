@@ -97,21 +97,22 @@ def stub_groq():
 # pull in the neo4j packstream init chain.
 # ---------------------------------------------------------------------------
 
-def _build_test_app():
+def _build_test_app(settings_override=None):
     """
     Build and return a FastAPI app wired for testing.
 
-    Registers all routes, sets app.state.graph_repo / groq_service / settings.
-    Does not use the lifespan — state is set directly.
+    Registers all routes via `api.router.register_api_routers`, sets
+    app.state.graph_repo / groq_service / settings, and mirrors `main.py`'s
+    OpenAPI gating, CORS, and security headers without importing `Neo4jClient`.
     """
-    import importlib
-    from fastapi import FastAPI
+    from fastapi import Depends, FastAPI
     from fastapi.middleware.cors import CORSMiddleware
 
-    # Reload config so any env overrides apply
     import config as cfg_module
-    settings = cfg_module.Settings()
+    settings = settings_override or cfg_module.Settings()
 
+    from api.router import register_api_routers
+    from api.security import SecurityHeadersMiddleware, require_public_rate_limit
     from graph.memory_store import MemoryGraphStore
     from graph.queries import GraphRepository
     from services.groq_service import GroqService
@@ -121,39 +122,32 @@ def _build_test_app():
     graph_repo = GraphRepository(store)
     groq_service = GroqService("", demo_mode=True)
 
-    app = FastAPI(title="Halite Test App")
+    openapi_on = settings.openapi_enabled
+    app = FastAPI(
+        title="Halite Test App",
+        docs_url="/docs" if openapi_on else None,
+        redoc_url="/redoc" if openapi_on else None,
+        openapi_url="/openapi.json" if openapi_on else None,
+    )
+    app.add_middleware(SecurityHeadersMiddleware)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=settings.cors_origins_list,
+        allow_origin_regex=(settings.CORS_ORIGIN_REGEX or None),
+        allow_credentials=True,
+        allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type", "X-Halite-Api-Key", "X-Ops-Token"],
     )
 
-    # Software domain routes
-    from api.routes import alerts, chat, decisions, graph, ingest, webhooks
-    app.include_router(chat.router, prefix="/api")
-    app.include_router(decisions.router, prefix="/api")
-    app.include_router(graph.router, prefix="/api")
-    app.include_router(ingest.router, prefix="/api")
-    app.include_router(webhooks.router, prefix="/api")
-    app.include_router(alerts.router, prefix="/api")
-
-    # Maintenance domain routes
-    from api.routes.maintenance import domains_router, router as maintenance_router
-    from api.routes.diagnostics import router as diagnostics_router
-    from api.routes.ops import router as ops_router
-    app.include_router(maintenance_router, prefix="/api")
-    app.include_router(diagnostics_router, prefix="/api")
-    app.include_router(domains_router, prefix="/api")
-    app.include_router(ops_router, prefix="/api")
+    register_api_routers(app)
 
     # Health endpoints (simplified, matching main.py's _health_payload logic)
     from domains.registry import list_domains
 
-    @app.get("/health")
+    @app.get("/health", dependencies=[Depends(require_public_rate_limit)])
     def health():
+        active_settings = app.state.settings
         is_memory = graph_repo.is_memory
-        llm_is_live = groq_service.is_live
         maint_count = graph_repo.count_service_records()
         return {
             "status": "ok",
@@ -168,9 +162,11 @@ def _build_test_app():
             "maintenance_corpus_loaded": maint_count > 0,
             "maintenance_record_count": maint_count,
             "fallback_invocations": groq_service.fallback_invocations,
+            "auth_enabled": active_settings.api_auth_required,
+            "openapi_enabled": active_settings.openapi_enabled,
         }
 
-    @app.get("/api/health")
+    @app.get("/api/health", dependencies=[Depends(require_public_rate_limit)])
     def api_health():
         return health()
 

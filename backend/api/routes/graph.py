@@ -8,7 +8,10 @@ router = APIRouter(prefix="/graph", tags=["graph"])
 
 
 @router.get("/overview")
-def graph_overview(limit: int = 200, graph_repo=Depends(get_graph_repo)):
+def graph_overview(
+    limit: int = Query(default=200, ge=1, le=5000),
+    graph_repo=Depends(get_graph_repo),
+):
     return graph_repo.graph_overview(limit)
 
 

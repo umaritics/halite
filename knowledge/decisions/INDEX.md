@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261114-public-api-security-hardening](DEC-20261114-public-api-security-hardening.md) | Global API key authentication, fail-closed startup, Gitea retirement, and container sandboxing | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261025-evidence-provenance](DEC-20261025-evidence-provenance.md) | Consolidate diagnostic evidence without altering retrieval semantics | accepted | Umar, Shahmeer |
 | [DEC-20261017-analysis-cost-cascade](DEC-20261017-analysis-cost-cascade.md) | Pre-register the opt-in conflict-analysis cost cascade | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261017-conflict-analysis-state](DEC-20261017-conflict-analysis-state.md) | Persist honest conflict-analysis state separately from confidence | accepted | Umar, Usman, Shahmeer |

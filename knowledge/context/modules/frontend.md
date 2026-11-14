@@ -90,9 +90,11 @@ not capture `/api/*` or `/assets/*`.
 
 ## Environment
 
-`npm run dev` reads `frontend/.env.development` (shared staging). For a local backend create `frontend/.env.local`
-with `VITE_API_URL=/api` and `VITE_PROXY_TARGET=http://localhost:8000`. **Check before committing: `.env.local` is not
-currently listed in `.gitignore`** despite what other docs say. Asset UUIDs differ between local Neo4j and staging, so
+`npm run dev` reads `frontend/.env.development` (shared staging). Put `VITE_HALITE_API_KEY=<team-key>` in gitignored
+`frontend/.env.local` (and Vercel env vars for hosted builds) so `client.js` sends `Authorization: Bearer <key>` on `/api/*`.
+For a local backend create `frontend/.env.local` with `VITE_API_URL=/api`, `VITE_PROXY_TARGET=http://localhost:8000`, and
+(if running `docker compose up`, which sets `DEMO_MODE=false`) `VITE_HALITE_API_KEY=halite-local-dev-api-key`. `frontend/.env.local`
+and `frontend/.env.*.local` are gitignored. Asset UUIDs differ between local Neo4j and staging, so
 deep links containing a UUID are environment-specific.
 
 ## Tests

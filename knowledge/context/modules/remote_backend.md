@@ -14,15 +14,18 @@ One **centralized** API for the whole team. Partners do **not** need VM SSH. The
 
 `https://dev1.corp.curatech.pk/halite-api`
 
-## Public URLs
+## Public & authenticated URLs
 
-| URL | Purpose |
-| --- | --- |
-| `https://dev1.corp.curatech.pk/halite-api/api/health` | Runtime honesty (`graph_mode`, `llm_mode`, `git_sha`, …) |
-| `https://dev1.corp.curatech.pk/halite-api/api/ops/version` | Which SHA is live |
-| `https://dev1.corp.curatech.pk/halite-api/api/ops/logs` | Recent app logs (**token required**) |
-| `https://dev1.corp.curatech.pk/halite-api/api/maintenance/*` | Mid-I maintenance APIs |
-| `https://dev1.corp.curatech.pk/halite-api/api/maintenance/diagnose` | Diagnostics |
+Full security architecture and runbook: [`docs/security-public-deployment.md`](../../../docs/security-public-deployment.md) and [`DEC-20261114-public-api-security-hardening`](../../decisions/DEC-20261114-public-api-security-hardening.md).
+
+| URL | Auth | Purpose |
+| --- | --- | --- |
+| `https://dev1.corp.curatech.pk/halite-api/api/health` | Public | Runtime honesty (`graph_mode`, `llm_mode`, `auth_enabled`, `git_sha`, …) |
+| `https://dev1.corp.curatech.pk/halite-api/api/ops/version` | Public | Which SHA is live + security flags (`auth_enabled`, `openapi_enabled`) |
+| `https://dev1.corp.curatech.pk/halite-api/api/ops/logs` | `X-Ops-Token` | Recent redacted app logs (**privileged operator secret**) |
+| `https://dev1.corp.curatech.pk/halite-api/api/maintenance/*` | `Authorization: Bearer <HALITE_API_KEY>` | Protected maintenance & diagnostic APIs (`401` without key) |
+| `https://dev1.corp.curatech.pk/halite-api/docs` | Disabled (`404`) | OpenAPI / Swagger hidden on public VM (`EXPOSE_OPENAPI=false`) |
+| `https://dev1.corp.curatech.pk/halite-api/api/webhook/gitea` | Retired (`410`) | Decommissioned Gitea webhook surface |
 
 ## Frontend: point at the shared API
 
@@ -30,7 +33,9 @@ One **centralized** API for the whole team. Partners do **not** need VM SSH. The
 `VITE_API_URL=https://dev1.corp.curatech.pk/halite-api/api`  
 so `npm run dev` hits staging after pull + restart (see `docs/mid1/09_frontend_shared_api.md`).
 
-Override only if you need a local backend: create gitignored `frontend/.env.local` with `VITE_API_URL=/api`.
+Each developer sets `VITE_HALITE_API_KEY=<shared-client-key>` inside gitignored `frontend/.env.local` (and in Vercel Environment Variables for hosted builds). Never commit real keys.
+
+Override `VITE_API_URL=/api` in gitignored `frontend/.env.local` if you need a local backend.
 
 ## How backend updates reach the VM (CD)
 
@@ -119,10 +124,12 @@ Verify:
 ```bash
 curl -s https://dev1.corp.curatech.pk/halite-api/api/health
 curl -s https://dev1.corp.curatech.pk/halite-api/api/ops/version
-curl -s https://dev1.corp.curatech.pk/halite-api/api/maintenance/assets
+# Anonymous must be 401; authenticated with Bearer key must be 200:
+curl -s -o /dev/null -w "%{http_code}\n" https://dev1.corp.curatech.pk/halite-api/api/maintenance/assets
+curl -s -H "Authorization: Bearer <HALITE_API_KEY>" https://dev1.corp.curatech.pk/halite-api/api/maintenance/assets
 ```
 
-`maintenance/assets` must be **200**. `git_sha` should update after CD runs.
+Authenticated `maintenance/assets` must be **200** (and **401** without Bearer key). `git_sha` should update after CD runs.
 
 ## Logs without VM access
 

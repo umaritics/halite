@@ -29,6 +29,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field, field_validator
 
 from api.deps import get_graph_repo, get_groq_service, get_settings
+from api.security import require_llm_rate_limit
 from services.citation_validation import validate_citations
 from services.diagnostic_retrieval import (
     build_diagnostic_context,
@@ -40,7 +41,11 @@ from services.diagnostic_retrieval import (
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/maintenance", tags=["diagnostics"])
+router = APIRouter(
+    prefix="/maintenance",
+    tags=["diagnostics"],
+    dependencies=[Depends(require_llm_rate_limit)],
+)
 
 
 # ---------------------------------------------------------------------------

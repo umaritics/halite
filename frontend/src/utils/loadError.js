@@ -16,8 +16,20 @@ export function describeLoadError(err) {
       message: 'The backend did not respond. Check that the API server is running.',
     };
   }
+  if (status === 401 || status === 403) {
+    return {
+      kind: 'unauthorized',
+      message: detail || 'API authentication required. Configure VITE_HALITE_API_KEY in .env.local or sign in.',
+    };
+  }
   if (status === 404) {
     return { kind: 'not-found', message: detail || 'Not found.' };
+  }
+  if (status === 429) {
+    return {
+      kind: 'rate-limited',
+      message: detail || 'Too many requests. Wait a moment and try again.',
+    };
   }
   if (status === 503) {
     return {
