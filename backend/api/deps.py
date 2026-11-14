@@ -11,3 +11,7 @@ def get_groq_service(request: Request):
 
 def get_settings(request: Request):
     return request.app.state.settings
+
+
+def get_rel_store(request: Request):
+    return getattr(request.app.state, "rel_store", None)

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../context/ThemeContext';
-import { healthAPI, maintenanceAPI } from '../api/client';
+import { useAuth } from '../context/AuthContext';
+import { authAPI, healthAPI, maintenanceAPI } from '../api/client';
+import { formatDetail } from '../utils/diagnostics';
 import HaliteLogo from '../components/HaliteLogo';
 import BrandName from '../components/BrandName';
 
@@ -24,8 +26,32 @@ const yesNo = (v) => (typeof v === 'boolean' ? (v ? 'Yes' : 'No') : undefined);
 
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
+  const { isAuthenticated, user } = useAuth();
   const [health, setHealth] = useState(null);
   const [analysis, setAnalysis] = useState(null);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [pwStatus, setPwStatus] = useState(null);
+  const [pwError, setPwError] = useState(null);
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (pwSubmitting) return;
+    setPwSubmitting(true);
+    setPwError(null);
+    setPwStatus(null);
+    try {
+      await authAPI.changePassword(currentPassword, newPassword);
+      setCurrentPassword('');
+      setNewPassword('');
+      setPwStatus('Password updated. Other active sessions were signed out.');
+    } catch (err) {
+      setPwError(formatDetail(err?.response?.data?.detail) || 'Could not update password.');
+    } finally {
+      setPwSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     healthAPI.check().then(({ data }) => setHealth(data)).catch(() => setHealth(null));
@@ -139,6 +165,7 @@ export default function Settings() {
                 value={typeof health.fallback_invocations === 'number' ? health.fallback_invocations : undefined}
                 warn={health.fallback_invocations > 0}
               />
+              <HealthRow label="Identity Store" value={health.auth_db_mode} warn={health.auth_db_mode === 'unconfigured'} />
               <HealthRow
                 label="Deployed Version"
                 value={health.git_sha && health.git_sha !== 'unknown' ? String(health.git_sha).slice(0, 8) : undefined}
@@ -149,6 +176,52 @@ export default function Settings() {
             <p className="mt-4 font-sans text-sm text-red-400">Backend not reachable. Start the API server.</p>
           )}
         </section>
+
+        {isAuthenticated && user && (
+          <section className="halite-card p-6">
+            <h3 className="font-brand text-primary">Account security</h3>
+            <p className="mt-1 font-sans text-xs text-secondary">
+              Signed in as <span className="font-mono text-primary">{user.email}</span> ({user.role}).
+            </p>
+            {pwStatus && (
+              <p role="status" className="mt-3 rounded bg-accent/15 px-3 py-2 font-sans text-xs text-accent">
+                {pwStatus}
+              </p>
+            )}
+            {pwError && (
+              <p role="alert" className="mt-3 rounded bg-red-500/15 px-3 py-2 font-sans text-xs text-red-400">
+                {pwError}
+              </p>
+            )}
+            <form onSubmit={handlePasswordChange} className="mt-4 space-y-3">
+              <input
+                type="password"
+                required
+                placeholder="Current password"
+                aria-label="Current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="halite-input"
+              />
+              <input
+                type="password"
+                required
+                placeholder="New password (min 10 chars, letters + numbers)"
+                aria-label="New password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="halite-input"
+              />
+              <button
+                type="submit"
+                disabled={pwSubmitting}
+                className="halite-btn-primary px-4 py-2 text-sm disabled:opacity-60"
+              >
+                {pwSubmitting ? 'Updating…' : 'Update password'}
+              </button>
+            </form>
+          </section>
+        )}
 
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">

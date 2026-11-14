@@ -6,6 +6,7 @@ import ConfidenceBar from '../components/ConfidenceBar';
 import { formatDate, dateValue } from '../utils/format';
 import { formatDetail } from '../utils/diagnostics';
 import { describeLoadError } from '../utils/loadError';
+import { useAuth } from '../context/AuthContext';
 
 // What the engine means by each label (see backend/services/conflict_engine.py).
 // These are descriptions of the classification, not a verdict on which record is right.
@@ -50,6 +51,8 @@ function Finding({ label, rationale, confidence, considered, historyCount }) {
 }
 
 function NeedsReviewPanel({ analysisStatus }) {
+  const { hasRole, user } = useAuth();
+  const canAdjudicate = hasRole('supervisor', 'admin');
   const [queue, setQueue] = useState([]);
   const [loading, setLoading] = useState(true);
   const [queueError, setQueueError] = useState(null);
@@ -399,33 +402,42 @@ function NeedsReviewPanel({ analysisStatus }) {
 
             {!detailsLoading && (
               <div className="mt-6 pt-4 border-t border-theme sticky bottom-0 bg-surface-dark/80 backdrop-blur pb-2">
-                <textarea
-                  className="halite-input w-full mb-3 text-sm"
-                  rows={2}
-                  placeholder="Add a review note (required for rejection)..."
-                  value={actionNote}
-                  onChange={(e) => setActionNote(e.target.value)}
-                />
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleAction('accept')}
-                    disabled={Boolean(pendingAction)}
-                    className="halite-btn-primary flex-1 py-2 text-sm disabled:opacity-60"
-                  >
-                    {pendingAction === 'accept' ? 'Accepting…' : 'Accept'}
-                  </button>
-                  <button
-                    onClick={() => handleAction('reject')}
-                    disabled={Boolean(pendingAction)}
-                    className="halite-btn-ghost flex-1 py-2 text-sm disabled:opacity-60"
-                  >
-                    {pendingAction === 'reject' ? 'Rejecting…' : 'Reject'}
-                  </button>
-                </div>
-                <p className="mt-2 font-sans text-[11px] text-secondary">
-                  Accept marks this record as reviewed and accepted. Reject marks it rejected and stores your note.
-                  Neither action deletes the record.
-                </p>
+                {!canAdjudicate ? (
+                  <div className="rounded-md border border-theme bg-surface p-3 font-sans text-xs text-secondary">
+                    Signed in as <span className="font-mono text-primary">{user?.role || 'technician'}</span>.
+                    Supervisor or administrator access is required to accept or reject conflict findings.
+                  </div>
+                ) : (
+                  <>
+                    <textarea
+                      className="halite-input w-full mb-3 text-sm"
+                      rows={2}
+                      placeholder="Add a review note (required for rejection)..."
+                      value={actionNote}
+                      onChange={(e) => setActionNote(e.target.value)}
+                    />
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => handleAction('accept')}
+                        disabled={Boolean(pendingAction)}
+                        className="halite-btn-primary flex-1 py-2 text-sm disabled:opacity-60"
+                      >
+                        {pendingAction === 'accept' ? 'Accepting…' : 'Accept'}
+                      </button>
+                      <button
+                        onClick={() => handleAction('reject')}
+                        disabled={Boolean(pendingAction)}
+                        className="halite-btn-ghost flex-1 py-2 text-sm disabled:opacity-60"
+                      >
+                        {pendingAction === 'reject' ? 'Rejecting…' : 'Reject'}
+                      </button>
+                    </div>
+                    <p className="mt-2 font-sans text-[11px] text-secondary">
+                      Accept marks this record as reviewed and accepted. Reject marks it rejected and stores your note.
+                      Your reviewer identity is recorded in the audit trail; neither action deletes the record.
+                    </p>
+                  </>
+                )}
               </div>
             )}
           </div>

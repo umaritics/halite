@@ -198,6 +198,19 @@ export default function AssetHistory() {
                       {rec.source && <span>Source: {rec.source}</span>}
                     </div>
                   )}
+                  {(rec.reviewed_by_name || rec.reviewed_by_email || rec.review_note) && (
+                    <div className="mt-2 font-sans text-xs text-secondary">
+                      {(rec.reviewed_by_name || rec.reviewed_by_email) && (
+                        <span>
+                          Reviewed by <span className="text-primary">{rec.reviewed_by_name || rec.reviewed_by_email}</span>
+                          {rec.reviewed_at ? ` on ${formatDate(rec.reviewed_at)}` : ''}
+                        </span>
+                      )}
+                      {rec.review_note && (
+                        <span className="block text-secondary">Review note: {rec.review_note}</span>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-3 font-sans text-xs text-[#888888] font-mono">
                     ID: {rec.record_id}
                   </div>

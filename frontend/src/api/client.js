@@ -1,13 +1,23 @@
 import axios from 'axios';
 
 let sessionTokenGetter = null;
+let refreshSessionHandler = null;
+let inflightRefreshPromise = null;
 
 /**
- * Register a runtime token provider (used when website user auth / JWT sessions
- * are enabled so user tokens take precedence over the static build-time API key).
+ * Register a runtime token provider so user Access JWTs take precedence
+ * over any build-time fallback API key.
  */
 export function setSessionTokenGetter(getter) {
   sessionTokenGetter = typeof getter === 'function' ? getter : null;
+}
+
+/**
+ * Register an async handler `() => Promise<string | null>` invoked once on
+ * unexpected 401 responses to rotate the refresh session transparently.
+ */
+export function setRefreshSessionHandler(handler) {
+  refreshSessionHandler = typeof handler === 'function' ? handler : null;
 }
 
 export function resolveClientBearerToken(envKey = import.meta.env.VITE_HALITE_API_KEY) {
@@ -30,10 +40,83 @@ export function applyAuthHeaders(config, envKey = import.meta.env.VITE_HALITE_AP
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
+  withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
 });
 
 api.interceptors.request.use((config) => applyAuthHeaders(config));
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalConfig = error?.config;
+    const status = error?.response?.status;
+    const url = String(originalConfig?.url || '');
+    const isAuthHandshake =
+      url.includes('/auth/login') ||
+      url.includes('/auth/refresh') ||
+      url.includes('/auth/logout') ||
+      url.includes('/auth/invites/');
+
+    if (
+      status === 401 &&
+      refreshSessionHandler &&
+      originalConfig &&
+      !originalConfig._haliteRetried &&
+      !isAuthHandshake
+    ) {
+      originalConfig._haliteRetried = true;
+      try {
+        if (!inflightRefreshPromise) {
+          inflightRefreshPromise = Promise.resolve(refreshSessionHandler()).finally(() => {
+            inflightRefreshPromise = null;
+          });
+        }
+        const nextAccessToken = await inflightRefreshPromise;
+        if (nextAccessToken) {
+          originalConfig.headers = {
+            ...(originalConfig.headers || {}),
+            Authorization: `Bearer ${nextAccessToken}`,
+          };
+          return api.request(originalConfig);
+        }
+      } catch {
+        // Refresh failed; propagate original 401 so AuthContext / UI can respond
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+
+export const authAPI = {
+  login: (email, password) => api.post('/auth/login', { email, password }),
+  refresh: (refreshToken) =>
+    api.post('/auth/refresh', refreshToken ? { refresh_token: refreshToken } : {}),
+  logout: (refreshToken) =>
+    api.post('/auth/logout', refreshToken ? { refresh_token: refreshToken } : {}),
+  me: () => api.get('/auth/me'),
+  changePassword: (currentPassword, newPassword) =>
+    api.post('/auth/password', {
+      current_password: currentPassword,
+      new_password: newPassword,
+    }),
+  verifyInvite: (token) => api.get('/auth/invites/verify', { params: { token } }),
+  acceptInvite: ({ token, password, fullName }) =>
+    api.post('/auth/invites/accept', {
+      token,
+      password,
+      full_name: fullName || undefined,
+    }),
+};
+
+export const adminAPI = {
+  listUsers: () => api.get('/admin/users'),
+  updateUser: (userId, updates) => api.patch(`/admin/users/${userId}`, updates),
+  listInvites: () => api.get('/admin/invites'),
+  createInvite: (payload) => api.post('/admin/invites', payload),
+  revokeInvite: (inviteId) => api.delete(`/admin/invites/${inviteId}`),
+  auditEvents: (params) => api.get('/admin/audit-events', { params }),
+};
 
 export const chatAPI = {
   send: (message, history) => api.post('/chat', { message, conversation_history: history }),

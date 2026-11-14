@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import ProtectedRoute from './components/ProtectedRoute';
 import Graph from './pages/Graph';
 import Settings from './pages/Settings';
 import Landing from './pages/Landing';
+import Login from './pages/Login';
+import AcceptInvite from './pages/AcceptInvite';
+import TeamAccess from './pages/TeamAccess';
 import Assets from './pages/Assets';
 import AssetHistory from './pages/AssetHistory';
 import ServiceRecords from './pages/ServiceRecords';
@@ -49,6 +53,14 @@ function AppShell() {
           <Route path="review-queue" element={<ReviewQueue />} />
           <Route path="maintenance-ingest" element={<MaintenanceIngest />} />
           <Route path="graph" element={<Graph />} />
+          <Route
+            path="team"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <TeamAccess />
+              </ProtectedRoute>
+            }
+          />
           <Route path="settings" element={<Settings />} />
           {LEGACY_SOFTWARE_PATHS.map((path) => (
             <Route key={path} path={path} element={<Navigate to={HOME} replace />} />
@@ -64,11 +76,18 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/app/*" element={
-        <DomainProvider>
-          <AppShell />
-        </DomainProvider>
-      } />
+      <Route path="/login" element={<Login />} />
+      <Route path="/accept-invite" element={<AcceptInvite />} />
+      <Route
+        path="/app/*"
+        element={
+          <ProtectedRoute>
+            <DomainProvider>
+              <AppShell />
+            </DomainProvider>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

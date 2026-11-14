@@ -36,13 +36,15 @@ def api(
     payload: dict | None = None,
     *,
     authenticated: bool = True,
+    bearer_token: str | None = None,
 ) -> tuple[int, object]:
     body = json.dumps(payload).encode() if payload is not None else None
     headers: dict[str, str] = {}
     if body is not None:
         headers["Content-Type"] = "application/json"
-    if authenticated and API_KEY:
-        headers["Authorization"] = f"Bearer {API_KEY}"
+    token = bearer_token if bearer_token is not None else (API_KEY if authenticated else "")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     req = request.Request(BASE_URL + path, data=body, headers=headers, method=method)
     try:
         with request.urlopen(req, timeout=15) as response:
@@ -64,6 +66,7 @@ def main() -> None:
     status, initial_health = api("GET", "/api/health", authenticated=False)
     require(status == 200, f"health returned HTTP {status}")
     require(initial_health["graph_mode"] == "neo4j", initial_health)
+    require(initial_health["auth_db_mode"] == "postgresql", initial_health)
     require(initial_health["using_memory_graph"] is False, initial_health)
     require(initial_health["demo_mode"] is False, initial_health)
     require(initial_health.get("auth_enabled") is True, initial_health)
@@ -77,6 +80,34 @@ def main() -> None:
         f"unauthenticated /api/maintenance/assets returned HTTP {unauth_status}: {unauth_body}",
     )
     proof["unauthenticated_guard_status"] = unauth_status
+
+    # Verify PostgreSQL-backed user authentication, invite flow, and RBAC
+    admin_email = os.getenv("BOOTSTRAP_ADMIN_EMAIL", "admin@halite.local")
+    admin_password = os.getenv("BOOTSTRAP_ADMIN_PASSWORD", "HaliteDevAdmin2026")
+    login_status, admin_login = api(
+        "POST",
+        "/api/auth/login",
+        {"email": admin_email, "password": admin_password},
+        authenticated=False,
+    )
+    require(login_status == 200, f"admin login failed ({login_status}): {admin_login}")
+    admin_jwt = admin_login["access_token"]
+
+    inv_status, inv_resp = api(
+        "POST",
+        "/api/admin/invites",
+        {"email": "tech-smoke@halite.local", "full_name": "CI Technician", "role": "technician"},
+        bearer_token=admin_jwt,
+    )
+    require(inv_status == 201, f"invite creation failed ({inv_status}): {inv_resp}")
+    acc_status, tech_login = api(
+        "POST",
+        "/api/auth/invites/accept",
+        {"token": inv_resp["invite_token"], "password": "TechPassword2026"},
+        authenticated=False,
+    )
+    require(acc_status == 200, f"invite accept failed ({acc_status}): {tech_login}")
+    tech_jwt = tech_login["access_token"]
 
     status, first_ingest = api("POST", "/api/maintenance/ingest", {
         "csv_path": FIXTURE_PATH,
@@ -144,16 +175,29 @@ def main() -> None:
     require(set(RECORD_IDS[1:]).issubset(queue_ids), queue)
     proof["review_queue_ids"] = sorted(queue_ids)
 
+    # Technician role must be forbidden (403) from adjudicating conflict review items
+    tech_accept_status, _ = api(
+        "POST",
+        "/api/maintenance/review-queue/CI-SMOKE-002/accept",
+        {"note": "Technician attempt"},
+        bearer_token=tech_jwt,
+    )
+    require(tech_accept_status == 403, f"expected 403 for technician accept, got {tech_accept_status}")
+    proof["rbac_technician_review_denied"] = tech_accept_status
+
     status, accepted = api(
         "POST",
         "/api/maintenance/review-queue/CI-SMOKE-002/accept",
         {"note": "CI smoke acceptance"},
+        bearer_token=admin_jwt,
     )
     require(status == 200 and accepted["status"] == "accepted", accepted)
     require(accepted["record"]["record_id"] == "CI-SMOKE-002", accepted)
+    require(accepted["record"]["reviewed_by_email"] == admin_email, accepted)
     proof["accept_result"] = {
         "record_id": accepted["record_id"],
         "status": accepted["status"],
+        "reviewed_by_email": accepted["record"]["reviewed_by_email"],
     }
 
     status, rejected = api(

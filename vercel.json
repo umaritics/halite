@@ -6,6 +6,14 @@
       "framework": "vite",
       "rewrites": [
         {
+          "source": "/login",
+          "destination": "/index.html"
+        },
+        {
+          "source": "/accept-invite",
+          "destination": "/index.html"
+        },
+        {
           "source": "/app/:path*",
           "destination": "/index.html"
         }

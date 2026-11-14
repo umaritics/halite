@@ -20,25 +20,52 @@ describe('Vercel routing', () => {
     });
   });
 
-  it('serves the React entry point for direct application routes only', () => {
+  it('serves the React entry point for direct auth and application routes only', () => {
     expect(config.services.frontend.rewrites).toEqual([
+      {
+        source: '/login',
+        destination: '/index.html',
+      },
+      {
+        source: '/accept-invite',
+        destination: '/index.html',
+      },
       {
         source: '/app/:path*',
         destination: '/index.html',
       },
     ]);
 
-    const applicationRoutes = [
+    const spaRoutes = [
+      '/login',
+      '/accept-invite',
       '/app',
       '/app/diagnostics',
       '/app/assets',
       '/app/records',
       '/app/graph',
+      '/app/team',
       '/app/asset-history/aircraft-uuid',
     ];
-    expect(applicationRoutes.every((path) => path === '/app' || path.startsWith('/app/'))).toBe(true);
+    expect(
+      spaRoutes.every(
+        (path) =>
+          path === '/login' ||
+          path === '/accept-invite' ||
+          path === '/app' ||
+          path.startsWith('/app/'),
+      ),
+    ).toBe(true);
 
     const nonApplicationRoutes = ['/', '/api/health', '/api/maintenance/assets', '/assets/index.js'];
-    expect(nonApplicationRoutes.some((path) => path === '/app' || path.startsWith('/app/'))).toBe(false);
+    expect(
+      nonApplicationRoutes.some(
+        (path) =>
+          path === '/login' ||
+          path === '/accept-invite' ||
+          path === '/app' ||
+          path.startsWith('/app/'),
+      ),
+    ).toBe(false);
   });
 });

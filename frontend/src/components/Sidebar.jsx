@@ -1,4 +1,4 @@
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import {
   CircleStackIcon,
   DocumentArrowUpIcon,
@@ -6,11 +6,14 @@ import {
   MagnifyingGlassIcon,
   WrenchScrewdriverIcon,
   ClipboardDocumentListIcon,
-  InboxStackIcon
+  InboxStackIcon,
+  UsersIcon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import HaliteLogo from './HaliteLogo';
 import BrandName from './BrandName';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 // Mid-I: maintenance-only navigation. Software-domain screens (Chat, Decisions,
 // Alerts, software Ingest) are intentionally not linked from here.
@@ -21,11 +24,23 @@ const NAV_ITEMS = [
   { to: '/app/review-queue', label: 'Review Queue', icon: InboxStackIcon, badge: true },
   { to: '/app/maintenance-ingest', label: 'Ingest', icon: DocumentArrowUpIcon },
   { to: '/app/graph', label: 'Knowledge Graph', icon: CircleStackIcon },
+  { to: '/app/team', label: 'Team & Access', icon: UsersIcon, adminOnly: true },
   { to: '/app/settings', label: 'Settings', icon: Cog6ToothIcon },
 ];
 
 export default function Sidebar({ reviewCount = 0 }) {
   const { isDark } = useTheme();
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => !item.adminOnly || (isAuthenticated && user?.role === 'admin'),
+  );
+
+  const handleSignOut = async () => {
+    await logout();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <aside
@@ -44,7 +59,7 @@ export default function Sidebar({ reviewCount = 0 }) {
       </div>
 
       <nav className="flex-1 space-y-1 p-3">
-        {NAV_ITEMS.map(({ to, label, icon: Icon, badge }) => (
+        {visibleItems.map(({ to, label, icon: Icon, badge }) => (
           <NavLink
             key={to}
             to={to}
@@ -70,10 +85,32 @@ export default function Sidebar({ reviewCount = 0 }) {
         ))}
       </nav>
 
-      <div className="border-t border-theme p-4">
-        <p className="font-sans text-xs text-[#555555]">
-          Service history intelligence for maintenance teams
-        </p>
+      <div className="border-t border-theme p-4 space-y-3">
+        {isAuthenticated && user ? (
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <span className="truncate font-sans text-xs font-medium text-primary">
+                {user.full_name}
+              </span>
+              <span className="rounded bg-accent/15 px-1.5 py-0.5 font-mono text-[10px] font-medium text-accent">
+                {user.role}
+              </span>
+            </div>
+            <p className="truncate font-mono text-[11px] text-secondary">{user.email}</p>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="halite-btn-ghost w-full py-1.5 text-xs justify-center"
+            >
+              <ArrowRightOnRectangleIcon className="h-4 w-4" />
+              Sign out
+            </button>
+          </div>
+        ) : (
+          <p className="font-sans text-xs text-[#555555]">
+            Service history intelligence for maintenance teams
+          </p>
+        )}
       </div>
     </aside>
   );
