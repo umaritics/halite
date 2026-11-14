@@ -23,15 +23,26 @@ from graph.neo4j_client import Neo4jClient
 
 
 BASE_URL = os.getenv("MID1_BASE_URL", "http://127.0.0.1:8000")
+API_KEY = os.getenv("HALITE_API_KEY", "").strip()
 FIXTURE_PATH = os.getenv(
     "MID1_FIXTURE_PATH", "/app/tests/fixtures/mid1_smoke.csv"
 )
 RECORD_IDS = ["CI-SMOKE-001", "CI-SMOKE-002", "CI-SMOKE-003"]
 
 
-def api(method: str, path: str, payload: dict | None = None) -> tuple[int, object]:
+def api(
+    method: str,
+    path: str,
+    payload: dict | None = None,
+    *,
+    authenticated: bool = True,
+) -> tuple[int, object]:
     body = json.dumps(payload).encode() if payload is not None else None
-    headers = {"Content-Type": "application/json"} if body is not None else {}
+    headers: dict[str, str] = {}
+    if body is not None:
+        headers["Content-Type"] = "application/json"
+    if authenticated and API_KEY:
+        headers["Authorization"] = f"Bearer {API_KEY}"
     req = request.Request(BASE_URL + path, data=body, headers=headers, method=method)
     try:
         with request.urlopen(req, timeout=15) as response:
@@ -50,12 +61,22 @@ def require(condition: bool, message: str) -> None:
 def main() -> None:
     proof: dict[str, object] = {}
 
-    status, initial_health = api("GET", "/api/health")
+    status, initial_health = api("GET", "/api/health", authenticated=False)
     require(status == 200, f"health returned HTTP {status}")
     require(initial_health["graph_mode"] == "neo4j", initial_health)
     require(initial_health["using_memory_graph"] is False, initial_health)
     require(initial_health["demo_mode"] is False, initial_health)
+    require(initial_health.get("auth_enabled") is True, initial_health)
     proof["initial_health"] = initial_health
+
+    unauth_status, unauth_body = api(
+        "GET", "/api/maintenance/assets", authenticated=False
+    )
+    require(
+        unauth_status == 401,
+        f"unauthenticated /api/maintenance/assets returned HTTP {unauth_status}: {unauth_body}",
+    )
+    proof["unauthenticated_guard_status"] = unauth_status
 
     status, first_ingest = api("POST", "/api/maintenance/ingest", {
         "csv_path": FIXTURE_PATH,

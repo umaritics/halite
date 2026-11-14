@@ -31,6 +31,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | DEMO_MODE, graph_mode, llm_mode | context/modules/devops.md |
 | CI, GitHub Actions, docker compose | flows/FLOW-ci.md, context/modules/devops.md |
 | staging, remote VM, deploy, OPS_TOKEN, ops/logs | context/modules/remote_backend.md, flows/FLOW-deploy.md |
+| security, HALITE_API_KEY, Bearer auth, rate limit, EXPOSE_OPENAPI, Gitea 410 | docs/security-public-deployment.md, decisions/DEC-20261114-public-api-security-hardening.md, `backend/api/security.py`, `backend/api/router.py` |
 | Mid-I progress, partner handoff | docs/mid1/README.md, docs/mid1/08_umar_progress.md |
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |

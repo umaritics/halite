@@ -1,17 +1,18 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from api.deps import get_graph_repo, get_groq_service
+from api.security import require_llm_rate_limit
 
 router = APIRouter(tags=["chat"])
 
 
 class ChatRequest(BaseModel):
-    message: str
-    conversation_history: list[dict] = []
+    message: str = Field(min_length=1, max_length=8000)
+    conversation_history: list[dict] = Field(default_factory=list, max_length=50)
 
 
-@router.post("/chat")
+@router.post("/chat", dependencies=[Depends(require_llm_rate_limit)])
 def chat(req: ChatRequest, graph_repo=Depends(get_graph_repo), groq_service=Depends(get_groq_service)):
     from services.context_builder import build_context_for_query
 

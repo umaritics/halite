@@ -25,6 +25,7 @@ from pydantic import BaseModel, Field, field_validator
 from agents.maintenance_agent import MaintenanceAgent
 from api.deps import get_graph_repo, get_groq_service, get_settings
 from api.routes.ops import _require_ops_token
+from api.security import require_llm_rate_limit
 from domains.registry import list_domains
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
 from services.analysis_state import normalize_analysis_for_api
@@ -99,6 +100,45 @@ def _analysis_budget(settings) -> DailyBudgetManager:
     )
 
 
+def _resolve_safe_csv_path(raw_path: str | None, settings) -> Path:
+    """
+    Restrict server-side CSV ingest strictly to `MAINT_DATA_DIR` or `tests/fixtures`
+    so callers cannot traverse the host/container filesystem (`../../.env`, `/etc/*`).
+    """
+    backend_root = Path(__file__).resolve().parents[2]
+    data_root = Path(settings.MAINT_DATA_DIR)
+    if not data_root.is_absolute():
+        data_root = (Path.cwd() / data_root).resolve()
+    else:
+        data_root = data_root.resolve()
+
+    allowed_roots = (
+        data_root,
+        (backend_root / "data").resolve(),
+        (backend_root / "tests" / "fixtures").resolve(),
+    )
+
+    candidate = (
+        Path(raw_path)
+        if raw_path
+        else data_root / "processed" / "sdr_poc_corpus.csv"
+    )
+    if not candidate.is_absolute():
+        candidate = (Path.cwd() / candidate).resolve()
+    else:
+        candidate = candidate.resolve()
+
+    if candidate.suffix.lower() != ".csv" or not any(
+        candidate.is_relative_to(root) for root in allowed_roots
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="csv_path must reference a .csv file inside the configured data or fixtures directory.",
+        )
+
+    return candidate
+
+
 # ---------------------------------------------------------------------------
 # POST /api/maintenance/ingest
 # ---------------------------------------------------------------------------
@@ -110,7 +150,8 @@ def maintenance_ingest(
     settings=Depends(get_settings),
 ):
     """
-    Ingest FAA SDR records from a CSV file path.
+    Ingest FAA SDR records from a server-side CSV file inside `MAINT_DATA_DIR`
+    or `tests/fixtures`.
 
     Body (JSON): {"csv_path": str, "limit": int | None}
 
@@ -119,18 +160,14 @@ def maintenance_ingest(
     if body is None:
         body = IngestRequest()
 
-    # Default csv_path to the processed corpus if not specified
-    csv_path = body.csv_path
-    if not csv_path:
-        csv_path = str(Path(settings.MAINT_DATA_DIR) / "processed" / "sdr_poc_corpus.csv")
-
-    if not Path(csv_path).exists():
+    resolved_csv = _resolve_safe_csv_path(body.csv_path, settings)
+    if not resolved_csv.is_file():
         raise HTTPException(
             status_code=404,
-            detail=f"CSV file not found: {csv_path}. Run scripts/fetch_sdr_data.py first.",
+            detail=f"CSV file not found: {resolved_csv.name}. Run scripts/fetch_sdr_data.py first.",
         )
 
-    payload = {"csv_path": csv_path}
+    payload: dict[str, Any] = {"csv_path": str(resolved_csv)}
     if body.limit is not None:
         payload["limit"] = body.limit
 
@@ -198,7 +235,7 @@ def list_records(
     return page
 
 
-@router.get("/records/{record_id}")
+@router.get("/records/{record_id}", dependencies=[Depends(require_llm_rate_limit)])
 def get_single_record(
     record_id: str,
     graph_repo=Depends(get_graph_repo),
@@ -228,7 +265,7 @@ def get_single_record(
 # POST /api/maintenance/records — single record through conflict engine
 # ---------------------------------------------------------------------------
 
-@router.post("/records")
+@router.post("/records", dependencies=[Depends(require_llm_rate_limit)])
 def process_single_record(
     body: RecordProcessRequest,
     graph_repo=Depends(get_graph_repo),

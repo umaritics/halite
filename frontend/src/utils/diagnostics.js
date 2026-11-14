@@ -52,6 +52,16 @@ export function describeDiagnosticError(err) {
         detail,
         retryable: false,
       };
+    case 401:
+    case 403:
+      return {
+        kind: 'unauthorized',
+        title: 'API authentication required',
+        message:
+          'The backend rejected this request as unauthenticated. Configure VITE_HALITE_API_KEY in your environment or sign in.',
+        detail,
+        retryable: false,
+      };
     case 404:
       return {
         kind: 'no-history',

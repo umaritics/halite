@@ -10,20 +10,33 @@ services:
         DEPLOYED_AT: ${DEPLOYED_AT:-}
     container_name: halite-api
     restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m
+      - /app/data:rw,noexec,nosuid,nodev,size=64m,uid=10001,gid=10001
     env_file:
       - ./backend/.env
     environment:
       GIT_SHA: ${GIT_SHA:-unknown}
       DEPLOYED_AT: ${DEPLOYED_AT:-}
       DEMO_MODE: "false"
+      EXPOSE_OPENAPI: "false"
+      ENABLE_GITEA_INTEGRATION: "false"
     ports:
       - "127.0.0.1:8002:8000"
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    pids_limit: 128
     mem_limit: 512m
     cpus: "1.0"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test:
         [

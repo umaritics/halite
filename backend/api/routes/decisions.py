@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from agents.decision_agent import DecisionAgent
 from api.deps import get_graph_repo, get_groq_service
+from api.security import require_llm_rate_limit
 
 router = APIRouter(prefix="/decisions", tags=["decisions"])
 
@@ -30,7 +31,7 @@ def list_decisions(status: str | None = None, graph_repo=Depends(get_graph_repo)
     return graph_repo.list_decisions(status)
 
 
-@router.post("")
+@router.post("", dependencies=[Depends(require_llm_rate_limit)])
 def create_decision(body: DecisionCreate, graph_repo=Depends(get_graph_repo), groq_service=Depends(get_groq_service)):
     agent = DecisionAgent(graph_repo, groq_service)
     return agent.run(body.model_dump())

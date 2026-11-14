@@ -2,30 +2,41 @@
 Ops endpoints for the shared staging backend.
 
 Partners do not need VM SSH. They can:
-  - GET /api/ops/version  (public) — which SHA is live
-  - GET /api/ops/logs     (OPS_TOKEN) — recent application log lines
+  - GET /api/ops/version  (public) — which SHA is live + non-secret runtime flags
+  - GET /api/ops/logs     (OPS_TOKEN) — recent redacted application log lines
 """
 from __future__ import annotations
 
 import logging
 import os
 import re
-import secrets
 import time
 from collections import deque
 from typing import Deque
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 
 from api.deps import get_settings
+from api.security import require_ops_token, require_public_rate_limit
 
 logger = logging.getLogger(__name__)
 
+# Mounted without API key in api/router.py
+public_router = APIRouter(prefix="/ops", tags=["ops"])
+# Mounted under authenticated /api router + privileged X-Ops-Token guard
 router = APIRouter(prefix="/ops", tags=["ops"])
 
-_SECRET_RE = re.compile(
-    r"(?i)(api[_-]?key|password|token|secret|authorization)\s*[:=]\s*([^\s,;]+)"
+# Backward-compatible export used by graph.py, maintenance.py, and tests
+_require_ops_token = require_ops_token
+
+_SECRET_KV_RE = re.compile(
+    r"(?i)(halite[_-]?api[_-]?key|ops[_-]?token|groq[_-]?api[_-]?key(?:[_-]?fallback)?|"
+    r"neo4j[_-]?password|gitea[_-]?(?:token|webhook[_-]?secret)|"
+    r"x-halite-api-key|x-ops-token|api[_-]?key|password|token|secret|authorization)"
+    r"\s*([:=])\s*(?:bearer\s+)?([^\s,;\"']+)"
 )
+_BEARER_RE = re.compile(r"(?i)\b(bearer)\s+([A-Za-z0-9._~+/=-]{8,})")
+_URI_CRED_RE = re.compile(r"(?i)\b((?:bolt|neo4j)(?:\+s|\+ssc)?://[^:\s/@]+:)([^@\s]+)(@)")
 
 
 class RingBufferHandler(logging.Handler):
@@ -57,27 +68,15 @@ def install_ring_buffer_logging() -> None:
 
 
 def _redact(line: str) -> str:
-    return _SECRET_RE.sub(r"\1=[REDACTED]", line)
+    scrubbed = _URI_CRED_RE.sub(r"\1[REDACTED]\3", line)
+    scrubbed = _BEARER_RE.sub(r"\1 [REDACTED]", scrubbed)
+    scrubbed = _SECRET_KV_RE.sub(r"\1\2[REDACTED]", scrubbed)
+    return scrubbed
 
 
-def _require_ops_token(
-    x_ops_token: str | None = Header(default=None, alias="X-Ops-Token"),
-    settings=Depends(get_settings),
-) -> None:
-    expected = (getattr(settings, "OPS_TOKEN", None) or "").strip()
-    if not expected:
-        raise HTTPException(
-            status_code=503,
-            detail="OPS_TOKEN is not configured on this server. Ask the deploy admin to set it.",
-        )
-    supplied = (x_ops_token or "").strip()
-    if not supplied or not secrets.compare_digest(supplied, expected):
-        raise HTTPException(status_code=401, detail="Invalid or missing X-Ops-Token")
-
-
-@router.get("/version")
+@public_router.get("/version", dependencies=[Depends(require_public_rate_limit)])
 def ops_version(settings=Depends(get_settings)):
-    """Public: which build is serving traffic."""
+    """Public: which build is serving traffic (build/mode metadata only, no secrets)."""
     return {
         "app": "Halite",
         "git_sha": os.environ.get("GIT_SHA") or getattr(settings, "GIT_SHA", "unknown"),
@@ -85,6 +84,8 @@ def ops_version(settings=Depends(get_settings)):
         "demo_mode": settings.DEMO_MODE,
         "neo4j_configured": settings.neo4j_configured,
         "groq_configured": settings.groq_configured,
+        "auth_enabled": bool(getattr(settings, "api_auth_required", not settings.DEMO_MODE)),
+        "openapi_enabled": bool(getattr(settings, "openapi_enabled", settings.DEMO_MODE)),
         "ops_logs_enabled": bool((getattr(settings, "OPS_TOKEN", None) or "").strip()),
         "server_time_unix": int(time.time()),
     }

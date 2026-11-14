@@ -45,6 +45,8 @@ backend/data/processed/
 # Reproducible runtime/model-response caches
 backend/data/cache.json
 backend/data/diag_cache/
+data/cache.json
+data/diag_cache/
 
 # Ad-hoc local debug output
 backend/*_output.txt
