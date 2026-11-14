@@ -1,6 +1,5 @@
 import logging
 import os
-import time
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
@@ -17,8 +16,6 @@ from services.groq_service import GroqService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-_health_count_cache: dict[str, float | int] = {"ts": 0.0, "count": 0}
 
 
 @asynccontextmanager
@@ -110,20 +107,12 @@ def _health_payload():
     groq_service = getattr(app.state, "groq_service", None)
     llm_is_live = groq_service.is_live if groq_service else False
 
-    # Maintenance corpus check (short TTL cache on live Neo4j to prevent health-probe DoS)
+    # Maintenance corpus check (always truthful live count; rate limiter caps anonymous floods)
     maintenance_record_count = 0
     maintenance_corpus_loaded = False
     if graph_repo:
         try:
-            now = time.monotonic()
-            use_ttl = (not is_memory) and ("PYTEST_CURRENT_TEST" not in os.environ)
-            if use_ttl and (now - float(_health_count_cache["ts"])) < 5.0:
-                maintenance_record_count = int(_health_count_cache["count"])
-            else:
-                maintenance_record_count = graph_repo.count_service_records()
-                if use_ttl:
-                    _health_count_cache["ts"] = now
-                    _health_count_cache["count"] = maintenance_record_count
+            maintenance_record_count = graph_repo.count_service_records()
             maintenance_corpus_loaded = maintenance_record_count > 0
         except Exception:
             pass
