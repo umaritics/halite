@@ -17,8 +17,10 @@ updated: 2026-10-17
    without an LLM call.
    When explicitly configured, cascade mode first applies the deterministic
    text/scope screen, then uses adaptive 2-or-5-pass model voting.
-4. `needs_review` rows appear in `GET /maintenance/review-queue`; Accept or
-   Reject preserves source text and sets `analysis_state=reviewed`.
+4. `needs_review` rows appear in `GET /maintenance/review-queue`; `Accept` or
+   `Reject` requires `supervisor` or `admin` role (`403` for `technician`),
+   preserves source text, sets `analysis_state=reviewed`, stamps `reviewed_by_*`
+   provenance onto the `ServiceRecord`, and writes an immutable `AuditEvent` in PostgreSQL.
 5. Confident supersessions create `SUPERSEDES`. `GET
    /maintenance/corrections` and inline corrected-by banners read that edge.
 6. `GET /maintenance/analysis/status` drives coverage and honest empty states.
@@ -71,6 +73,7 @@ flowchart TB
   N --> COR[GET /corrections]
   N --> REC[GET /records]
   RQ --> UI[ReviewQueue.jsx]
+  AUTH[api/security.py RBAC + PostgreSQL audit_events] --> RQ
   COR --> UI
   REC --> SR[ServiceRecords.jsx]
   N --> AH[AssetHistory.jsx]

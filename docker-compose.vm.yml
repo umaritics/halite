@@ -1,6 +1,34 @@
 # VM / shared staging deploy — bind localhost; Caddy exposes https://dev1.corp.curatech.pk/halite-api/
 # Deployed by .github/workflows/deploy-staging.yml (partners do not need SSH).
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: halite-postgres
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_USER: halite
+      POSTGRES_DB: halite
+    volumes:
+      - halite_pg_data:/var/lib/postgresql/data
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 256m
+    cpus: "0.5"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U halite -d halite"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
   api:
     build:
       context: ./backend
@@ -25,6 +53,9 @@ services:
       ENABLE_GITEA_INTEGRATION: "false"
     ports:
       - "127.0.0.1:8002:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -49,3 +80,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 25s
+
+volumes:
+  halite_pg_data:

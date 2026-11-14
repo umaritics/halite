@@ -13,19 +13,25 @@ Endpoints:
   POST  /api/maintenance/review-queue/{id}/reject
   GET   /api/domains                      — registered domains for frontend switcher
 """
+import datetime
 import logging
 import os
 import time
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
 from pydantic import BaseModel, Field, field_validator
 
 from agents.maintenance_agent import MaintenanceAgent
-from api.deps import get_graph_repo, get_groq_service, get_settings
-from api.routes.ops import _require_ops_token
-from api.security import require_llm_rate_limit
+from api.deps import get_graph_repo, get_groq_service, get_rel_store, get_settings
+from api.security import (
+    AuthPrincipal,
+    get_client_ip,
+    require_llm_rate_limit,
+    require_ops_or_admin,
+    require_roles,
+)
 from domains.registry import list_domains
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
 from services.analysis_state import normalize_analysis_for_api
@@ -374,7 +380,7 @@ def analysis_status(graph_repo=Depends(get_graph_repo)):
 @router.post("/analysis/run")
 def run_analysis_batch(
     body: AnalysisRunRequest | None = None,
-    _: None = Depends(_require_ops_token),
+    _: None = Depends(require_ops_or_admin),
     graph_repo=Depends(get_graph_repo),
     groq_service=Depends(get_groq_service),
     settings=Depends(get_settings),
@@ -468,6 +474,38 @@ def corrections(
     )
 
 
+def _record_review_audit(
+    rel_store,
+    request: Request,
+    principal: AuthPrincipal,
+    *,
+    action: str,
+    record_id: str,
+    previous_status: str | None,
+    note: str,
+) -> None:
+    if rel_store is None or not rel_store.is_available:
+        return
+    from services.auth_service import record_audit_event
+
+    try:
+        with rel_store.session_scope() as db:
+            record_audit_event(
+                db,
+                action=action,
+                organization_id=principal.organization_id,
+                actor_user_id=principal.user_id if principal.kind == "user" else None,
+                actor_email=principal.email,
+                actor_role=principal.role,
+                target_type="service_record",
+                target_id=record_id,
+                metadata={"previous_status": previous_status, "note": note},
+                ip_address=get_client_ip(request),
+            )
+    except Exception as exc:
+        logger.warning("Failed to persist review audit event for %s: %s", record_id, exc)
+
+
 # ---------------------------------------------------------------------------
 # POST /api/maintenance/review-queue/{record_id}/accept
 # ---------------------------------------------------------------------------
@@ -475,24 +513,47 @@ def corrections(
 @router.post("/review-queue/{record_id}/accept")
 def accept_record(
     record_id: str,
+    request: Request,
     body: ReviewActionRequest | None = None,
+    principal: AuthPrincipal = Depends(require_roles("supervisor", "admin")),
     graph_repo=Depends(get_graph_repo),
+    rel_store=Depends(get_rel_store),
 ):
-    """Accept a queued record (status → accepted)."""
+    """Accept a queued record (status → accepted). Requires supervisor or admin role."""
     note = (body.note if body else None) or ""
     sr = graph_repo.get_service_record(record_id)
     if sr is None:
         raise HTTPException(status_code=404, detail=f"Record {record_id!r} not found")
-    if sr.get("status") not in ("needs_review", "auto_accepted"):
+    prev_status = sr.get("status")
+    if prev_status not in ("needs_review", "auto_accepted"):
         raise HTTPException(
             status_code=409,
-            detail=f"Record {record_id!r} is in status '{sr.get('status')}', cannot accept",
+            detail=f"Record {record_id!r} is in status '{prev_status}', cannot accept",
         )
+    reviewed_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
     updated = graph_repo.update_service_record(
         record_id,
-        {"status": "accepted", "analysis_state": "reviewed", "review_note": note},
+        {
+            "status": "accepted",
+            "analysis_state": "reviewed",
+            "review_note": note,
+            "reviewed_by_id": principal.user_id or "",
+            "reviewed_by_name": principal.full_name,
+            "reviewed_by_email": principal.email or "",
+            "reviewed_by_role": principal.role,
+            "reviewed_at": reviewed_at,
+        },
     )
-    logger.info("Record %r accepted. Note: %r", record_id, note)
+    _record_review_audit(
+        rel_store,
+        request,
+        principal,
+        action="maintenance.review.accepted",
+        record_id=record_id,
+        previous_status=prev_status,
+        note=note,
+    )
+    logger.info("Record %r accepted by %s (%s). Note: %r", record_id, principal.email or principal.user_id, principal.role, note)
     return {"record_id": record_id, "status": "accepted", "record": updated}
 
 
@@ -504,22 +565,45 @@ def accept_record(
 def reject_record(
     record_id: str,
     body: RejectActionRequest,
+    request: Request,
+    principal: AuthPrincipal = Depends(require_roles("supervisor", "admin")),
     graph_repo=Depends(get_graph_repo),
+    rel_store=Depends(get_rel_store),
 ):
-    """Reject a queued record (status → rejected). Note is required."""
+    """Reject a queued record (status → rejected). Note is required. Requires supervisor or admin role."""
     sr = graph_repo.get_service_record(record_id)
     if sr is None:
         raise HTTPException(status_code=404, detail=f"Record {record_id!r} not found")
-    if sr.get("status") not in ("needs_review", "auto_accepted"):
+    prev_status = sr.get("status")
+    if prev_status not in ("needs_review", "auto_accepted"):
         raise HTTPException(
             status_code=409,
-            detail=f"Record {record_id!r} is in status '{sr.get('status')}', cannot reject",
+            detail=f"Record {record_id!r} is in status '{prev_status}', cannot reject",
         )
+    reviewed_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
     updated = graph_repo.update_service_record(
         record_id,
-        {"status": "rejected", "analysis_state": "reviewed", "review_note": body.note},
+        {
+            "status": "rejected",
+            "analysis_state": "reviewed",
+            "review_note": body.note,
+            "reviewed_by_id": principal.user_id or "",
+            "reviewed_by_name": principal.full_name,
+            "reviewed_by_email": principal.email or "",
+            "reviewed_by_role": principal.role,
+            "reviewed_at": reviewed_at,
+        },
     )
-    logger.info("Record %r rejected. Note: %r", record_id, body.note)
+    _record_review_audit(
+        rel_store,
+        request,
+        principal,
+        action="maintenance.review.rejected",
+        record_id=record_id,
+        previous_status=prev_status,
+        note=body.note,
+    )
+    logger.info("Record %r rejected by %s (%s). Note: %r", record_id, principal.email or principal.user_id, principal.role, body.note)
     return {"record_id": record_id, "status": "rejected", "record": updated}
 
 

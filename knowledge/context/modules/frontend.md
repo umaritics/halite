@@ -18,11 +18,11 @@ The software-domain screens still exist in the repo but are **not reachable** (s
 
 | Area | Files |
 | --- | --- |
-| Router + shell | `frontend/src/App.jsx` (routes, legacy redirects, review-count badge) |
+| Router + shell | `frontend/src/App.jsx` (routes, `<ProtectedRoute>` gate on `/app/*`, legacy redirects, review-count badge), `frontend/src/context/AuthContext.jsx` |
 | Domain lock | `frontend/src/context/DomainContext.jsx` (fixed to `maintenance`) |
-| Navigation | `frontend/src/components/Sidebar.jsx` (maintenance destinations only) |
-| API adapter | `frontend/src/api/client.js` (`maintenanceAPI`) |
-| Pages | `pages/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx`; Copilot evidence details are rendered by `components/DiagnosticEvidenceInspector.jsx` |
+| Navigation | `frontend/src/components/Sidebar.jsx` (maintenance destinations + admin `Team & Access` + user/sign-out footer) |
+| API adapter | `frontend/src/api/client.js` (`authAPI`, `adminAPI`, `maintenanceAPI`, single-flight 401 refresh interceptor) |
+| Pages | `pages/Login.jsx`, `pages/AcceptInvite.jsx`, `pages/TeamAccess.jsx`, `pages/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx`; Copilot evidence details are rendered by `components/DiagnosticEvidenceInspector.jsx` |
 | Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `diagnosticEvidence.js` (exact aircraft provenance, discrepancy labels, deterministic evidence grouping), `diagnosticWorkspace.js` (versioned active-workspace persistence), `format.js` (dates), `loadError.js` |
 | Tests | `frontend/src/test/*` (Vitest, API mocked) |
 | Runtime target | `frontend/.env.development` (staging) · override with local `.env.local` |

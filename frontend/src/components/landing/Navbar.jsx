@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 import BrandName from '../BrandName';
 import HaliteLogo from '../HaliteLogo';
 
@@ -14,6 +15,7 @@ const navLinks = [
 
 export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   return (
     <nav
@@ -58,8 +60,11 @@ export default function Navbar() {
         >
           {isDark ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
         </button>
-        <Link to="/app/assets" className="halite-btn-outline text-sm">
-          Open Workspace
+        <Link
+          to={isAuthenticated ? '/app/assets' : '/login'}
+          className="halite-btn-outline text-sm"
+        >
+          {isAuthenticated ? 'Open Workspace' : 'Sign in'}
         </Link>
       </div>
     </nav>

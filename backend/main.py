@@ -9,9 +9,11 @@ from api.router import register_api_routers
 from api.routes.ops import install_ring_buffer_logging
 from api.security import SecurityHeadersMiddleware, require_public_rate_limit
 from config import settings
+from db.session import build_relational_store
 from graph.memory_store import MemoryGraphStore
 from graph.neo4j_client import Neo4jClient
 from graph.queries import GraphRepository
+from services.auth_service import bootstrap_admin_if_configured
 from services.groq_service import GroqService
 
 logging.basicConfig(level=logging.INFO)
@@ -65,12 +67,21 @@ async def lifespan(app: FastAPI):
     )
     logger.info("Groq configured: %s", settings.groq_configured)
 
+    rel_store = build_relational_store(settings)
+    logger.info("Relational auth store mode: %s", rel_store.mode)
+    try:
+        bootstrap_admin_if_configured(rel_store, settings)
+    except Exception as exc:
+        logger.error("Admin bootstrap skipped/failed: %s", exc)
+
     app.state.graph_repo = graph_repo
     app.state.groq_service = groq_service
+    app.state.rel_store = rel_store
     app.state.settings = settings
 
     yield
 
+    rel_store.close()
     store.close()
 
 
@@ -121,6 +132,9 @@ def _health_payload():
 
     domains = list_domains()
 
+    rel_store = getattr(app.state, "rel_store", None)
+    auth_db_mode = rel_store.mode if rel_store is not None else "unconfigured"
+
     return {
         "status": "ok",
         "app": "Halite",
@@ -138,6 +152,7 @@ def _health_payload():
         "maintenance_record_count": maintenance_record_count,
         "fallback_invocations": groq_service.fallback_invocations if groq_service else 0,
         "auth_enabled": active_settings.api_auth_required,
+        "auth_db_mode": auth_db_mode,
         "openapi_enabled": active_settings.openapi_enabled,
         "git_sha": os.environ.get("GIT_SHA") or active_settings.GIT_SHA or "unknown",
         "deployed_at": os.environ.get("DEPLOYED_AT") or active_settings.DEPLOYED_AT or "",

@@ -113,14 +113,18 @@ def _build_test_app(settings_override=None):
 
     from api.router import register_api_routers
     from api.security import SecurityHeadersMiddleware, require_public_rate_limit
+    from db.session import build_relational_store
     from graph.memory_store import MemoryGraphStore
     from graph.queries import GraphRepository
+    from services.auth_service import bootstrap_admin_if_configured
     from services.groq_service import GroqService
 
     store = MemoryGraphStore()
     store.seed_demo_data()
     graph_repo = GraphRepository(store)
     groq_service = GroqService("", demo_mode=True)
+    rel_store = build_relational_store(settings)
+    bootstrap_admin_if_configured(rel_store, settings)
 
     openapi_on = settings.openapi_enabled
     app = FastAPI(
@@ -147,6 +151,7 @@ def _build_test_app(settings_override=None):
     @app.get("/health", dependencies=[Depends(require_public_rate_limit)])
     def health():
         active_settings = app.state.settings
+        active_rel = getattr(app.state, "rel_store", None)
         is_memory = graph_repo.is_memory
         maint_count = graph_repo.count_service_records()
         return {
@@ -163,6 +168,7 @@ def _build_test_app(settings_override=None):
             "maintenance_record_count": maint_count,
             "fallback_invocations": groq_service.fallback_invocations,
             "auth_enabled": active_settings.api_auth_required,
+            "auth_db_mode": active_rel.mode if active_rel else "unconfigured",
             "openapi_enabled": active_settings.openapi_enabled,
         }
 
@@ -173,6 +179,7 @@ def _build_test_app(settings_override=None):
     # Wire state
     app.state.graph_repo = graph_repo
     app.state.groq_service = groq_service
+    app.state.rel_store = rel_store
     app.state.settings = settings
 
     return app

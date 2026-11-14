@@ -63,11 +63,14 @@ api_key = env_map.get("HALITE_API_KEY", "").strip()
 if not api_key:
     raise SystemExit("FATAL: HALITE_API_KEY is missing in backend/.env on the VM")
 
+health = json.loads(Path("/tmp/halite-health.json").read_text(encoding="utf-8"))
 version = json.loads(Path("/tmp/halite-version.json").read_text(encoding="utf-8"))
 if version.get("auth_enabled") is not True:
     raise SystemExit(f"FATAL: auth_enabled is not True: {version}")
 if version.get("openapi_enabled") is not False:
     raise SystemExit(f"FATAL: openapi_enabled must be False on VM: {version}")
+if health.get("auth_db_mode") != "postgresql":
+    raise SystemExit(f"FATAL: expected auth_db_mode=postgresql on VM, got {health.get('auth_db_mode')}")
 
 def status_of(path: str, headers: dict[str, str] | None = None, method: str = "GET") -> int:
     req = urllib.request.Request(

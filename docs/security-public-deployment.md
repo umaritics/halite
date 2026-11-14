@@ -60,11 +60,16 @@ Configure secrets in `/home/umar/halite/backend/.env` on the VM (`chmod 600`), n
 
 ---
 
-## 4. Browser SPA Tradeoff & Roadmap to User Auth
+## 4. Website User Authentication, RBAC & Server-to-Server Keys
 
-- **CORS is not authentication:** Non-browser scripts ignore CORS completely, so `FRONTEND_URL` + `CORS_ORIGIN_REGEX` only restrict cross-origin browsers while `HALITE_API_KEY` enforces server-side caller authorization.
-- **SPA build-time key tradeoff:** A pure Vite SPA bundles `VITE_HALITE_API_KEY` into client assets served to users of the website. This immediately blocks unauthenticated internet scanners, bots, and opportunistic LLM/Neo4j abuse against `dev1.corp.curatech.pk`, while relying on rate limits + key rotation if rotated.
-- **Forward-compatible hook for Phase 2 (Website User Auth):** `frontend/src/api/client.js` exports `setSessionTokenGetter(fn)`. Once website login/JWT authorization is enabled, authenticated user session tokens automatically supersede `VITE_HALITE_API_KEY` on `Authorization: Bearer <token>` without changing any page component.
+Halite implements **Module M01 (Workspace & Identity)** directly in FastAPI backed by PostgreSQL (`halite-postgres` on `dev1`, or any Supabase PostgreSQL URI via `DATABASE_URL`):
+
+- **Zero static API key in public browser builds:** Website users sign in at `/login` (or activate a single-use 72-hour admin invitation at `/accept-invite?token=...`). The browser holds a 15-minute `HS256` Access JWT in memory (`Authorization: Bearer <jwt>`) and rotates a single-use hashed Refresh Session (`HttpOnly; Secure` cookie + `sessionStorage` fallback for Safari/Brave ITP). `VITE_HALITE_API_KEY` is therefore **not** needed in hosted Vercel builds (`HALITE_API_KEY` stays strictly server-to-server).
+- **Argon2id + Lockout + Token-Family Theft Detection:** Passwords use Argon2id with constant-time dummy verification for unknown emails and 5-attempt lockout (`429`). Replaying an already-rotated refresh token immediately revokes the entire session family.
+- **Role-Based Access Control (RBAC):**
+  - `technician`: Browse fleet assets/history/graph, upload/ingest maintenance records, and run Diagnostics & Copilot.
+  - `supervisor`: All technician permissions **plus** `Accept` / `Reject` on `/api/maintenance/review-queue/{id}`, stamping `reviewed_by_*` onto Neo4j `ServiceRecord` nodes and writing immutable `audit_events` rows in PostgreSQL.
+  - `admin`: All supervisor permissions **plus** `/app/team` (`/api/admin/users`, `/api/admin/invites`, `/api/admin/audit-events`) and batch conflict analysis.
 
 ---
 

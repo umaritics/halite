@@ -13,8 +13,9 @@ updated: 2026-10-16
 | Layer | Tech |
 | --- | --- |
 | Frontend | React 18, Vite 5, JS/JSX, Tailwind, Axios, Vitest |
-| Backend | FastAPI, Pydantic, PyTest |
-| Graph | Neo4j 5 (Compose) + in-memory fallback when `DEMO_MODE=true` or Neo4j unset |
+| Backend | FastAPI, Pydantic, SQLAlchemy 2, Argon2id, PyJWT, PyTest |
+| Graph | Neo4j 5 (Compose / AuraDB) + in-memory fallback when `DEMO_MODE=true` or Neo4j unset |
+| Relational (M01) | PostgreSQL 16 (`organizations`, `users`, `user_sessions`, `user_invites`, `audit_events`) + SQLite in-memory fallback in `DEMO_MODE=true` |
 | LLM | Groq via `GroqService` (`is_live` gate); response caches for conflict + diagnose |
 
 ## Domain registry pattern

@@ -31,12 +31,15 @@ _require_ops_token = require_ops_token
 
 _SECRET_KV_RE = re.compile(
     r"(?i)(halite[_-]?api[_-]?key|ops[_-]?token|groq[_-]?api[_-]?key(?:[_-]?fallback)?|"
-    r"neo4j[_-]?password|gitea[_-]?(?:token|webhook[_-]?secret)|"
+    r"neo4j[_-]?password|jwt[_-]?secret[_-]?key|bootstrap[_-]?admin[_-]?password|"
+    r"refresh[_-]?token|invite[_-]?token|gitea[_-]?(?:token|webhook[_-]?secret)|"
     r"x-halite-api-key|x-ops-token|api[_-]?key|password|token|secret|authorization)"
     r"\s*([:=])\s*(?:bearer\s+)?([^\s,;\"']+)"
 )
 _BEARER_RE = re.compile(r"(?i)\b(bearer)\s+([A-Za-z0-9._~+/=-]{8,})")
-_URI_CRED_RE = re.compile(r"(?i)\b((?:bolt|neo4j)(?:\+s|\+ssc)?://[^:\s/@]+:)([^@\s]+)(@)")
+_URI_CRED_RE = re.compile(
+    r"(?i)\b((?:bolt|neo4j|postgres|postgresql)(?:\+[a-z0-9]+)?://[^:\s/@]+:)([^@\s]+)(@)"
+)
 
 
 class RingBufferHandler(logging.Handler):

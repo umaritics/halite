@@ -21,6 +21,24 @@ class Settings(BaseSettings):
     GITEA_WEBHOOK_SECRET: str = ""
 
     SECRET_KEY: str = "halite-dev-secret"
+    JWT_SECRET_KEY: str = ""
+    JWT_ACCESS_TTL_MINUTES: int = 15
+    JWT_REFRESH_TTL_DAYS: int = 7
+    AUTH_MAX_FAILED_ATTEMPTS: int = 5
+    AUTH_LOCKOUT_MINUTES: int = 15
+
+    # Relational database for Workspace Identity, RBAC, Sessions & Audit Trail
+    # Production/Compose: postgresql://halite:<password>@postgres:5432/halite (or Supabase Postgres URI)
+    # Empty in DEMO_MODE=true uses an isolated in-memory SQLite database for deterministic tests.
+    DATABASE_URL: str = ""
+
+    # Optional idempotent startup bootstrap for the initial organization admin (never commit credentials)
+    BOOTSTRAP_ORG_NAME: str = "Halite Maintenance Operations"
+    BOOTSTRAP_ORG_SLUG: str = "halite-ops"
+    BOOTSTRAP_ADMIN_EMAIL: str = ""
+    BOOTSTRAP_ADMIN_PASSWORD: str = ""
+    BOOTSTRAP_ADMIN_NAME: str = "Halite Administrator"
+
     FRONTEND_URL: str = "http://localhost:5173"
     CORS_ALLOWED_ORIGINS: str = ""
     CORS_ORIGIN_REGEX: str = r"^https://halite(?:-[a-z0-9-]+)?\.vercel\.app$"
@@ -79,6 +97,22 @@ class Settings(BaseSettings):
     def api_auth_required(self) -> bool:
         """Fail closed whenever DEMO_MODE is false, or whenever HALITE_API_KEY is configured."""
         return self.api_key_configured or not self.DEMO_MODE
+
+    @property
+    def effective_jwt_secret(self) -> str:
+        return (self.JWT_SECRET_KEY or self.SECRET_KEY or "").strip()
+
+    @property
+    def jwt_secret_strong(self) -> bool:
+        secret = self.effective_jwt_secret
+        return (
+            len(secret) >= 32
+            and secret not in {"halite-dev-secret", "change-me-in-production"}
+        )
+
+    @property
+    def database_configured(self) -> bool:
+        return bool((self.DATABASE_URL or "").strip())
 
     @property
     def openapi_enabled(self) -> bool:
