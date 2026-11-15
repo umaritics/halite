@@ -19,6 +19,7 @@ Following the November 2026 incident on the shared VM (where an internet-exposed
    - **Layer 3 — Privilege Separation (`OPS_TOKEN`):** Destructive and operational endpoints (`GET /api/ops/logs`, `DELETE /api/graph/reset`, `POST /api/maintenance/analysis/run`) require `X-Ops-Token` (`OPS_TOKEN`), which is never embedded in browser builds.
    - **Layer 4 — Abuse & Quota Controls:** Bounded in-memory sliding-window rate limiting per client IP (rightmost hop from loopback proxy), stricter per-minute caps on LLM-backed endpoints, brute-force lockout on repeated `401` failures, server-side CSV path jailing, and retired Gitea endpoints (`410 Gone`).
    - **Layer 5 — Container Sandbox (`docker-compose.vm.yml` + `Dockerfile`):** Non-root UID/GID `10001:10001`, `read_only: true` root filesystem, `noexec,nosuid,nodev` `tmpfs` mounts (`/tmp`, `/app/data`), `cap_drop: ALL`, `no-new-privileges:true`, `pids_limit: 128`, CPU/memory caps, and bounded JSON logs. Even if a dependency vulnerability were exploited, binary drops and fork-bombs inside the container are blocked by kernel enforcement.
+   - **Layer 6 — Private local LLM (staging):** Ollama runs as `halite-ollama` with **no host `ports:`**, `OLLAMA_API_KEY`, and RAM/CPU limits. Only `halite-api` on the Docker bridge may call `http://halite-ollama:11434/v1`. Public callers still pass through Layer 2 (`HALITE_API_KEY` / JWT). See [`local-llm-staging.md`](local-llm-staging.md).
 
 ---
 

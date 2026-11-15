@@ -20,7 +20,7 @@ Full security architecture and runbook: [`docs/security-public-deployment.md`](.
 
 | URL | Auth | Purpose |
 | --- | --- | --- |
-| `https://dev1.corp.curatech.pk/halite-api/api/health` | Public | Runtime honesty (`graph_mode`, `llm_mode`, `auth_enabled`, `git_sha`, …) |
+| `https://dev1.corp.curatech.pk/halite-api/api/health` | Public | Runtime honesty (`graph_mode`, `llm_mode`, `llm_provider`, `auth_enabled`, `git_sha`, …) |
 | `https://dev1.corp.curatech.pk/halite-api/api/ops/version` | Public | Which SHA is live + security flags (`auth_enabled`, `openapi_enabled`) |
 | `https://dev1.corp.curatech.pk/halite-api/api/ops/logs` | `X-Ops-Token` | Recent redacted app logs (**privileged operator secret**) |
 | `https://dev1.corp.curatech.pk/halite-api/api/maintenance/*` | `Authorization: Bearer <HALITE_API_KEY>` | Protected maintenance & diagnostic APIs (`401` without key) |
@@ -152,6 +152,7 @@ Actions → **Fetch staging backend logs** → Run workflow → download artifac
 | --- | --- |
 | Merge reviewed changes to `main`; approve CI-green releases | SSH into the VM “just to restart” |
 | Check `/api/ops/version` after deploy | Claim live Neo4j/LLM without reading `/api/health` |
+| Local conflict LLM on VM | [`docs/local-llm-staging.md`](../../../docs/local-llm-staging.md) — Ollama is Docker-internal only |
 | Use shared API from frontend `.env.local` | Commit `.env` / `OPS_TOKEN` / SSH keys |
 | Run backend unit tests locally (`DEMO_MODE=true`) | Point local Vite at localhost and assume that is staging |
 

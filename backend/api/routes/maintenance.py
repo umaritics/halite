@@ -387,7 +387,7 @@ def run_analysis_batch(
 ):
     """Process the next bounded chronological batch of unscored records."""
     if not groq_service.is_live:
-        raise HTTPException(status_code=503, detail="A live Groq model is required for conflict analysis.")
+        raise HTTPException(status_code=503, detail="A live LLM is required for conflict analysis.")
     body = body or AnalysisRunRequest()
     before = graph_repo.analysis_status()
     page = graph_repo.list_service_records_page(

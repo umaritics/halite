@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261115-local-ollama-staging](DEC-20261115-local-ollama-staging.md) | Private Ollama on staging for unbounded conflict classification | accepted | Umar, Usman |
 | [DEC-20261114-workspace-auth-rbac-postgresql](DEC-20261114-workspace-auth-rbac-postgresql.md) | M01 Workspace Authentication, Invite-Only Onboarding, RBAC, and PostgreSQL Audit Trail | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261114-public-api-security-hardening](DEC-20261114-public-api-security-hardening.md) | Global API key authentication, fail-closed startup, Gitea retirement, and container sandboxing | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261025-evidence-provenance](DEC-20261025-evidence-provenance.md) | Consolidate diagnostic evidence without altering retrieval semantics | accepted | Umar, Shahmeer |

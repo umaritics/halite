@@ -60,12 +60,23 @@ async def lifespan(app: FastAPI):
             store.seed_demo_data()
             graph_repo = GraphRepository(store)
 
+    llm_api_key = settings.GROQ_API_KEY
+    if settings.LLM_PROVIDER.strip().lower() == "openai_compatible":
+        llm_api_key = settings.OPENAI_COMPAT_API_KEY
     groq_service = GroqService(
-        settings.GROQ_API_KEY,
-        settings.GROQ_MODEL,
-        demo_mode=not settings.groq_configured,
+        llm_api_key,
+        settings.llm_model,
+        demo_mode=not settings.llm_configured,
+        provider=settings.LLM_PROVIDER,
+        openai_compat_base_url=settings.OPENAI_COMPAT_BASE_URL,
+        request_timeout_s=settings.LLM_REQUEST_TIMEOUT_S,
     )
-    logger.info("Groq configured: %s", settings.groq_configured)
+    logger.info(
+        "LLM provider=%s configured=%s model=%s",
+        settings.LLM_PROVIDER,
+        settings.llm_configured,
+        settings.llm_model,
+    )
 
     rel_store = build_relational_store(settings)
     logger.info("Relational auth store mode: %s", rel_store.mode)
@@ -142,6 +153,7 @@ def _health_payload():
         "neo4j_configured": active_settings.neo4j_configured,
         "using_memory_graph": is_memory,
         "groq_configured": active_settings.groq_configured,
+        "llm_provider": active_settings.LLM_PROVIDER,
         # §T6 additions
         "graph_mode": "memory" if is_memory else "neo4j",
         "llm_mode": "live" if llm_is_live else "fallback",

@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     GROQ_API_KEY_FALLBACK: str = ""
     GROQ_MODEL: str = "openai/gpt-oss-20b"
 
+    # LLM backend: groq (cloud) or openai_compatible (e.g. Ollama on Docker internal DNS).
+    # Staging may use openai_compatible so conflict analysis is not capped by Groq TPD.
+    LLM_PROVIDER: str = "groq"
+    OPENAI_COMPAT_BASE_URL: str = ""
+    OPENAI_COMPAT_API_KEY: str = ""
+    LLM_REQUEST_TIMEOUT_S: float = 120.0
+
     # Deprecated: self-hosted Gitea was retired after the Nov 2026 VM incident.
     # Routes fail closed (410 Gone) unless ENABLE_GITEA_INTEGRATION=true.
     ENABLE_GITEA_INTEGRATION: bool = False
@@ -79,8 +86,24 @@ class Settings(BaseSettings):
         return bool(self.NEO4J_URI and self.NEO4J_PASSWORD)
 
     @property
-    def groq_configured(self) -> bool:
+    def llm_model(self) -> str:
+        if self.LLM_PROVIDER == "openai_compatible":
+            return (self.GROQ_MODEL or "phi4-mini").strip()
+        return self.GROQ_MODEL
+
+    @property
+    def llm_configured(self) -> bool:
+        if (self.LLM_PROVIDER or "groq").strip().lower() == "openai_compatible":
+            return bool(
+                (self.OPENAI_COMPAT_BASE_URL or "").strip()
+                and (self.OPENAI_COMPAT_API_KEY or "").strip()
+            )
         return bool(self.GROQ_API_KEY)
+
+    @property
+    def groq_configured(self) -> bool:
+        """Backward-compatible alias used by /api/health and startup logs."""
+        return self.llm_configured
 
     @property
     def gitea_configured(self) -> bool:

@@ -1,32 +1,101 @@
 import json
 import logging
 
+import httpx
+
 logger = logging.getLogger(__name__)
 
 
 class GroqService:
-    def __init__(self, api_key: str, model: str = "openai/gpt-oss-20b", demo_mode: bool = False):
+    def __init__(
+        self,
+        api_key: str,
+        model: str = "openai/gpt-oss-20b",
+        demo_mode: bool = False,
+        *,
+        provider: str = "groq",
+        openai_compat_base_url: str = "",
+        request_timeout_s: float = 120.0,
+    ):
         self.api_key = api_key
         self.model = model
-        self.demo_mode = demo_mode or not api_key
+        self.provider = (provider or "groq").strip().lower()
+        self.openai_compat_base_url = (openai_compat_base_url or "").rstrip("/")
+        self.request_timeout_s = float(request_timeout_s)
+        self.demo_mode = demo_mode
         self.client = None
         self.fallback_invocations: int = 0  # §7: incremented every time _demo_response is used
-        if not self.demo_mode:
-            try:
-                from groq import Groq
-
-                self.client = Groq(api_key=api_key)
-            except Exception as exc:
-                logger.error("Failed to init Groq client: %s", exc)
+        if self.demo_mode:
+            return
+        if self.provider == "openai_compatible":
+            if not self.openai_compat_base_url or not self.api_key:
+                logger.error("OpenAI-compatible LLM missing base URL or API key")
                 self.demo_mode = True
+            return
+        try:
+            from groq import Groq
+
+            self.client = Groq(api_key=api_key)
+        except Exception as exc:
+            logger.error("Failed to init Groq client: %s", exc)
+            self.demo_mode = True
 
     @property
     def is_live(self) -> bool:
-        """True only when a real Groq client is configured and not in demo mode."""
-        return not self.demo_mode and self.client is not None
+        """True when a real provider is configured and not in demo mode."""
+        if self.demo_mode:
+            return False
+        if self.provider == "openai_compatible":
+            return bool(self.openai_compat_base_url and self.api_key)
+        return self.client is not None
 
     def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048) -> str:
         return self.chat_with_usage(messages, system_prompt, max_tokens)["content"]
+
+    def _chat_openai_compatible(
+        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048
+    ) -> dict:
+        full_messages: list[dict] = []
+        if system_prompt:
+            full_messages.append({"role": "system", "content": system_prompt})
+        full_messages.extend(messages)
+        url = f"{self.openai_compat_base_url}/chat/completions"
+        payload = {
+            "model": self.model,
+            "messages": full_messages,
+            "max_tokens": max_tokens,
+            "temperature": 0.3,
+            "stream": False,
+            # Ollama OpenAI-compat extensions (ignored by Groq); see docs/local-llm-staging.md
+            "response_format": {"type": "json_object"},
+            "reasoning_effort": "none",
+        }
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
+        with httpx.Client(timeout=self.request_timeout_s) as client:
+            response = client.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+            body = response.json()
+        choices = body.get("choices") or []
+        if not choices:
+            raise RuntimeError("OpenAI-compatible LLM returned no choices")
+        message = choices[0].get("message") or {}
+        content = message.get("content")
+        if content is None or not str(content).strip():
+            finish_reason = choices[0].get("finish_reason", "unknown")
+            raise RuntimeError(
+                f"OpenAI-compatible LLM returned empty content (finish_reason={finish_reason})"
+            )
+        usage_raw = body.get("usage") or {}
+        usage = {
+            "prompt_tokens": usage_raw.get("prompt_tokens"),
+            "completion_tokens": usage_raw.get("completion_tokens"),
+            "total_tokens": usage_raw.get("total_tokens"),
+            "reasoning_tokens": None,
+        }
+        return {"content": str(content), "usage": usage}
 
     def chat_with_usage(
         self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048
@@ -35,6 +104,12 @@ class GroqService:
         if self.demo_mode:
             self.fallback_invocations += 1
             return {"content": self._demo_response(messages, system_prompt), "usage": {}}
+        if self.provider == "openai_compatible":
+            try:
+                return self._chat_openai_compatible(messages, system_prompt, max_tokens)
+            except Exception as exc:
+                logger.error("OpenAI-compatible LLM error: %s", exc)
+                raise RuntimeError(f"LLM error: {exc}") from exc
         full_messages = []
         if system_prompt:
             full_messages.append({"role": "system", "content": system_prompt})
