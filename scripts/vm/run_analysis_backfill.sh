@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 ENV_FILE="$ROOT/backend/.env"
 API="http://127.0.0.1:8002/api/maintenance/analysis/run"
-LOG="$ROOT/backend/data/analysis_backfill.log"
+LOG="${LOG:-$ROOT/logs/analysis_backfill.log}"
 BATCH_SIZE="${BATCH_SIZE:-25}"
 MAX_ROUNDS="${MAX_ROUNDS:-100}"
 SLEEP_SEC="${SLEEP_SEC:-2}"
