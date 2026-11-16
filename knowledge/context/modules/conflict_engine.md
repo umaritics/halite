@@ -3,7 +3,7 @@ id: mod-conflict
 title: Conflict engine module
 status: active
 owners: [Usman, Umar]
-updated: 2026-10-17
+updated: 2026-11-16
 ---
 
 # Module: Conflict engine
@@ -46,9 +46,20 @@ Before migration, API reads identify an untouched `confidence=1.0` record with
 no analysis metadata as `legacy_placeholder`, return null confidence and
 `analysis_state=unscored`, and leave the stored graph value unchanged.
 Backfill `--resume` and `POST /maintenance/analysis/run` select explicit
-`analysis_state=unscored`; both require live Groq, use `allow_stub=False`, and
-bound 429 retries. The API batch is ops-token protected and capped at 25.
-Coverage is returned by `GET /maintenance/analysis/status`.
+`analysis_state=unscored`; both require a **live LLM** (`groq_service.is_live`,
+Groq or `LLM_PROVIDER=openai_compatible` on staging), use `allow_stub=False`, and
+bound 429 retries when on Groq. The API batch is ops-token protected and capped
+at 25. Coverage is returned by `GET /maintenance/analysis/status`.
+
+### Staging inference (2026-11-16)
+
+Shared staging runs **Docker-internal Ollama** (`phi4-mini`) via `GroqService`
+openai-compatible adapter — see
+[`docs/local-llm-staging.md`](../../../docs/local-llm-staging.md) and
+`DEC-20261115-local-ollama-staging`. `MAINT_ANALYSIS_MODE=cascade` is enabled on
+the VM. Full-corpus backfill completed with **0 unscored** (see
+`DEC-20261116-staging-corpus-analysis-complete`, `docs/mid1/25_local_llm_staging_evidence.md`).
+Local dev defaults remain `LLM_PROVIDER=groq`.
 
 ### Opt-in cost cascade
 

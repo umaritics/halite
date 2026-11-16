@@ -3,7 +3,7 @@ id: mod-remote-backend
 title: Shared remote staging backend
 status: active
 owners: [Umar, Usman]
-updated: 2026-10-16
+updated: 2026-11-16
 ---
 
 # Shared remote staging backend
@@ -153,6 +153,7 @@ Actions → **Fetch staging backend logs** → Run workflow → download artifac
 | Merge reviewed changes to `main`; approve CI-green releases | SSH into the VM “just to restart” |
 | Check `/api/ops/version` after deploy | Claim live Neo4j/LLM without reading `/api/health` |
 | Local conflict LLM on VM | [`docs/local-llm-staging.md`](../../../docs/local-llm-staging.md) — Ollama is Docker-internal only |
+| Staging analysis coverage | Full corpus analysed 2026-11-16 (`0` unscored); evidence [`docs/mid1/25_local_llm_staging_evidence.md`](../../../docs/mid1/25_local_llm_staging_evidence.md) |
 | Use shared API from frontend `.env.local` | Commit `.env` / `OPS_TOKEN` / SSH keys |
 | Run backend unit tests locally (`DEMO_MODE=true`) | Point local Vite at localhost and assume that is staging |
 

@@ -31,7 +31,8 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | DEMO_MODE, graph_mode, llm_mode | context/modules/devops.md |
 | CI, GitHub Actions, docker compose | flows/FLOW-ci.md, context/modules/devops.md |
 | staging, remote VM, deploy, OPS_TOKEN, ops/logs | context/modules/remote_backend.md, flows/FLOW-deploy.md |
-| local LLM, Ollama, OPENAI_COMPAT, conflict backfill | docs/local-llm-staging.md, decisions/DEC-20261115-local-ollama-staging.md, docker-compose.vm.yml |
+| local LLM, Ollama, OPENAI_COMPAT, conflict backfill | docs/local-llm-staging.md, docs/mid1/25_local_llm_staging_evidence.md, decisions/DEC-20261115-local-ollama-staging.md, decisions/DEC-20261116-staging-corpus-analysis-complete.md, docker-compose.vm.yml |
+| corpus analysis complete, 0 unscored, review queue bulk | decisions/DEC-20261116-staging-corpus-analysis-complete.md, docs/mid1/25_local_llm_staging_evidence.md |
 | security, HALITE_API_KEY, Bearer auth, rate limit, EXPOSE_OPENAPI, Gitea 410 | docs/security-public-deployment.md, decisions/DEC-20261114-public-api-security-hardening.md, `backend/api/security.py`, `backend/api/router.py` |
 | login, RBAC, Argon2, JWT, invite, PostgreSQL, audit_events, reviewed_by, TeamAccess | decisions/DEC-20261114-workspace-auth-rbac-postgresql.md, docs/security-public-deployment.md, `backend/db/models.py`, `backend/services/auth_service.py`, `backend/api/routes/auth.py`, `frontend/src/context/AuthContext.jsx` |
 | Mid-I progress, partner handoff | docs/mid1/README.md, docs/mid1/08_umar_progress.md |

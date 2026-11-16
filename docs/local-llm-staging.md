@@ -2,7 +2,7 @@
 
 Halite’s conflict engine needs many small **JSON classifications**. Groq’s free **tokens-per-day** cap blocks full-corpus backfill (~2,079 records). Staging runs **Ollama** on the shared VM with **no public port** so only the `halite-api` container can call it.
 
-**Related:** [`security-public-deployment.md`](security-public-deployment.md), [`knowledge/decisions/DEC-20261115-local-ollama-staging.md`](../knowledge/decisions/DEC-20261115-local-ollama-staging.md).
+**Related:** [`security-public-deployment.md`](security-public-deployment.md), [`knowledge/decisions/DEC-20261115-local-ollama-staging.md`](../knowledge/decisions/DEC-20261115-local-ollama-staging.md), [`docs/mid1/25_local_llm_staging_evidence.md`](mid1/25_local_llm_staging_evidence.md), [`DEC-20261116-staging-corpus-analysis-complete`](../knowledge/decisions/DEC-20261116-staging-corpus-analysis-complete.md).
 
 ---
 

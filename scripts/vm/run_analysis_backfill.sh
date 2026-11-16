@@ -28,7 +28,7 @@ for ((round = 1; round <= MAX_ROUNDS; round++)); do
     exit 1
   }
   echo "round $round: $resp" | tee -a "$LOG"
-  unscored="$(python3 -c "import json,sys; d=json.load(sys.stdin); print((d.get('analysis_status') or {}).get('unscored', 0))" <<<"$resp")"
+  unscored="$(python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('remaining_unscored', d.get('after', {}).get('unscored', 0)))" <<<"$resp")"
   processed="$(python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('processed', 0))" <<<"$resp")"
   if [[ "${processed:-0}" -eq 0 ]]; then
     echo "round $round: nothing processed; stopping" | tee -a "$LOG"

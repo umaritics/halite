@@ -3,7 +3,7 @@ id: flow-conflict-review
 title: Conflict detection and review flow
 status: active
 owners: [Usman, Shahmeer, Umar]
-updated: 2026-10-17
+updated: 2026-11-16
 ---
 
 # FLOW-conflict-review
@@ -27,8 +27,8 @@ updated: 2026-10-17
 
 ## Failure and safety
 
-- Model-dependent work fails closed unless Groq is live; stubs are never
-  persisted as conflict evidence.
+- Model-dependent work fails closed unless a live LLM is configured (Groq cloud
+  or staging Ollama); stubs are never persisted as conflict evidence.
 - Batch size is capped at 25, retries for 429 are bounded, and resume selects
   only explicit `unscored` state.
 - Request/token budgets persist by UTC date and model. Batch/API runs stop
@@ -62,9 +62,11 @@ flowchart TB
   RUN[POST /maintenance/analysis/run + ops token] --> CE
   U --> CE
   CE --> SC[Deterministic text/scope screen]
-  SC -->|above threshold| G[Adaptive Groq votes + cache]
+  SC -->|above threshold| G[Adaptive LLM votes + cache]
   SC -->|below threshold| GR
   B[(UTC daily budget state)] --> G
+  G -->|Groq cloud or halite-ollama| LLM[(LLM)]
+  LLM --> G
   G --> GR
   CE --> GR[GraphRepository]
   GR --> N[(Neo4j or memory)]
