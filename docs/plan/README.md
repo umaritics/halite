@@ -10,6 +10,7 @@ timeline, demo script) is the shared document "Halite Master Plan: ownership, CC
 | [`AGENT_GUIDE_UMAR.md`](AGENT_GUIDE_UMAR.md) | Umar's agent | V1 Retrieval and Ranking |
 | [`AGENT_GUIDE_SHAHMEER.md`](AGENT_GUIDE_SHAHMEER.md) | Shahmeer's agent | V2 Record Integrity, plus the frontend preparation |
 | [`AGENT_GUIDE_USMAN.md`](AGENT_GUIDE_USMAN.md) | Usman's agent | V3 Investigation Sessions, plus the backend preparation and CI |
+| [`Halite_Master_Plan.docx`](Halite_Master_Plan.docx) | The three of us | A Word export of the master plan as of 20 November 2026. The live document is the source of truth; re-export after it changes. |
 
 ## How to start an agent session
 
@@ -22,9 +23,8 @@ Say this, then name one work package:
 
 1. All three owners read the master plan and agree to it.
 2. Commit these files to `main`.
-3. In the same commit, add `knowledge/decisions/DEC-20261120-vertical-ownership.md` and replace the
-   mid-term ownership list in `AGENTS.md` and `knowledge/context/02_ownership_mid1.md` with the three verticals.
-   The handbook requires ownership changes to be recorded when they happen.
+3. The ownership change is recorded in `knowledge/decisions/DEC-20261120-vertical-ownership.md`, and `AGENTS.md`
+   points at these files. The handbook requires ownership changes to be recorded when they happen.
 4. Tag that commit. The December work starts from it.
 
 ## Keeping the files true

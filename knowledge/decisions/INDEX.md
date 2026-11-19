@@ -3,7 +3,7 @@ id: decisions-index
 title: Architecture / process decisions
 status: active
 owners: [all]
-updated: 2026-11-16
+updated: 2026-11-20
 ---
 
 # Decisions index
@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261120-vertical-ownership](DEC-20261120-vertical-ownership.md) | Ownership moves from layers to three full-stack verticals | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261116-staging-corpus-analysis-complete](DEC-20261116-staging-corpus-analysis-complete.md) | Staging full-corpus conflict analysis complete (0 unscored) | accepted | Umar, Usman |
 | [DEC-20261115-local-ollama-staging](DEC-20261115-local-ollama-staging.md) | Private Ollama on staging for unbounded conflict classification | accepted | Umar, Usman |
 | [DEC-20261114-workspace-auth-rbac-postgresql](DEC-20261114-workspace-auth-rbac-postgresql.md) | M01 Workspace Authentication, Invite-Only Onboarding, RBAC, and PostgreSQL Audit Trail | accepted | Umar, Usman, Shahmeer |

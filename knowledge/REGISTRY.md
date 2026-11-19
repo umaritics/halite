@@ -8,6 +8,10 @@ updated: 2026-11-16
 
 # Module registry
 
+> The "Primary owner (Mid-I)" column is historical. Since 2026-11-20 ownership is by vertical: see
+> [DEC-20261120-vertical-ownership](decisions/DEC-20261120-vertical-ownership.md) and `docs/plan/CONTRACTS.md`.
+> Update each row as the preparation pull requests move its files.
+
 | Module | Primary owner (Mid-I) | Primary code | Context | Flow |
 | --- | --- | --- | --- | --- |
 | Diagnostics retrieval, ranking & copilot | Umar (cross-owner waiver for copilot) | `backend/services/diagnostic_retrieval.py`, `backend/api/routes/diagnostics.py`, `backend/services/groq_service.py` | [modules/diagnostics.md](context/modules/diagnostics.md) | [FLOW-diagnose.md](flows/FLOW-diagnose.md) |
