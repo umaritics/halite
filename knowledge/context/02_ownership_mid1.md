@@ -1,12 +1,16 @@
 ---
 id: ctx-ownership
 title: Mid-I ownership and edit rules
-status: active
+status: superseded
 owners: [all]
-updated: 2026-10-16
+updated: 2026-11-20
 ---
 
 # Mid-I ownership
+
+> **Historical.** Superseded on 2026-11-20 by vertical ownership: see
+> [DEC-20261120-vertical-ownership](../decisions/DEC-20261120-vertical-ownership.md) and `docs/plan/CONTRACTS.md`.
+> The table below describes who owned what up to the FYP-I Mid evaluation.
 
 Source: `docs/halite_work_division_mid1.pdf`.
 
