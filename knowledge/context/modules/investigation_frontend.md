@@ -77,5 +77,4 @@ outcomes/print, hidden foreign session, model-off quick diagnosis and widget out
 New Copilot/session turns supply uncalibrated named beliefs, the other bucket and
 entropy. The UI renders all of them as relative support and labels calibration
 status. Old saved turns lacking beliefs retain their existing rendering; no
-recomputation enriches historical responses. The live policy remains explicitly
-unconfigured. Component and built-browser evidence is in `phase4-*`.
+recomputation enriches historical responses. The default live policy remains unconfigured. The opt-in managed controller supplies official-code questions and saved posterior updates; experimental settings are explicitly labelled. Question IDs are submitted and changing identity resets the selection. Component and built-browser evidence is in `phase4-*`.

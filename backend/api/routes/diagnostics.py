@@ -518,6 +518,11 @@ def copilot_turn(
     groq_service=Depends(get_groq_service),
 ):
     """Advance a stateless, evidence-grounded diagnostic case by one turn."""
+    return _run_copilot_turn(req, graph_repo, groq_service)
+
+
+def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
+    """Shared extraction/ranking; managed sessions own their final explanation."""
     if req.asset_id and not _asset_exists(graph_repo, req.asset_id):
         raise HTTPException(status_code=404, detail=f"Unknown asset_id={req.asset_id}")
 
@@ -573,7 +578,7 @@ def copilot_turn(
 
     reply = None
     citation_result = {"valid": [], "invalid": [], "flagged_text": ""}
-    if llm_status != "unavailable":
+    if write_reply and llm_status != "unavailable":
         if not evidence:
             reply = "No relevant service history was found for the accumulated case."
             llm_status = "not_needed"
@@ -645,7 +650,7 @@ def copilot_turn(
                 reply = None
 
     beliefs = score_beliefs(ranked[:10], ranker_version=MID_VERSION)
-    return {
+    result = {
         "session_id": req.session_id or str(uuid.uuid4()),
         "reply": reply,
         "case_state": case_state,
@@ -663,6 +668,9 @@ def copilot_turn(
         **decide(beliefs),
         "ranker_mode": "mid_heuristic", "ranker_version": MID_VERSION,
     }
+    if not write_reply:
+        result['report_mode'] = bool(selected_records)
+    return result
 
 
 # ---------------------------------------------------------------------------

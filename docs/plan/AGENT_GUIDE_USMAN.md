@@ -509,3 +509,7 @@ The pure question engine and three-control 2024 simulation are implemented. See 
 ### Verified implementation snapshot — coded-field review preparation
 
 User-authorized separate branch adds exactly twelve shared-file lines and the idempotent/dry-run backfill. All 355 backend tests pass with isolated Neo4j/PostgreSQL; actual CLI apply/repeat proof is saved. See `docs/work/usman/CODED_FIELDS_INTEGRATION.md`. Shahmeer review/merge and Umar’s actual staging backup/backfill remain pending; no staging mutation claimed.
+
+### Verified implementation snapshot — managed live WP-S5
+
+The session question/answer controller is implemented behind disabled-by-default `SESSION_QUESTIONS_ENABLED` and an explicit policy file. It saves a unique question ID, model basis/matrices, policy, prior/posterior and answer history. Answers never read graph/model state. The production-built browser verifies changing bars, not-sure, three-question budget and exact reload replay with real local databases. The synthetic policy fixture is not the chosen operating point; shared responsive-shell preparation was separately authorized after visual QA exposed the phone-width sidebar problem.

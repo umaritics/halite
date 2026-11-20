@@ -107,3 +107,7 @@ The Copilot ranker port → stable score/other beliefs → unconfigured policy i
 are included in each new saved response. Snapshot hypotheses carry their beliefs
 and `belief_entropy` stores the same entropy. Existing saved turns replay exactly
 without recomputation. See [FLOW-decision-selection.md](FLOW-decision-selection.md).
+
+## Managed question extension
+
+The opt-in [managed flow](FLOW-live-questions.md) uses a strict visible graph snapshot for observations and saved matrices for structured answers. Unique question IDs reject replaced questions even for the same attribute. Prior/posterior, answer history and the budget share the existing CAS transaction and exact replay boundary. The default bridge remains unconfigured.

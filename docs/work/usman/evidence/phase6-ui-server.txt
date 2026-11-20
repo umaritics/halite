@@ -1,0 +1,3 @@
+npm notice run halite-frontend@0.1.0 npx
+npm notice run 'vite' preview --host 127.0.0.1 --port 15173
+  ➜  Local:   http://127.0.0.1:15173/

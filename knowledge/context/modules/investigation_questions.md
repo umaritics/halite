@@ -8,7 +8,7 @@ updated: 2026-11-20
 
 # Question engine boundary
 
-The pure engine is implemented; live session answer handling remains disabled.
+The pure engine is implemented. [Managed live session questions](investigation_live_questions.md) are now implemented behind an explicit disabled-by-default flag and policy file.
 `attributes.py` freezes thirteen attributes: four raw FAA fields, a 2023-only
 part-condition top thirty, explicit hundred-level location zones, and seven
 narrative mention patterns. A negated mention is still a mention; absence never

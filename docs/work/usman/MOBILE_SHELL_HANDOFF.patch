@@ -1,0 +1,96 @@
+--- a/frontend/src/App.jsx
++++ b/frontend/src/App.jsx
+@@ -43,7 +43,7 @@
+   return (
+     <div className={`flex h-screen overflow-hidden bg-page ${isDark ? 'text-[#F5F5F5]' : 'text-[#0A0A0A]'}`}>
+       <Sidebar reviewCount={reviewCount} />
+-      <main className="relative flex-1 overflow-hidden">
++      <main className="relative min-w-0 flex-1 overflow-hidden">
+         <Routes>
+           <Route index element={<Navigate to={HOME} replace />} />
+           {featureRoutes.map(({ path, element, roles }) => (
+--- a/frontend/src/components/Sidebar.jsx
++++ b/frontend/src/components/Sidebar.jsx
+@@ -51,27 +51,28 @@
+ 
+   return (
+     <aside
+-      className={`flex h-full w-64 flex-col border-r ${
++      className={`flex h-full w-16 shrink-0 flex-col border-r md:w-64 ${
+         isDark ? 'border-border-dark bg-black' : 'border-[#DDDDDD] bg-surface-light'
+       }`}
+     >
+-      <div className="border-b border-theme px-5 py-6">
++      <div className="border-b border-theme px-3 py-4 md:px-5 md:py-6">
+         <Link to="/app/assets" className="flex items-center gap-3">
+           <HaliteLogo className="h-10 w-10" />
+-          <div>
++          <div className="hidden md:block">
+             <BrandName className="text-xl text-accent" />
+             <p className="font-sans text-xs text-secondary">Maintenance Intelligence</p>
+           </div>
+         </Link>
+       </div>
+ 
+-      <nav className="flex-1 space-y-1 p-3">
++      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto p-2 md:p-3">
+         {visibleItems.map(({ to, label, icon: Icon, badge }) => (
+           <NavLink
+             key={to}
+             to={to}
++            aria-label={label}
+             className={({ isActive }) =>
+-              `group flex items-center gap-3 rounded-md px-3 py-2.5 font-sans text-sm font-medium transition ${
++              `group relative flex items-center gap-3 rounded-md px-3 py-2.5 font-sans text-sm font-medium transition ${
+                 isActive
+                   ? `border-l-[3px] border-accent pl-[9px] ${isDark ? 'text-[#F5F5F5]' : 'text-[#0A0A0A]'}`
+                   : 'border-l-[3px] border-transparent text-[#888888] hover:text-primary'
+@@ -79,11 +80,11 @@
+             }
+           >
+             <Icon className="h-5 w-5 shrink-0" />
+-            <span className="flex-1">{label}</span>
++            <span className="sr-only md:not-sr-only md:flex-1">{label}</span>
+             {badge && reviewCount > 0 && (
+               <span
+                 aria-label={`${reviewCount} records awaiting review`}
+-                className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent/20 px-1.5 text-xs font-semibold text-accent ring-1 ring-accent/40"
++                className="absolute right-0 top-0 flex h-5 min-w-5 md:static items-center justify-center rounded-full bg-accent/20 px-1.5 text-xs font-semibold text-accent ring-1 ring-accent/40"
+               >
+                 {reviewCount}
+               </span>
+@@ -92,10 +93,10 @@
+         ))}
+       </nav>
+ 
+-      <div className="border-t border-theme p-4 space-y-3">
++      <div className="border-t border-theme p-2 space-y-3 md:p-4">
+         {isAuthenticated && user ? (
+           <div className="space-y-2.5">
+-            <div className="flex items-center justify-between gap-2">
++            <div className="hidden items-center justify-between gap-2 md:flex">
+               <span className="truncate font-sans text-xs font-medium text-primary">
+                 {user.full_name}
+               </span>
+@@ -103,18 +104,18 @@
+                 {user.role}
+               </span>
+             </div>
+-            <p className="truncate font-mono text-[11px] text-secondary">{user.email}</p>
++            <p className="hidden truncate font-mono text-[11px] text-secondary md:block">{user.email}</p>
+             <button
+               type="button"
+               onClick={handleSignOut}
+               className="halite-btn-ghost w-full py-1.5 text-xs justify-center"
+             >
+               <ArrowRightOnRectangleIcon className="h-4 w-4" />
+-              Sign out
++              <span className="sr-only md:not-sr-only">Sign out</span>
+             </button>
+           </div>
+         ) : (
+-          <p className="font-sans text-xs text-[#555555]">
++          <p className="sr-only font-sans text-xs text-[#555555] md:not-sr-only">
+             Service history intelligence for maintenance teams
+           </p>
+         )}

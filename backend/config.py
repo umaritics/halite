@@ -88,7 +88,9 @@ class Settings(BaseSettings):
     # Reserved for the integrity owner's additive settings.
 
     # --- SESSION_ ---
-    # Reserved for investigation settings after session persistence lands.
+    SESSION_QUESTIONS_ENABLED: bool = False
+    # Explicit reviewable operating-point file; enabling without it fails closed.
+    SESSION_POLICY_FILE: str = ""
 
     @property
     def neo4j_configured(self) -> bool:

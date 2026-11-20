@@ -48,7 +48,7 @@ outage behavior. Until the measured policy package lands, session responses say
 `decision=abstain`, `policy_status=not_configured`, `question=null` and
 `grounding=null`. It now returns explicit uncalibrated beliefs/entropy and stores
 the rule inputs; see [investigation_decisions.md](investigation_decisions.md). No calibrated beliefs or sentence checks are claimed.
-Structured answers are refused with 409 until a stored question can validate them.
+Structured answers remain refused in the default bridge. The opt-in [managed controller](investigation_live_questions.md) validates saved question IDs/options, updates saved posteriors without graph/model reads and commits through the same transaction.
 
 Quick diagnose adds `allow_degraded=false`; the default 503 contract remains.
 Opt-in calls return `explanation=null`, `fallback_explanation`, ranking, evidence

@@ -3,9 +3,11 @@ import CopilotMarkdown from '../../components/CopilotMarkdown';
 
 export function DecisionBadge({ response }) {
   const pending = response?.policy_status === 'not_configured';
+  const experimental = response?.policy_status === 'experimental';
   const labels = { answer: 'Answer', ask: 'Clarification needed', abstain: 'Insufficient evidence', report: 'Record summary' };
   return <div role="status" className="rounded-md border border-theme p-3 text-sm text-primary">
     <strong>{pending ? 'Decision policy pending' : (labels[response?.decision] || 'Historical evidence')}</strong>
+    {experimental && <p className="mt-1 text-xs text-secondary">Experimental guidance — decision settings are still being evaluated.</p>}
     {response?.decision_reason && <p className="mt-1 text-secondary">{response.decision_reason}</p>}
   </div>;
 }
@@ -32,10 +34,14 @@ export function BeliefBars({ beliefs }) {
 }
 
 export function QuestionCard({ question, disabled, onAnswer }) {
-  const [value, setValue] = useState('');
   if (!question) return null;
+  return <QuestionForm key={question.id || question.attribute} question={question} disabled={disabled} onAnswer={onAnswer} />;
+}
+
+function QuestionForm({ question, disabled, onAnswer }) {
+  const [value, setValue] = useState('');
   const options = question.options || [];
-  return <form className="halite-card p-4" onSubmit={(event) => { event.preventDefault(); if (value) onAnswer({ attribute: question.attribute, value }); }}>
+  return <form className="halite-card p-4" onSubmit={(event) => { event.preventDefault(); if (options.some(option => option.value === value) || value === 'not_sure') onAnswer({ attribute: question.attribute, value, ...(question.id ? { question_id: question.id } : {}) }); }}>
     <fieldset disabled={disabled}>
       <legend className="font-brand text-lg text-primary">{question.text}</legend>
       {question.reason && <p className="mt-2 text-sm text-secondary">Why this question: {question.reason}</p>}

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field, field_validator
 
-from api.deps import get_graph_repo, get_groq_service, get_rel_store
+from api.deps import get_graph_repo, get_groq_service, get_rel_store, get_settings
 from api.security import get_current_principal, require_llm_rate_limit
 from investigation.sessions import SessionService
 
@@ -25,6 +25,7 @@ class CreateSession(BaseModel):
 class SessionAnswer(BaseModel):
     attribute: str = Field(min_length=1, max_length=80)
     value: str = Field(min_length=1, max_length=200)
+    question_id: str | None = Field(default=None, max_length=36)
 
 
 class TurnRequest(BaseModel):
@@ -58,8 +59,8 @@ class CloseSession(BaseModel):
         return value.strip()
 
 
-def service(store=Depends(get_rel_store), principal=Depends(get_current_principal)):
-    return SessionService(store, principal)
+def service(store=Depends(get_rel_store), principal=Depends(get_current_principal), settings=Depends(get_settings)):
+    return SessionService(store, principal, settings=settings)
 
 
 @router.get('/summary')

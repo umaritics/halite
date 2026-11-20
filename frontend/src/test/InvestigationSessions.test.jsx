@@ -267,3 +267,47 @@ describe('Dashboard and future response views', () => {
     expect(clearLegacyInvestigations({ removeItem() { throw new Error('denied'); } })).toBe(false);
   });
 });
+
+describe('Saved structured questions', () => {
+  const question = { id: 'question-1', attribute: 'stage_of_operation', text: 'At what stage?', reason: 'Expected to remove 0.400 of 1.000 bits of uncertainty.',
+    options: [{ value: 'CL', label: 'CLIMB (CL)' }, { value: 'CR', label: 'CRUISE (CR)' }] };
+
+  it('sends the saved question identity and resets the selection for the next question', () => {
+    const answer = vi.fn();
+    const { rerender } = render(<QuestionCard question={question} onAnswer={answer} />);
+    fireEvent.change(screen.getByLabelText('Your answer'), { target: { value: 'CL' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit answer' }));
+    expect(answer).toHaveBeenCalledWith({ attribute: 'stage_of_operation', value: 'CL', question_id: 'question-1' });
+    rerender(<QuestionCard question={{ ...question, id: 'question-2' }} onAnswer={answer} />);
+    expect(screen.getByLabelText('Your answer')).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Submit answer' })).toBeDisabled();
+  });
+
+  it('keeps an in-flight question disabled', () => {
+    render(<QuestionCard question={question} disabled onAnswer={vi.fn()} />);
+    expect(screen.getByLabelText('Your answer')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Submit answer' })).toBeDisabled();
+  });
+
+  it('submits through the workspace and displays only the confirmed updated beliefs', async () => {
+    const initial = reply({ question, decision: 'ask', policy_status: 'experimental', beliefs: {
+      calibrated: true, hypotheses: [{ part_name: 'PUMP', belief: .4 }], other: .6, entropy: .97,
+    } });
+    sessionsAPI.get.mockResolvedValue({ data: saved({ turn_count: 1, turns: [{ id: 'turn-1', idx: 1, user_text: 'pressure loss', response: initial }] }) });
+    let resolve;
+    sessionsAPI.turn.mockImplementation(() => new Promise(r => { resolve = r; }));
+    renderPage('/app/investigations/session-one');
+    expect(await screen.findByText('At what stage?')).toBeInTheDocument();
+    expect(screen.getByText('Experimental guidance — decision settings are still being evaluated.')).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Your answer'), { target: { value: 'CL' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Submit answer' }));
+    expect(sessionsAPI.turn).toHaveBeenCalledWith('session-one', { message: 'Answer to stage_of_operation: CL',
+      answer: { attribute: 'stage_of_operation', value: 'CL', question_id: 'question-1' } });
+    expect(screen.getByText('40.0%')).toBeInTheDocument();
+    expect(screen.getByLabelText('Your answer')).toBeDisabled();
+    resolve({ data: reply({ turn_id: 'turn-2', turn_index: 2, decision: 'abstain', question: null, policy_status: 'experimental',
+      beliefs: { calibrated: true, hypotheses: [{ part_name: 'PUMP', belief: .8 }], other: .2, entropy: .72 } }) });
+    expect(await screen.findByText('80.0%')).toBeInTheDocument();
+    expect(screen.queryByText('At what stage?')).not.toBeInTheDocument();
+  });
+});

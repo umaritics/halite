@@ -413,3 +413,71 @@ No metric, trace or method source changed.
 
 Coded-field review preparation is draft PR #33:
 https://github.com/umaritics/halite/pull/33, stacked on #32.
+
+## Phase 6 — durable live question and posterior flow
+
+Implemented the managed session controller behind disabled-by-default
+`SESSION_QUESTIONS_ENABLED` and an explicit `SESSION_POLICY_FILE`. The committed
+fixture is synthetic and experimental, not Usman's selected operating point.
+The default session/stateless contracts remain unconfigured; no production
+threshold, 2025 result or probability wording is installed.
+
+One read-only graph snapshot now supplies both ranking and likelihood counts.
+It excludes missing/invalid/naive/equal/future submission times before retrieval
+limits, uses real ABOUT membership, and prevents known future corrections from
+changing earlier visible supersession status. Likelihood counts exclude validated
+query citation chains and save audit/count metadata. The existing ranker algorithm
+and other owners' data/retrieval files are unchanged.
+
+Each question saves a unique ID, fixed hypothesis basis, likelihood matrices,
+codebook and policy. Answers must match ID/attribute/options, then update **saved**
+beliefs without graph/model reads. Saved configuration survives file changes and
+application restart. The turn stores prior, posterior and answer; not-sure changes
+no beliefs but excludes the attribute. Budget/history survive later observations.
+The existing CAS transaction rejects concurrent/stale answers and closure races;
+snapshot failures roll back question consumption and revision together.
+
+Managed prose follows the server decision. The model cannot set question/decision
+fields. Empty/model-written question prose falls back explicitly. Structured
+answers use `llm_status=not_needed`; their citations validate against saved evidence.
+Stateless Copilot uses its same helper with default behavior; compatibility tests
+pass unchanged. No shared shell source was edited in this package.
+
+Frontend now submits the saved question ID, resets choice on question identity
+change, disables pending answers, and labels experimental guidance while keeping
+relative support/other/entropy. **261 frontend tests passed**, and production build
+succeeded. The React quality review checked hook order, keyed reset, controlled
+options, accessible labels/disabled state, confirmed-response updates and no new
+client-side persistence/dependencies.
+
+Built-browser proof through actual App/Sidebar/AuthProvider/API with real local
+Neo4j and isolated PostgreSQL: 40 synthetic coded records; real user login/session;
+answer changes bars; two not-sure answers preserve beliefs; budget three ends in
+abstention; reloads create no extra turn and reproduce exact saved responses.
+`/api/health` agrees: graph_mode=neo4j, auth_db_mode=postgresql, llm_mode=fallback,
+maintenance_corpus_loaded=true after ingest. No live LLM or shared staging claimed.
+Evidence: `phase6-browser-proof.json`, screenshots, server logs and browser output.
+
+Setup correction: an initial `/tmp` ingest source was correctly rejected by the
+existing file-path guard. Moved the synthetic fixture into the allowed test-fixture
+directory, then the complete flow passed. The first rollback test also incorrectly
+queried while its deliberately broken snapshot constructor was still patched;
+restored that constructor before reading the verified database state.
+
+Visual QA caught a separate shared-shell phone issue: a fixed 256px sidebar leaves
+too little content width. The initial no-overflow assertion was insufficient; the
+phone screenshot is explicitly failure evidence, not a usability pass. Prepared
+an unapplied App/Sidebar responsive patch and requested its narrow ownership
+handoff. The user authorized “Prepare and test the separate layout branch”. It
+will be applied/tested separately with Shahmeer owner review/merge pending.
+
+Focused live-question checks cover both SQLite/PostgreSQL, healthy/rejected model
+prose, answer/report priorities, source/parameter mismatches, restart, question
+replacement, stale/unoffered/foreign answers, concurrency, closure and rollback.
+The saved 2024 experiment still exactly replays all three controls and intervals;
+its source/method files were not changed. See phase6 replay evidence.
+
+Final phase-6 backend run: **384 passed** against isolated Neo4j/PostgreSQL,
+with JUnit and broad coverage output saved. Coverage is 77%, still below NFR-04's
+80% target; no exclusions or target reductions were used. Ruff passed. The full
+suite includes all pre-existing tests plus the new managed-question paths.

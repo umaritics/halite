@@ -35,13 +35,14 @@ def _session_dict(row):
 
 
 class SessionService:
-    def __init__(self, store, principal):
+    def __init__(self, store, principal, *, settings=None):
         if store is None or not store.is_available:
             raise HTTPException(503, 'Session database is unavailable.')
         if principal.kind != 'user' or not principal.user_id or not principal.organization_id:
             raise HTTPException(403, 'Sign in with a user account to access investigations.')
         self.store = store
         self.principal = principal
+        self.settings = settings
 
     def _scope(self, mine=False):
         p = self.principal
@@ -127,9 +128,6 @@ class SessionService:
     def turn(self, session_id, *, message, answer=None, graph_repo, groq_service):
         if not message.strip() or len(message) > 4000:
             raise HTTPException(422, 'A message of 1 to 4000 characters is required.')
-        if answer is not None:
-            # Question selection will own validation and posterior updates in WP-S5.
-            raise HTTPException(409, 'No structured question is active for this investigation.')
         with self.store.session_scope() as db:
             row = self._find(db, session_id, write=True)
             if row.status != 'open':
@@ -138,9 +136,18 @@ class SessionService:
             previous = db.scalar(select(SessionTurn).where(SessionTurn.session_id == row.id)
                                  .order_by(SessionTurn.idx.desc()).limit(1))
             state = json.loads(previous.case_state_json) if previous else {}
+            previous_response = json.loads(previous.response_json) if previous else None
         started = time.monotonic()
-        response = run_turn(session_id=session_id, asset_id=asset_id, message=message.strip(),
-                            case_state=state, graph_repo=graph_repo, groq_service=groq_service)
+        from investigation.live_questions import QuestionController
+        controller = QuestionController.from_settings(self.settings)
+        if answer is not None:
+            if controller is None:
+                raise HTTPException(409, 'No structured question is active for this investigation.')
+            response = controller.answer(previous_response, answer)
+        else:
+            kwargs = {'question_controller': controller} if controller is not None else {}
+            response = run_turn(session_id=session_id, asset_id=asset_id, message=message.strip(),
+                                case_state=state, graph_repo=graph_repo, groq_service=groq_service, **kwargs)
         turn_id = str(uuid.uuid4())
         response.update(turn_id=turn_id, turn_index=expected_count + 1)
         with self.store.session_scope() as db:
