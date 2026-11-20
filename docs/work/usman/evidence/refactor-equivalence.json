@@ -1,0 +1,18 @@
+{
+  "GraphRepository": {
+    "method_count": 43,
+    "all_method_bodies_and_signatures_identical": true
+  },
+  "MemoryGraphStore": {
+    "method_count": 53,
+    "all_method_bodies_and_signatures_identical": true
+  },
+  "identity_models": {
+    "byte_identical_to_baseline": true,
+    "table_count": 5
+  },
+  "existing_tests": {
+    "unexpected_modifications": [],
+    "upstream_owner_fix": "797778a, incorporated as 4ce566c"
+  }
+}

@@ -1,0 +1,34 @@
+.....................................F.................................. [ 29%]
+........................................................................ [ 59%]
+.........................s.s.s.s.s.s.s.s.s.s.s..s.s.s.s.s.s.s.s.s.s.s.s. [ 89%]
+.........................                                                [100%]
+=================================== FAILURES ===================================
+____ TestConflictAnalysisApi.test_analysis_run_requires_token_and_live_llm _____
+
+self = <tests.test_api_maintenance.TestConflictAnalysisApi object at 0x72e353337140>
+client = <starlette.testclient.TestClient object at 0x72e339226a50>
+
+    def test_analysis_run_requires_token_and_live_llm(self, client):
+        client.app.state.settings.OPS_TOKEN = "analysis-token"
+        assert client.post("/api/maintenance/analysis/run", json={"batch_size": 1}).status_code == 401
+        response = client.post(
+            "/api/maintenance/analysis/run",
+            json={"batch_size": 1},
+            headers={"X-Ops-Token": "analysis-token"},
+        )
+        assert response.status_code == 503
+>       assert "live Groq" in response.json()["detail"]
+E       AssertionError: assert 'live Groq' in 'A live LLM is required for conflict analysis.'
+
+tests/test_api_maintenance.py:359: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  api.security:security.py:495 Rejected ops request method=POST path=/api/maintenance/analysis/run client_ip=testclient
+=============================== warnings summary ===============================
+../../halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41
+  /tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_api_maintenance.py::TestConflictAnalysisApi::test_analysis_run_requires_token_and_live_llm
+1 failed, 217 passed, 23 skipped, 1 warning in 13.30s

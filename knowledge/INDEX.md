@@ -34,7 +34,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | local LLM, Ollama, OPENAI_COMPAT, conflict backfill | docs/local-llm-staging.md, docs/mid1/25_local_llm_staging_evidence.md, decisions/DEC-20261115-local-ollama-staging.md, decisions/DEC-20261116-staging-corpus-analysis-complete.md, docker-compose.vm.yml |
 | corpus analysis complete, 0 unscored, review queue bulk | decisions/DEC-20261116-staging-corpus-analysis-complete.md, docs/mid1/25_local_llm_staging_evidence.md |
 | security, HALITE_API_KEY, Bearer auth, rate limit, EXPOSE_OPENAPI, Gitea 410 | docs/security-public-deployment.md, decisions/DEC-20261114-public-api-security-hardening.md, `backend/api/security.py`, `backend/api/router.py` |
-| login, RBAC, Argon2, JWT, invite, PostgreSQL, audit_events, reviewed_by, TeamAccess | decisions/DEC-20261114-workspace-auth-rbac-postgresql.md, docs/security-public-deployment.md, `backend/db/models.py`, `backend/services/auth_service.py`, `backend/api/routes/auth.py`, `frontend/src/context/AuthContext.jsx` |
+| login, RBAC, Argon2, JWT, invite, PostgreSQL, audit_events, reviewed_by, TeamAccess | decisions/DEC-20261114-workspace-auth-rbac-postgresql.md, docs/security-public-deployment.md, `backend/db/models/identity.py`, `backend/services/auth_service.py`, `backend/api/routes/auth.py`, `frontend/src/context/AuthContext.jsx` |
 | Mid-I progress, partner handoff | docs/mid1/README.md, docs/mid1/08_umar_progress.md |
 | frontend ECONNREFUSED, VITE_API_URL | docs/mid1/09_frontend_shared_api.md |
 | review queue UI, accept/reject, stored finding | context/modules/frontend.md, decisions/DEC-20261016-review-actions-server-confirmed.md |
@@ -70,3 +70,9 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `docs/halite_work_division_mid1.pdf` | Ownership + work packages U1–U5 / A1–A4 / S1–S5 |
 | `docs/Halite_FYP_Report.pdf` | Product report / module vision |
 | `docs/halite_timeline.pdf` | Milestone percentages |
+
+## Backend preparation
+
+`graph/repo/`, `graph/memory/`, `db/models/`, vertical summary routes and model `json_mode`:
+see `decisions/DEC-20261120-backend-foundation.md`, `context/modules/backend_foundation.md`,
+`flows/FLOW-backend-foundation.md` and `docs/work/usman/WORK_LOG.md`.

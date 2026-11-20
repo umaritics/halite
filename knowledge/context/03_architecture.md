@@ -53,3 +53,14 @@ flowchart LR
 - **Citation allow-list**: only record IDs present in retrieved context may be confirmed.
 
 Detail: legacy narrative in `docs/maintenance_architecture.md` (still valid for conflict/domain registry; prefer this bank for Mid-I navigation).
+
+## Compatible vertical backend foundation
+
+Graph methods now live in `backend/graph/repo/` and `backend/graph/memory/`;
+`queries.py` and `memory_store.py` remain compatibility facades. Identity tables
+live in `db/models/identity.py` with registered vertical extension modules.
+Authenticated summary routers reserve each vertical's API namespace. Legacy
+software remains isolated pending a separate retirement contract. Model prose
+and structured extraction explicitly select different response formats.
+See [backend_foundation.md](modules/backend_foundation.md) and
+[FLOW-backend-foundation.md](../flows/FLOW-backend-foundation.md).

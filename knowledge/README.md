@@ -47,6 +47,7 @@ When sources conflict: prefer code+tests; record a decision note; get team appro
 | Maintenance assets/history/ingest APIs | [context/modules/maintenance_api.md](context/modules/maintenance_api.md) + [flows/FLOW-ingest.md](flows/FLOW-ingest.md) |
 | Ingestion / corpus | [flows/FLOW-ingest.md](flows/FLOW-ingest.md) |
 | Frontend UX | [context/modules/frontend.md](context/modules/frontend.md) |
+| Backend preparation, graph/model packages, vertical summaries | [context/modules/backend_foundation.md](context/modules/backend_foundation.md) + [flows/FLOW-backend-foundation.md](flows/FLOW-backend-foundation.md) |
 | CI / Docker / setup | [context/modules/devops.md](context/modules/devops.md) + [flows/FLOW-ci.md](flows/FLOW-ci.md) |
 | Shared remote VM backend / CD / logs | [context/modules/remote_backend.md](context/modules/remote_backend.md) + [flows/FLOW-deploy.md](flows/FLOW-deploy.md) |
 | Why a past choice was made | [decisions/INDEX.md](decisions/INDEX.md) |

@@ -1,0 +1,49 @@
+........................................................................ [ 27%]
+........................................................................ [ 55%]
+........................................................................ [ 83%]
+...........................................                              [100%]
+=============================== warnings summary ===============================
+../../halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41
+  /tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform linux, python 3.12.3-final-0 -----------
+Name                        Stmts   Miss  Cover   Missing
+---------------------------------------------------------
+api/routes/evaluation.py        5      0   100%
+api/routes/integrity.py         5      0   100%
+api/routes/retrieval.py         5      0   100%
+api/routes/sessions.py          5      0   100%
+db/__init__.py                  0      0   100%
+db/models/__init__.py           3      0   100%
+db/models/evaluation.py         0      0   100%
+db/models/identity.py          75      0   100%
+db/models/integrity.py          0      0   100%
+db/models/sessions.py           0      0   100%
+db/session.py                  73     15    79%   31, 33, 58-65, 70, 84-85, 104-112
+graph/__init__.py               0      0   100%
+graph/invalidation.py           2      1    50%   3
+graph/memory/__init__.py        2      0   100%
+graph/memory/_helpers.py        3      0   100%
+graph/memory/core.py          202     29    86%   20, 23, 55, 61-70, 96, 151, 164, 237-243, 266-268, 281, 284, 295, 301, 303, 305
+graph/memory/integrity.py      55      5    91%   18, 63, 67, 70, 72
+graph/memory/legacy.py        133     41    69%   9, 18, 24, 42-45, 62, 66-69, 84, 97, 103, 109, 116-131, 137-144, 158
+graph/memory/retrieval.py      37      4    89%   7-10
+graph/memory_store.py           2      0   100%
+graph/neo4j_client.py          16      0   100%
+graph/queries.py                2      0   100%
+graph/repo/__init__.py          2      0   100%
+graph/repo/_helpers.py         22     16    27%   12-27
+graph/repo/core.py            130     12    91%   22, 27-29, 193, 220-221, 229-230, 232-233, 271
+graph/repo/integrity.py        57      4    93%   98-99, 101-102
+graph/repo/legacy.py          274    207    24%   13-60, 66-79, 84-94, 100-117, 120-131, 134-137, 143, 153-156, 168, 181-208, 213-217, 220-235, 240-248, 251-261, 266-268, 273-274, 277-280, 285-320, 325-356, 360-458, 461-464, 477, 489-507, 511-593
+graph/repo/retrieval.py        69     31    55%   12-35, 38-61, 81, 84-92, 121-122, 144
+graph/schema.py                 3      0   100%
+services/groq_service.py      123     19    85%   32-33, 39-41, 48-50, 88, 92-93, 116-118, 121, 172-173, 214, 224
+---------------------------------------------------------
+TOTAL                        1305    384    71%
+Coverage XML written to file ../docs/work/usman/evidence/backend-coverage.xml
+
+259 passed, 1 warning in 30.15s

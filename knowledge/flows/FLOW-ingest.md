@@ -29,7 +29,7 @@ flowchart LR
   Upload[Ingest page: CsvUploader] --> UpRoute[maintenance.py /ingest/upload]
   UpRoute --> Agent
   Route --> Agent[maintenance_agent.py]
-  Agent --> GR[GraphRepository]
+  Agent --> GR[GraphRepository via graph/repo core and integrity mixins]
   Agent --> U[analysis_state unscored]
   U --> Batch[ops-token analysis batch or backfill resume]
   Batch --> CE[conflict_engine.py]

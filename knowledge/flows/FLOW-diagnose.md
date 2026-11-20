@@ -87,7 +87,7 @@ flowchart TB
     V[services/citation_validation.py]
     G[services/groq_service.py]
     CACHE[data/diag_cache/cache.json]
-    QR[graph/queries.py]
+    QR[graph/queries.py facade to graph/repo]
   end
   subgraph data
     N[(Neo4j Asset/ServiceRecord)]
@@ -111,3 +111,10 @@ flowchart TB
 - `diagnostics.py` → `groq_service.py` + `citation_validation.py`
 - One-shot `/diagnose` retains its diagnostic cache path
 - Evidence click → `/app/asset-history/<asset uuid>#<record_id>`
+
+## Model format boundary
+
+`GroqService.chat` uses prose mode by default. JSON extraction methods, Copilot fact extraction and quick-diagnose explanation
+calls request JSON explicitly, including usage-aware calls. Both providers preserve the format
+through retries. The repository facade delegates to vertical mixins; ranking,
+diagnostic response fields and failure semantics remain unchanged by this split.
