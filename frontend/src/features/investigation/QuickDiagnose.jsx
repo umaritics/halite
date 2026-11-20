@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/
 import { describeDiagnosticError, extractExplanation, splitUnverified } from '../../utils/diagnostics';
 import { sessionsAPI } from './api';
 import { useAuth } from '../../context/AuthContext';
+import { GroundedReply } from './DecisionView';
 const MAX_IDS_PER_CHECK = 5;
 
 function QuickContents() {
@@ -17,6 +18,7 @@ function QuickContents() {
   const [symptom, setSymptom] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [groundingFocus, setGroundingFocus] = useState(null);
   const [submitted, setSubmitted] = useState(null);
   const [error, setError] = useState(null);
   const [rareExpanded, setRareExpanded] = useState(false);
@@ -39,6 +41,7 @@ function QuickContents() {
     if (loading) return;
     setLoading(true);
     setResult(null);
+    setGroundingFocus(null);
     setError(null);
     setRareExpanded(false);
     setSubmitted({ asset, symptom: symptomText });
@@ -66,6 +69,7 @@ function QuickContents() {
   const handleClear = () => {
     setSymptom('');
     setResult(null);
+    setGroundingFocus(null);
     setError(null);
     setSubmitted(null);
     setRareExpanded(false);
@@ -379,7 +383,7 @@ function QuickContents() {
                     No supporting records were found. The text below was returned by the model and is not backed by retrieved evidence.
                   </p>
                 )}
-                <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
+                {result.grounding?.sentences?.length ? <GroundedReply reply={explanation.text} grounding={result.grounding} onCitationFocus={setGroundingFocus} /> : <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
                   {splitUnverified(explanation.text).map((seg, k) =>
                     seg.flagged ? (
                       <mark
@@ -393,7 +397,12 @@ function QuickContents() {
                       <Fragment key={k}>{seg.text}</Fragment>
                     )
                   )}
-                </p>
+                </p>}
+                {groundingFocus && <section aria-label="Cited report text" className="mt-4 rounded border border-theme p-3">
+                  <h4 className="break-all text-sm text-primary">{groundingFocus}</h4>
+                  <p className="mt-2 whitespace-pre-wrap break-words text-sm text-secondary">{result.grounding?.evidence?.find(record => record.record_id === groundingFocus)?.text || 'This report narrative is absent from the saved explanation evidence.'}</p>
+                  <button type="button" className="mt-2 text-xs text-accent" onClick={() => setGroundingFocus(null)}>Close cited report</button>
+                </section>}
                 {invalidIds.length > 0 ? (
                   <p className="mt-2 font-sans text-xs text-amber-400">
                     ⚠ {invalidIds.length} unverified ID(s) were flagged and marked [UNVERIFIED].

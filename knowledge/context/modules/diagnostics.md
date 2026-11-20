@@ -114,3 +114,12 @@ Copilot adds uncalibrated beliefs, explicit policy inputs and actual Mid-I ranke
 metadata without changing frozen fields. Ranking imports go through the investigation
 port. See [investigation_decisions.md](investigation_decisions.md). No operating
 point or probability wording is enabled.
+
+## Sentence-audit extension
+
+Managed sessions and quick diagnosis now supply additive sentence audits and exact
+source narratives. The UI preserves original Markdown, displays pending or explicit
+experimental status, exposes sentence reasons and opens saved citation text.
+No accepted support threshold or safety whitelist is fabricated. See
+[investigation_grounding.md](investigation_grounding.md) and
+[FLOW-grounding.md](../../flows/FLOW-grounding.md) for calibration and replay rules.

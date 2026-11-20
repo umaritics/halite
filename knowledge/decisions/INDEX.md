@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261120-grounding-human-calibration](DEC-20261120-grounding-human-calibration.md) | Saved audits, explicit calibration and blinded independent human review | implemented / calibration pending | Usman |
 | [DEC-20261120-responsive-shell-review](DEC-20261120-responsive-shell-review.md) | User-authorized responsive App/Sidebar preparation with measured phone usability | proposed / review pending | Usman, Shahmeer |
 | [DEC-20261120-managed-question-snapshots](DEC-20261120-managed-question-snapshots.md) | Saved question IDs, graph/model-independent answers and explicit activation | implemented / selection pending | Usman |
 | [DEC-20261120-decision-core-protocol](DEC-20261120-decision-core-protocol.md) | Uncalibrated runtime beliefs and temporally isolated selection | accepted | Usman |

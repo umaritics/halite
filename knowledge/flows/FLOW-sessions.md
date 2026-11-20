@@ -120,3 +120,7 @@ at md and above it stays 256px. Main's flex item may shrink correctly. The
 question control remains reachable at phone width; keyboard navigation and the
 same confirmed logout/auth guard were verified in the built browser. There is no
 new route, service, permission or storage flow. Owner review/merge remain pending.
+
+Sentence auditing freezes configuration before inference and commits the full
+source/score/guard audit with the existing turn transaction. GET never recomputes
+historical audits. See [FLOW-grounding.md](FLOW-grounding.md).

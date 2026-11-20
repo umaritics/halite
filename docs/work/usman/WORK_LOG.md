@@ -531,3 +531,74 @@ lines from the API were captured after the implementation commit; this follow-up
 only preserves that evidence and the PR link. Hosted acceptance is available in
 https://github.com/umaritics/halite/pull/35/checks. The working tree must remain
 clean and no owner review/merge is implied by local or hosted verification.
+
+## Phase 8 — sentence audits and independent review preparation
+
+Fetched origin again; main remains `0dd86d9` and preceding review branches remain
+unmerged. Continued on separate `codex/usman-grounding`, based on PR #35. No
+merge, staging deployment or teammate message was performed.
+
+Implemented the L2/L3 checker, optional encoder port, 2023-only fitted part guard
+vocabulary (1,006 names), versioned configuration loader and additive session/
+quick-diagnosis integration. Each audit retains original sentence text, cited IDs,
+source narratives, max single-report score, lexical guards, mode and provenance.
+Thresholds/whitelist default to absent: valid citations stay **unrated**. Invalid
+citations fail L2. Dense outages retain lexical scores but withhold blended-mode
+ratings. Structured answer audits make no graph/encoder call. Settings are frozen
+before inference; invalid next-turn settings fail before inference. Saved response
+and grounding JSON commit/replay together through the existing transaction.
+
+The UI preserves sentence Markdown, labels pending/experimental status and exposes
+focusable reasons/source narratives. Quick diagnosis keeps its original response
+fields and adds full source text inside the grounding audit. Frozen stateless
+Copilot prose/output behavior remains unchanged.
+
+Prepared a reproducible, blinded 150-pair constructed sample from actual FAA
+2023/2024 text: 50 originals, three pairing categories, 99 fit / 51 validation pairs,
+no source-ID overlap across splits and no held-out 2025. **Muhammad Umar** is the
+second independent reviewer chosen by the user. Separate Usman/Umar HTML copies,
+empty CSV templates, draft resume/export, fingerprint-bound strict import,
+agreement/adjudication and lexical threshold proposal tools are provided. No
+labels, rationales, signatures, threshold acceptance or human agreement results
+were invented. These are constructed calibration pairs, **not measured generated
+model answers**. L4/generated-answer/no-evidence results remain separate work.
+
+Verification found and corrected a real-corpus ID-shape issue: the legacy
+letters-then-digits assumption missed mixed-prefix and numeric-leading FAA IDs.
+The new grounder supports those shapes independently; frozen legacy citation
+behavior remains intact. Added four parametrized regression cases and audited
+**all 150 actual packet claims** for one sentence and exact source-ID recognition.
+The corrected final packet's method hashes and blank templates are verified by
+`verify_grounding_packet.py`.
+
+**420 backend tests passed** on SQLite and isolated real PostgreSQL/Neo4j, with
+JUnit and the same broad coverage scope as CI; coverage is **78%**, still below
+NFR-04's 80% target. **267 frontend tests passed**, production build and full
+backend Ruff passed. The first backend invocation used an unavailable driver
+name (`psycopg` instead of the installed `psycopg2`); its setup-error log is retained,
+and the corrected full run passed. No new application dependency was installed.
+
+Real Chromium checked the actual 150-pair interface with **zero human labels
+entered**. A separate six-pair synthetic packet tested partial-export rejection,
+draft roundtrip with unsaved fields, mixed-reviewer rejection, foreign-fingerprint
+rejection and complete CSV export; its CSV also passes the strict importer.
+The synthetic reviews are not copied into the human packet. Visually inspected
+the empty reviewer page and built application sentence marks.
+
+The production-built BrowserRouter flow uses real local databases and accurately
+reports `llm_mode=fallback`. It verified sentence audits in both initial and
+structured-answer turns, pending-rating labels, changed bars, not-sure handling,
+three-question budget, phone controls, keyboard/logout and exact GET/reload replay
+without extra inference. A first verifier selector matched two historical sentence
+summaries; narrowing to the first summary resolved that test ambiguity. Both logs
+are retained. Full project acceptance is still tracked separately in the matrix.
+
+Visual QA also found that deterministic model-off diagnosis cites the complete
+collected evidence list, whereas model-written diagnosis sees a bounded prompt.
+Corrected the fallback audit to use its actual supplied/displayed sources, keeping
+the stricter prompt list for model prose. Added a regression demonstrating the
+same eighth source is valid in the deterministic summary and invalid outside the
+model prompt. **Nine final runtime tests passed**, including PostgreSQL, after
+this correction; the prior 420-test broad suite remains recorded separately.
+A built-browser quick-diagnosis check opens a citation by keyboard focus and
+matches the exact saved narrative. No frozen explanation text was changed.

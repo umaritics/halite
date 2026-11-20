@@ -91,6 +91,7 @@ class Settings(BaseSettings):
     SESSION_QUESTIONS_ENABLED: bool = False
     # Explicit reviewable operating-point file; enabling without it fails closed.
     SESSION_POLICY_FILE: str = ""
+    SESSION_GROUNDING_FILE: str = ""  # No guessed thresholds or implicit whitelist.
 
     @property
     def neo4j_configured(self) -> bool:

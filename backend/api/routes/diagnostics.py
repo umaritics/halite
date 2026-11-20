@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field, field_validator
 from api.deps import get_graph_repo, get_groq_service, get_settings
 from api.security import require_llm_rate_limit
 from services.citation_validation import validate_citations
+from investigation.grounding_runtime import annotate_diagnose, load_configuration
 from investigation.beliefs import score_beliefs
 from investigation.policy import decide
 from investigation.ranker_port import MID_VERSION
@@ -375,6 +376,7 @@ def diagnose(
     """
     from investigation.explain import templated_explanation
     t0 = time.time()
+    grounding_configuration=load_configuration(settings)
     context = build_diagnostic_context(graph_repo, req.asset_id, req.symptom_text)
     ranked = rank_diagnostic_checks(context)
     cache = _load_cache()
@@ -384,7 +386,7 @@ def diagnose(
     in_test = "PYTEST_CURRENT_TEST" in os.environ
     cached = cache.get(ck)
     if not in_test and isinstance(cached, dict) and str(cached.get('explanation') or '').strip():
-        return cached
+        return annotate_diagnose(cached,context,ranked,settings,configuration=grounding_configuration)
 
     def degraded(reason):
         if not req.allow_degraded:
@@ -392,7 +394,7 @@ def diagnose(
         if not context['asset_history']:
             raise HTTPException(404, f"No history found for asset_id={req.asset_id}.")
         evidence = _collect_evidence(context, ranked)
-        return {
+        degraded_result = {
             'asset_id': req.asset_id, 'symptom_text': req.symptom_text,
             'ranked_checks': ranked[:10], 'evidence': evidence, 'rare_cases': [],
             'explanation': None, 'fallback_explanation': templated_explanation(ranked, evidence),
@@ -401,6 +403,7 @@ def diagnose(
             'llm_status': 'unavailable',
             'warnings': ['Language model unavailable; showing historical ranking and a deterministic explanation.'],
         }
+        return annotate_diagnose(degraded_result,context,ranked,settings,configuration=grounding_configuration)
 
     if not groq_service.is_live:
         return degraded('Groq LLM is not configured (is_live=False). Cannot produce a diagnostic without a live model.')
@@ -498,6 +501,8 @@ def diagnose(
         },
         "warnings": llm_json.get("warnings", []),
     }
+
+    result = annotate_diagnose(result,context,ranked,settings,configuration=grounding_configuration)
 
     # 10. Cache result
     if not in_test:

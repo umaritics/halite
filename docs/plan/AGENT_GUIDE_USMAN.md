@@ -513,3 +513,15 @@ User-authorized separate branch adds exactly twelve shared-file lines and the id
 ### Verified implementation snapshot — managed live WP-S5
 
 The session question/answer controller is implemented behind disabled-by-default `SESSION_QUESTIONS_ENABLED` and an explicit policy file. It saves a unique question ID, model basis/matrices, policy, prior/posterior and answer history. Answers never read graph/model state. The production-built browser verifies changing bars, not-sure, three-question budget and exact reload replay with real local databases. The synthetic policy fixture is not the chosen operating point; shared responsive-shell preparation was separately authorized after visual QA exposed the phone-width sidebar problem.
+
+### Implemented sentence-audit/review preparation
+
+L2/L3 audits now accompany managed turns and quick diagnosis; original prose and
+stateless response fields remain intact. Default valid citations are unrated until
+calibration is accepted. Explicit experimental settings are labelled. The frozen
+150-pair constructed FAA-text packet has separate blinded copies for Usman and
+Muhammad Umar (chosen by the user). No human labels or results are fabricated.
+The strict importer/agreement/adjudication/fit-validation tooling and protocol are
+in `docs/work/usman/grounding_review_v1/README.md` and
+`knowledge/context/modules/investigation_grounding.md`. Actual labels, accepted
+thresholds/whitelist, L4 and generated-answer/no-evidence measurements remain gates.

@@ -136,3 +136,16 @@ Copilot ranking imports now pass through `investigation/ranker_port.py`; the
 compatibility aliases preserve the existing scores/context. Additive uncalibrated
 beliefs, version metadata and unconfigured policy inputs are returned. A session
 snapshot stores those beliefs/entropy. See [FLOW-decision-selection.md](FLOW-decision-selection.md).
+
+## Additive sentence audit
+
+After ordinary/cached/degraded explanation selection, attach the saved-context
+L2/L3 audit without rewriting explanation, ranking or metadata-only evidence.
+Configuration is frozen before inference. See [FLOW-grounding.md](FLOW-grounding.md)
+for sentence scoring, source narratives and independent human calibration.
+
+```mermaid
+flowchart LR
+  Diagnose[Existing diagnose output] --> Audit[Sentence audit against exact prompt sources]
+  Audit --> UI[Original prose plus badges and saved source text]
+```

@@ -1,0 +1,1021 @@
+........................................................................ [ 17%]
+........................................................................ [ 34%]
+........................................................................ [ 51%]
+......................................E...E............................. [ 69%]
+..................................E.E.E..EE.E.E.E.E.E.E.E.E........E.E.E [ 86%]
+.E.E.E.E....E.E.E.E.E.E.................................                 [100%]
+==================================== ERRORS ====================================
+_ ERROR at setup of test_session_stores_and_replays_exact_grounding_after_source_and_settings_change[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_session_stores_and_replay1')
+request = <SubRequest 'environment' for <Function test_session_stores_and_replays_exact_grounding_after_source_and_settings_change[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_grounding_configuration_is_frozen_before_inference[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_grounding_configuration_i1')
+request = <SubRequest 'environment' for <Function test_grounding_configuration_is_frozen_before_inference[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_session_replays_across_clients_and_application_restart[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_session_replays_across_cl1')
+request = <SubRequest 'environment' for <Function test_session_replays_across_clients_and_application_restart[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+____ ERROR at setup of test_close_outcome_and_read_only_replay[postgresql] _____
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_close_outcome_and_read_on1')
+request = <SubRequest 'environment' for <Function test_close_outcome_and_read_only_replay[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_other_technician_cannot_discover_read_or_write[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_other_technician_cannot_d1')
+request = <SubRequest 'environment' for <Function test_other_technician_cannot_discover_read_or_write[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_organization_supervisors_can_read_but_not_write_others[postgresql-supervisor] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_organization_supervisors_2')
+request = <SubRequest 'environment' for <Function test_organization_supervisors_can_read_but_not_write_others[postgresql-supervisor]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_organization_supervisors_can_read_but_not_write_others[postgresql-admin] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_organization_supervisors_3')
+request = <SubRequest 'environment' for <Function test_organization_supervisors_can_read_but_not_write_others[postgresql-admin]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_other_organization_is_hidden_even_from_admin[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_other_organization_is_hid1')
+request = <SubRequest 'environment' for <Function test_other_organization_is_hidden_even_from_admin[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_service_tokens_cannot_access_user_sessions[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_service_tokens_cannot_acc1')
+request = <SubRequest 'environment' for <Function test_service_tokens_cannot_access_user_sessions[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_pagination_filters_and_request_validation[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_pagination_filters_and_re1')
+request = <SubRequest 'environment' for <Function test_pagination_filters_and_request_validation[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_concurrent_turns_cannot_overwrite_each_other[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_concurrent_turns_cannot_o1')
+request = <SubRequest 'environment' for <Function test_concurrent_turns_cannot_overwrite_each_other[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_close_during_inference_discards_stale_turn[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_close_during_inference_di1')
+request = <SubRequest 'environment' for <Function test_close_during_inference_discards_stale_turn[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_printable_report_escapes_text_and_preserves_citations[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_printable_report_escapes_1')
+request = <SubRequest 'environment' for <Function test_printable_report_escapes_text_and_preserves_citations[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_server_state_cannot_be_replaced_by_browser_payload[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_server_state_cannot_be_re1')
+request = <SubRequest 'environment' for <Function test_server_state_cannot_be_replaced_by_browser_payload[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_snapshot_failure_rolls_back_turn_and_revision[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_snapshot_failure_rolls_ba1')
+request = <SubRequest 'environment' for <Function test_snapshot_failure_rolls_back_turn_and_revision[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+<sqlalchemy generated warned() wrapper for sqlalchemy.engine.create.create_engine>:2: in create_engine
+    return target(fn, url, **kwargs)
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_question_answer_uses_saved_model_without_graph_or_llm_and_replays[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_question_answer_uses_save1')
+request = <SubRequest 'environment' for <Function test_question_answer_uses_saved_model_without_graph_or_llm_and_replays[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_not_sure_excludes_attribute_budget_is_durable_and_fourth_answer_rejected[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_not_sure_excludes_attribu1')
+request = <SubRequest 'environment' for <Function test_not_sure_excludes_attribute_budget_is_durable_and_fourth_answer_rejected[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_stale_unoffered_and_unowned_answers_do_not_create_turns[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_stale_unoffered_and_unown1')
+request = <SubRequest 'environment' for <Function test_stale_unoffered_and_unowned_answers_do_not_create_turns[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_concurrent_answers_claim_only_one_posterior[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_concurrent_answers_claim_1')
+request = <SubRequest 'environment' for <Function test_concurrent_answers_claim_only_one_posterior[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_failed_snapshot_rolls_back_answer_and_question_consumption[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_failed_snapshot_rolls_bac1')
+request = <SubRequest 'environment' for <Function test_failed_snapshot_rolls_back_answer_and_question_consumption[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_configuration_failure_is_explicit_without_affecting_frozen_stateless_route[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_configuration_failure_is_1')
+request = <SubRequest 'environment' for <Function test_configuration_failure_is_explicit_without_affecting_frozen_stateless_route[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_model_cannot_choose_the_question_and_prose_questions_are_rejected[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_model_cannot_choose_the_q1')
+request = <SubRequest 'environment' for <Function test_model_cannot_choose_the_question_and_prose_questions_are_rejected[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_empty_visible_history_abstains_without_inventing_a_question[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_empty_visible_history_abs1')
+request = <SubRequest 'environment' for <Function test_empty_visible_history_abstains_without_inventing_a_question[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_saved_question_survives_application_restart_and_uses_its_saved_policy[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_saved_question_survives_a1')
+request = <SubRequest 'environment' for <Function test_saved_question_survives_application_restart_and_uses_its_saved_policy[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_free_text_replaces_question_identity_and_retains_answered_attribute_exclusion[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_free_text_replaces_questi1')
+request = <SubRequest 'environment' for <Function test_free_text_replaces_question_identity_and_retains_answered_attribute_exclusion[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_closure_during_answer_does_not_commit_posterior[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_closure_during_answer_doe1')
+request = <SubRequest 'environment' for <Function test_closure_during_answer_does_not_commit_posterior[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_healthy_model_prose_uses_saved_evidence_allow_list[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_healthy_model_prose_uses_1')
+request = <SubRequest 'environment' for <Function test_healthy_model_prose_uses_saved_evidence_allow_list[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+_ ERROR at setup of test_answer_priority_report_mode_and_ranker_mismatch_are_explicit[postgresql] _
+
+tmp_path = PosixPath('/tmp/pytest-of-muhammadusmanalhaq/pytest-39/test_answer_priority_report_mo1')
+request = <SubRequest 'environment' for <Function test_answer_priority_report_mode_and_ranker_mismatch_are_explicit[postgresql]>>
+
+    @pytest.fixture(params=['sqlite', 'postgresql'])
+    def environment(tmp_path, request):
+        admin_engine = None
+        schema = None
+        overrides = {'RATE_LIMIT_ENABLED': False}
+        if request.param == 'postgresql':
+            url = os.getenv('SESSION_TEST_DATABASE_URL')
+            if not url:
+                pytest.skip('SESSION_TEST_DATABASE_URL not set — PostgreSQL session tests skipped')
+            # Own random schema, never wipe an existing database or someone else's records.
+            url = normalize_database_url(url)
+>           admin_engine = create_engine(url)
+
+tests/test_investigation_sessions.py:34: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/util/deprecations.py:281: in warned
+    return fn(*args, **kwargs)  # type: ignore[no-any-return]
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/engine/create.py:602: in create_engine
+    dbapi = dbapi_meth(**dbapi_args)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'sqlalchemy.dialects.postgresql.psycopg.PGDialect_psycopg'>
+
+    @classmethod
+    def import_dbapi(cls):
+>       import psycopg
+E       ModuleNotFoundError: No module named 'psycopg'
+
+/tmp/halite-phase1-venv/lib/python3.12/site-packages/sqlalchemy/dialects/postgresql/psycopg.py:497: ModuleNotFoundError
+=============================== warnings summary ===============================
+../../../../../../../../tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41
+  /tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/test_grounding_runtime.py::test_session_stores_and_replays_exact_grounding_after_source_and_settings_change[postgresql]
+ERROR tests/test_grounding_runtime.py::test_grounding_configuration_is_frozen_before_inference[postgresql]
+ERROR tests/test_investigation_sessions.py::test_session_replays_across_clients_and_application_restart[postgresql]
+ERROR tests/test_investigation_sessions.py::test_close_outcome_and_read_only_replay[postgresql]
+ERROR tests/test_investigation_sessions.py::test_other_technician_cannot_discover_read_or_write[postgresql]
+ERROR tests/test_investigation_sessions.py::test_organization_supervisors_can_read_but_not_write_others[postgresql-supervisor]
+ERROR tests/test_investigation_sessions.py::test_organization_supervisors_can_read_but_not_write_others[postgresql-admin]
+ERROR tests/test_investigation_sessions.py::test_other_organization_is_hidden_even_from_admin[postgresql]
+ERROR tests/test_investigation_sessions.py::test_service_tokens_cannot_access_user_sessions[postgresql]
+ERROR tests/test_investigation_sessions.py::test_pagination_filters_and_request_validation[postgresql]
+ERROR tests/test_investigation_sessions.py::test_concurrent_turns_cannot_overwrite_each_other[postgresql]
+ERROR tests/test_investigation_sessions.py::test_close_during_inference_discards_stale_turn[postgresql]
+ERROR tests/test_investigation_sessions.py::test_printable_report_escapes_text_and_preserves_citations[postgresql]
+ERROR tests/test_investigation_sessions.py::test_server_state_cannot_be_replaced_by_browser_payload[postgresql]
+ERROR tests/test_investigation_sessions.py::test_snapshot_failure_rolls_back_turn_and_revision[postgresql]
+ERROR tests/test_live_questions.py::test_question_answer_uses_saved_model_without_graph_or_llm_and_replays[postgresql]
+ERROR tests/test_live_questions.py::test_not_sure_excludes_attribute_budget_is_durable_and_fourth_answer_rejected[postgresql]
+ERROR tests/test_live_questions.py::test_stale_unoffered_and_unowned_answers_do_not_create_turns[postgresql]
+ERROR tests/test_live_questions.py::test_concurrent_answers_claim_only_one_posterior[postgresql]
+ERROR tests/test_live_questions.py::test_failed_snapshot_rolls_back_answer_and_question_consumption[postgresql]
+ERROR tests/test_live_questions.py::test_configuration_failure_is_explicit_without_affecting_frozen_stateless_route[postgresql]
+ERROR tests/test_live_questions.py::test_model_cannot_choose_the_question_and_prose_questions_are_rejected[postgresql]
+ERROR tests/test_live_questions.py::test_empty_visible_history_abstains_without_inventing_a_question[postgresql]
+ERROR tests/test_live_questions.py::test_saved_question_survives_application_restart_and_uses_its_saved_policy[postgresql]
+ERROR tests/test_live_questions.py::test_free_text_replaces_question_identity_and_retains_answered_attribute_exclusion[postgresql]
+ERROR tests/test_live_questions.py::test_closure_during_answer_does_not_commit_posterior[postgresql]
+ERROR tests/test_live_questions.py::test_healthy_model_prose_uses_saved_evidence_allow_list[postgresql]
+ERROR tests/test_live_questions.py::test_answer_priority_report_mode_and_ranker_mismatch_are_explicit[postgresql]
+388 passed, 1 warning, 28 errors in 60.61s (0:01:00)

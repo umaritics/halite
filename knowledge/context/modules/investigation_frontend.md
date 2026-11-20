@@ -90,3 +90,12 @@ The production-built browser submits the answer at phone width, verifies posteri
 replay, keyboard navigation and sign-out/protected deep-link behavior. Source
 changes are confined to the proposed App/Sidebar patch; Shahmeer review/merge
 remain pending. See `phase7-*` evidence and `MOBILE_SHELL_HANDOFF.md`.
+
+## Sentence-audit extension
+
+Managed sessions and quick diagnosis now supply additive sentence audits and exact
+source narratives. The UI preserves original Markdown, displays pending or explicit
+experimental status, exposes sentence reasons and opens saved citation text.
+No accepted support threshold or safety whitelist is fabricated. See
+[investigation_grounding.md](investigation_grounding.md) and
+[FLOW-grounding.md](../../flows/FLOW-grounding.md) for calibration and replay rules.

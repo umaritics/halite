@@ -139,6 +139,8 @@ class SessionService:
             previous_response = json.loads(previous.response_json) if previous else None
         started = time.monotonic()
         from investigation.live_questions import QuestionController
+        from investigation.grounding_runtime import annotate_response,load_configuration
+        grounding_configuration=load_configuration(self.settings)
         controller = QuestionController.from_settings(self.settings)
         if answer is not None:
             if controller is None:
@@ -148,6 +150,7 @@ class SessionService:
             kwargs = {'question_controller': controller} if controller is not None else {}
             response = run_turn(session_id=session_id, asset_id=asset_id, message=message.strip(),
                                 case_state=state, graph_repo=graph_repo, groq_service=groq_service, **kwargs)
+        annotate_response(response,self.settings,structured_answer=answer is not None,configuration=grounding_configuration)
         turn_id = str(uuid.uuid4())
         response.update(turn_id=turn_id, turn_index=expected_count + 1)
         with self.store.session_scope() as db:

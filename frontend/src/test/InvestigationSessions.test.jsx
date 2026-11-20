@@ -311,3 +311,23 @@ describe('Saved structured questions', () => {
     expect(screen.queryByText('At what stage?')).not.toBeInTheDocument();
   });
 });
+
+describe('Sentence score transparency', () => {
+  it('does not turn pending thresholds into a supported-sentence claim', () => {
+    render(<GroundedReply reply="Pump leak." grounding={{ status: 'thresholds_pending', checked_with: 'lexical', sentences: [
+      { text: '**Pump** leak.', citations: [], level: 'unrated', score: 1, reason: 'Thresholds require validation.' },
+    ] }} />);
+    expect(screen.getByText('Sentence ratings await validation · lexical')).toBeInTheDocument();
+    expect(screen.queryByText(/of 1 sentences supported/)).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Sentence check: unrated. Thresholds require validation.')).toHaveAttribute('title', 'Thresholds require validation.');
+    expect(screen.getByText('Pump')).toHaveProperty('tagName', 'STRONG');
+  });
+
+  it('labels experimental settings and exact allowed safety templates separately', () => {
+    render(<GroundedReply reply="Provisional." grounding={{ status: 'configured', checked_with: 'lexical', configuration: { status: 'experimental' }, sentences: [
+      { text: 'Provisional.', citations: [], level: 'uncited', acceptable_uncited: true },
+    ] }} />);
+    expect(screen.getByText('Experimental sentence ratings — settings have not been accepted.')).toBeInTheDocument();
+    expect(screen.getByText('uncited · allowed template')).toBeInTheDocument();
+  });
+});

@@ -34,3 +34,20 @@ describe('Model-off quick diagnosis', () => {
     expect(sessionsAPI.diagnose).not.toHaveBeenCalled();
   });
 });
+
+it('shows the exact saved narrative when a sentence citation receives focus', async () => {
+  sessionsAPI.diagnose.mockResolvedValue({ data: {
+    explanation: 'Pump leaked [REC123456].', ranked_checks: [], evidence: [{ record_id: 'REC123456', part_name: 'PUMP' }],
+    grounding: { status: 'thresholds_pending', checked_with: 'lexical',
+      evidence: [{ record_id: 'REC123456', text: 'Exact saved pump narrative.' }],
+      sentences: [{ text: 'Pump leaked [REC123456].', citations: ['REC123456'], level: 'unrated', reason: 'Thresholds pending.' }] },
+  } });
+  render(<MemoryRouter><QuickDiagnose /></MemoryRouter>);
+  fireEvent.click(screen.getByRole('button', { name: /Select aircraft/i }));
+  fireEvent.click(await screen.findByRole('button', { name: /N123/i }));
+  fireEvent.change(screen.getByRole('textbox', { name: /symptom/i }), { target: { value: 'pump leak' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Run diagnostic', exact: true }));
+  expect(await screen.findByText(/Sentence ratings await validation/)).toBeInTheDocument();
+  fireEvent.focus(screen.getByRole('region', { name: 'Checked explanation' }).querySelector('button'));
+  expect(screen.getByRole('region', { name: 'Cited report text' })).toHaveTextContent('Exact saved pump narrative.');
+});

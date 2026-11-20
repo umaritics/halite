@@ -92,6 +92,17 @@ const { randomUUID, createHash } = require('node:crypto');
     response = await pending;
     assert.equal(response.status(), 200);
     const answered = await response.json();
+    if (process.env.HALITE_UI_REQUIRE_GROUNDING === 'true') {
+      for (const value of [initial, answered]) {
+        assert.equal(value.grounding.status, 'thresholds_pending');
+        assert.equal(value.grounding.checked_with, 'lexical');
+        assert.ok(value.grounding.sentences.length > 0);
+        assert.equal(value.grounding.parameters, null);
+        assert.deepEqual(value.grounding.evidence, value.evidence);
+        assert.ok(value.grounding.sentences.every(item => ['unrated', 'uncited', 'unsupported'].includes(item.level)));
+      }
+      await page.getByText('Sentence ratings await validation · lexical', { exact: true }).first().waitFor();
+    }
     assert.equal(answered.llm_status, 'not_needed');
     assert.deepEqual(answered.belief_transition.prior, initial.beliefs);
     assert.notDeepEqual(answered.beliefs, initial.beliefs);
@@ -159,6 +170,8 @@ const { randomUUID, createHash } = require('node:crypto');
       initial: { decision: initial.decision, question: { attribute: initial.question.attribute, text: initial.question.text, reason: initial.question.reason, options: initial.question.options }, beliefs: initial.beliefs, response_sha256: sha(initial) },
       answer: { beliefs: answered.beliefs, llm_status: answered.llm_status, prior: answered.belief_transition.prior, response_sha256: sha(answered) },
       final: { decision: latest.decision, questions_asked: latest.policy_inputs.questions_asked, response_sha256: sha(latest) },
+      sentence_grounding_verified: process.env.HALITE_UI_REQUIRE_GROUNDING === 'true',
+      grounding: initial.grounding || null,
       exact_reload_replay: true, second_and_third_not_sure_preserve_beliefs: true,
       mobile_and_desktop_no_horizontal_overflow: true, desktop_sidebar_width_px: desktopSidebarWidth, phone_keyboard_navigation_and_logout_verified: true, mobile_active_question_geometry: mobileActiveGeometry, mobile_main_width_px: mobileMainWidth, mobile_content_usable: mobileContentUsable, shared_staging_accessed: false,
     }, null, 2) + '\n');

@@ -62,13 +62,16 @@ export function GroundedReply({ reply, grounding, onCitationFocus }) {
     <p className="mt-2 text-xs text-secondary">Sentence support has not been checked for this reply.</p>
   </div>;
   const supported = grounding.sentences.filter(s => s.level === 'supported').length;
+  const pending = grounding.status === 'thresholds_pending' || grounding.status === 'fallback_thresholds_pending';
   return <section aria-label="Checked explanation">
-    <p className="mb-2 text-xs text-secondary">{supported} of {grounding.sentences.length} sentences supported · {grounding.checked_with}</p>
-    {grounding.sentences.map((sentence, index) => <p key={index} className="mb-2 text-sm text-primary">
-      <span title={`Sentence check: ${sentence.level}`} className={sentence.level === 'unsupported' ? 'opacity-60' : ''}>{sentence.text}</span>{' '}
-      <span className="rounded border border-theme px-1 text-xs">{sentence.level}</span>
+    <p className="mb-2 text-xs text-secondary">{pending ? 'Sentence ratings await validation' : `${supported} of ${grounding.sentences.length} sentences supported`} · {grounding.checked_with}</p>
+    {grounding.configuration?.status === 'experimental' && <p className="mb-2 text-xs text-secondary">Experimental sentence ratings — settings have not been accepted.</p>}
+    {grounding.sentences.map((sentence, index) => <div key={index} className="mb-3 text-sm text-primary">
+      <div className={sentence.level === 'unsupported' ? 'opacity-60' : ''}><CopilotMarkdown>{sentence.text}</CopilotMarkdown></div>
+      <span tabIndex={0} title={sentence.reason || `Sentence check: ${sentence.level}`}
+        aria-label={`Sentence check: ${sentence.level}. ${sentence.reason || ''}`} className="rounded border border-theme px-1 text-xs">{sentence.level}{sentence.acceptable_uncited ? ' · allowed template' : ''}</span>
       {(sentence.citations || []).map(id => <button type="button" key={id} className="ml-2 break-all text-xs text-accent underline"
         onMouseEnter={() => onCitationFocus?.(id)} onFocus={() => onCitationFocus?.(id)} onClick={() => onCitationFocus?.(id)}>{id}</button>)}
-    </p>)}
+    </div>)}
   </section>;
 }

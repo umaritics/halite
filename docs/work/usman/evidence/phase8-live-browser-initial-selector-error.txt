@@ -1,0 +1,12 @@
+locator.waitFor: Error: strict mode violation: getByText('Sentence ratings await validation · lexical', { exact: true }) resolved to 2 elements:
+    1) <p class="mb-2 text-xs text-secondary">Sentence ratings await validation · lexical</p> aka getByText('Sentence ratings await').first()
+    2) <p class="mb-2 text-xs text-secondary">Sentence ratings await validation · lexical</p> aka getByText('Sentence ratings await').nth(1)
+
+Call log:
+[2m  - waiting for getByText('Sentence ratings await validation · lexical', { exact: true }) to be visible[22m
+
+    at /home/muhammadusmanalhaq/Desktop/Halite (FYP)/halite_repo/.worktrees/usman-phase1/frontend/e2e/verify-question-ui.cjs:104:92) {
+  log: [
+    "  - waiting for getByText('Sentence ratings await validation · lexical', { exact: true }) to be visible"
+  ]
+}
