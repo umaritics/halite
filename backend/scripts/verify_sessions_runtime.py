@@ -57,13 +57,23 @@ def main():
             body = turn.json()
             assert body['ranked_checks'] and body['evidence'] and body['reply'], body
             assert body['llm_status'] == 'unavailable', body
+            beliefs = body['beliefs']
+            assert beliefs['calibrated'] is False and beliefs['label'] == 'relative support'
+            assert abs(sum(h['belief'] for h in beliefs['hypotheses']) + beliefs['other'] - 1) < 1e-9
+            assert body['decision'] == 'abstain' and body['policy_status'] == 'not_configured'
+            assert body['policy_inputs']['parameters'] is None
             proof['turn'] = {'turn_index': body['turn_index'], 'llm_status': body['llm_status'],
                              'evidence_count': len(body['evidence']), 'ranked_checks_count': len(body['ranked_checks']),
-                             'template_present': 'not written by a model' in body['reply']}
+                             'template_present': 'not written by a model' in body['reply'],
+                             'beliefs_normalized': True, 'calibrated': beliefs['calibrated'],
+                             'belief_entropy': beliefs['entropy'], 'policy_status': body['policy_status']}
         with httpx.Client(base_url=base, headers=credentials['owner'], timeout=30) as second_browser:
             saved = second_browser.get(path)
             assert saved.status_code == 200
             assert saved.json()['turns'][0]['response'] == body
+            snapshot = saved.json()['turns'][0]['snapshot']
+            assert snapshot['hypotheses'] == beliefs['hypotheses']
+            assert snapshot['belief_entropy'] == beliefs['entropy']
             proof['cross_client_replay_equal'] = True
             assert admin.get(path).status_code == 200
             assert admin.post(path + '/turns', json={'message': 'forbidden'}).status_code == 403

@@ -19,8 +19,7 @@ def run_turn(*, session_id, asset_id, message, case_state, graph_repo, groq_serv
         result['reply'] = checked['flagged_text']
         result['citation_validation'] = {'valid_ids': checked['valid'], 'invalid_ids': checked['invalid'],
                                          'all_valid': not checked['invalid']}
-    # Persistence can ship before a measured operating point. Never invent fitted policy decisions.
-    result.update(decision='abstain', decision_reason='Decision policy is not configured; ranking is provisional.',
-                  policy_status='not_configured', beliefs=None, question=None, grounding=None,
-                  ranker_mode='mid_heuristic', ranker_version='mid_heuristic-v1')
+    # The compatibility route provides uncalibrated beliefs and an explicit
+    # unconfigured policy until a measured operating point is accepted.
+    result.update(grounding=None)
     return result

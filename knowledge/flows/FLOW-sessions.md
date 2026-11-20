@@ -100,3 +100,10 @@ flowchart LR
 
 Main-shell browser verification covers redirects, refresh, logout and another
 account's direct saved-session URL. Owner review/merge/deploy are separate gates.
+
+## Belief snapshot extension
+
+The Copilot ranker port → stable score/other beliefs → unconfigured policy inputs
+are included in each new saved response. Snapshot hypotheses carry their beliefs
+and `belief_entropy` stores the same entropy. Existing saved turns replay exactly
+without recomputation. See [FLOW-decision-selection.md](FLOW-decision-selection.md).

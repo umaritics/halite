@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261120-decision-core-protocol](DEC-20261120-decision-core-protocol.md) | Uncalibrated runtime beliefs and temporally isolated selection | accepted | Usman |
 | [DEC-20261120-investigation-ui-handoff](DEC-20261120-investigation-ui-handoff.md) | Independent investigation UI and separately reviewed shared registration | proposed | Usman, Shahmeer |
 | [DEC-20261120-durable-investigations](DEC-20261120-durable-investigations.md) | User-owned atomic session turns, replay and opt-in degraded diagnosis | accepted | Usman |
 | [DEC-20261120-backend-foundation](DEC-20261120-backend-foundation.md) | Compatible vertical backend packages and explicit model JSON mode | accepted | Usman |

@@ -1,0 +1,29 @@
+{
+  "preview_harness": false,
+  "production_shell_integrated": true,
+  "initial_health": {
+    "graph_mode": "neo4j",
+    "auth_db_mode": "postgresql",
+    "llm_mode": "fallback"
+  },
+  "diagnostics_redirect": "PASS",
+  "global_logout_legacy_cleanup": "PASS",
+  "logout_protected_deep_link": "PASS",
+  "next_account_isolation": "PASS",
+  "relative_support_bars": "PASS",
+  "session_id": "e418334e-246c-4da8-bae1-979e57429209",
+  "create_and_degraded_turn": "PASS",
+  "close_with_outcome": "PASS",
+  "authenticated_print": "PASS",
+  "second_browser_and_reload": "PASS",
+  "other_technician_hidden": "PASS",
+  "failed_widget_hidden": "PASS",
+  "quick_diagnosis_model_off": "PASS",
+  "turn_post_count": 1,
+  "page_errors": [],
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "dark_and_light": "PASS"
+}

@@ -11,17 +11,23 @@ export function DecisionBadge({ response }) {
 }
 
 export function BeliefBars({ beliefs }) {
-  if (!beliefs?.hypotheses?.length) return null;
+  if (!Array.isArray(beliefs?.hypotheses)) return null;
+  const items = beliefs.hypotheses.map(item => ({ ...item, key: `part:${item.part_name}` }));
+  if (Number.isFinite(beliefs.other)) items.push({ key: 'other-bucket', part_name: 'Other / outside ranking', belief: beliefs.other });
   return <section className="halite-card p-4" aria-label="Relative support">
     <h2 className="font-brand text-lg text-primary">Relative support</h2>
-    <p className="mb-3 text-xs text-secondary">Relative support is derived from historical evidence.</p>
-    {beliefs.hypotheses.map((item) => Number.isFinite(item.belief) && <div key={item.part_name} className="mb-3">
+    <p className="mb-3 text-xs text-secondary">
+      {beliefs.calibrated ? 'Fitted historical support.' : 'Uncalibrated historical support.'} Other covers outcomes outside this ranking.
+    </p>
+    {items.map((item) => Number.isFinite(item.belief) && <div key={item.key} className="mb-3">
       <div className="flex justify-between gap-3 text-sm text-primary"><span>{item.part_name}</span><span>{(item.belief * 100).toFixed(1)}%</span></div>
       <div role="meter" aria-label={item.part_name} aria-valuemin={0} aria-valuemax={1} aria-valuenow={item.belief}
+        aria-valuetext={`${(item.belief * 100).toFixed(1)}% relative support`}
         className="mt-1 h-2 overflow-hidden rounded bg-page">
         <div className="h-full bg-accent transition-[width] motion-reduce:transition-none" style={{ width: `${Math.max(0, Math.min(1, item.belief)) * 100}%` }} />
       </div>
     </div>)}
+    {Number.isFinite(beliefs.entropy) && <p className="text-xs text-secondary">Uncertainty: {beliefs.entropy.toFixed(2)} bits, including other.</p>}
   </section>;
 }
 

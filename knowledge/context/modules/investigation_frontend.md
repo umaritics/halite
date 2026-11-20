@@ -71,3 +71,11 @@ Tests: `InvestigationSessions.test.jsx`, `InvestigationQuick.test.jsx`,
 The separate Vite preview build compiles every new feature even before App imports
 them. Local browser evidence includes 1280px dark/light, two browsers, refresh,
 outcomes/print, hidden foreign session, model-off quick diagnosis and widget outage.
+
+## Decision-core display extension
+
+New Copilot/session turns supply uncalibrated named beliefs, the other bucket and
+entropy. The UI renders all of them as relative support and labels calibration
+status. Old saved turns lacking beliefs retain their existing rendering; no
+recomputation enriches historical responses. The live policy remains explicitly
+unconfigured. Component and built-browser evidence is in `phase4-*`.

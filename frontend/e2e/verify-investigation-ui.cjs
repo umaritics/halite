@@ -13,7 +13,7 @@ const assert = require('node:assert/strict');
   fs.mkdirSync(directory, { recursive: true });
   const productionShell = process.env.HALITE_UI_PRODUCTION_SHELL === 'true';
   const entry = route => base + (productionShell ? route : '/e2e/investigation-preview.html#' + route);
-  const evidencePrefix = productionShell ? 'phase3-integration' : 'phase3';
+  const evidencePrefix = process.env.HALITE_UI_EVIDENCE_PREFIX || (productionShell ? 'phase3-integration' : 'phase3');
   const suffix = randomUUID().slice(0, 8);
   const password = 'BrowserTestPassword2026';
   async function api(route, body, token) {
@@ -77,6 +77,10 @@ const assert = require('node:assert/strict');
     await first.getByLabel('Symptom, observation or check result').fill('Hydraulic pressure dropped during taxi');
     await first.getByRole('button', { name: 'Send observation', exact: true }).click();
     await first.getByText('Model unavailable · deterministic explanation', { exact: true }).waitFor();
+    if (process.env.HALITE_UI_EXPECT_BELIEFS === 'true') {
+      await first.getByRole('region', { name: 'Relative support', exact: true }).waitFor();
+      assert.ok(await first.getByRole('meter').count() > 0);
+    }
     await first.getByRole('button', { name: 'CI-SMOKE-001', exact: true }).click();
     await first.getByRole('region', { name: 'Saved evidence', exact: true }).getByText('Hydraulic pressure dropped during taxi', { exact: true }).waitFor();
     await screenshot(first, 'phase3-workspace-dark');
@@ -153,6 +157,7 @@ const assert = require('node:assert/strict');
     const proof = { preview_harness: !productionShell, production_shell_integrated: productionShell,
       initial_health: { graph_mode: health.graph_mode, auth_db_mode: health.auth_db_mode, llm_mode: health.llm_mode },
       ...(productionShell ? { diagnostics_redirect: 'PASS', global_logout_legacy_cleanup: 'PASS', logout_protected_deep_link: 'PASS', next_account_isolation: 'PASS' } : {}),
+      ...(process.env.HALITE_UI_EXPECT_BELIEFS === 'true' ? { relative_support_bars: 'PASS' } : {}),
       session_id: sessionId, create_and_degraded_turn: 'PASS', close_with_outcome: 'PASS', authenticated_print: 'PASS',
       second_browser_and_reload: 'PASS', other_technician_hidden: 'PASS', failed_widget_hidden: 'PASS',
       quick_diagnosis_model_off: 'PASS', turn_post_count: turnPosts, page_errors: errors, viewport: { width: 1280, height: 900 }, dark_and_light: 'PASS' };

@@ -86,3 +86,7 @@ CI lint/coverage and Form 10: `context/modules/devops.md`, `flows/FLOW-ci.md`,
 Investigation history/resume/close/print, home widgets, frontend identity isolation:
 `context/modules/investigation_frontend.md`, `frontend/src/features/investigation/`,
 `frontend/src/features/home/`, `docs/work/usman/FRONTEND_INTEGRATION.md`.
+
+Beliefs/entropy/other bucket, answer/ask/abstain, 2023 fit/2024 selection, temporal isolation:
+`context/modules/investigation_decisions.md`, `flows/FLOW-decision-selection.md`,
+`decisions/DEC-20261120-decision-core-protocol.md`, `backend/investigation/experiments/`.

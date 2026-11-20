@@ -109,3 +109,8 @@ stateless response fields. Quick diagnosis adds opt-in degraded mode and content
 aware cache invalidation; its citations are constrained to the IDs shown in the
 prompt. See [investigation_sessions.md](investigation_sessions.md). Policy and
 sentence-grounding fields remain explicitly unconfigured until their packages land.
+
+Copilot adds uncalibrated beliefs, explicit policy inputs and actual Mid-I ranker
+metadata without changing frozen fields. Ranking imports go through the investigation
+port. See [investigation_decisions.md](investigation_decisions.md). No operating
+point or probability wording is enabled.

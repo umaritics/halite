@@ -1,0 +1,99 @@
+INFO:     Started server process [58020]
+INFO:     Waiting for application startup.
+INFO:api.routes.ops:Ops ring-buffer logging installed
+INFO:main:Halite connecting to Neo4j AuraDB
+INFO:main:Neo4j connected and seeded
+INFO:main:LLM provider=groq configured=False model=openai/gpt-oss-20b
+INFO:main:Relational auth store mode: postgresql
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:32904 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:api.routes.maintenance:Maintenance ingest: {'assets_created': 1, 'records_created': 3, 'rows_skipped_no_tail': 0, 'rows_skipped_bad_date': 0, 'duplicates_skipped': 0}
+INFO:     127.0.0.1:32904 - "POST /api/maintenance/ingest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:32904 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:32904 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58584 - "POST /api/sessions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:58584 - "POST /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4/turns HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58594 - "GET /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "GET /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "POST /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4/turns HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:32904 - "GET /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:58594 - "POST /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4/close HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58594 - "POST /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4/turns HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:58594 - "GET /api/sessions/b341962b-0b7e-42e1-9e90-a2b3e46d36f4/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32904 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49992 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49992 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:49992 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49990 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52106 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52122 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52128 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52144 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52148 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52160 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52174 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52184 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52192 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52202 - "POST /api/sessions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:52214 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52222 - "POST /api/sessions/e418334e-246c-4da8-bae1-979e57429209/turns HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52238 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52242 - "GET /api/maintenance/analysis/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52244 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52264 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52248 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52272 - "POST /api/sessions/e418334e-246c-4da8-bae1-979e57429209/close HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52288 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52304 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52318 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52322 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52332 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52348 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52362 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52378 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52394 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52408 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52420 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52424 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52446 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52430 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52460 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52448 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52464 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52470 - "POST /api/maintenance/diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52482 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52488 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52486 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42938 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:42944 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42950 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42960 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42972 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42980 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42988 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42990 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43004 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:43018 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43022 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43030 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43046 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43026 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43062 - "POST /api/auth/logout HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43076 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:43092 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43100 - "GET /api/sessions/e418334e-246c-4da8-bae1-979e57429209 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:43102 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [58020]
+
+Aborted!

@@ -205,3 +205,101 @@ Machine-readable check links/states are saved in
 `evidence/phase3-integration-github-checks.json`. Code remains unmerged; owner
 review is the outstanding integration gate. Final evidence follow-up changes
 documentation only.
+
+## Phase 4 — decision core, stored beliefs and measured selection
+
+Branch `codex/usman-decision-layer`, stacked on PR #30. The preceding goal turn
+made concrete progress by publishing/review-verifying the shared integration.
+PR #30's final documentation commit subsequently passed every hosted check too.
+
+### User authorization and design before code
+
+When asked for the plan's reserved design note, the user answered: **“just do it
+on my behalf you know the project wayy better than me so go ahead do something
+that is impressive.”** This authorizes the AI-assisted design draft at
+`docs/fyp1-final/DECISION_LAYER_DESIGN.md`, written before the WP-S4 implementation.
+It explicitly discloses assistance. It is not an invented unaided student note,
+human label, cross-review or supervisor approval. No numeric operating-point
+choice is claimed from that response.
+
+### Implementation and executed evidence
+
+- Pure stable top-ten/other softmax, entropy, explicit uncalibrated fallback and
+  version/provenance-validated fitted parameters in `beliefs.py`.
+- Pure answer/ask/abstain priority, exact boundaries, question budget, active
+  evidence gate, report-mode option and recorded rule inputs in `policy.py`.
+  Missing configuration still abstains; no production threshold was guessed.
+- `ranker_port.py` centralises investigation ranking imports and provides the
+  future V1 extension boundary, honest missing-extension fallback, and an error
+  rather than ignoring an unsupported historical time bound. Frozen diagnostic
+  endpoints keep their exact Mid-I score/context behavior.
+- Additive uncalibrated beliefs/policy inputs in stateless Copilot; sessions store
+  exact beliefs/entropy on snapshots and preserve old saved replies.
+- Relative-support UI now includes the other bucket and entropy, even with no
+  named candidates. Fitted support also retains the relative-support label.
+- Streaming official FAA source projection, timestamp/chain-safe offline adapter,
+  deterministic NLL fitter, 2024 threshold table and 1,000 clustered bootstrap
+  intervals. No new application dependency, model calls or other-owner code.
+
+**321 backend tests passed**, zero failures/skips, using real Neo4j/PostgreSQL
+where required and memory/SQLite contracts. **258 frontend tests passed**; main
+build passed; runtime-error lint passed. Production-startup smoke with disposable
+Neo4j/PostgreSQL verified normalized uncalibrated beliefs, unconfigured abstention
+and exact cross-client snapshot replay. The actual built application passed its
+browser flow including relative-support bars, second-browser/reload without
+inference, outcomes/print, outsider denial, widget failure, model-off diagnosis,
+redirects/logout/account isolation. Dark/light 1280px screenshots visually checked;
+no horizontal overflow or page errors. Evidence: `evidence/phase4-*`.
+
+The initial API test command named a nonexistent test file, so it collected no
+tests; corrected to `test_investigation_degraded.py` and reran (62 passed), then
+ran the complete suite. No failing assertion was removed.
+
+### Real-data selection and protocol audit
+
+The FAA endpoint was verified accessible and streamed 62,691 records for 2023 and
+66,080 for 2024. Compressed projections are git-ignored and checked by canonical
+row fingerprint; source metadata is committed. The shared contract's **2023 fit /
+2024 select / 2025 test** wins over the guide's conflicting 2024 fit wording.
+`2025` was neither downloaded nor evaluated in this phase.
+
+The first exploratory run retained only the earliest correction per original.
+A protocol audit found 35 additional eligible fit pairs and 49 selection pairs.
+Corrected the method to retain every eligible pair, and clustered bootstrap by
+original report to retain their dependence. Preserved the correction reason in
+`phase4-protocol-correction.json`; it is a selection-method change before any
+held-out evaluation.
+
+Authoritative results: `backend/investigation/experiments/results/decision_selection_2024_v2/`.
+**406** fit pairs, **389** selection pairs from **340** originals; 22/7 unknown
+outcome keys excluded and counted. T=0.5025466938, other score=1.3184610197;
+mean fit NLL=1.1940390452; fitted optimum is inside the recorded search domain.
+The no-abstention baseline answers 388/389 with top-1 0.1443, top-3 0.2062 and
+unsupported top-3 outcome-key rate 0.7918 over all selection cases. At threshold
+0.20 with at least two active records: 43/389 answered, top-1 0.4651, top-3 0.5814,
+unsupported rate 0.0463. These are **selection examples, not a chosen point or
+held-out result**. Their 95% clustered intervals are in the JSON. Named-top ECE
+on selection is 0.06891; this does not authorize probability wording.
+
+These weak historical part-key results remain visible. They are a proxy from the
+bounded Mid-I ranker, not validated fault diagnosis. Scores/case IDs are committed
+for reproducibility, with source/method fingerprints and truthful dirty-tree
+provenance. Offline occurrence-date ties use record ID descending; live Cypher
+has no secondary key, explicitly disclosed. No graph or retrieval-owner algorithm
+was changed.
+
+### Remaining acceptance
+
+This phase completes the core and pre-question selection slice, **not all WP-S4
+or FYP-I**. The question-conditioned selection and operating-point decision,
+held-out 2025 run/intervals, plots/product experiment panels, calibrated runtime
+activation, sentence checker/labels, model comparison and release gates remain.
+Broad test coverage is approximately 76%, still below NFR-04; no threshold or
+coverage exclusions were changed to hide it. See the complete acceptance matrix.
+Knowledge context, flow, decision/index/registry and the guide's implementation
+snapshot were updated in the same change set.
+
+The committed experiment method fingerprint was recomputed against the final
+source and matched exactly (`EXPERIMENT_METHOD_FINGERPRINT=PASS`). The temporary
+API/preview servers were stopped after browser verification to freeze their logs.
+Disposable database containers remain isolated for subsequent phases.

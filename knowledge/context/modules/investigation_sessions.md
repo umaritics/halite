@@ -33,7 +33,7 @@ A database failure rolls all three back. Unique `(session_id, idx)` protects the
 sequence independently of the application process.
 
 Each turn stores the exact response, including evidence narratives, and its
-snapshot stores hypotheses and evidence IDs. Replay does not call a model or
+snapshot stores hypotheses with derived beliefs, their entropy and evidence IDs. Replay does not call a model or
 re-read changed graph records. Creation/list/detail/resume/close work across
 clients and application engines. Lists use stable `(created_at, id)` cursor
 pagination with visibility and status/outcome filters applied in SQL.
@@ -45,8 +45,9 @@ it supplies a deterministic explanation from the returned ranking/evidence and
 retains `llm_status=unavailable`. It never uses canned software-domain responses.
 The compatibility stateless Copilot endpoint retains its existing null-reply
 outage behavior. Until the measured policy package lands, session responses say
-`decision=abstain`, `policy_status=not_configured`, `beliefs=null`, `question=null`
-and `grounding=null`. No calibrated beliefs or sentence checks are claimed.
+`decision=abstain`, `policy_status=not_configured`, `question=null` and
+`grounding=null`. It now returns explicit uncalibrated beliefs/entropy and stores
+the rule inputs; see [investigation_decisions.md](investigation_decisions.md). No calibrated beliefs or sentence checks are claimed.
 Structured answers are refused with 409 until a stored question can validate them.
 
 Quick diagnose adds `allow_degraded=false`; the default 503 contract remains.
@@ -65,7 +66,7 @@ a graph record reference. Closed sessions with a named outcome part are availabl
 to other verticals through `status=closed&has_outcome=true`. Findings remain user
 reports, not adjudicated labels or approvals. The authenticated HTML report
 escapes every user/model/evidence value and is available only after closure.
-The one-click frontend action remains WP-S9 work.
+The one-click frontend action is verified on the shared integration review branch.
 
 ## Verification
 

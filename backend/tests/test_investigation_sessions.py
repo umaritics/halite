@@ -74,11 +74,16 @@ def test_session_replays_across_clients_and_application_restart(environment):
     assert response['citation_validation']['valid_ids']
     assert response['reply'] and 'not written by a model' in response['reply']
     assert response['policy_status'] == 'not_configured'
+    assert response['beliefs']['calibrated'] is False
+    assert response['decision'] == 'abstain'
+    assert response['policy_inputs']['parameters'] is None
     with TestClient(app) as second_browser:
         saved = second_browser.get(path, headers=headers['owner']).json()
     assert saved['turns'][0]['response'] == response
     assert saved['turns'][0]['snapshot']['evidence_ids'] == [r['record_id'] for r in response['evidence']]
     assert saved['turn_count'] == 1
+    assert saved['turns'][0]['snapshot']['belief_entropy'] == response['beliefs']['entropy']
+    assert saved['turns'][0]['snapshot']['hypotheses'] == response['beliefs']['hypotheses']
     app.state.graph_repo.update_service_record('AALA2024050500004', {'text': 'changed after the turn'})
     assert client.get(path, headers=headers['owner']).json()['turns'][0]['response'] == response
     # New app/engine, same file database. No browser storage or shared in-process object required.

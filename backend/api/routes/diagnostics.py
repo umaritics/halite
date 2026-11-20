@@ -32,7 +32,10 @@ from pydantic import BaseModel, Field, field_validator
 from api.deps import get_graph_repo, get_groq_service, get_settings
 from api.security import require_llm_rate_limit
 from services.citation_validation import validate_citations
-from services.diagnostic_retrieval import (
+from investigation.beliefs import score_beliefs
+from investigation.policy import decide
+from investigation.ranker_port import MID_VERSION
+from investigation.ranker_port import (
     build_diagnostic_context,
     build_copilot_context,
     rank_diagnostic_checks,
@@ -641,6 +644,7 @@ def copilot_turn(
                 llm_status = "unavailable"
                 reply = None
 
+    beliefs = score_beliefs(ranked[:10], ranker_version=MID_VERSION)
     return {
         "session_id": req.session_id or str(uuid.uuid4()),
         "reply": reply,
@@ -655,6 +659,9 @@ def copilot_turn(
         },
         "llm_status": llm_status,
         "warnings": _dedupe_strings(warnings),
+        "beliefs": beliefs,
+        **decide(beliefs),
+        "ranker_mode": "mid_heuristic", "ranker_version": MID_VERSION,
     }
 
 

@@ -129,3 +129,10 @@ Unlike the compatibility endpoint, it supplies template text on outages. See
 `fallback_explanation` on outages. Diagnose citations are restricted to IDs in the
 bounded prompt, including the bounded ranked-evidence IDs. Empty cache explanations
 are ignored. Model wording failures never create a blank successful explanation.
+
+## Decision-core extension
+
+Copilot ranking imports now pass through `investigation/ranker_port.py`; the
+compatibility aliases preserve the existing scores/context. Additive uncalibrated
+beliefs, version metadata and unconfigured policy inputs are returned. A session
+snapshot stores those beliefs/entropy. See [FLOW-decision-selection.md](FLOW-decision-selection.md).

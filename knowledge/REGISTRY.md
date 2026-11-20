@@ -63,3 +63,7 @@ Integration registration review: `frontend/src/app/registry.js`, `App.jsx`,
 `components/Sidebar.jsx`, `context/AuthContext.jsx`, login/invite defaults — shared
 Shahmeer ownership; authorized Usman preparation on `codex/usman-ui-integration`,
 owner review pending.
+
+| Module | Primary files | Owner | Knowledge |
+| --- | --- | --- | --- |
+| Decision core and offline selection | `backend/investigation/{ranker_port,beliefs,policy}.py`, `investigation/experiments/` | Usman | `context/modules/investigation_decisions.md`, `flows/FLOW-decision-selection.md` |

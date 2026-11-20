@@ -1,0 +1,7 @@
+{
+  "superseded_method": "earliest-correction-only-v1",
+  "n_fit": 371,
+  "n_selection": 340,
+  "reason": "Protocol audit found 35 fit and 49 selection pairs omitted when retaining only earliest correction per original. V2 retains every eligible known-outcome pair and clusters bootstrap by original report. Only 2023/2024 were used; 2025 has not been accessed.",
+  "authoritative_results": "backend/investigation/experiments/results/decision_selection_2024_v2/"
+}

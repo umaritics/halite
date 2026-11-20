@@ -162,9 +162,10 @@ class SessionService:
             )
             db.add(turn)
             db.flush()
-            db.add(SessionSnapshot(turn_id=turn.id, hypotheses_json=_json(response['ranked_checks']),
+            db.add(SessionSnapshot(turn_id=turn.id, hypotheses_json=_json(
+                (response.get('beliefs') or {}).get('hypotheses', response['ranked_checks'])),
                                    evidence_ids_json=_json([r['record_id'] for r in response['evidence']]),
-                                   belief_entropy=None))
+                                   belief_entropy=(response.get('beliefs') or {}).get('entropy')))
         return response
 
     def close(self, session_id, *, outcome_note, outcome_part=None, outcome_jasc=None, outcome_record_id=None):

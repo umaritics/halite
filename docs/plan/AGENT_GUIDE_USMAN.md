@@ -12,13 +12,18 @@ name and tell Usman what changed.
 
 ## Current implementation evidence
 
-The original code-map line numbers below are a baseline snapshot. The compatible
-foundation and model output-format boundary are in PR #27; persisted sessions,
-opt-in degraded diagnosis, cache/citation tightening and CI reports are in PR #28.
-Both implementation commits passed GitHub CI. Session policy/questions/grounding
-remain explicitly unconfigured, and the frontend still needs the shared feature
-registration/preparation. See `docs/work/usman/ACCEPTANCE_MATRIX.md` before choosing
-the next work package; do not infer that the full mission is finished.
+Original code-map line numbers below are the baseline snapshot. Foundation/adapter
+work is in PR #27, sessions/degraded/CI in #28, feature UI in #29 and the separately
+authorized shared integration in #30. All have passed hosted checks; owner review,
+merge and staging remain separate gates. The user explicitly authorized an
+AI-assisted design note on his behalf, now in
+`docs/fyp1-final/DECISION_LAYER_DESIGN.md` before WP-S4 code.
+
+The decision-core branch adds tested beliefs/policy, exact stored beliefs/entropy,
+a ranker boundary and real 2023-fit/2024-selection tooling. Runtime beliefs remain
+uncalibrated and policy unconfigured pending measured selection. No 2025 result,
+manual label, owner review or completed full mission is implied. See
+`docs/work/usman/ACCEPTANCE_MATRIX.md` and `knowledge/context/modules/investigation_decisions.md`.
 
 ## 1. Mission
 
