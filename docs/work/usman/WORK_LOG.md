@@ -673,3 +673,10 @@ will be checked through the existing hosted CI, which provisions its own databas
 Updated the knowledge router/index/registry, model context/flow, decision, guide
 and acceptance matrix in the same change. Actual M4 execution, comparison review
 and Usman's interactive-model decision remain gates for the full FYP objective.
+
+Published this package as draft PR #37:
+https://github.com/umaritics/halite/pull/37, stacked on #36. The final eleven focused
+tests and extracted HTTP smoke passed. Hosted full regression/lint/coverage,
+Compose and preview checks are tracked on that PR. The artifact's exact source
+and instruction bytes are frozen by its manifest and sidecar; this handoff log
+does not change the ZIP. No approval, merge, M4 result or model decision is implied.
