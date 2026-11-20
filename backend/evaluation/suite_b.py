@@ -13,10 +13,16 @@ from evaluation.corpus import _normalise_part, load_sdr_raw
 from evaluation.graph_builder import build_eval_repository
 from evaluation.metrics import bootstrap_top1_ci, top_k_hit
 from evaluation.rank_b0 import build_diagnostic_context_b0, rank_diagnostic_checks_b0
+from evaluation.embeddings import (
+    BackendKind,
+    EmbeddingBackend,
+    load_or_build_corpus_matrix,
+)
 from evaluation.rank_b2 import rank_parts_bm25
+from evaluation.rank_b3 import rank_parts_embed
 from services.diagnostic_retrieval import build_diagnostic_context, rank_diagnostic_checks
 
-RankerId = Literal["b0", "b1", "b2"]
+RankerId = Literal["b0", "b1", "b2", "b3"]
 
 _BUILDERS: dict[RankerId, tuple[Callable, Callable]] = {
     "b0": (build_diagnostic_context_b0, rank_diagnostic_checks_b0),
@@ -31,6 +37,8 @@ class SuiteBConfig:
     splits_path: Path | None = None
     split: Literal["train", "tune", "test", "all"] = "test"
     max_pairs: int | None = None
+    embedding_backend: BackendKind = "fastembed"
+    embedding_cache_dir: Path | None = None
 
 
 def _load_pairs(path: Path) -> pd.DataFrame:
@@ -49,8 +57,21 @@ def _split_years(splits_path: Path | None, split: str) -> set[str]:
 
 def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
     corpus = load_sdr_raw(config.raw_dir)
-    corpus = corpus[corpus["_submitted_dt"].notna()].sort_values("_submitted_dt")
+    corpus = (
+        corpus[corpus["_submitted_dt"].notna()]
+        .sort_values("_submitted_dt")
+        .reset_index(drop=True)
+    )
     corpus_index = corpus.set_index("OperatorControlNumber")
+
+    embed_backend: EmbeddingBackend | None = None
+    corpus_vectors = None
+    if ranker == "b3":
+        embed_backend = EmbeddingBackend(kind=config.embedding_backend)
+        cache_dir = config.embedding_cache_dir or Path("data/evaluation")
+        corpus_vectors = load_or_build_corpus_matrix(
+            corpus, cache_dir, embed_backend
+        )
 
     pairs = _load_pairs(config.pairs_path)
     years = _split_years(config.splits_path, config.split)
@@ -100,6 +121,17 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
                 query_time,
                 exclude_record_ids={new_id},
             )
+        elif ranker == "b3":
+            assert corpus_vectors is not None and embed_backend is not None
+            ranked = rank_parts_embed(
+                corpus,
+                corpus_vectors,
+                embed_backend,
+                tail,
+                symptom,
+                query_time,
+                exclude_record_ids={new_id},
+            )
         else:
             repo, asset_id = build_eval_repository(
                 corpus,
@@ -118,7 +150,7 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
 
     n = len(hits1)
     ci = bootstrap_top1_ci(hits1) if hits1 else (0.0, 0.0)
-    return {
+    out = {
         "suite": "B",
         "ranker": ranker,
         "split": config.split,
@@ -129,3 +161,7 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
         "top5_accuracy": round(sum(hits5) / n, 4) if n else 0.0,
         "top1_ci_95": list(ci),
     }
+    if ranker == "b3" and embed_backend is not None:
+        out["embedding_backend"] = embed_backend.kind
+        out["embedding_model"] = embed_backend.model_name
+    return out

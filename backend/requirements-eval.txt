@@ -1,0 +1,3 @@
+# Optional — offline retrieval benchmarks only (not required for API runtime).
+fastembed>=0.4.0
+numpy>=1.26.0

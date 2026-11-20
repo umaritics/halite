@@ -9,17 +9,16 @@ First measurable retrieval baseline on citation-valid correction pairs (resoluti
 Corpus lives at `/home/umar/halite/corpus_data/` (raw + `evaluation/correction_pairs.csv`).
 
 ```bash
-docker run --rm --user 0:0 \
+docker run --rm --user 0:0 -e PYTHONUNBUFFERED=1 \
   -v /home/umar/halite/backend:/app \
   -v /home/umar/halite/corpus_data:/app/data \
   -w /app halite-api:latest \
-  python evaluation/run_suite_b.py \
+  sh -c 'pip install -q -r requirements-eval.txt && python evaluation/run_suite_b.py \
     --raw-dir data/raw \
-    --pairs data/evaluation/correction_pairs.csv \
+    --pairs data/processed/correction_pairs.csv \
     --splits data/evaluation/splits.json \
-    --split test \
-    --ranker all \
-    --out data/evaluation/suite_b_test_2025.json
+    --split test --ranker b3 \
+    --out data/evaluation/suite_b_test_2025_b3.json'
 ```
 
 Log (example): `/home/umar/halite/logs/suite_b_test_2025.log`
@@ -37,7 +36,7 @@ Committed snapshots (VM 2026-11-20):
 | B1 (heuristic fixes) | 0.199 | 0.284 | 0.319 | 0.135 – 0.262 |
 | B2 (BM25) | 0.199 | **0.340** | **0.397** | 0.128 – 0.270 |
 
-B2 matches B1 on top-1 but improves top-3/top-5; B3 embeddings + hybrid (B5) is next.
+B2 matches B1 on top-1 but improves top-3/top-5. **B3** uses FastEmbed `BAAI/bge-small-en-v1.5` (384-d, ONNX via `requirements-eval.txt`) with on-disk `.npy` cache under `data/evaluation/`. Hybrid **B5** is next.
 
 ## CI
 

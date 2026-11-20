@@ -36,9 +36,20 @@ def main() -> None:
     )
     parser.add_argument(
         "--ranker",
-        choices=("b0", "b1", "b2", "all", "both"),
+        choices=("b0", "b1", "b2", "b3", "all", "both", "lexical"),
         default="both",
-        help="b0/b1/b2, both (=b0+b1), or all (=b0+b1+b2)",
+        help="both=b0+b1, all=b0–b3, lexical=b2+b3, or single ranker",
+    )
+    parser.add_argument(
+        "--embedding-backend",
+        choices=("fastembed", "hashing"),
+        default="fastembed",
+        help="B3 encoder (hashing for CI smoke only)",
+    )
+    parser.add_argument(
+        "--embedding-cache-dir",
+        type=Path,
+        default=Path("data/evaluation"),
     )
     parser.add_argument("--max-pairs", type=int, default=None)
     parser.add_argument(
@@ -55,6 +66,8 @@ def main() -> None:
         splits_path=args.splits if args.splits.is_file() else None,
         split=args.split,
         max_pairs=args.max_pairs,
+        embedding_backend=args.embedding_backend,
+        embedding_cache_dir=args.embedding_cache_dir,
     )
 
     results = {
@@ -70,7 +83,9 @@ def main() -> None:
     if args.ranker == "both":
         rankers = ("b0", "b1")
     elif args.ranker == "all":
-        rankers = ("b0", "b1", "b2")
+        rankers = ("b0", "b1", "b2", "b3")
+    elif args.ranker == "lexical":
+        rankers = ("b2", "b3")
     else:
         rankers = (args.ranker,)
     for ranker in rankers:

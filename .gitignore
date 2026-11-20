@@ -47,6 +47,7 @@ backend/data/raw/
 backend/data/processed/
 backend/data/evaluation/*.csv
 backend/data/evaluation/*.json
+backend/data/evaluation/*.npy
 !backend/data/evaluation/.gitkeep
 
 # Reproducible runtime/model-response caches
