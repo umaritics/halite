@@ -30,3 +30,13 @@ INFO:     127.0.0.1:45964 - "POST /api/sessions/319e7a76-256c-4243-aac6-8b65cb5c
 INFO:     127.0.0.1:45964 - "POST /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/turns HTTP/1.1" 409 Conflict
 INFO:     127.0.0.1:45964 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/report HTTP/1.1" 200 OK
 INFO:     127.0.0.1:45952 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40194 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40194 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51120 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51120 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [41507]
+
+Aborted!

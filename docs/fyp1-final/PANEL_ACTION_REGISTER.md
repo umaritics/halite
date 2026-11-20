@@ -24,8 +24,8 @@ These are implementation actions from the master plan, not panel instructions.
 | --- | --- | --- | --- | --- |
 | INT-001 | Separate backend vertical extension points | Usman | `../work/usman/evidence/refactor-equivalence.json`, phase 1 test results | Foundation verified; legacy retirement still open |
 | INT-002 | Repair local model prose/JSON boundary | Usman | `backend/tests/test_model_adapter_format.py`, phase 1/2 regression output | Adapter verified |
-| INT-003 | Persist investigations with access control and replay | Usman | `backend/tests/test_investigation_sessions.py`, phase 2 evidence | Under verification |
-| INT-004 | Add lint and coverage reports to CI | Usman | `.github/workflows/ci.yml`, backend report artifacts after remote CI runs | Configured; remote CI evidence pending |
+| INT-003 | Persist investigations with access control and replay | Usman | `backend/tests/test_investigation_sessions.py`, phase 2 evidence | Verified backend in PR #28; frontend pending |
+| INT-004 | Add lint and coverage reports to CI | Usman | `.github/workflows/ci.yml`, backend report artifacts after remote CI runs | Lint and reports verified in GitHub run 44702502396; broad 80% target remains |
 
 ## New entry template
 

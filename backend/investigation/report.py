@@ -15,7 +15,7 @@ def render_report(session):
                      f"<p class='reply'>{text(response.get('reply'))}</p><h3>Evidence</h3><ul>{citations}</ul></section>")
     return f'''<!doctype html><html lang="en"><meta charset="utf-8">
 <title>Investigation {text(session['id'])}</title>
-<style>body{{font:16px/1.5 system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#111}}
+<style>body{{font:16px/1.5 system-ui,sans-serif;max-width:900px;margin:2rem auto;padding:0 1rem;color:#111;overflow-wrap:anywhere}}
 h1,h2,h3{{line-height:1.2}}section{{border-top:1px solid #ccc;margin-top:2rem}}.reply{{white-space:pre-wrap}}
 li{{overflow-wrap:anywhere}}@media print{{body{{font-size:11pt;max-width:none;margin:0}}h2,h3{{break-after:avoid}}}}</style>
 <body><h1>{text(session['title'])}</h1><p>Investigation ID: {text(session['id'])}</p>

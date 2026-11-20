@@ -147,3 +147,11 @@ Phase-1 draft PR: https://github.com/umaritics/halite/pull/27 — backend, front
 Research policy/questions/grounding are explicitly unconfigured: responses abstain provisionally with `policy_status=not_configured` and null beliefs/questions/grounding. This is an intermediate persistence milestone, not the final decision product. The remaining packages, frontend integration, measured experiments, genuine human labels/model decisions, report/defense and release gates stay open in the acceptance matrix.
 
 Knowledge updated: investigation context/flow/decision; diagnostics and CI context/flows; registry/index/router. AI assistance: Codex authored code, tests and engineering evidence; student/supervisor judgements, labels and approvals are not claimed.
+
+### GitHub acceptance and visual proof
+
+Phase-2 draft PR: https://github.com/umaritics/halite/pull/28 (stacked on #27). GitHub run https://github.com/umaritics/halite/actions/runs/44702502396 verified commit `4764581`: **293 tests, zero failures/errors/skips**, clean lint, uploaded JUnit/coverage reports, frontend tests/build and both Docker runtime smoke checks. Vercel preview also succeeded. Downloaded artifact source and metadata are preserved in `phase2-github-*`; broad measured coverage is **75.47%**, not an 80% claim.
+
+The printable report was opened in headless Chrome using print CSS at 1280px, visually inspected for clean headings/text/evidence, and tested with a maximum-length unbroken title at 1280px and 794px. Added `overflow-wrap:anywhere` to keep that valid input within page bounds. Both widths report no horizontal overflow; evidence: `phase2-report-print.png`, `phase2-report-render.json`, `phase2-print-report-tests.txt` (both database backends). This final small print-layout follow-up is locally verified and will receive a fresh GitHub check after push.
+
+The temporary HTTP server has been stopped. The two disposable databases remain on separate loopback ports for continued goal verification; their storage is tmpfs. They are not shared staging and will be removed when no longer needed.

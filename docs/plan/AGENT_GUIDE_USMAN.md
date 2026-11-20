@@ -10,6 +10,16 @@ name and tell Usman what changed.
 
 ---
 
+## Current implementation evidence
+
+The original code-map line numbers below are a baseline snapshot. The compatible
+foundation and model output-format boundary are in PR #27; persisted sessions,
+opt-in degraded diagnosis, cache/citation tightening and CI reports are in PR #28.
+Both implementation commits passed GitHub CI. Session policy/questions/grounding
+remain explicitly unconfigured, and the frontend still needs the shared feature
+registration/preparation. See `docs/work/usman/ACCEPTANCE_MATRIX.md` before choosing
+the next work package; do not infer that the full mission is finished.
+
 ## 1. Mission
 
 Given ranked hypotheses and their evidence, decide what to tell the technician: commit to an answer, ask one more
