@@ -1,4 +1,4 @@
-// Run against the development-only preview harness and disposable loopback API.
+// Run against the feature preview or production shell and disposable loopback API.
 const { chromium } = require(process.env.HALITE_PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -11,6 +11,9 @@ const assert = require('node:assert/strict');
   for (const url of [base, apiBase]) if (!['127.0.0.1', 'localhost', '::1'].includes(new URL(url).hostname)) throw new Error('Disposable loopback servers required');
   const directory = process.env.HALITE_UI_EVIDENCE_DIR || '/tmp/halite-investigation-ui-evidence';
   fs.mkdirSync(directory, { recursive: true });
+  const productionShell = process.env.HALITE_UI_PRODUCTION_SHELL === 'true';
+  const entry = route => base + (productionShell ? route : '/e2e/investigation-preview.html#' + route);
+  const evidencePrefix = productionShell ? 'phase3-integration' : 'phase3';
   const suffix = randomUUID().slice(0, 8);
   const password = 'BrowserTestPassword2026';
   async function api(route, body, token) {
@@ -44,17 +47,23 @@ const assert = require('node:assert/strict');
     context.on('request', request => { if (request.method() === 'POST' && /\/api\/sessions\/[^/]+\/turns$/.test(new URL(request.url()).pathname)) turnPosts += 1; });
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto(base + '/e2e/investigation-preview.html#/login');
+    await page.goto(entry('/login'));
+    await page.evaluate(() => {
+      localStorage.setItem('halite-diagnostic-active-workspace', 'unowned secret');
+      localStorage.setItem('halite-diagnostic-copilot-sessions', 'unowned secret');
+    });
     await page.getByLabel(/work email/i).fill(email);
     await page.getByLabel(/^password$/i).fill(password);
     await page.getByRole('button', { name: /^sign in$/i }).click();
     await page.getByRole('heading', { name: 'Maintenance workspace', exact: true }).waitFor();
+    assert.equal(await page.evaluate(() => localStorage.getItem('halite-diagnostic-active-workspace')), null);
+    assert.equal(await page.evaluate(() => localStorage.getItem('halite-diagnostic-copilot-sessions')), null);
     return { context, page };
   }
   async function screenshot(page, name) {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth);
     assert.equal(overflow, false, 'Horizontal overflow at projector width');
-    await page.screenshot({ path: path.join(directory, name + '.png'), fullPage: true });
+    await page.screenshot({ path: path.join(directory, name.replace('phase3', evidencePrefix) + '.png'), fullPage: true });
   }
   try {
     const { page: first } = await login(accounts.owner);
@@ -71,7 +80,15 @@ const assert = require('node:assert/strict');
     await first.getByRole('button', { name: 'CI-SMOKE-001', exact: true }).click();
     await first.getByRole('region', { name: 'Saved evidence', exact: true }).getByText('Hydraulic pressure dropped during taxi', { exact: true }).waitFor();
     await screenshot(first, 'phase3-workspace-dark');
-    await first.getByRole('button', { name: 'Light theme', exact: true }).click();
+    if (productionShell) {
+      // The existing Settings screen owns the application theme control.
+      await first.getByRole('link', { name: 'Settings', exact: true }).click();
+      await first.locator('button').filter({ has: first.locator('span.rounded-full') }).click();
+      await first.goto(entry('/app/investigations/' + encodeURIComponent(sessionId)));
+      await first.getByRole('heading', { name: title, exact: true }).waitFor();
+    } else {
+      await first.getByRole('button', { name: 'Light theme', exact: true }).click();
+    }
     await first.waitForFunction(() => !document.documentElement.classList.contains('dark') && getComputedStyle(document.querySelector('#investigation-message')).backgroundColor === 'rgb(255, 255, 255)');
     await screenshot(first, 'phase3-workspace-light');
     await first.getByRole('button', { name: 'Close investigation', exact: true }).click();
@@ -108,21 +125,43 @@ const assert = require('node:assert/strict');
     assert.equal(await second.getByRole('heading', { name: 'Record integrity', exact: true }).count(), 0);
     await screenshot(second, 'phase3-home-widget-outage');
     const { page: outsider } = await login(accounts.other);
-    await outsider.goto(base + '/e2e/investigation-preview.html#/app/investigations/' + encodeURIComponent(sessionId));
+    await outsider.goto(entry('/app/investigations/' + encodeURIComponent(sessionId)));
     await outsider.getByRole('alert').filter({ hasText: 'unavailable to your account' }).waitFor();
     assert.equal(await outsider.getByRole('heading', { name: title, exact: true }).count(), 0);
     assert.equal(errors.length, 0, errors.join('\n'));
-    const proof = { preview_harness: true, production_shell_integrated: false,
+    if (productionShell) {
+      await second.goto(entry('/app/diagnostics'));
+      await second.getByRole('heading', { name: 'Investigations', exact: true }).waitFor();
+      assert.equal(new URL(second.url()).pathname, '/app/investigations');
+      await second.evaluate(() => {
+        localStorage.setItem('halite-diagnostic-active-workspace', 'unowned secret');
+        localStorage.setItem('halite-diagnostic-copilot-sessions', 'unowned secret');
+      });
+      await second.getByRole('button', { name: 'Sign out', exact: true }).click();
+      await second.getByRole('heading', { name: /sign in to workspace/i }).waitFor();
+      assert.equal(await second.evaluate(() => localStorage.getItem('halite-diagnostic-active-workspace')), null);
+      assert.equal(await second.evaluate(() => localStorage.getItem('halite-diagnostic-copilot-sessions')), null);
+      await second.goto(entry('/app/investigations/' + encodeURIComponent(sessionId)));
+      await second.getByRole('heading', { name: /sign in to workspace/i }).waitFor();
+      await second.getByLabel(/work email/i).fill(accounts.other);
+      await second.getByLabel(/^password$/i).fill(password);
+      await second.getByRole('button', { name: /^sign in$/i }).click();
+      await second.getByRole('alert').filter({ hasText: 'unavailable to your account' }).waitFor();
+      assert.equal(await second.getByRole('heading', { name: title, exact: true }).count(), 0);
+    }
+    assert.equal(errors.length, 0, errors.join('\n'));
+    const proof = { preview_harness: !productionShell, production_shell_integrated: productionShell,
       initial_health: { graph_mode: health.graph_mode, auth_db_mode: health.auth_db_mode, llm_mode: health.llm_mode },
+      ...(productionShell ? { diagnostics_redirect: 'PASS', global_logout_legacy_cleanup: 'PASS', logout_protected_deep_link: 'PASS', next_account_isolation: 'PASS' } : {}),
       session_id: sessionId, create_and_degraded_turn: 'PASS', close_with_outcome: 'PASS', authenticated_print: 'PASS',
       second_browser_and_reload: 'PASS', other_technician_hidden: 'PASS', failed_widget_hidden: 'PASS',
       quick_diagnosis_model_off: 'PASS', turn_post_count: turnPosts, page_errors: errors, viewport: { width: 1280, height: 900 }, dark_and_light: 'PASS' };
-    fs.writeFileSync(path.join(directory, 'phase3-browser-proof.json'), JSON.stringify(proof, null, 2) + '\n');
-    process.stdout.write('INVESTIGATION_UI_PREVIEW=PASS\n');
+    fs.writeFileSync(path.join(directory, evidencePrefix + '-browser-proof.json'), JSON.stringify(proof, null, 2) + '\n');
+    process.stdout.write(productionShell ? 'INVESTIGATION_UI_PRODUCTION_SHELL=PASS\n' : 'INVESTIGATION_UI_PREVIEW=PASS\n');
   } catch (error) {
     let index = 0;
     for (const context of contexts) for (const page of context.pages()) {
-      await page.screenshot({ path: path.join(directory, 'phase3-failure-' + index++ + '.png'), fullPage: true }).catch(() => {});
+      await page.screenshot({ path: path.join(directory, evidencePrefix + '-failure-' + index++ + '.png'), fullPage: true }).catch(() => {});
     }
     throw error;
   } finally {

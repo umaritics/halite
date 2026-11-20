@@ -78,7 +78,7 @@ export default function Login() {
   const destination =
     location.state?.from?.pathname && location.state.from.pathname.startsWith('/app')
       ? `${location.state.from.pathname}${location.state.from.search || ''}${location.state.from.hash || ''}`
-      : '/app/assets';
+      : '/app/home';
 
   if (status === 'authenticated' && isAuthenticated) {
     return <Navigate to={destination} replace />;

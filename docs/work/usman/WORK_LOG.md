@@ -165,3 +165,29 @@ Verification: **246 frontend tests passed in 24 files**, main build and independ
 The actual shared App/Sidebar/AuthContext were intentionally unchanged in this package. The user subsequently authorized **“Prepare the integration for review”**; the concrete patch is recorded in `FRONTEND_INTEGRATION.patch` and will be applied/tested on a separate branch. This is not Shahmeer review, merge or deployment approval. The React quality review checked effect cleanup/account isolation, async mutation guards, labels/dialogs, parallel independent dashboard reads and absence of session local-storage persistence. No new dependencies. Research calibration/grounding/evaluation and human decisions remain open.
 
 Phase-2 follow-up commit `ffafbaf` also passed all GitHub checks; evidence `phase2-final-github-checks.json`.
+
+## Phase 3 integration — user-authorized shared-file preparation
+
+The user answered **“Prepare the integration for review.”** Created separate
+`codex/usman-ui-integration` from feature commit `51b87a3` (draft PR #29). Applied
+minimal shared manifest registry, authenticated App routes, Sidebar nav, home
+defaults and AuthContext legacy-key clearing. Kept Shahmeer's broader preparation
+outside the change; owner review remains pending. Added route/privacy tests and
+updated the invite test's destination fixture without weakening authentication.
+
+**256 tests passed in 25 files; main production build passed.** BrowserRouter
+verification through the actual App shell and local API/Neo4j/PostgreSQL passed:
+create/model-off turn/saved evidence, close/print, second-browser/reload without
+inference, outsider denial, quick diagnosis, failed-widget hiding, dark/light,
+old Diagnostics redirect, logout key clearing, protected URL after logout and
+next-account isolation. Screenshots visually inspected at 1280px; no overflow or
+page errors. Evidence `phase3-integration-*`. Build retains the existing large
+graph-heavy application chunk warning; no suppressed warnings or false claim of
+research policy readiness. This phase is review-ready, not merged/deployed.
+
+The browser flow was rerun against the built production bundle served locally
+by Vite preview on port 15174, including direct-route refresh and JWT API proxy;
+**INVESTIGATION_UI_PRODUCTION_SHELL=PASS**. PR #29 feature CI also passed all
+backend/frontend/Docker/Vercel checks (`phase3-feature-github-checks.json`).
+Temporary HTTP servers were stopped after verification; disposable database
+containers remain isolated for subsequent work.

@@ -1,34 +1,41 @@
-# Investigation frontend integration handoff
+# Investigation frontend integration review
 
-Status: **proposal, not applied**. Shared frontend preparation has not landed.
-The user has authorized preparing the integration for review. A separate branch
-will apply and verify it; no Shahmeer review or merge approval is fabricated.
+Status: **prepared and locally verified on `codex/usman-ui-integration`**.
+The user explicitly authorized **“Prepare the integration for review.”**
+Shahmeer owner review and merge remain pending; broader shared frontend
+preparation remains his work.
 
-`FRONTEND_INTEGRATION.patch` is the concrete minimum registration proposal:
+The branch is stacked on `codex/usman-investigation-ui` (PR #29), which contains
+the independently verified feature package. `FRONTEND_INTEGRATION.patch` preserves
+the initial registration proposal for review history; the branch diff is the
+authoritative implementation, including the added integration tests.
 
 - Shared `src/app/registry.js` discovers feature manifests once.
-- App mounts their routes under the existing authenticated shell and defaults to home.
+- App mounts their routes under the authenticated shell and defaults to home.
 - Sidebar renders their navigation and removes the old local-Copilot destination.
 - AuthContext clears both unowned legacy browser keys on authentication and logout.
-- Login/invite defaults point to home; saved explicit destinations still take precedence.
-- Sidebar's destination assertion follows the new navigation labels.
+- Login/invite defaults point to home; explicit saved destinations still win.
+- No old unowned browser records are imported into an account.
 
-The patch passes `git apply --check` against this branch but is intentionally not
-applied to shared owner files. Shahmeer may incorporate it into his preparation
-PR or review/authorize this small handoff. His broader frontend cleanup, UI
-primitives, global client split, error boundary and chart library stay his work.
-After his registry lands, the investigation/home feature files need no new shell
-edits: their manifests already carry the agreed routes and nav entries.
+## Executed verification
 
-The runnable preview at `frontend/e2e/investigation-preview.html` proves the
-feature workflow independently, using real authentication and a disposable local
-API/Neo4j/PostgreSQL. It is **not** evidence that production App/Sidebar routing
-or global logout cleanup has shipped. The main application still exposes its old
-diagnostics screen until the integration is accepted. Existing old Copilot tests
-therefore remain intact; new feature tests cover the replacement workflow.
+All **256 frontend tests in 25 files passed**. Includes actual App route
+registration, old Diagnostics redirect, protected saved-session URL, failed
+restoration/new login/logout privacy (including server logout failure), and invite
+activation at home while preserving explicit protected destinations. Main
+production build passed.
 
-Acceptance after applying the handoff: run all frontend tests/build, add explicit
-App redirect and global logout migration tests, then exercise the production
-BrowserRouter path (not only the hash-router preview). Auth/invite navigation
-tests may need an explicit home test route where they currently only declare an
-assets test destination. Do not weaken their authentication assertions.
+Chrome exercised the actual built production bundle (local Vite preview) and
+App/Sidebar/AuthContext through BrowserRouter with a
+real local API, Neo4j and PostgreSQL: ordinary login/home, create/turn/evidence,
+closure/print, second-browser/reload without inference, outsider denial,
+model-off quick diagnosis, partial summary outage, dark/light 1280px layouts,
+old Diagnostics redirect, logout clearing and another account's protected deep
+link. No page errors or horizontal overflow. Screenshots were visually inspected.
+Evidence: `evidence/phase3-integration-*`. Runtime health honestly reports model
+fallback. This proves local integration, not staging deployment, owner approval
+or completion of the remaining research packages.
+
+The independent preview remains available for feature-only testing. Shared
+cleanup, client split, error boundary, chart library and UI primitives remain
+outside this small authorized handoff.

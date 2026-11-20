@@ -80,3 +80,23 @@ flowchart LR
   Home --> Summaries[Three independently loaded summaries]
   Preview --> Quick[QuickDiagnose allow_degraded]
 ```
+
+## Shared-shell integration review
+
+On `codex/usman-ui-integration`, App routes → discovered manifests → feature
+pages → shared JWT client → session API. Sidebar consumes manifest navigation.
+AuthContext clears unowned legacy keys on restoration/login/logout. Login/invite
+and app-index defaults go to home; Diagnostics redirects to history.
+
+```mermaid
+flowchart LR
+  App[Authenticated App shell] --> Registry[Feature manifest registry]
+  Registry --> Home[Home and investigation pages]
+  Registry --> Nav[Sidebar navigation]
+  Home --> Client[Shared JWT HTTP client]
+  Client --> API[Scoped session API]
+  Auth[AuthContext login / restore / logout] --> Clear[Discard unowned browser keys]
+```
+
+Main-shell browser verification covers redirects, refresh, logout and another
+account's direct saved-session URL. Owner review/merge/deploy are separate gates.

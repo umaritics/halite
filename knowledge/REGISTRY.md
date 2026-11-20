@@ -58,3 +58,8 @@ updated: 2026-11-16
 - `frontend/src/features/home/{HomePage,manifest}.jsx`; shared design classes/client are consumed unchanged.
 - Feature tests in `frontend/src/test/Investigation*.test.*`; independent browser/build harness in `frontend/e2e/`.
 - Context: `context/modules/investigation_frontend.md`; shared-shell review proposal: `docs/work/usman/FRONTEND_INTEGRATION.md` (user authorized preparation; owner review not claimed).
+
+Integration registration review: `frontend/src/app/registry.js`, `App.jsx`,
+`components/Sidebar.jsx`, `context/AuthContext.jsx`, login/invite defaults — shared
+Shahmeer ownership; authorized Usman preparation on `codex/usman-ui-integration`,
+owner review pending.

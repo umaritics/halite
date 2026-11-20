@@ -19,7 +19,7 @@ const renderSidebar = (props = {}) =>
 describe('Sidebar', () => {
   it('renders the maintenance destinations', () => {
     renderSidebar();
-    ['Assets', 'Service Records', 'Diagnostics', 'Review Queue', 'Knowledge Graph'].forEach((label) => {
+    ['Home', 'Assets', 'Service Records', 'Investigations', 'Review Queue', 'Knowledge Graph'].forEach((label) => {
       expect(screen.getByText(label)).toBeInTheDocument();
     });
   });

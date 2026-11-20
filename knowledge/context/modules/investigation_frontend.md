@@ -26,7 +26,7 @@ Component instances are keyed by account/organisation and session ID. Reads abor
 on scope changes; late writes cannot render after unmount. The old unowned local
 workspace/session keys are cleared, never imported. The new feature saves no
 investigation text, history or draft in localStorage. Global login/logout cleanup
-requires the separately reviewed AuthContext integration.
+is also enforced by AuthContext on the separate integration review branch.
 
 On a stale/uncertain write, the user must reload before sending again. Drafts are
 retained on failure and cleared after reload only if the server's latest saved
@@ -57,11 +57,13 @@ loading/errors/empty states are independent of summary loading.
 
 ## Registration and verification
 
-Feature manifests are ready for the shared registry. Until the approved
-integration is applied, the current production App still mounts the old
-Diagnostics page. The isolated `/e2e/investigation-preview.html` uses the real
+On `codex/usman-ui-integration`, the shared registry discovers feature manifests;
+App mounts them inside its authenticated shell, Sidebar renders their navigation,
+and login/invite/app defaults point to home. The old Diagnostics URL redirects
+to investigation history. This authorized preparation is pending owner review. The isolated `/e2e/investigation-preview.html` uses the real
 AuthProvider, API and protected feature routes on disposable local services.
-It proves the feature flow, not production-shell registration. The review patch
+It proves the independent feature flow. A separate production-shell browser
+mode verifies ordinary BrowserRouter URLs, refresh, redirects and global logout. The review patch
 and user authorization are recorded in `docs/work/usman/FRONTEND_INTEGRATION.md`.
 
 Tests: `InvestigationSessions.test.jsx`, `InvestigationQuick.test.jsx`,

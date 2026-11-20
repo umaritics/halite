@@ -70,7 +70,7 @@ export default function AcceptInvite() {
     setSubmitError(null);
     try {
       await acceptInvite({ token, password, fullName: fullName.trim() });
-      navigate('/app/assets', { replace: true });
+      navigate('/app/home', { replace: true });
     } catch (err) {
       setSubmitError(
         formatDetail(err?.response?.data?.detail) || 'Could not activate your account. Try again.',

@@ -14,6 +14,7 @@ import HaliteLogo from './HaliteLogo';
 import BrandName from './BrandName';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { featureNav } from '../app/registry';
 
 // Mid-I: maintenance-only navigation. Software-domain screens (Chat, Decisions,
 // Alerts, software Ingest) are intentionally not linked from here.
@@ -33,8 +34,14 @@ export default function Sidebar({ reviewCount = 0 }) {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const visibleItems = NAV_ITEMS.filter(
-    (item) => !item.adminOnly || (isAuthenticated && user?.role === 'admin'),
+  const dynamicPaths = new Set(featureNav.map(item => item.to));
+  const visibleItems = [
+    ...NAV_ITEMS.map((item, index) => ({ ...item, order: (index + 1) * 10 }))
+      .filter(item => item.to !== '/app/diagnostics' && !dynamicPaths.has(item.to)),
+    ...featureNav,
+  ].sort((a, b) => (a.order ?? 100) - (b.order ?? 100)).filter(
+    item => (!item.adminOnly || (isAuthenticated && user?.role === 'admin'))
+      && (!item.roles?.length || item.roles.includes(user?.role)),
   );
 
   const handleSignOut = async () => {

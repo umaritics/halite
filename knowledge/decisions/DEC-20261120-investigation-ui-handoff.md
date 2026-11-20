@@ -44,3 +44,11 @@ they carry no owner. Research policy/grounding remain separate work packages.
 
 Muhammad Usman Al Haq: feature files, tests and proposed integration.
 Shahmeer Atif: shared shell/auth registration review and frontend preparation.
+
+## Verification follow-up
+
+The separate integration branch now applies the focused proposal and has passed
+256 frontend tests, the main build and the real BrowserRouter workflow against
+Neo4j/PostgreSQL. Global logout failure cleanup, direct routes/refresh and next
+account isolation are included. User authorization permits preparation for review;
+status remains proposed until Shahmeer review.

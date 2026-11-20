@@ -22,3 +22,10 @@ Playwright installation or the Codex bundled path), `HALITE_CHROME_EXECUTABLE`,
 `HALITE_UI_ADMIN_EMAIL`, `HALITE_UI_ADMIN_PASSWORD`, and `HALITE_UI_EVIDENCE_DIR`.
 It refuses non-loopback hosts and creates only synthetic users/investigations.
 No credentials, cookies or bearer tokens are written to its evidence files.
+
+Set `HALITE_UI_PRODUCTION_SHELL=true` to run the same verifier through ordinary
+`/login` and `/app/*` BrowserRouter routes. This mode additionally checks the old
+Diagnostics redirect, global logout storage cleanup, the protected deep link
+after logout and subsequent login as another technician. Evidence is written to
+`phase3-integration-*`, separately from the independent preview. It uses the
+actual App/Sidebar/AuthContext; it is local verification, not staging deployment.

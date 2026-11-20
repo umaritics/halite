@@ -123,3 +123,12 @@ Diagnostics page until the separately authorized registration handoff is applied
 See [investigation_frontend.md](investigation_frontend.md) and
 `docs/work/usman/FRONTEND_INTEGRATION.md`; no completed production migration is
 claimed by the feature-package evidence alone.
+
+### Authorized integration review branch
+
+`codex/usman-ui-integration` applies the minimal feature registry, App/Sidebar
+registration, home defaults and AuthContext legacy-key clearing, following the
+user's explicit preparation authorization. Shahmeer review remains pending.
+256 tests and a real BrowserRouter/API/PostgreSQL/Neo4j browser flow passed,
+including global logout/deep-link/account isolation. See
+`docs/work/usman/FRONTEND_INTEGRATION.md` and its integration evidence.
