@@ -48,6 +48,6 @@ zero in every attribute group. No production operating point or causal diagnosti
 claim follows. No 2025 data was downloaded or evaluated. Replay script and static
 scientific figure are under `docs/work/usman` and `docs/fyp1-final/figures`.
 
-The four-field ingest patch is prepared separately for user-authorized review
-and testing. Shared staging backup/backfill and Shahmeer review remain distinct
+The four-field ingest patch and idempotent backfill are applied/tested on the
+separate user-authorized review branch. Shared staging backup/backfill and Shahmeer review remain distinct
 acceptance steps. See `CODED_FIELDS_INTEGRATION.md` for exact scope and authorization.

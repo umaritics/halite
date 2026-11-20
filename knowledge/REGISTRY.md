@@ -71,3 +71,5 @@ owner review pending.
 ## Question selection (Usman)
 
 `backend/investigation/{attributes,questions}.py`, `experiments/{temporal_questions,simulated_technician,import_faa_codes}.py`, `data/faa_codes.json`, `params/report-attributes-v1.json`: [context](context/modules/investigation_questions.md), [flow](flows/FLOW-question-selection.md). Offline core verified; live questions and shared ingest integration remain separate.
+
+Raw coded-field ingest integration: `backend/scripts/backfill_coded_fields.py` and `backend/tests/test_coded_fields_integration.py` (Usman; shared creation-list/ingest review Shahmeer). [Context](context/modules/maintenance_api.md), [flow](flows/FLOW-ingest.md).

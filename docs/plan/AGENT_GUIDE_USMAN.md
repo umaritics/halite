@@ -505,3 +505,7 @@ Things only Usman does, which you support with tooling but never write for him:
 ### Verified implementation snapshot — offline WP-S5
 
 The pure question engine and three-control 2024 simulation are implemented. See `knowledge/context/modules/investigation_questions.md`, committed result traces and `docs/work/usman/evidence/phase5-*`. All 342 backend tests pass. Information-gain accuracy advantage is uncertain; no threshold or 2025 result is asserted. Live question UI/answers and the separately authorized shared-field integration remain open.
+
+### Verified implementation snapshot — coded-field review preparation
+
+User-authorized separate branch adds exactly twelve shared-file lines and the idempotent/dry-run backfill. All 355 backend tests pass with isolated Neo4j/PostgreSQL; actual CLI apply/repeat proof is saved. See `docs/work/usman/CODED_FIELDS_INTEGRATION.md`. Shahmeer review/merge and Umar’s actual staging backup/backfill remain pending; no staging mutation claimed.

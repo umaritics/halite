@@ -1,0 +1,123 @@
+{
+  "synthetic_record_id": "CODECLI-6381be8951404a40b6f25007a6fac515",
+  "source": "synthetic fixture, not a student/human label",
+  "dry_run": {
+    "mode": "dry_run",
+    "source_records": 1,
+    "matched_records": 1,
+    "unchanged_records": 0,
+    "would_update_records": 1,
+    "updated_records": 0,
+    "would_update_fields": 4,
+    "missing_record_ids": [],
+    "conflicts": [],
+    "changes": [
+      {
+        "record_id": "CODECLI-6381be8951404a40b6f25007a6fac515",
+        "before": {
+          "stage_of_operation": null,
+          "how_discovered": null,
+          "nature_of_condition": null,
+          "precautionary_procedure": null
+        },
+        "updates": {
+          "stage_of_operation": "00",
+          "how_discovered": "01",
+          "nature_of_condition": "02",
+          "precautionary_procedure": "03"
+        }
+      }
+    ],
+    "source_sha256": "bcc8de463eeb564a8658a8632cf67b6c67948d2ad07350501c3c8661da3450a2",
+    "identical_duplicate_rows": 0
+  },
+  "apply": {
+    "mode": "apply",
+    "source_records": 1,
+    "matched_records": 1,
+    "unchanged_records": 0,
+    "would_update_records": 1,
+    "updated_records": 1,
+    "would_update_fields": 4,
+    "missing_record_ids": [],
+    "conflicts": [],
+    "changes": [
+      {
+        "record_id": "CODECLI-6381be8951404a40b6f25007a6fac515",
+        "before": {
+          "stage_of_operation": null,
+          "how_discovered": null,
+          "nature_of_condition": null,
+          "precautionary_procedure": null
+        },
+        "updates": {
+          "stage_of_operation": "00",
+          "how_discovered": "01",
+          "nature_of_condition": "02",
+          "precautionary_procedure": "03"
+        }
+      }
+    ],
+    "source_sha256": "bcc8de463eeb564a8658a8632cf67b6c67948d2ad07350501c3c8661da3450a2",
+    "identical_duplicate_rows": 0
+  },
+  "repeat": {
+    "mode": "apply",
+    "source_records": 1,
+    "matched_records": 1,
+    "unchanged_records": 1,
+    "would_update_records": 0,
+    "updated_records": 0,
+    "would_update_fields": 0,
+    "missing_record_ids": [],
+    "conflicts": [],
+    "changes": [],
+    "source_sha256": "bcc8de463eeb564a8658a8632cf67b6c67948d2ad07350501c3c8661da3450a2",
+    "identical_duplicate_rows": 0
+  },
+  "before": {
+    "submitted_at": "",
+    "confidence": 0.42,
+    "jasc_code": "",
+    "created_at": "2026-11-20T10:33:40.281138+00:00",
+    "analysis_state": "unscored",
+    "source": "faa_sdr",
+    "occurred_at": "",
+    "record_id": "CODECLI-6381be8951404a40b6f25007a6fac515",
+    "updated_at": "2026-11-20T10:33:40.281159+00:00",
+    "part_location": "",
+    "asset_key": "",
+    "text": "Unchanged evidence",
+    "part_condition": "",
+    "id": "3335f9a0-7ec2-4542-bb3b-3ed84a73305d",
+    "part_name": "PUMP",
+    "status": "unscored"
+  },
+  "after": {
+    "submitted_at": "",
+    "confidence": 0.42,
+    "jasc_code": "",
+    "created_at": "2026-11-20T10:33:40.281138+00:00",
+    "analysis_state": "unscored",
+    "source": "faa_sdr",
+    "precautionary_procedure": "03",
+    "nature_of_condition": "02",
+    "stage_of_operation": "00",
+    "occurred_at": "",
+    "record_id": "CODECLI-6381be8951404a40b6f25007a6fac515",
+    "how_discovered": "01",
+    "updated_at": "2026-11-20T10:33:42.531085+00:00",
+    "part_location": "",
+    "asset_key": "",
+    "text": "Unchanged evidence",
+    "part_condition": "",
+    "id": "3335f9a0-7ec2-4542-bb3b-3ed84a73305d",
+    "part_name": "PUMP",
+    "status": "unscored"
+  },
+  "dry_run_unchanged": true,
+  "other_properties_unchanged": true,
+  "leading_zero_codes_preserved": true,
+  "second_apply_unchanged": true,
+  "shared_staging_accessed": false
+}

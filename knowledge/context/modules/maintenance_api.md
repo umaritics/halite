@@ -79,3 +79,17 @@ filter that optional pattern and incorrectly retain every ServiceRecord.
 - Ingest: [`FLOW-ingest.md`](../../flows/FLOW-ingest.md)
 - Review: [`FLOW-conflict-review.md`](../../flows/FLOW-conflict-review.md)
 - Performance handoff: [`docs/mid1/10_perf_assets_api_handoff.md`](../../../docs/mid1/10_perf_assets_api_handoff.md)
+
+## Raw coded-field integration (review branch)
+
+The user explicitly authorized the separate shared-file preparation before PR #27
+merges. Exactly four raw FAA strings are added at ingestion and to both creation
+property lists: stage_of_operation, how_discovered, nature_of_condition and
+precautionary_procedure. Missing optional codes stay empty; duplicate ingest does
+not overwrite existing nodes. `scripts/backfill_coded_fields.py` validates all
+source rows before connecting, defaults to dry-run and updates only missing codes
+by exact record ID. It preserves conflicts and unrelated fields, prints per-field
+prior/update values and source SHA, and is idempotent on retry. Multi-record writes
+are resumable rather than atomic; use a backed-up, quiescent graph. Shahmeer review,
+merge and Umar's actual staging backup/backfill remain pending. Procedure and
+executed synthetic CLI proof: `docs/work/usman/CODED_FIELDS_INTEGRATION.md`.

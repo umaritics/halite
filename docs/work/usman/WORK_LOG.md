@@ -370,3 +370,36 @@ The user authorized applying/testing the twelve-line coded-field patch on a
 separate review branch before backend preparation merges. That next change must
 retain pending Shahmeer review and Umar's actual staging backup/backfill. Live
 question integration and all remaining acceptance matrix items stay open.
+
+### Published question core and authorized coded-field review preparation
+
+Question package draft PR #32:
+https://github.com/umaritics/halite/pull/32 (stacked on #31). All hosted checks on
+`bb5502f` passed: backend, frontend/build, real-graph Docker smoke, Vercel preview
+and comments. Exact check states/links: `phase5-question-github-checks.json`.
+The generated table had a trailing blank line; removed in `bb5502f` without
+changing calculation sources or parsed result values. Fetched origin again;
+main remains `0dd86d9` (master-plan merge), so no new main code was overlooked.
+
+On `codex/usman-coded-fields-integration`, applied exactly the approved twelve-line
+patch to three shared files. Added the dry-run-default exact-ID backfill tool and
+13 additional checks (355 backend tests total). Both memory and actual isolated
+Neo4j round-trip CSV codes as strings and retain duplicate ingest behavior.
+Backfill validates every source row before connecting, rejects conflicting source
+duplicates, preserves existing-value conflicts and blank sources, reports missing
+IDs and includes source SHA/prior field values in its reviewable JSON. It touches
+no graph identity/link, ranking, confidence or text fields. Missing optional codes
+remain blank. Writes fail explicitly and are resumable/idempotent, not falsely
+represented as a multi-record transaction.
+
+Actual CLI proof: `verify_coded_fields_cli.py` creates one uniquely identified
+synthetic old Neo4j node with no coded properties, invokes the real command for
+--dry-run / --apply / --apply, verifies leading zero strings, unrelated property
+preservation and second-apply zero changes, then cleans up only that node. Saved
+JSON: `phase5-coded-fields-cli.json`. No shared staging accessed. Full 355-test
+JUnit/log and Ruff output are committed. The sole warning is the existing AnyIO
+BlockingPortal deprecation. Broad coverage is still 76%, not the 80% target.
+
+User authorization is explicitly recorded in the handoff and decision. Shahmeer
+owner review, merges, and Umar's staging backup/backfill remain pending; this
+phase completes review preparation/testing, not deployment or all of WP-S5.
