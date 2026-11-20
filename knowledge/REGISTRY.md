@@ -51,3 +51,10 @@ updated: 2026-11-16
 - `backend/tests/test_investigation_sessions.py` verifies SQLite and isolated PostgreSQL; `test_investigation_degraded.py` covers opt-in diagnosis and cache/citation boundaries.
 - `backend/requirements-dev.txt`, `backend/ruff.toml`, `.github/workflows/ci.yml` provide runtime-error lint and coverage/JUnit artifacts. PostgreSQL session contracts execute in CI alongside Neo4j contracts.
 - Context/flow: `context/modules/investigation_sessions.md`, `flows/FLOW-sessions.md`. University feedback tracking: `docs/fyp1-final/PANEL_ACTION_REGISTER.md` (no invented feedback/sign-off).
+
+## Investigation/home feature interface (Usman)
+
+- `frontend/src/features/investigation/{InvestigationsPage,InvestigationWorkspace,QuickDiagnose,DecisionView,CloseSessionDialog}.jsx`, `api.js`, `privacy.js`, `manifest.jsx`.
+- `frontend/src/features/home/{HomePage,manifest}.jsx`; shared design classes/client are consumed unchanged.
+- Feature tests in `frontend/src/test/Investigation*.test.*`; independent browser/build harness in `frontend/e2e/`.
+- Context: `context/modules/investigation_frontend.md`; shared-shell review proposal: `docs/work/usman/FRONTEND_INTEGRATION.md` (user authorized preparation; owner review not claimed).

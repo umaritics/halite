@@ -1,0 +1,16 @@
+npm notice run halite-frontend@0.1.0 test
+npm notice run vitest run src/test/InvestigationQuick.test.jsx
+
+ RUN  v2.1.9 /home/muhammadusmanalhaq/Desktop/Halite (FYP)/halite_repo/.worktrees/usman-phase1/frontend
+
+stderr | src/test/InvestigationQuick.test.jsx > Model-off quick diagnosis > shows the deterministic explanation, ranking and evidence when the model is unavailable
+⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+
+ ✓ src/test/InvestigationQuick.test.jsx (2 tests) 239ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  13:49:00
+   Duration  1.40s (transform 87ms, setup 153ms, collect 194ms, tests 239ms, environment 538ms, prepare 128ms)
+

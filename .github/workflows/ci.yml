@@ -97,6 +97,8 @@ jobs:
         run: npm test
       - name: Build frontend
         run: npm run build
+      - name: Build investigation feature preview
+        run: npm exec vite build -- --config e2e/vite-preview.config.mjs
 
   docker-smoke:
     name: Docker Compose real-graph smoke test

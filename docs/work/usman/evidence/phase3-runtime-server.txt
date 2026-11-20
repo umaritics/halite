@@ -1,0 +1,54 @@
+INFO:     Started server process [47108]
+INFO:     Waiting for application startup.
+INFO:api.routes.ops:Ops ring-buffer logging installed
+INFO:main:Halite connecting to Neo4j AuraDB
+INFO:main:Neo4j connected and seeded
+INFO:main:LLM provider=groq configured=False model=openai/gpt-oss-20b
+INFO:main:Relational auth store mode: postgresql
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:36106 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36118 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36106 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36118 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36106 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36118 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36106 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36128 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:36134 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36150 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36138 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36162 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36164 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36172 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36174 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36190 - "POST /api/sessions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:36198 - "GET /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36214 - "POST /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36/turns HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36218 - "POST /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36/close HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36222 - "GET /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36224 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:36240 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36254 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36268 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36290 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36276 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36294 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36304 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36316 - "GET /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36332 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36342 - "GET /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36346 - "GET /api/sessions?mine=true&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36362 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36366 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36380 - "POST /api/maintenance/diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36392 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36400 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36398 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36402 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:36416 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36422 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36424 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36426 - "GET /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36430 - "GET /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36442 - "GET /api/sessions/20a8a24b-b5a0-4844-8066-14231cc79d36 HTTP/1.1" 404 Not Found

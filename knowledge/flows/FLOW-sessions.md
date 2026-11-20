@@ -54,3 +54,29 @@ flowchart TB
   active question: 409. Retry after reloading; no partial state was committed.
 - Missing relational store: 503, never a pretend browser-only persistence success.
 - Model unavailable: session turn still returns ranking/evidence/template.
+
+## Prepared frontend feature path
+
+The investigation/home feature manifests provide history, workspace, quick
+diagnosis and dashboard routes. Their independent preview uses the real shared
+AuthProvider/HTTP client and the same sessions API. History/resume/reload issue
+GETs only; new messages and closure wait for confirmed POST responses. Old turn
+narratives are rendered from saved responses. An uncertain write requires reload
+before another send; matching saved text clears an already-committed draft.
+The user has authorized a separately reviewed shell/auth integration. Until it is
+applied and verified, preview evidence is not production-route evidence.
+
+```mermaid
+flowchart LR
+  Preview[Independent preview / proposed production registry] --> Auth[Shared AuthProvider and JWT client]
+  Auth --> List[InvestigationsPage]
+  List --> Workspace[InvestigationWorkspace]
+  Workspace --> SessionAPI[Persisted sessions API]
+  Workspace --> Replay[Saved turn narratives / ranking]
+  Workspace --> Close[CloseSessionDialog]
+  Close --> SessionAPI
+  Workspace --> Print[Authenticated printable HTML]
+  Preview --> Home[HomePage]
+  Home --> Summaries[Three independently loaded summaries]
+  Preview --> Quick[QuickDiagnose allow_degraded]
+```

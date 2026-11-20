@@ -395,7 +395,8 @@ def diagnose(
             'explanation': None, 'fallback_explanation': templated_explanation(ranked, evidence),
             'context_size': {**context['context_size'], 'wall_clock_s': round(time.time() - t0, 2)},
             'citation_validation': {'valid_ids': [], 'invalid_ids': [], 'all_valid': True},
-            'llm_status': 'unavailable', 'warnings': [reason],
+            'llm_status': 'unavailable',
+            'warnings': ['Language model unavailable; showing historical ranking and a deterministic explanation.'],
         }
 
     if not groq_service.is_live:

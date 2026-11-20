@@ -113,3 +113,13 @@ shape, not live integration. There is no linter. Evidence and live checks: `docs
   empty citation lists (3 of 3 symptoms) while the ranking was present; the same merged code run locally returned a full
   explanation for 1 of 2. **Settings now shows staging's pinned model as `openai/gpt-oss-20b`; the local stack uses
   `openai/gpt-oss-120b`**, a likely (unconfirmed) cause. Needs staging logs / `GROQ_MODEL` on the VM. The UI shows the notice above.
+
+## Prepared investigation/home feature packages
+
+Usman's server-backed feature packages and manifests now exist under
+`src/features/investigation/` and `src/features/home/`. The independent preview and
+feature tests verify their behavior. The existing App still mounts the old
+Diagnostics page until the separately authorized registration handoff is applied.
+See [investigation_frontend.md](investigation_frontend.md) and
+`docs/work/usman/FRONTEND_INTEGRATION.md`; no completed production migration is
+claimed by the feature-package evidence alone.

@@ -82,3 +82,7 @@ invalidation: `context/modules/investigation_sessions.md`, `flows/FLOW-sessions.
 `decisions/DEC-20261120-durable-investigations.md`, `backend/investigation/`.
 CI lint/coverage and Form 10: `context/modules/devops.md`, `flows/FLOW-ci.md`,
 `docs/fyp1-final/PANEL_ACTION_REGISTER.md`.
+
+Investigation history/resume/close/print, home widgets, frontend identity isolation:
+`context/modules/investigation_frontend.md`, `frontend/src/features/investigation/`,
+`frontend/src/features/home/`, `docs/work/usman/FRONTEND_INTEGRATION.md`.
