@@ -44,6 +44,7 @@ When sources conflict: prefer code+tests; record a decision note; get team appro
 | Graph schema / Neo4j / data | [context/04_data_and_graph.md](context/04_data_and_graph.md) |
 | Investigation sessions, access, history and outcomes | [context/modules/investigation_sessions.md](context/modules/investigation_sessions.md) + [flows/FLOW-sessions.md](flows/FLOW-sessions.md) |
 | Beliefs / decision policy / calibration / abstention experiments | [context/modules/investigation_decisions.md](context/modules/investigation_decisions.md) + [flows/FLOW-decision-selection.md](flows/FLOW-decision-selection.md) |
+| Interactive-model comparison / portable M4 runner | [context/modules/investigation_model_comparison.md](context/modules/investigation_model_comparison.md) + [flows/FLOW-model-comparison.md](flows/FLOW-model-comparison.md) |
 | Sentence grounding / independent human review | [context/modules/investigation_grounding.md](context/modules/investigation_grounding.md) + [flows/FLOW-grounding.md](flows/FLOW-grounding.md) |
 | Managed live questions / durable answers | [context/modules/investigation_live_questions.md](context/modules/investigation_live_questions.md) + [flows/FLOW-live-questions.md](flows/FLOW-live-questions.md) |
 | Attributes / information gain / simulated technician | [context/modules/investigation_questions.md](context/modules/investigation_questions.md) + [flows/FLOW-question-selection.md](flows/FLOW-question-selection.md) |

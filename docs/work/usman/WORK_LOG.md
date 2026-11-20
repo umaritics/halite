@@ -608,3 +608,68 @@ Local API/preview servers were stopped after verification. Proof text logs have
 only trailing whitespace normalized; original outcomes/errors are retained.
 Hosted verification is tracked on the PR checks page and must be green before
 this preparation is treated as CI-verified. Owner merge/release remains pending.
+
+## Phase 9 — portable interactive-model comparison
+
+Previous goal turn classified **progress**: committed saved grounding audits and
+review tools, with PR #36's final `572fcc6` passing all hosted checks (421 backend
+tests, frontend/build, Compose and preview). This turn continues the whole goal;
+it does not treat that package as completion of the FYP.
+
+Started `codex/usman-model-evaluation` from #36. Fetched origin; main still ends at
+`0dd86d9`. After asking about M4 availability, the user explicitly chose **“finish
+and verify a self-contained runner that he can execute on the M4.”** No endpoint
+or real M4 output was supplied, and no teammate message was sent.
+
+Implemented:
+
+- `model_prompts.py`: reproducible 20-unique-original packet from the exact frozen
+  real 2023/2024 selection corpus. Ten extraction and ten prose prompts, plus ten
+  paired no-evidence prose calls per model. Top-three hypotheses / at most three
+  source IDs each. Strict earlier submission and full-chain exclusion verified;
+  no correcting narrative, answer key or answer ID is exported. 2025 untouched.
+- `model_compare.py`: native Ollama HTTP, exact names/digests/server version,
+  runner hardware and explicit measurement roles, serial timing, excluded warmups,
+  seeded order, fixed context/token limits, strict output/citation checks, saved
+  sentence audits, raw response/error journals and generated decision table.
+  No retries, fallback, model pull, automatic winner or app configuration changes.
+  Invalid/unavailable support calibration stays unavailable. A loopback tunnel is
+  explicitly not proof of inference-server placement.
+- Durable resume preserves attempts and verifies packet/method/model/machine and
+  saved assessment identities. Resumed unfinished models are rewarmed; finished
+  runs make no more chat calls. Partial journal tails fail without dropping bytes.
+- `model_bundle.py`: deterministic ZIP with fixed member order/timestamps/modes,
+  source/data hashes, fixed bundled packet and entrypoint integrity verification.
+  The extracted package needs Python standard library only, plus an already
+  installed/running Ollama service and models. No database/app/server install.
+
+The delivered artifact is `artifacts/halite-model-comparison-v1.zip`, with SHA-256
+sidecar and `MODEL_COMPARISON_RUNNER.md`. Rebuilding independently produced exactly
+identical ZIP bytes. No real-model results, human labels or M4 timing are bundled.
+
+**Eleven standard-library unit tests passed.** They check exact denominators, raw
+response retention, completed/partial resume, failed attempts, changed model
+identity, tampered journal/packet/bundle, strict fact/prose validity, missing
+calibration, fake M4 roles, endpoint constraints, verified 7–8B candidate metadata and prompt context budget.
+They remain discoverable by the repository's pytest suite through unittest.
+
+A real local HTTP server with explicitly **synthetic** responses exercised the
+extracted runner under `python -I -S`: no site packages, 31 chat posts (one excluded
+warmup plus 30 cases/arms), exact journal replay with no extra calls on resume.
+A separate injected HTTP outage produced a retained failed attempt, 29 responses
+from 30 attempts and CLI exit 2 after saving the table/results. All actual packet
+sources were independently checked against the frozen corpus for chronology,
+chain exclusion, verbatim text and generator hash. See `phase9-*-proof.json` and
+unit/build logs. These are transport/tool verification, not research model scores.
+
+The environment's temporary state had been reset: prior venv and test database
+containers were absent. A full dependency restore failed for disk space. Kept
+that failure log; replaced the unnecessary local dependency requirement with
+standard-library tests and isolated-Python HTTP verification. A subsequent minimal
+installer was stopped once these checks no longer needed it. No user data or
+other project's containers were removed. Full regression/lint/coverage acceptance
+will be checked through the existing hosted CI, which provisions its own databases.
+
+Updated the knowledge router/index/registry, model context/flow, decision, guide
+and acceptance matrix in the same change. Actual M4 execution, comparison review
+and Usman's interactive-model decision remain gates for the full FYP objective.

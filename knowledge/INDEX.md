@@ -15,6 +15,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | Keyword / concept | Document |
 | --- | --- |
 | Sentence grounding, L2/L3, blinded labels, Cohen kappa, threshold proposal | context/modules/investigation_grounding.md, flows/FLOW-grounding.md, docs/work/usman/grounding_review_v1/README.md |
+| Model comparison, Ollama, M4, no-evidence baseline, resumable measurements | context/modules/investigation_model_comparison.md, flows/FLOW-model-comparison.md, docs/work/usman/MODEL_COMPARISON_RUNNER.md |
 | Mid-I, vertical slice, acceptance gate | context/00_project_overview.md |
 | maintenance-only, software domain dropped | context/01_domain_scope_deferred.md |
 | maintenance assets, history, ingest, record counts, N+1 | context/modules/maintenance_api.md, FLOW-ingest.md |

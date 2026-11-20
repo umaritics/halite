@@ -14,6 +14,7 @@ updated: 2026-11-16
 
 | Module | Primary owner (Mid-I) | Primary code | Context | Flow |
 | --- | --- | --- | --- | --- |
+| Interactive-model comparison | Usman (current vertical) | `backend/investigation/experiments/model_{prompts,compare,bundle}.py`, `data/model_prompts_2024_v1.json` | [modules/investigation_model_comparison.md](context/modules/investigation_model_comparison.md) | [FLOW-model-comparison.md](flows/FLOW-model-comparison.md) |
 | Sentence grounding and human evaluation | Usman (current vertical) | `backend/investigation/{grounding,grounding_runtime,embed_port}.py`, `experiments/{grounding_packet,grounding_eval,fit_grounding_vocabulary}.py`, investigation `DecisionView.jsx` / `QuickDiagnose.jsx` | [modules/investigation_grounding.md](context/modules/investigation_grounding.md) | [FLOW-grounding.md](flows/FLOW-grounding.md) |
 | Diagnostics retrieval, ranking & copilot | Umar (cross-owner waiver for copilot) | `backend/services/diagnostic_retrieval.py`, `backend/api/routes/diagnostics.py`, `backend/services/groq_service.py` | [modules/diagnostics.md](context/modules/diagnostics.md) | [FLOW-diagnose.md](flows/FLOW-diagnose.md) |
 | Graph schema & maintenance queries | Umar (cross-owner waiver for this task) | `backend/graph/schema.py`, `backend/graph/repo/{core,retrieval,integrity,legacy}.py`, `backend/graph/memory/`, compatibility `backend/graph/queries.py`, `backend/graph/neo4j_client.py` | [04_data_and_graph.md](context/04_data_and_graph.md) | FLOW-diagnose, FLOW-ingest, FLOW-conflict-review |

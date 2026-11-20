@@ -525,3 +525,14 @@ The strict importer/agreement/adjudication/fit-validation tooling and protocol a
 in `docs/work/usman/grounding_review_v1/README.md` and
 `knowledge/context/modules/investigation_grounding.md`. Actual labels, accepted
 thresholds/whitelist, L4 and generated-answer/no-evidence measurements remain gates.
+
+### Portable model-comparison preparation
+
+The user requested a self-contained runner for Shahmeer to execute on the M4.
+`model_prompts.py`, `model_compare.py` and `model_bundle.py` provide a frozen real
+20-case packet, strict serial Ollama measurements, saved raw responses/failures,
+resume verification and a generated comparison table. The portable ZIP needs
+only Python and already installed models/Ollama, and verifies its source hashes.
+Protocol, role/hardware distinctions and the handoff are documented in
+`docs/work/usman/MODEL_COMPARISON_RUNNER.md`. Synthetic verification is not real
+M4 measurement, human grounding accuracy or the interactive-model decision.
