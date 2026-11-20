@@ -12,6 +12,7 @@ export const sessionsAPI = {
   turn: (id, payload) => api.post(`${idPath(id)}/turns`, payload, { timeout: 300000 }),
   close: (id, payload) => api.post(`${idPath(id)}/close`, payload, { timeout: 15000 }),
   report: (id) => api.get(`${idPath(id)}/report`, { timeout: 15000, responseType: 'text' }),
+  experiments: (signal) => api.get('/sessions/experiments', readOptions(signal)),
   summary: (signal) => api.get('/sessions/summary', readOptions(signal)),
   diagnose: (assetId, symptomText) => api.post('/maintenance/diagnose', {
     asset_id: assetId, symptom_text: symptomText, allow_degraded: true,

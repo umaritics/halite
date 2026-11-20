@@ -100,3 +100,5 @@ Beliefs/entropy/other bucket, answer/ask/abstain, 2023 fit/2024 selection, tempo
 Managed questions (Usman): `backend/investigation/{live_graph,live_questions}.py`, session service/API, `SESSION_*` settings; [context](context/modules/investigation_live_questions.md), [flow](flows/FLOW-live-questions.md). UI: `DecisionView.jsx`; real browser: `frontend/e2e/verify-question-ui.cjs`.
 
 Research publication (Usman): `backend/investigation/research_results.py`, `experiments/results/publication.json`, sessions experiments route and `tests/test_research_results*.py`; [context](context/modules/investigation_decisions.md), [flow](flows/FLOW-decision-selection.md).
+
+Research product panel (Usman): `frontend/src/features/investigation/{ResearchPage.jsx,research.js}`, `frontend/e2e/verify-research-ui.cjs`; [context](context/modules/investigation_frontend.md), [flow](flows/FLOW-research-publication.md). Hosted browser verification is part of CI; owner review/merge remain separate.

@@ -714,3 +714,16 @@ or container/model workload started locally. Product charts remain in progress.
 ### Shared chart review preparation
 
 Isolated the plan-required Recharts/shared wrapper on codex/usman-chart-foundation-review. Shared components are proposed for Shahmeer review; existing pages and shell are not refactored. Metadata preparation only, with a 384 MiB Node heap cap and scripts disabled; no package installation or full local build. Official ErrorBar documentation confirms asymmetric distances. Hosted verification pending.
+
+### Phase 10 — product research panel preparation
+
+PR #38 hosted checks all passed (workflow 44745242226): backend/JWT route tests,
+frontend tests/build and Docker real-graph smoke. Shared-chart PR #39 exposed a
+missing matchMedia implementation in jsdom; corrected its test browser API setup
+in commit 2f4c50b, with no production workaround. Prepared Usman's product page,
+real-artifact component contracts and a hosted production-browser verifier.
+Includes all policy/attribute controls, cohort selection, top-1/top-3/entropy in
+bits, paired intervals, accuracy–coverage and clearly labelled outcome proxy.
+No point accepted; no 2025 or sentence hallucination measurement fabricated.
+Hosted browser checks use real endpoint reads and explicitly mock only UI
+outage/empty subchecks. Screenshots/proof will be retained from CI.

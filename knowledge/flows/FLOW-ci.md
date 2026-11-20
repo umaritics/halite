@@ -37,3 +37,19 @@ A configured workflow is not evidence of a successful remote run. Record the run
 URL and terminal job results in the work log before claiming CI passed. Coverage
 scope is explicit; the NFR-04 80% target is not satisfied by a report alone.
 Staging deployment remains separate and main-only; no test targets shared data.
+
+## Hosted research page browser check
+
+```mermaid
+flowchart LR
+  CI[Disposable Docker smoke runner] --> Stack[Neo4j / Postgres / API]
+  CI --> Build[Production frontend build]
+  Build --> Preview[Vite preview same-origin API proxy]
+  Preview --> Browser[Chromium research verifier]
+  Stack --> Browser
+  Browser --> Proof[Screenshots + measured JSON artifact]
+```
+
+Normal chart reads use real JWT/API/artifact checksums. Only UI failure/empty
+subchecks intercept responses, explicitly labelled in proof. No staging data is
+used; the job tears down its own Compose volumes after verification.

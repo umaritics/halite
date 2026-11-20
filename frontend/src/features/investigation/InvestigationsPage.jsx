@@ -102,7 +102,7 @@ export default function InvestigationsPage() {
   if (!user) return <p className="p-6 text-primary">Sign in to view your investigations.</p>;
   return <div className="h-full overflow-y-auto p-4 sm:p-6">
     <div className="mx-auto max-w-7xl space-y-6">
-      <PageHeader title="Investigations" description="Resume your work, review the evidence, and record what was found."><Link to="/app/investigations/quick" className="halite-btn-outline">Quick diagnosis</Link></PageHeader>
+      <PageHeader title="Investigations" description="Resume your work, review the evidence, and record what was found."><Link to="/app/investigations/experiments" className="halite-btn-outline">How Halite decides</Link><Link to="/app/investigations/quick" className="halite-btn-outline">Quick diagnosis</Link></PageHeader>
       <div className="flex flex-wrap items-end gap-4">
         <label className="text-sm text-primary">Status<select aria-label="Status" className="halite-input mt-1" value={status} onChange={e => setStatus(e.target.value)}>
           <option value="">All statuses</option><option value="open">Open</option><option value="closed">Closed</option>

@@ -43,3 +43,13 @@ runtime evidence. Current local evidence is in `docs/work/usman/WORK_LOG.md`.
 Use `/api/health` before claiming graph/model/corpus state. Shared staging,
 its backup and deployments belong to Umar under the vertical plan. This work
 uses only disposable local databases and draft review branches.
+
+## Hosted research browser proof
+
+CI's disposable Docker smoke job additionally builds the frontend on the runner,
+serves its production output through Vite preview (same-origin proxy to the
+ephemeral Compose API), and runs `frontend/e2e/verify-research-ui.cjs` in Chromium.
+The runner installs the pinned browser tool into its temporary directory; it
+does not add it to the API image or deploy it. Screenshots, JSON proof and preview
+log are uploaded as `research-browser-proof`. Test accounts/databases remain
+ephemeral. Local heavy builds are avoided after the machine storage incident.

@@ -133,6 +133,35 @@ jobs:
           backend python scripts/verify_sessions_runtime.py
       - name: Verify frontend is served
         run: curl --fail --silent http://127.0.0.1:5173/ | grep --quiet '<div id="root">'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Prepare hosted production browser verification
+        run: |
+          npm ci --prefix frontend
+          npm run build --prefix frontend
+          npm install --prefix "$RUNNER_TEMP/halite-browser" playwright@1.65.1 --ignore-scripts --no-audit --no-fund
+          "$RUNNER_TEMP/halite-browser/node_modules/.bin/playwright" install --with-deps chromium
+          cd frontend
+          nohup npm exec vite preview -- --host 127.0.0.1 --port 5174 > "$RUNNER_TEMP/halite-research-preview.log" 2>&1 &
+      - name: Verify research product charts in the real browser
+        env:
+          HALITE_PLAYWRIGHT_MODULE: ${{ runner.temp }}/halite-browser/node_modules/playwright
+          HALITE_UI_EVIDENCE_DIR: ${{ runner.temp }}/halite-research-ui-evidence
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5174/ > /dev/null; then break; fi
+            sleep 2
+          done
+          node frontend/e2e/verify-research-ui.cjs
+      - name: Upload research browser proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-browser-proof
+          path: |
+            ${{ runner.temp }}/halite-research-ui-evidence
+            ${{ runner.temp }}/halite-research-preview.log
       - name: Capture service state and logs
         if: always()
         run: |

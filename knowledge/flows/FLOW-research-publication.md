@@ -20,12 +20,12 @@ updated: 2026-11-20
 flowchart LR
   Files[Committed 2024 results] --> API[Checksum-pinned experiments endpoint]
   JWT[Website-user JWT] --> API
-  API --> Feature[Investigation research page / in preparation]
+  API --> Feature[Investigation ResearchPage]
   Feature --> Shared[Shared chart wrapper / owner review pending]
   Shared --> SVG[Recharts estimates and interval whiskers]
   Shared --> Table[Accessible values table and caption]
 ```
 
 Corrupt evidence fails with 503 at the API. Authentication errors remain explicit.
-The shared wrapper and dependency are a review proposal, not a completed owner
-handoff or deployed page. No 2025 result or accepted policy is implied.
+The shared wrapper and dependency remain an owner-review proposal. The page is
+prepared on the stacked feature branch; owner handoff/deployment are not claimed. No 2025 result or accepted policy is implied.

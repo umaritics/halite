@@ -99,3 +99,27 @@ experimental status, exposes sentence reasons and opens saved citation text.
 No accepted support threshold or safety whitelist is fabricated. See
 [investigation_grounding.md](investigation_grounding.md) and
 [FLOW-grounding.md](../../flows/FLOW-grounding.md) for calibration and replay rules.
+
+## Research results product page
+
+`ResearchPage.jsx` registers `/app/investigations/experiments` before the session-ID
+route and is linked from investigation history. It loads the authenticated
+experiments endpoint through the shared client with 15-second timeout and abort
+on identity change. Loading, explicit empty, unavailable/retry and signed-out
+states do not show fabricated measurements.
+
+The page reads all three saved question policies, three attribute controls,
+part-change cohorts and top-1/top-3/entropy (bits) metrics. It displays the paired
+information-gain-minus-random interval at the last recorded budget, including
+zero-crossing uncertainty. Two saved abstention charts show accuracy–coverage and
+the top-3 outcome-key proxy. No accepted point or 2025 performance is invented.
+The runtime policy is unaffected. Method versions, corpus split, ECE interval and
+publication/artifact hashes remain visible. Shared primitives and Recharts
+wrapper are isolated on the preceding owner-review branch.
+
+`InvestigationResearch.test.jsx` tests loading, real-artifact chart parity,
+controls, failure/retry/empty states and account-change cancellation. Hosted
+`e2e/verify-research-ui.cjs` checks the production build against the disposable
+Compose API, SVG whiskers, table parity, deep-link reload and both themes at
+1280px and 390px. Its outage/empty subchecks explicitly mock those responses;
+normal publication reads use the real authenticated endpoint.

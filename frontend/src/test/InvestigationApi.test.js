@@ -6,6 +6,11 @@ vi.mock('../api/client', () => ({ default: { get: vi.fn(), post: vi.fn() } }));
 beforeEach(() => vi.resetAllMocks());
 
 describe('Investigation transport contracts', () => {
+  it('loads research with the shared authenticated client and cancellation', () => {
+    const signal = new AbortController().signal;
+    sessionsAPI.experiments(signal);
+    expect(api.get).toHaveBeenCalledWith('/sessions/experiments', { signal, timeout: 15000 });
+  });
   it('opts quick diagnosis into model-off operation on the existing authenticated client', () => {
     sessionsAPI.diagnose('asset-uuid', 'pump leak');
     expect(api.post).toHaveBeenCalledWith('/maintenance/diagnose', {

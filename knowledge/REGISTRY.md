@@ -83,3 +83,5 @@ Responsive shell preparation: `frontend/src/App.jsx`, `frontend/src/components/S
 Research publication (Usman): `backend/investigation/research_results.py`, `experiments/results/publication.json`, sessions experiments route and `tests/test_research_results*.py`; [context](context/modules/investigation_decisions.md), [flow](flows/FLOW-decision-selection.md).
 
 Shared research-chart proposal: `frontend/src/components/ui/Research{Chart,Primitives}.jsx` (Shahmeer ownership; Usman review preparation), [context](context/modules/research_charts.md), [flow](flows/FLOW-research-publication.md).
+
+Research product panel (Usman): `frontend/src/features/investigation/{ResearchPage.jsx,research.js}`, `frontend/e2e/verify-research-ui.cjs`; [context](context/modules/investigation_frontend.md), [flow](flows/FLOW-research-publication.md). Hosted browser verification is part of CI; owner review/merge remain separate.
