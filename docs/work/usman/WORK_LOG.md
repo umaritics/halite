@@ -195,3 +195,13 @@ containers remain isolated for subsequent work.
 Integration implementation commit `8ae9b8d` is published in draft PR #30:
 https://github.com/umaritics/halite/pull/30, base feature PR #29. The draft remains
 unmerged for Shahmeer review. This reference records preparation, not approval.
+
+### Hosted integration acceptance
+
+PR #30 commit `fedbdc5` passed every hosted check: backend tests, frontend
+tests/build, Docker real-graph/session runtime smoke, Vercel preview and preview
+comments. Run: https://github.com/umaritics/halite/actions/runs/44707539568.
+Machine-readable check links/states are saved in
+`evidence/phase3-integration-github-checks.json`. Code remains unmerged; owner
+review is the outstanding integration gate. Final evidence follow-up changes
+documentation only.
