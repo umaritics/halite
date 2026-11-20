@@ -403,3 +403,13 @@ BlockingPortal deprecation. Broad coverage is still 76%, not the 80% target.
 User authorization is explicitly recorded in the handoff and decision. Shahmeer
 owner review, merges, and Umar's staging backup/backfill remain pending; this
 phase completes review preparation/testing, not deployment or all of WP-S5.
+
+Official code coverage is additionally preserved in `phase5-faa-code-coverage.json`:
+all 128,771 loaded 2023/2024 records have zero unknown nonblank codes across the
+four official tables. The graph ingester still preserves arbitrary raw codes
+without pretending to validate their meanings. Relabeled the figure's horizontal
+axis “Question budget (maximum)” to accurately include empty/no-question cases.
+No metric, trace or method source changed.
+
+Coded-field review preparation is draft PR #33:
+https://github.com/umaritics/halite/pull/33, stacked on #32.

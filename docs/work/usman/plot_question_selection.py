@@ -25,7 +25,7 @@ for row, (group, result) in enumerate(data['summaries'].items()):
         if col < 2:
             ax.set_ylim(0, .4)
         if row == 2:
-            ax.set_xlabel('Question budget used')
+            ax.set_xlabel('Question budget (maximum)')
 axes[0, 0].legend(fontsize=8, loc='upper left')
 fig.suptitle('2024 selection: simulated technician, frozen Mid-I candidates\n389 pairs / 340 original reports; 95% clustered bootstrap intervals', fontsize=14)
 fig.supxlabel('Original-report answers only; narrative mentions may reuse initial text. Accuracy differences remain uncertain.\n2023 fit; 2025 held out. Entropy reduction alone does not establish diagnostic correctness.', fontsize=10)

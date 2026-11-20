@@ -1,0 +1,124 @@
+{
+  "corpus": {
+    "sources": [
+      {
+        "file": "usman_decision_2023.csv.gz",
+        "projection_sha256": "d94620eb59ea86dfb4ac53ebc614d5eb42901cef4328cab20a1ecfbd9c2206cd"
+      },
+      {
+        "file": "usman_decision_2024.csv.gz",
+        "projection_sha256": "da33b8d064fc8ce1ba8133a5719aa135ffb9d01ac3be911172bf483755f447cb"
+      }
+    ],
+    "corpus_sha256": "bec0b4f2083ce8f03034fbe5dbd71b2fb120603254f149b60b7c795c605380bf",
+    "rows": 128771,
+    "invalid": 0,
+    "duplicate_identical": 0,
+    "ambiguous_ids": 0,
+    "records": 128771
+  },
+  "years": [
+    2023,
+    2024
+  ],
+  "source": "https://sdrs.faa.gov/Documents/SDRS%20Look-Up%20Tables.zip",
+  "archive_sha256": "5ab1d86f963a2f7c2ac2298c787bc875d5212aa4cd6f82df076122958651ced0",
+  "coverage": {
+    "stage_of_operation": {
+      "nonblank_records": 128771,
+      "distinct_observed_codes": 17,
+      "unknown_codes": [],
+      "counts": {
+        "AA": 134,
+        "AB": 2,
+        "AG": 4,
+        "AP": 1410,
+        "CL": 4354,
+        "CR": 4690,
+        "DE": 2042,
+        "EX": 5,
+        "FF": 3,
+        "HO": 82,
+        "IN": 98207,
+        "LD": 952,
+        "MS": 2,
+        "NR": 8233,
+        "TO": 1657,
+        "TX": 5423,
+        "UK": 1571
+      }
+    },
+    "how_discovered": {
+      "nonblank_records": 128771,
+      "distinct_observed_codes": 13,
+      "unknown_codes": [],
+      "counts": {
+        "9": 31861,
+        "B": 141,
+        "C": 8285,
+        "D": 25,
+        "E": 1167,
+        "L": 164,
+        "M": 48,
+        "O": 39256,
+        "T": 21,
+        "U": 108,
+        "V": 47588,
+        "W": 31,
+        "X": 76
+      }
+    },
+    "nature_of_condition": {
+      "nonblank_records": 128771,
+      "distinct_observed_codes": 23,
+      "unknown_codes": [],
+      "counts": {
+        "A": 62,
+        "B": 3850,
+        "C": 330,
+        "D": 120,
+        "E": 371,
+        "F": 700,
+        "G": 152,
+        "H": 80,
+        "I": 25,
+        "J": 9006,
+        "K": 1225,
+        "L": 6816,
+        "M": 394,
+        "N": 1153,
+        "O": 102622,
+        "P": 372,
+        "R": 275,
+        "S": 245,
+        "T": 6,
+        "W": 574,
+        "X": 54,
+        "Y": 79,
+        "Z": 260
+      }
+    },
+    "precautionary_procedure": {
+      "nonblank_records": 128771,
+      "distinct_observed_codes": 14,
+      "unknown_codes": [],
+      "counts": {
+        "A": 5937,
+        "B": 741,
+        "C": 1019,
+        "D": 975,
+        "E": 339,
+        "F": 41,
+        "G": 26,
+        "H": 132,
+        "I": 21,
+        "J": 37,
+        "K": 103086,
+        "L": 241,
+        "O": 16171,
+        "R": 5
+      }
+    }
+  },
+  "held_out_2025_read": false
+}
