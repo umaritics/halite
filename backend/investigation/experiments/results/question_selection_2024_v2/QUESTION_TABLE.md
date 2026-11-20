@@ -54,4 +54,3 @@ Every answer comes from the original report. Coded-only separates structured fie
 | no_questions | 1 | 0.1440 | 0.2057 | 2.3863 |
 | no_questions | 2 | 0.1440 | 0.2057 | 2.3863 |
 | no_questions | 3 | 0.1440 | 0.2057 | 2.3863 |
-
