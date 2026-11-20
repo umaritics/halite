@@ -1,0 +1,15 @@
+{
+  "schema_version": "investigation-publication-v1",
+  "artifacts": [
+    {
+      "id": "question_selection",
+      "path": "question_selection_2024_v2/results.json",
+      "sha256": "22c5b39870c97c9f59138561d7cf0736f457dd0922faf58727c2756287e64565"
+    },
+    {
+      "id": "decision_selection",
+      "path": "decision_selection_2024_v2/selection.json",
+      "sha256": "7ed4c694974ecdfb80366dff9b8965fd22e386b949ccf6f547600fb9bf21c265"
+    }
+  ]
+}

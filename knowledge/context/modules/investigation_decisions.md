@@ -82,3 +82,19 @@ pairs sharing an original report; undefined answered accuracy stays null.
 
 The current benchmark is selection before the question policy, not final RQ4
 performance. Question-policy effects are now measured separately in [the question package](investigation_questions.md). No selected operating point or 2025 result is claimed.
+
+## Published experiment reads
+
+`GET /api/sessions/experiments` requires an active website-user JWT, independently
+of the session database service. The static route precedes session-ID lookup.
+`investigation/research_results.py` reads only the two fixed 2024 selection JSON
+artifacts named in `experiments/results/publication.json`. SHA-256, method/split,
+corpus compatibility, denominators and interval checks precede publication. The
+response preserves exact measurements and provenance and is private/no-store.
+A deliberately empty manifest returns an explicit empty state; missing/corrupt/
+incompatible evidence returns 503, never substitute data. No inference, fitting,
+graph query, policy activation or held-out read happens on this path.
+
+The abstention rate is an outcome-key top-3 proxy, not a sentence-grounding rate.
+Undefined answered accuracy stays null; the accepted operating point stays null.
+The product page must retain those distinctions and display saved intervals.

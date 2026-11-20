@@ -45,3 +45,19 @@ flowchart LR
 Failures are explicit: naive timestamps invalid; malformed source fingerprint
 fails; ambiguous IDs are counted/excluded; incompatible ranker parameters fail;
 unknown policy never enables answer. Empty answered sets report null accuracy.
+
+## Read-only product publication
+
+```mermaid
+flowchart LR
+  User[Active website-user JWT] --> Endpoint[GET sessions/experiments]
+  Endpoint --> Manifest[Fixed publication manifest]
+  Manifest --> Verify[Checksum + split + corpus + interval validation]
+  Files[Committed 2024 question and decision JSON] --> Verify
+  Verify --> Exact[Exact measurements and provenance / private no-store]
+  Verify --> Fail[503 on missing or incompatible evidence]
+  Manifest --> Empty[Explicit empty publication state]
+```
+
+Service/API-key principals receive 403; anonymous callers receive the shared
+authentication failure. Reads do not activate a policy or evaluate 2025.

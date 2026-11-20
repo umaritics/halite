@@ -680,3 +680,33 @@ tests and extracted HTTP smoke passed. Hosted full regression/lint/coverage,
 Compose and preview checks are tracked on that PR. The artifact's exact source
 and instruction bytes are frozen by its manifest and sidecar; this handoff log
 does not change the ZIP. No approval, merge, M4 result or model decision is implied.
+
+## Local machine incident and authorized storage cleanup
+
+User reported two hard freezes. Stopped project execution for lightweight checks;
+confirmed full-disk write failures in an earlier boot, but no proven freeze trigger.
+After explicit user authorization, cleared npm content cache, then emptied Trash
+and removed four known downloaded app packages/archives. The latter operation
+freed about 18.2 GiB; root now has about 21 GiB available (77% used). No project,
+application, container volume or browser data was removed. Remaining large items
+require the user’s decision. Evidence and resource constraints are recorded in
+`LOCAL_MACHINE_INCIDENT.md` and `evidence/local-storage-cleanup-20261120.json`.
+Full local installs/builds/parallel workloads must not resume under low storage;
+use hosted CI and lightweight serial checks. Freeing space is not proof that the
+underlying freeze cause has been fixed.
+
+### Machine stability follow-up
+
+Cleared Docker build cache (3.309 GB reported reclaimed) and verified zero remaining build cache, root 24 GiB free / 74% used. Preserved containers/images/volumes. Three unrelated cluster containers consume about 3.7 GiB in one sample; retained pending user decision. Last goal activity was research API implementation/dependency restoration; no logged evidence establishes the freeze trigger. Full verification will use hosted CI, with serial lightweight local checks and a 10 GiB free-space guard. See `LOCAL_MACHINE_INCIDENT.md` and `evidence/docker-cache-cleanup-20261120.json`.
+
+### Phase 10 — research publication API
+
+Refreshed origin; main and existing review branches remain unchanged. Implemented
+website-user-only GET /api/sessions/experiments with exact checksum-pinned 2024
+artifacts. Corruption/missing evidence returns 503; explicit empty state supported.
+No model, graph, fitting, accepted point or held-out result invented. Twelve pure
+publication tests passed in 0.100 seconds using standard-library Python only.
+Real JWT/route-order/error tests added for hosted CI; not yet executed locally.
+An initial test-file write used an incorrect relative directory and created no
+files; corrected the paths and ran all twelve actual tests. No dependency install
+or container/model workload started locally. Product charts remain in progress.

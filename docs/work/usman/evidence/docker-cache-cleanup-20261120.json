@@ -1,0 +1,12 @@
+{
+  "operation": "docker builder prune --all --force",
+  "exit_code": 0,
+  "reported_reclaimed": "3.309GB",
+  "verified_build_cache_bytes": 0,
+  "root_available": "24GiB",
+  "root_used_percent": 74,
+  "containers_deleted": false,
+  "images_deleted": false,
+  "volumes_deleted": false,
+  "freeze_cause": "unconfirmed"
+}

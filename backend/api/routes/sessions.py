@@ -2,7 +2,7 @@
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field, field_validator
 
 from api.deps import get_graph_repo, get_groq_service, get_rel_store, get_settings
@@ -69,6 +69,18 @@ def summary(store=Depends(get_rel_store), principal=Depends(get_current_principa
         # Preserve the prep route's empty widget for demo/service callers. No user data disclosed.
         return {'title': 'Investigation sessions', 'link': '/app/investigations', 'stats': []}
     return SessionService(store, principal).summary()
+
+
+@router.get('/experiments')
+def experiments(principal=Depends(get_current_principal)):
+    if principal.kind != 'user':
+        raise HTTPException(403, 'Sign in to view the investigation research results.')
+    from investigation.research_results import ResultsUnavailable, load_results
+    try:
+        result = load_results()
+    except ResultsUnavailable as exc:
+        raise HTTPException(503, 'Research results are unavailable; no substitute measurements were generated.') from exc
+    return JSONResponse(result, headers={'Cache-Control': 'private, no-store'})
 
 
 @router.post('', status_code=201)
