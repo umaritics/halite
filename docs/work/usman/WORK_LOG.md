@@ -602,3 +602,9 @@ model prompt. **Nine final runtime tests passed**, including PostgreSQL, after
 this correction; the prior 420-test broad suite remains recorded separately.
 A built-browser quick-diagnosis check opens a citation by keyboard focus and
 matches the exact saved narrative. No frozen explanation text was changed.
+
+Published draft PR #36: https://github.com/umaritics/halite/pull/36, stacked on #35.
+Local API/preview servers were stopped after verification. Proof text logs have
+only trailing whitespace normalized; original outcomes/errors are retained.
+Hosted verification is tracked on the PR checks page and must be green before
+this preparation is treated as CI-verified. Owner merge/release remains pending.

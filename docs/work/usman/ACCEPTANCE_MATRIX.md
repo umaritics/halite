@@ -20,7 +20,7 @@ A local pass is not a merge, deployment, cross-review or empirical research resu
 | WP-S9 printable report | Escaped authenticated closed-session HTML endpoint and integration test | Backend and print layout verified (1280px and A4 width); one-click feature action verified with real browser; production-shell integration verified on review branch; owner review/merge pending |
 | WP-S10 model comparison | No results claimed | Build/run 20-prompt harness; actual M4 measurements and owner decision remain |
 | Report / diagrams / disclosure / defense | Explicitly authorized AI-assisted design draft; engineering knowledge and disclosure log | Student-owned report review, final traceability/diagrams, disclosure and genuine defense/rehearsal evidence remain |
-| Integration/release | Draft PRs #27–#32 passed hosted checks; separate coded-field integration locally verified; staging unchanged | Cross-review, accepted shared contracts, merged green CI, deploy and full UI/runtime verification remain |
+| Integration/release | Draft PRs #27–#35 passed hosted checks; grounding/review preparation PR #36 published; staging unchanged | Cross-review, accepted shared contracts, merged green CI, deploy and full UI/runtime verification remain |
 
 Next execution: review/publish the measured decision-core slice, implement the
 question/grounding packages, then complete leakage-safe selection and held-out evaluation. Never mark
