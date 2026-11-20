@@ -524,3 +524,10 @@ is resolved in this review branch. Retained the initial phase-6 failure evidence
 rather than relabelling it as success. Updated context, flow, registry, decision,
 acceptance matrix and the handoff procedure together. Stopped local API/preview
 servers after verification; disposable databases remain for subsequent phases.
+
+Published responsive review preparation as draft PR #35:
+https://github.com/umaritics/halite/pull/35, stacked on #34. Final local shutdown
+lines from the API were captured after the implementation commit; this follow-up
+only preserves that evidence and the PR link. Hosted acceptance is available in
+https://github.com/umaritics/halite/pull/35/checks. The working tree must remain
+clean and no owner review/merge is implied by local or hosted verification.
