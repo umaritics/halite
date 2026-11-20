@@ -138,11 +138,13 @@ jobs:
           node-version: "20"
       - name: Prepare hosted production browser verification
         run: |
-          npm ci --prefix frontend
-          npm run build --prefix frontend
+          mkdir -p "$RUNNER_TEMP/halite-research-build"
+          git archive HEAD frontend | tar -x -C "$RUNNER_TEMP/halite-research-build"
+          npm ci --prefix "$RUNNER_TEMP/halite-research-build/frontend"
+          npm run build --prefix "$RUNNER_TEMP/halite-research-build/frontend"
           npm install --prefix "$RUNNER_TEMP/halite-browser" playwright@1.65.1 --ignore-scripts --no-audit --no-fund
           "$RUNNER_TEMP/halite-browser/node_modules/.bin/playwright" install --with-deps chromium
-          cd frontend
+          cd "$RUNNER_TEMP/halite-research-build/frontend"
           nohup npm exec vite preview -- --host 127.0.0.1 --port 5174 > "$RUNNER_TEMP/halite-research-preview.log" 2>&1 &
       - name: Verify research product charts in the real browser
         env:

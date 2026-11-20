@@ -727,3 +727,5 @@ bits, paired intervals, accuracy–coverage and clearly labelled outcome proxy.
 No point accepted; no 2025 or sentence hallucination measurement fabricated.
 Hosted browser checks use real endpoint reads and explicitly mock only UI
 outage/empty subchecks. Screenshots/proof will be retained from CI.
+
+Hosted run 44746788033 passed backend/frontend checks but exposed a runner setup issue: Compose had created a root-owned frontend/node_modules mountpoint, so host npm ci failed EACCES before browser execution. Corrected the browser preparation to build a git-archived frontend copy under RUNNER_TEMP; no broad permission change or local workaround. Browser verification is still required.

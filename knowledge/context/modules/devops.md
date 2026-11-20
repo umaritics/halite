@@ -53,3 +53,6 @@ The runner installs the pinned browser tool into its temporary directory; it
 does not add it to the API image or deploy it. Screenshots, JSON proof and preview
 log are uploaded as `research-browser-proof`. Test accounts/databases remain
 ephemeral. Local heavy builds are avoided after the machine storage incident.
+
+The host browser build uses a git-archived frontend copy under RUNNER_TEMP,
+avoiding Compose-created root-owned bind-mount directories in the checkout.
