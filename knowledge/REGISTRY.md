@@ -44,3 +44,10 @@ updated: 2026-11-16
 - Authenticated summary routers: `backend/api/routes/{retrieval,evaluation,integrity,sessions}.py`; route registration in `backend/api/router.py`. Statistics start empty.
 - Model adapter `backend/services/groq_service.py` (Usman) selects JSON format explicitly; prose is the default.
 - Evidence and phase scope: `docs/work/usman/WORK_LOG.md`; decision: DEC-20261120-backend-foundation.
+
+## Persisted investigations (Usman)
+
+- `backend/investigation/{sessions,turns,explain,report,prompts}.py`, `backend/db/models/sessions.py`, `backend/api/routes/sessions.py` own user-scoped persistence and replay.
+- `backend/tests/test_investigation_sessions.py` verifies SQLite and isolated PostgreSQL; `test_investigation_degraded.py` covers opt-in diagnosis and cache/citation boundaries.
+- `backend/requirements-dev.txt`, `backend/ruff.toml`, `.github/workflows/ci.yml` provide runtime-error lint and coverage/JUnit artifacts. PostgreSQL session contracts execute in CI alongside Neo4j contracts.
+- Context/flow: `context/modules/investigation_sessions.md`, `flows/FLOW-sessions.md`. University feedback tracking: `docs/fyp1-final/PANEL_ACTION_REGISTER.md` (no invented feedback/sign-off).

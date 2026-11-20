@@ -106,3 +106,44 @@ Run `python3 docs/work/usman/verify_refactor.py` from this checkout to reproduce
 ### Remaining work is explicitly outside phase 1
 
 Phase 1 does **not** claim all FYP-I work, all WP-S0, all WP-S1, a completed session product, a live language model or a passing remote CI workflow. The subsequent-phase list above remains the execution queue. Backend legacy retirement needs the recorded compatibility conflict resolved; the master plan's student design note, labels, model selection and operating-point decisions remain genuine human contributions.
+
+## Phase 2 — durable sessions, degraded diagnosis and CI reports
+
+Branch: `codex/usman-sessions`, stacked on `codex/usman-phase1` in the same permanent worktree. The preceding goal turn produced verified phase-1 code; this continuation adds implementation and executed evidence. The full FYP-I goal remains active. `ACCEPTANCE_MATRIX.md` retains the complete requirement audit.
+
+### Implementation
+
+- Three additive session tables; no identity-column changes. User/organisation-scoped lifecycle, stable pagination, history/resume, outcomes and exact saved turn responses/evidence.
+- Owner-only writes; same-organisation supervisor/admin read access; inaccessible IDs return 404. Service/demo principals cannot access user investigations.
+- Conditional revision/open-state updates make turn/snapshot persistence atomic across processes. Stale/concurrent/closed turns return 409; failures roll back the revision too. Browser-supplied state cannot replace saved state.
+- Model-outage session replies derive from ranking/evidence, with validated citation IDs and honest unavailable status. The stateless Copilot outage contract remains unchanged.
+- Quick-diagnose opt-in degraded mode; prompt-bounded citation/rare-case allow-list; content/count/mode/prompt-aware cache identity; malformed/empty-cache tolerance and atomic cache replacement.
+- Escaped authenticated HTML reports for closed sessions. One-click frontend integration remains WP-S9.
+- CI runtime-error lint through Ruff (a development-only dependency explicitly required by WP-S11); terminal/XML coverage, JUnit artifacts and PostgreSQL session contracts. Docker CI also runs the production-startup session smoke. Removed an unreachable duplicate diagnostics prompt block exposed by lint.
+- Form 10 working template distinguishes a documented proposal-defense statement from missing Mid-I feedback. No feedback/signatures invented.
+
+### Evidence
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Full local backend, real Neo4j/PostgreSQL plus memory/SQLite | **293 passed**, zero failures/skips | `evidence/phase2-backend-full.txt`, JUnit/XML |
+| Session contracts on both SQL backends | 22 initial tests; four further atomic-state tests; final fallback-citation test on both | `phase2-session-tests.txt`, `phase2-atomic-state-tests.txt`, `phase2-final-citation-boundary.txt` |
+| Opt-in degradation, malformed caches, bounded citations, content invalidation | **8 passed** | `phase2-degraded-tests.txt` |
+| Original diagnostic/adapter/foundation boundaries | **32 passed** | `phase2-existing-boundaries.txt` |
+| Runtime-error lint | **PASS** | `phase2-lint.txt` |
+| Actual production startup with local Neo4j/PostgreSQL, model off | **SESSION_RUNTIME_SMOKE=PASS** | `phase2-runtime-smoke.txt`, `phase2-runtime-server.txt` |
+| Phase-1 GitHub CI/deployment preview checks | All successful | `phase1-github-checks.json`, PR #27 |
+
+The production smoke verified authenticated create/turn, ranking/evidence/template with the model off, exact saved replay in a second HTTP client, another technician's 404, admin read/403 mutation, closure/409 future turns and a citation-bearing HTML report. Its first harness request used the wrong ingest key; corrected the harness to the existing `csv_path` contract and reran successfully. No maintenance API change was made.
+
+Broad coverage includes retained legacy and is below 80%; the new session modules have separately measured coverage in `phase2-coverage-summary.json`. The final fallback-citation lines were added during the full run and were separately verified afterward; remote CI will measure final source. NFR-04 is not claimed complete.
+
+Coverage initially triggered SQLAlchemy's known dotted-source import/reimport issue (`InternalTraversal` mismatch). Normal tests passed; using filesystem/top-level coverage sources avoided the import side effect without changing runtime dependencies. [Upstream issue](https://github.com/sqlalchemy/sqlalchemy/issues/13645). A test-only PostgreSQL URL was also normalized through the existing psycopg2 adapter. Neither workaround skips database contracts.
+
+### Review and remaining work
+
+Phase-1 draft PR: https://github.com/umaritics/halite/pull/27 — backend, frontend, Docker smoke and Vercel checks all succeeded. No main merge or shared-staging write occurred. Phase-2 draft review/CI is next.
+
+Research policy/questions/grounding are explicitly unconfigured: responses abstain provisionally with `policy_status=not_configured` and null beliefs/questions/grounding. This is an intermediate persistence milestone, not the final decision product. The remaining packages, frontend integration, measured experiments, genuine human labels/model decisions, report/defense and release gates stay open in the acceptance matrix.
+
+Knowledge updated: investigation context/flow/decision; diagnostics and CI context/flows; registry/index/router. AI assistance: Codex authored code, tests and engineering evidence; student/supervisor judgements, labels and approvals are not claimed.

@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261120-durable-investigations](DEC-20261120-durable-investigations.md) | User-owned atomic session turns, replay and opt-in degraded diagnosis | accepted | Usman |
 | [DEC-20261120-backend-foundation](DEC-20261120-backend-foundation.md) | Compatible vertical backend packages and explicit model JSON mode | accepted | Usman |
 | [DEC-20261120-vertical-ownership](DEC-20261120-vertical-ownership.md) | Ownership moves from layers to three full-stack verticals | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261116-staging-corpus-analysis-complete](DEC-20261116-staging-corpus-analysis-complete.md) | Staging full-corpus conflict analysis complete (0 unscored) | accepted | Umar, Usman |

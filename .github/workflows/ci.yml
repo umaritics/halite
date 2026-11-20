@@ -17,6 +17,19 @@ jobs:
     name: Backend tests (Python 3.11)
     runs-on: ubuntu-latest
     services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: halite
+          POSTGRES_PASSWORD: test-password
+          POSTGRES_DB: halite_session_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U halite -d halite_session_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
       neo4j:
         image: neo4j:5-community
         env:
@@ -37,17 +50,33 @@ jobs:
       NEO4J_USERNAME: neo4j
       NEO4J_PASSWORD: test-password
       GROQ_API_KEY: ""
+      SESSION_TEST_DATABASE_URL: postgresql+psycopg2://halite:test-password@localhost:5432/halite_session_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: backend/requirements.txt
+          cache-dependency-path: |
+            backend/requirements.txt
+            backend/requirements-dev.txt
       - name: Install backend dependencies
-        run: python -m pip install -r requirements.txt
-      - name: Run backend tests
-        run: python -m pytest -q
+        run: python -m pip install -r requirements-dev.txt
+      - name: Lint runtime errors
+        run: python -m ruff check .
+      - name: Run backend tests with coverage
+        run: >-
+          python -m pytest -q --junitxml=test-results.xml
+          --cov=api --cov=agents --cov=services --cov=graph --cov=db --cov=investigation
+          --cov-report=term-missing --cov-report=xml:coverage.xml
+      - name: Upload backend verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-and-coverage-reports
+          path: |
+            backend/coverage.xml
+            backend/test-results.xml
 
   frontend:
     name: Frontend tests and build (Node 20)
@@ -92,6 +121,14 @@ jobs:
           exit 1
       - name: Verify Neo4j, corpus and maintenance APIs
         run: docker compose exec -T backend python scripts/verify_mid1_runtime.py
+      - name: Verify persisted sessions and degraded turns
+        run: >-
+          docker compose exec -T
+          -e SESSION_SMOKE_BASE_URL=http://127.0.0.1:8000
+          -e SESSION_SMOKE_ADMIN_EMAIL=admin@halite.local
+          -e SESSION_SMOKE_ADMIN_PASSWORD=HaliteDevAdmin2026
+          -e SESSION_SMOKE_FIXTURE_PATH=/app/tests/fixtures/mid1_smoke.csv
+          backend python scripts/verify_sessions_runtime.py
       - name: Verify frontend is served
         run: curl --fail --silent http://127.0.0.1:5173/ | grep --quiet '<div id="root">'
       - name: Capture service state and logs

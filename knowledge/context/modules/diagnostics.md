@@ -100,3 +100,12 @@ Response fields expected by UI (verify in code before renaming): `ranked_checks`
 
 - Flow: [FLOW-diagnose.md](../../flows/FLOW-diagnose.md)
 - U1 audit (executed inventory): [diagnostics_u1_audit.md](diagnostics_u1_audit.md)
+
+## Investigation session extension
+
+Usman now owns diagnostic routes and the model adapter under the vertical plan.
+Persisted session routes delegate the existing Copilot without changing its
+stateless response fields. Quick diagnosis adds opt-in degraded mode and content-
+aware cache invalidation; its citations are constrained to the IDs shown in the
+prompt. See [investigation_sessions.md](investigation_sessions.md). Policy and
+sentence-grounding fields remain explicitly unconfigured until their packages land.

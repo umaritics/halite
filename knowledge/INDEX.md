@@ -76,3 +76,9 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 `graph/repo/`, `graph/memory/`, `db/models/`, vertical summary routes and model `json_mode`:
 see `decisions/DEC-20261120-backend-foundation.md`, `context/modules/backend_foundation.md`,
 `flows/FLOW-backend-foundation.md` and `docs/work/usman/WORK_LOG.md`.
+
+Persisted sessions, replay, owner/organisation access, degraded diagnosis, cache
+invalidation: `context/modules/investigation_sessions.md`, `flows/FLOW-sessions.md`,
+`decisions/DEC-20261120-durable-investigations.md`, `backend/investigation/`.
+CI lint/coverage and Form 10: `context/modules/devops.md`, `flows/FLOW-ci.md`,
+`docs/fyp1-final/PANEL_ACTION_REGISTER.md`.

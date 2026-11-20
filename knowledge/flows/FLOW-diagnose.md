@@ -109,7 +109,7 @@ flowchart TB
 - `diagnostics.py` → additive copilot helpers in `diagnostic_retrieval.py`
 - `diagnostic_retrieval.py` → `queries.py` → Neo4j/memory store
 - `diagnostics.py` → `groq_service.py` + `citation_validation.py`
-- One-shot `/diagnose` retains its diagnostic cache path
+- One-shot `/diagnose` retains its diagnostic cache path; the key now fingerprints count, mode, prompt version and retrieved context
 - Evidence click → `/app/asset-history/<asset uuid>#<record_id>`
 
 ## Model format boundary
@@ -118,3 +118,14 @@ flowchart TB
 calls request JSON explicitly, including usage-aware calls. Both providers preserve the format
 through retries. The repository facade delegates to vertical mixins; ranking,
 diagnostic response fields and failure semantics remain unchanged by this split.
+
+## Persisted session wrapper and opt-in outage handling
+
+`POST /api/sessions/{id}/turns` loads server-owned case state and delegates the
+stateless Copilot workflow, then atomically stores its response/evidence/snapshot.
+Unlike the compatibility endpoint, it supplies template text on outages. See
+[FLOW-sessions.md](FLOW-sessions.md). Quick diagnosis retains 503 by default;
+`allow_degraded=true` adds ranking/evidence, a null explanation and
+`fallback_explanation` on outages. Diagnose citations are restricted to IDs in the
+bounded prompt, including the bounded ranked-evidence IDs. Empty cache explanations
+are ignored. Model wording failures never create a blank successful explanation.

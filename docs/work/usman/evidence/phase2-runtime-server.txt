@@ -1,0 +1,32 @@
+INFO:     Started server process [41507]
+INFO:     Waiting for application startup.
+INFO:api.routes.ops:Ops ring-buffer logging installed
+INFO:main:Halite connecting to Neo4j AuraDB
+INFO:main:Neo4j connected and seeded
+INFO:main:LLM provider=groq configured=False model=openai/gpt-oss-20b
+INFO:main:Relational auth store mode: postgresql
+INFO:services.auth_service:Bootstrapped initial Halite admin user: admin@sessions.test
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:37794 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37794 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37794 - "POST /api/maintenance/ingest HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45952 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:api.routes.maintenance:Maintenance ingest: {'assets_created': 1, 'records_created': 3, 'rows_skipped_no_tail': 0, 'rows_skipped_bad_date': 0, 'duplicates_skipped': 0}
+INFO:     127.0.0.1:45952 - "POST /api/maintenance/ingest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:45952 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:45952 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45954 - "POST /api/sessions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:45954 - "POST /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/turns HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45964 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "POST /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/turns HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:45952 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:45964 - "POST /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/close HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45964 - "POST /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/turns HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:45964 - "GET /api/sessions/319e7a76-256c-4243-aac6-8b65cb5ca22c/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45952 - "GET /api/health HTTP/1.1" 200 OK
