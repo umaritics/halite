@@ -111,3 +111,12 @@ without recomputation. See [FLOW-decision-selection.md](FLOW-decision-selection.
 ## Managed question extension
 
 The opt-in [managed flow](FLOW-live-questions.md) uses a strict visible graph snapshot for observations and saved matrices for structured answers. Unique question IDs reject replaced questions even for the same attribute. Prior/posterior, answer history and the budget share the existing CAS transaction and exact replay boundary. The default bridge remains unconfigured.
+
+## Responsive shared shell (separate authorized review branch)
+
+The same App → registry → feature → JWT client → sessions API path now has a
+responsive shell proposal: below md, Sidebar becomes a 64px accessible icon rail;
+at md and above it stays 256px. Main's flex item may shrink correctly. The
+question control remains reachable at phone width; keyboard navigation and the
+same confirmed logout/auth guard were verified in the built browser. There is no
+new route, service, permission or storage flow. Owner review/merge remain pending.

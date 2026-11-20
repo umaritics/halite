@@ -42,6 +42,7 @@ const { randomUUID, createHash } = require('node:crypto');
   const page = await context.newPage();
   page.on('pageerror', error => errors.push(error.message));
   const screenshot = async name => {
+    await page.evaluate(() => document.fonts.ready);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await page.screenshot({ path: path.join(directory, name.replace('phase6', prefix) + '.png'), fullPage: true });
   };
@@ -70,7 +71,21 @@ const { randomUUID, createHash } = require('node:crypto');
     assert.equal(initial.beliefs.label, 'relative support');
     await page.getByLabel('Your answer').waitFor();
     await page.getByText('Why this question:', { exact: false }).waitFor();
+    const desktopSidebarWidth = await page.locator('aside').first().evaluate(el => el.getBoundingClientRect().width);
+    assert.equal(desktopSidebarWidth, 256);
     await screenshot('phase6-question-before-answer');
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.getByLabel('Your answer').scrollIntoViewIfNeeded();
+    const mobileActiveGeometry = await page.getByLabel('Your answer').evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return { left: r.left, right: r.right, width: r.width, main_width: document.querySelector('main').getBoundingClientRect().width };
+    });
+    if (process.env.HALITE_UI_REQUIRE_MOBILE_LAYOUT === 'true') {
+      assert.ok(mobileActiveGeometry.main_width >= 280, 'Phone workspace must have usable width');
+      assert.ok(mobileActiveGeometry.width >= 200 && mobileActiveGeometry.left >= 64 && mobileActiveGeometry.right <= 390,
+        'The active multiple-choice input must fit and remain usable on the phone');
+    }
+    await screenshot('phase6-question-mobile-active');
     await page.getByLabel('Your answer').selectOption(initial.question.options[0].value);
     pending = turnResponse();
     await page.getByRole('button', { name: 'Submit answer', exact: true }).click();
@@ -82,6 +97,8 @@ const { randomUUID, createHash } = require('node:crypto');
     assert.notDeepEqual(answered.beliefs, initial.beliefs);
     await page.getByLabel('Your answer').waitFor();
     assert.equal(await page.getByLabel('Your answer').inputValue(), '');
+    await page.setViewportSize({ width: 1280, height: 1000 });
+    await page.locator('main > div').first().evaluate(el => { el.scrollTop = 0; });
     await screenshot('phase6-question-after-answer');
     // Refresh is read-only; exact server snapshot is the authority.
     const stored = await api(route, null, account.access_token);
@@ -119,6 +136,21 @@ const { randomUUID, createHash } = require('node:crypto');
     assert.equal(turnPosts, 4);
     const saved = await api(route, null, account.access_token);
     assert.deepEqual(saved.turns.at(-1).response, latest);
+    const mobileSidebar = page.locator('aside').first();
+    for (const label of ['Home', 'Assets', 'Service Records', 'Investigations', 'Review Queue', 'Ingest', 'Knowledge Graph', 'Settings']) {
+      assert.equal(await mobileSidebar.getByRole('link', { name: label, exact: true }).count(), 1);
+    }
+    await mobileSidebar.getByRole('link', { name: 'Investigations', exact: true }).focus();
+    await page.keyboard.press('Enter');
+    await page.waitForURL(/\/app\/investigations$/);
+    await page.goto(base + '/app/investigations/' + sessionId);
+    await page.getByLabel('Symptom, observation or check result').waitFor();
+    assert.equal(turnPosts, 4, 'Keyboard navigation must not create inference turns');
+    await page.getByRole('button', { name: 'Sign out', exact: true }).click();
+    await page.getByLabel(/work email/i).waitFor();
+    await page.goto(base + '/app/investigations/' + sessionId);
+    await page.getByLabel(/work email/i).waitFor();
+    assert.equal(await page.getByRole('heading', { name: title, exact: true }).count(), 0);
     assert.equal(errors.length, 0, errors.join('\n'));
     const sha = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
     fs.writeFileSync(path.join(directory, prefix + '-browser-proof.json'), JSON.stringify({
@@ -128,7 +160,7 @@ const { randomUUID, createHash } = require('node:crypto');
       answer: { beliefs: answered.beliefs, llm_status: answered.llm_status, prior: answered.belief_transition.prior, response_sha256: sha(answered) },
       final: { decision: latest.decision, questions_asked: latest.policy_inputs.questions_asked, response_sha256: sha(latest) },
       exact_reload_replay: true, second_and_third_not_sure_preserve_beliefs: true,
-      mobile_and_desktop_no_horizontal_overflow: true, mobile_main_width_px: mobileMainWidth, mobile_content_usable: mobileContentUsable, shared_staging_accessed: false,
+      mobile_and_desktop_no_horizontal_overflow: true, desktop_sidebar_width_px: desktopSidebarWidth, phone_keyboard_navigation_and_logout_verified: true, mobile_active_question_geometry: mobileActiveGeometry, mobile_main_width_px: mobileMainWidth, mobile_content_usable: mobileContentUsable, shared_staging_accessed: false,
     }, null, 2) + '\n');
     console.log('LIVE_QUESTION_BROWSER_FLOW=PASS; EXACT_REPLAY=PASS; BUDGET=3; API_POSTS=4; MODEL_MODE=fallback');
   } finally { await context.close(); await browser.close(); }

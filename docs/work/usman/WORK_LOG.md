@@ -481,3 +481,46 @@ Final phase-6 backend run: **384 passed** against isolated Neo4j/PostgreSQL,
 with JUnit and broad coverage output saved. Coverage is 77%, still below NFR-04's
 80% target; no exclusions or target reductions were used. Ruff passed. The full
 suite includes all pre-existing tests plus the new managed-question paths.
+
+### Phase 6 hosted acceptance
+
+Draft PR #34: https://github.com/umaritics/halite/pull/34, stacked on #33.
+All hosted checks on `a73cce9` passed: backend tests, frontend tests/build, Docker
+real-graph/session smoke, Vercel preview and preview comments. Machine-readable
+states/links are saved in `phase6-github-checks.json`. No shared source was bundled
+into this question package. The proposal patch has required unified-diff context
+spaces; whitespace checks exclude that patch text and check all actual code/docs.
+
+## Phase 7 — authorized responsive-shell preparation
+
+Applied exactly the prepared App/Sidebar patch on
+`codex/usman-mobile-integration`; reverse-application validation passes. The user
+explicitly authorized this separate preparation after seeing the ownership reason.
+No broader frontend preparation, design system, API client or auth logic changed.
+Shahmeer owner review and merge remain pending.
+
+Below md: fixed 64px icon rail, accessible destination/sign-out names and scrolling
+navigation. At md and above: existing 256px sidebar retained. Main's flex item
+uses min-width:0. Roles, review badge and confirmed logout behavior stay intact.
+
+**264 frontend tests passed**, including accessible active destinations/roles and
+logout wait/redirect. Production build passed. React review checked conditional
+classes, accessible icon names, unchanged hooks/roles and source scope. Existing
+large-bundle warning is unchanged; no app dependency was added.
+
+The production-built real browser verified the complete question flow again with
+strict mobile assertions: at 390px, main is **326px** and the active select is
+**260px**, contained from x=97 to x=357. It submitted the actual answer at phone
+width, then verified moving bars, two not-sure updates, question budget three,
+exact saved response/reload without extra inference and the 256px desktop sidebar.
+Phone keyboard navigation to history and back created no inference turn. Icon-only
+sign-out returned to login; a protected investigation deep link stayed behind
+login without revealing its title. No browser exceptions or horizontal overflow.
+Proof: `phase7-browser-proof.json`, `phase7-browser-run.txt` and screenshots.
+
+Visually inspected desktop and active-phone screenshots: the question/options,
+submit action and supporting context are readable; the old narrow-column failure
+is resolved in this review branch. Retained the initial phase-6 failure evidence
+rather than relabelling it as success. Updated context, flow, registry, decision,
+acceptance matrix and the handoff procedure together. Stopped local API/preview
+servers after verification; disposable databases remain for subsequent phases.

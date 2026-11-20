@@ -78,3 +78,15 @@ New Copilot/session turns supply uncalibrated named beliefs, the other bucket an
 entropy. The UI renders all of them as relative support and labels calibration
 status. Old saved turns lacking beliefs retain their existing rendering; no
 recomputation enriches historical responses. The default live policy remains unconfigured. The opt-in managed controller supplies official-code questions and saved posterior updates; experimental settings are explicitly labelled. Question IDs are submitted and changing identity resets the selection. Component and built-browser evidence is in `phase4-*`.
+
+## Responsive shared-shell review integration
+
+The user separately authorized applying/testing the App/Sidebar phone layout
+patch. At 390px viewport, the icon rail is 64px and leaves a measured 326px main
+area; the active answer input spans 260px and stays within the viewport. Desktop
+keeps its measured 256px sidebar. Labels remain accessible, navigation can scroll,
+roles/badges are retained, and sign-out waits for the existing auth operation.
+The production-built browser submits the answer at phone width, verifies posterior
+replay, keyboard navigation and sign-out/protected deep-link behavior. Source
+changes are confined to the proposed App/Sidebar patch; Shahmeer review/merge
+remain pending. See `phase7-*` evidence and `MOBILE_SHELL_HANDOFF.md`.

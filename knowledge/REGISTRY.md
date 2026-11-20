@@ -75,3 +75,5 @@ owner review pending.
 Raw coded-field ingest integration: `backend/scripts/backfill_coded_fields.py` and `backend/tests/test_coded_fields_integration.py` (Usman; shared creation-list/ingest review Shahmeer). [Context](context/modules/maintenance_api.md), [flow](flows/FLOW-ingest.md).
 
 Managed questions (Usman): `backend/investigation/{live_graph,live_questions}.py`, session service/API, `SESSION_*` settings; [context](context/modules/investigation_live_questions.md), [flow](flows/FLOW-live-questions.md). UI: `DecisionView.jsx`; real browser: `frontend/e2e/verify-question-ui.cjs`.
+
+Responsive shell preparation: `frontend/src/App.jsx`, `frontend/src/components/Sidebar.jsx` (Shahmeer; user-authorized integration preparation Usman), tested by `InvestigationMobileIntegration.test.jsx` and the question browser verifier. [Decision](decisions/DEC-20261120-responsive-shell-review.md).

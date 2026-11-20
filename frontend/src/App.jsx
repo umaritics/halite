@@ -43,7 +43,7 @@ function AppShell() {
   return (
     <div className={`flex h-screen overflow-hidden bg-page ${isDark ? 'text-[#F5F5F5]' : 'text-[#0A0A0A]'}`}>
       <Sidebar reviewCount={reviewCount} />
-      <main className="relative flex-1 overflow-hidden">
+      <main className="relative min-w-0 flex-1 overflow-hidden">
         <Routes>
           <Route index element={<Navigate to={HOME} replace />} />
           {featureRoutes.map(({ path, element, roles }) => (
