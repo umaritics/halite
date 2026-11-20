@@ -191,3 +191,7 @@ by Vite preview on port 15174, including direct-route refresh and JWT API proxy;
 backend/frontend/Docker/Vercel checks (`phase3-feature-github-checks.json`).
 Temporary HTTP servers were stopped after verification; disposable database
 containers remain isolated for subsequent work.
+
+Integration implementation commit `8ae9b8d` is published in draft PR #30:
+https://github.com/umaritics/halite/pull/30, base feature PR #29. The draft remains
+unmerged for Shahmeer review. This reference records preparation, not approval.

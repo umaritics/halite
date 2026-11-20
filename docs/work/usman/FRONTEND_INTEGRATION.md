@@ -1,6 +1,7 @@
 # Investigation frontend integration review
 
 Status: **prepared and locally verified on `codex/usman-ui-integration`**.
+Draft owner-review PR: https://github.com/umaritics/halite/pull/30.
 The user explicitly authorized **“Prepare the integration for review.”**
 Shahmeer owner review and merge remain pending; broader shared frontend
 preparation remains his work.
