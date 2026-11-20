@@ -13,9 +13,10 @@ from evaluation.corpus import _normalise_part, load_sdr_raw
 from evaluation.graph_builder import build_eval_repository
 from evaluation.metrics import bootstrap_top1_ci, top_k_hit
 from evaluation.rank_b0 import build_diagnostic_context_b0, rank_diagnostic_checks_b0
+from evaluation.rank_b2 import rank_parts_bm25
 from services.diagnostic_retrieval import build_diagnostic_context, rank_diagnostic_checks
 
-RankerId = Literal["b0", "b1"]
+RankerId = Literal["b0", "b1", "b2"]
 
 _BUILDERS: dict[RankerId, tuple[Callable, Callable]] = {
     "b0": (build_diagnostic_context_b0, rank_diagnostic_checks_b0),
@@ -59,7 +60,7 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
     if config.max_pairs is not None:
         pairs = pairs.head(config.max_pairs)
 
-    build_ctx, rank_fn = _BUILDERS[ranker]
+    build_ctx, rank_fn = _BUILDERS.get(ranker, (None, None))
     hits1: list[bool] = []
     hits3: list[bool] = []
     hits5: list[bool] = []
@@ -91,14 +92,23 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
             skipped += 1
             continue
 
-        repo, asset_id = build_eval_repository(
-            corpus,
-            tail,
-            query_time,
-            exclude_record_ids={new_id},
-        )
-        ctx = build_ctx(repo, asset_id, symptom)
-        ranked = rank_fn(ctx)
+        if ranker == "b2":
+            ranked = rank_parts_bm25(
+                corpus,
+                tail,
+                symptom,
+                query_time,
+                exclude_record_ids={new_id},
+            )
+        else:
+            repo, asset_id = build_eval_repository(
+                corpus,
+                tail,
+                query_time,
+                exclude_record_ids={new_id},
+            )
+            ctx = build_ctx(repo, asset_id, symptom)
+            ranked = rank_fn(ctx)
         parts = [_normalise_part(r.get("part_name", "")) for r in ranked]
         parts = [p for p in parts if p]
 

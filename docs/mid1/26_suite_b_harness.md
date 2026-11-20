@@ -18,7 +18,7 @@ docker run --rm --user 0:0 \
     --pairs data/evaluation/correction_pairs.csv \
     --splits data/evaluation/splits.json \
     --split test \
-    --ranker both \
+    --ranker all \
     --out data/evaluation/suite_b_test_2025.json
 ```
 
@@ -26,14 +26,18 @@ Log (example): `/home/umar/halite/logs/suite_b_test_2025.log`
 
 ## First numbers (2025 hold-out, n=141)
 
-Committed snapshot: [`logs/suite_b_test_2025.json`](logs/suite_b_test_2025.json) (generated on VM 2026-11-20).
+Committed snapshots (VM 2026-11-20):
+
+- [`logs/suite_b_test_2025.json`](logs/suite_b_test_2025.json) — B0 vs B1  
+- [`logs/suite_b_test_2025_with_b2.json`](logs/suite_b_test_2025_with_b2.json) — B0, B1, B2
 
 | Ranker | Top-1 | Top-3 | Top-5 | Top-1 95% CI |
 | --- | ---: | ---: | ---: | --- |
 | B0 (frozen mid) | 0.149 | 0.277 | 0.319 | 0.092 – 0.206 |
-| B1 (bug fixes) | 0.199 | 0.284 | 0.319 | 0.135 – 0.262 |
+| B1 (heuristic fixes) | 0.199 | 0.284 | 0.319 | 0.135 – 0.262 |
+| B2 (BM25) | 0.199 | **0.340** | **0.397** | 0.128 – 0.270 |
 
-B1 improves top-1 on this slice; hybrid retrieval (B2+) is next.
+B2 matches B1 on top-1 but improves top-3/top-5; B3 embeddings + hybrid (B5) is next.
 
 ## CI
 

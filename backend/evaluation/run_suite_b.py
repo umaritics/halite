@@ -36,8 +36,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--ranker",
-        choices=("b0", "b1", "both"),
+        choices=("b0", "b1", "b2", "all", "both"),
         default="both",
+        help="b0/b1/b2, both (=b0+b1), or all (=b0+b1+b2)",
     )
     parser.add_argument("--max-pairs", type=int, default=None)
     parser.add_argument(
@@ -66,7 +67,12 @@ def main() -> None:
         },
         "runs": [],
     }
-    rankers = ("b0", "b1") if args.ranker == "both" else (args.ranker,)
+    if args.ranker == "both":
+        rankers = ("b0", "b1")
+    elif args.ranker == "all":
+        rankers = ("b0", "b1", "b2")
+    else:
+        rankers = (args.ranker,)
     for ranker in rankers:
         results["runs"].append(run_suite_b(config, ranker=ranker))
 
