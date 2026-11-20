@@ -12,8 +12,8 @@ Outputs:
     docs/dataset_profile.md              — human-readable profile
 """
 import argparse
+import json
 import logging
-import os
 import re
 import sys
 import urllib.request
@@ -60,6 +60,21 @@ _COLS_USED = [
     "JASCCode",
     "Discrepancy",
 ]
+
+# FYP-I Final coded fields (ingest later; kept when present in FAA CSV)
+_COLS_CODED_OPTIONAL = [
+    "StageOfOperation",
+    "HowDiscovered",
+    "NatureOfCondition",
+    "PrecautionaryProcedure",
+]
+
+EVAL_SPLITS = {
+    "train_years": [2023],
+    "tune_years": [2024],
+    "test_years": [2025],
+    "note": "No tuning on test_years — see docs/plan/BENCHMARK_PROTOCOL.md",
+}
 
 POC_TARGET_RECORDS = 2000
 POC_TARGET_TAILS = 60
@@ -123,14 +138,15 @@ def load_csv(path: Path) -> pd.DataFrame:
     logger.info("Raw shape: %s", df.shape)
 
     # Keep only columns we need (ignore missing columns gracefully)
-    cols = [c for c in _COLS_USED if c in df.columns]
+    wanted = list(_COLS_USED) + [c for c in _COLS_CODED_OPTIONAL if c in df.columns]
+    cols = [c for c in wanted if c in df.columns]
     missing = set(_COLS_USED) - set(cols)
     if missing:
         logger.warning("Columns missing from CSV (will treat as blank): %s", missing)
     df = df[cols].copy()
 
     # Fill missing columns with empty string
-    for col in _COLS_USED:
+    for col in _COLS_USED + _COLS_CODED_OPTIONAL:
         if col not in df.columns:
             df[col] = ""
 
@@ -229,6 +245,9 @@ def extract_ground_truth_pairs(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
                 "superseding_record_id": row["OperatorControlNumber"],
                 "tail_number": citing_tail,
                 "days_between": days_between,
+                "submission_date": row.get("SubmissionDate", ""),
+                "superseded_part": ocn_index[cited_id].get("PartName", ""),
+                "superseding_part": row.get("PartName", ""),
             })
 
     pairs_df = pd.DataFrame(pairs) if pairs else pd.DataFrame(
@@ -430,21 +449,63 @@ def write_profile_markdown(profile: dict, out_path: Path) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+def write_evaluation_artifacts(
+    pairs_df: pd.DataFrame,
+    processed_dir: Path,
+    eval_dir: Path,
+    source_years: list[int],
+) -> None:
+    """Write multi-year correction pairs and frozen year splits for offline eval."""
+    eval_dir.mkdir(parents=True, exist_ok=True)
+    pairs_out = processed_dir / "correction_pairs.csv"
+    if not pairs_df.empty and "source_year" not in pairs_df.columns:
+        pairs_df = pairs_df.copy()
+    if not pairs_df.empty:
+        pairs_df.to_csv(pairs_out, index=False)
+        logger.info("Correction pairs written: %s (%d rows)", pairs_out, len(pairs_df))
+    splits_path = eval_dir / "splits.json"
+    payload = {
+        **EVAL_SPLITS,
+        "source_years_fetched": source_years,
+        "pair_count": int(len(pairs_df)),
+    }
+    splits_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    logger.info("Evaluation splits written: %s", splits_path)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Fetch and profile FAA SDR data")
-    parser.add_argument("--year", type=int, default=2025, help="SDR year to download")
+    parser.add_argument("--year", type=int, default=2025, help="SDR year (ignored if --years set)")
+    parser.add_argument(
+        "--years",
+        type=int,
+        nargs="+",
+        default=None,
+        help="Download and merge multiple years (e.g. --years 2023 2024 2025)",
+    )
     parser.add_argument("--out", default="data/raw", help="Output directory for raw CSV")
+    parser.add_argument(
+        "--poc-only",
+        action="store_true",
+        help="Only build POC corpus outputs (skip multi-year correction_pairs + splits)",
+    )
     args = parser.parse_args()
 
     raw_dir = Path(args.out)
     processed_dir = Path("data/processed")
+    eval_dir = Path("data/evaluation")
     docs_dir = Path("..") / "docs"  # relative to backend/
 
-    # Step 1: Download
-    csv_path = download_sdr(args.year, raw_dir)
+    years = args.years or [args.year]
 
-    # Step 2: Load
-    df_raw = load_csv(csv_path)
+    # Step 1–2: Download + load (single or multi-year)
+    frames: list[pd.DataFrame] = []
+    for year in years:
+        csv_path = download_sdr(year, raw_dir)
+        frame = load_csv(csv_path)
+        frame["_source_year"] = str(year)
+        frames.append(frame)
+    df_raw = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
     rows_raw = len(df_raw)
     logger.info("rows_raw: %d", rows_raw)
 
@@ -455,6 +516,12 @@ def main():
     # Step 4: Ground truth pairs
     logger.info("Extracting ground-truth pairs...")
     pairs_df, discards = extract_ground_truth_pairs(df_deduped)
+    if not pairs_df.empty:
+        citing = df_deduped.set_index("OperatorControlNumber")
+        pairs_df = pairs_df.copy()
+        pairs_df["source_year"] = pairs_df["superseding_record_id"].map(
+            lambda rid: citing.loc[rid, "_source_year"] if rid in citing.index else ""
+        )
     logger.info("Ground-truth pairs: %d, discards: %s", len(pairs_df), discards)
 
     # Step 5: Implicit references
@@ -474,6 +541,8 @@ def main():
     pairs_path = processed_dir / "ground_truth_pairs.csv"
     corpus_df.to_csv(corpus_path, index=False)
     pairs_df.to_csv(pairs_path, index=False)
+    if not args.poc_only:
+        write_evaluation_artifacts(pairs_df, processed_dir, eval_dir, years)
     logger.info("Corpus written: %s", corpus_path)
     logger.info("Ground truth pairs written: %s", pairs_path)
 

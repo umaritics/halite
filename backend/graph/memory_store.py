@@ -467,7 +467,7 @@ class MemoryGraphStore:
         return result
 
     def list_asset_history_recent(self, asset_id: str, limit: int = 30) -> list[dict]:
-        """Newest-first ServiceRecords linked to asset_id."""
+        """Newest-first ServiceRecords linked to asset_id (includes corrected_by)."""
         records = self.list_asset_history(asset_id, limit=10_000)
         records.sort(key=lambda r: r.get("occurred_at", ""), reverse=True)
         return records[:limit]

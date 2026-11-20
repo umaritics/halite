@@ -124,7 +124,13 @@ class TestSimilarSymptomRecords:
         gr, a1_id, a2_id = repo
         results = similar_symptom_records(gr, "Hydraulic pump noise", exclude_asset_id=a1_id)
         for r in results:
-            assert r["asset_id"] != a1_id, f"Own asset leaked through: {r}"
+            assert r["asset_id"] == "TESTB2", f"Own asset leaked through: {r}"
+        assert any(r["record_id"] == "R2_A" for r in results)
+
+    def test_excludes_own_asset_when_api_passes_uuid(self, repo):
+        gr, a1_id, _ = repo
+        results = similar_symptom_records(gr, "hydraulic pump", exclude_asset_id=a1_id, limit=20)
+        assert all(r["asset_id"] != "TESTA1" for r in results)
 
     def test_returns_fleet_match(self, repo):
         gr, a1_id, a2_id = repo
@@ -250,6 +256,7 @@ class TestRankDiagnosticChecks:
 
     def test_stable_tie_break_by_part_name(self):
         ctx = {
+            "symptom_text": "test",
             "asset_history": [
                 {
                     "part_name": "BRAKE",
@@ -268,6 +275,7 @@ class TestRankDiagnosticChecks:
         # identical structure — both get weight 0.4 * 1/(i+1). Different i →
         # different scores. Build equal scores with two fleet-only parts:
         ctx = {
+            "symptom_text": "test",
             "asset_history": [],
             "fleet_matches": [
                 {"part_name": "ZEBRA", "record_id": "Z1", "score": 0.5, "is_superseded": False},
@@ -287,12 +295,35 @@ class TestRankDiagnosticChecks:
         assert [r["part_name"] for r in a] == [r["part_name"] for r in b]
         assert [r["score"] for r in a] == [r["score"] for r in b]
 
+    def test_asset_history_requires_symptom_overlap(self):
+        ctx = {
+            "symptom_text": "fuel indicator failed",
+            "asset_history": [
+                {
+                    "part_name": "PUMP",
+                    "record_id": "P1",
+                    "text": "Hydraulic pump noise",
+                    "is_superseded": False,
+                },
+                {
+                    "part_name": "INDICATOR",
+                    "record_id": "I1",
+                    "text": "Fuel indicator failed after refuel",
+                    "is_superseded": False,
+                },
+            ],
+            "fleet_matches": [],
+        }
+        ranked = rank_diagnostic_checks(ctx)
+        assert [r["part_name"] for r in ranked] == ["INDICATOR"]
+
     def test_skips_blank_part_names(self):
         ctx = {
+            "symptom_text": "pump leaking",
             "asset_history": [
-                {"part_name": "", "record_id": "X1", "is_superseded": False},
-                {"part_name": "UNKNOWN", "record_id": "X2", "is_superseded": False},
-                {"part_name": "PUMP", "record_id": "X3", "is_superseded": False},
+                {"part_name": "", "record_id": "X1", "text": "pump", "is_superseded": False},
+                {"part_name": "UNKNOWN", "record_id": "X2", "text": "pump", "is_superseded": False},
+                {"part_name": "PUMP", "record_id": "X3", "text": "pump leaking", "is_superseded": False},
             ],
             "fleet_matches": [],
         }

@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-11-20T15:27:19.600363+00:00",
+  "config": {
+    "raw_dir": "data/raw",
+    "pairs": "data/processed/correction_pairs.csv",
+    "split": "test",
+    "max_pairs": null
+  },
+  "runs": [
+    {
+      "suite": "B",
+      "ranker": "b0",
+      "split": "test",
+      "pairs_evaluated": 141,
+      "pairs_skipped": 0,
+      "top1_accuracy": 0.1489,
+      "top3_accuracy": 0.2766,
+      "top5_accuracy": 0.3191,
+      "top1_ci_95": [
+        0.0922,
+        0.2057
+      ]
+    },
+    {
+      "suite": "B",
+      "ranker": "b1",
+      "split": "test",
+      "pairs_evaluated": 141,
+      "pairs_skipped": 0,
+      "top1_accuracy": 0.1986,
+      "top3_accuracy": 0.2837,
+      "top5_accuracy": 0.3191,
+      "top1_ci_95": [
+        0.1348,
+        0.2624
+      ]
+    }
+  ]
+}

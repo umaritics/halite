@@ -40,7 +40,31 @@ def _text_similarity(a: str, b: str) -> float:
 
 
 def _record_is_superseded(record: dict) -> bool:
-    return record.get("status") == "superseded"
+    if record.get("status") == "superseded":
+        return True
+    corrected = record.get("corrected_by")
+    if corrected and corrected.get("record_id"):
+        return True
+    return False
+
+
+def _resolve_asset_exclusion_keys(graph_repo, asset_ref: Optional[str]) -> set[str]:
+    """Map asset UUID (diagnose API) and tail numbers to a single exclusion set."""
+    if not asset_ref:
+        return set()
+    keys = {_normalise(asset_ref)}
+    if hasattr(graph_repo, "list_assets_with_counts"):
+        for asset in graph_repo.list_assets_with_counts():
+            aid = str(asset.get("id") or "")
+            tail = _normalise(asset.get("tail_number") or "")
+            ref = _normalise(asset_ref)
+            if aid == asset_ref or tail == ref:
+                if aid:
+                    keys.add(_normalise(aid))
+                if tail:
+                    keys.add(tail)
+                break
+    return keys
 
 
 # ---------------------------------------------------------------------------
@@ -79,7 +103,10 @@ def asset_history_context(graph_repo, asset_id: str, limit: int = 30, exclude_sy
             "text":         rec.get("text", ""),
             "status":       rec.get("status", ""),
             "is_superseded":   _record_is_superseded(rec),
-            "superseded_by":   rec.get("superseding_record"),   # filled by graph if stored
+            "superseded_by": (
+                (rec.get("corrected_by") or {}).get("record_id")
+                or rec.get("superseding_record")
+            ),
             "confidence":   rec.get("confidence"),
         }
         results.append(entry)
@@ -113,6 +140,7 @@ def similar_symptom_records(
 
     scored = []
     norm_jasc = _normalise(jasc_code) if jasc_code else ""
+    exclude_keys = _resolve_asset_exclusion_keys(graph_repo, exclude_asset_id)
 
     for rec in all_records:
         rec_asset = rec.get("asset_key") or rec.get("asset_id") or ""
@@ -121,10 +149,11 @@ def similar_symptom_records(
         if exclude_synthetic and rec_id.startswith("DEMO"):
             continue
 
-        # Skip own asset
-        if exclude_asset_id and (rec_asset == exclude_asset_id or
-                                  rec.get("id") == exclude_asset_id):
-            continue
+        # Skip own asset (API passes Asset UUID; records carry tail in asset_key)
+        if exclude_keys:
+            rec_asset_norm = _normalise(rec_asset)
+            if rec_asset_norm in exclude_keys or _normalise(rec_id) in exclude_keys:
+                continue
 
         score = 0.0
 
@@ -289,8 +318,12 @@ def rank_diagnostic_checks(context: dict) -> list[dict]:
 
     Each item: part_name, score, evidence_count, evidence_record_ids (sorted),
     sources, rank (1-based).
+
+    Asset-history weight is scaled by symptom overlap (B1 fix); unrelated recent
+    parts no longer dominate when the symptom text differs.
     """
     component_scores: dict[str, dict] = {}
+    symptom_text = context.get("symptom_text") or ""
 
     def _add(part: str, weight: float, source: str, record_id: str) -> None:
         if not part or part.upper().strip() in ("UNKNOWN", ""):
@@ -314,12 +347,18 @@ def rank_diagnostic_checks(context: dict) -> list[dict]:
 
     for i, rec in enumerate(context.get("asset_history") or []):
         recency_weight = 1.0 / (i + 1)
+        symptom_overlap = max(
+            _text_similarity(symptom_text, rec.get("text", "")),
+            _text_similarity(symptom_text, rec.get("part_name", "")),
+        )
+        if symptom_overlap < 0.05:
+            continue
         superseded_penalty = (
             RANK_SUPERSEDED_PENALTY if rec.get("is_superseded") else 1.0
         )
         _add(
             rec.get("part_name", ""),
-            recency_weight * superseded_penalty * RANK_WEIGHT_ASSET_HISTORY,
+            recency_weight * symptom_overlap * superseded_penalty * RANK_WEIGHT_ASSET_HISTORY,
             "asset_history",
             rec.get("record_id", ""),
         )

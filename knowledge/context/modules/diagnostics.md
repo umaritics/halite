@@ -3,7 +3,7 @@ id: mod-diagnostics
 title: Diagnostics module
 status: active
 owners: [Umar]
-updated: 2026-10-17
+updated: 2026-11-20
 depends_on: [ctx-data-graph]
 ---
 
@@ -70,6 +70,8 @@ provenance rather than filtering or reranking them.
 - Conflict-detection F1 must **not** be reported as diagnostic accuracy.
 - Scores are ranking aids, **not** calibrated probabilities.
 - Weights: `RANK_WEIGHT_ASSET_HISTORY=0.4`, `RANK_WEIGHT_FLEET_MATCH=0.6`, `RANK_SUPERSEDED_PENALTY=0.3`.
+- **B1 (FYP-I Final):** fleet exclude resolves Asset UUID → tail; asset-history weight × symptom Jaccard (min 0.05); superseded if `status` or incoming `SUPERSEDES` (`corrected_by` on history rows).
+- Frozen **B0** for benchmarks: `backend/evaluation/baseline_b0.py`; protocol `docs/plan/BENCHMARK_PROTOCOL.md`.
 - Tie-break: score DESC → evidence_count DESC → part_name ASC. Evidence IDs and sources sorted.
 
 ## LLM boundary

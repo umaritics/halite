@@ -867,13 +867,23 @@ class GraphRepository:
         rows = self.store.run_query(
             """
             MATCH (sr:ServiceRecord)-[:ABOUT]->(a:Asset {id: $aid})
-            RETURN sr
+            OPTIONAL MATCH (corrector:ServiceRecord)-[:SUPERSEDES]->(sr)
+            RETURN sr,
+                   head(collect(CASE WHEN corrector IS NULL THEN null
+                            ELSE {record_id: corrector.record_id, part_name: corrector.part_name}
+                       END)) AS corrected_by
             ORDER BY sr.occurred_at DESC
             LIMIT $limit
             """,
             {"aid": asset_id, "limit": limit},
         )
-        return [dict(r["sr"]) for r in rows]
+        out = []
+        for row in rows:
+            rec = dict(row["sr"])
+            if row.get("corrected_by"):
+                rec["corrected_by"] = dict(row["corrected_by"])
+            out.append(rec)
+        return out
 
     def get_service_records_by_ids(self, record_ids: list[str]) -> list[dict]:
         """Batch fetch ServiceRecords by record_id (order not guaranteed)."""
