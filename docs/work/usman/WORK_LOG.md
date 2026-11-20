@@ -710,3 +710,7 @@ Real JWT/route-order/error tests added for hosted CI; not yet executed locally.
 An initial test-file write used an incorrect relative directory and created no
 files; corrected the paths and ran all twelve actual tests. No dependency install
 or container/model workload started locally. Product charts remain in progress.
+
+### Shared chart review preparation
+
+Isolated the plan-required Recharts/shared wrapper on codex/usman-chart-foundation-review. Shared components are proposed for Shahmeer review; existing pages and shell are not refactored. Metadata preparation only, with a 384 MiB Node heap cap and scripts disabled; no package installation or full local build. Official ErrorBar documentation confirms asymmetric distances. Hosted verification pending.

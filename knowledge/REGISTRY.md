@@ -81,3 +81,5 @@ Managed questions (Usman): `backend/investigation/{live_graph,live_questions}.py
 Responsive shell preparation: `frontend/src/App.jsx`, `frontend/src/components/Sidebar.jsx` (Shahmeer; user-authorized integration preparation Usman), tested by `InvestigationMobileIntegration.test.jsx` and the question browser verifier. [Decision](decisions/DEC-20261120-responsive-shell-review.md).
 
 Research publication (Usman): `backend/investigation/research_results.py`, `experiments/results/publication.json`, sessions experiments route and `tests/test_research_results*.py`; [context](context/modules/investigation_decisions.md), [flow](flows/FLOW-decision-selection.md).
+
+Shared research-chart proposal: `frontend/src/components/ui/Research{Chart,Primitives}.jsx` (Shahmeer ownership; Usman review preparation), [context](context/modules/research_charts.md), [flow](flows/FLOW-research-publication.md).
