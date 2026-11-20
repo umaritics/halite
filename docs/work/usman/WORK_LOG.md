@@ -303,3 +303,19 @@ The committed experiment method fingerprint was recomputed against the final
 source and matched exactly (`EXPERIMENT_METHOD_FINGERPRINT=PASS`). The temporary
 API/preview servers were stopped after browser verification to freeze their logs.
 Disposable database containers remain isolated for subsequent phases.
+
+### Published review and independent score replay
+
+Draft PR #31: https://github.com/umaritics/halite/pull/31, stacked on #30.
+`verify_decision_selection.py` verified the final method fingerprint and reproduced
+the fit, every selection/stratified metric and all 1,000-draw intervals exactly
+from committed score cases, with no graph/network/model access. Evidence:
+`phase4-selection-replay.txt`. It also found 246/389 outcome keys absent from the
+retrieved top ten and 309/389 absent from the top three. The generated error
+analysis retains these negatives and gives deterministic examples without
+inventing human adjudication. This identifies why reweighting a fixed candidate
+list cannot by itself repair many misses.
+
+Case-score JSON formatting was compacted with parsed-value equality checks to
+keep the review small; no values or calculation sources changed. Removed a
+trailing blank line in a captured test log after the whitespace check flagged it.

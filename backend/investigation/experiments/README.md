@@ -42,3 +42,15 @@ coverage/accuracy remain visible in the table; no improvement is invented. The
 abstention-off baseline removes both confidence and evidence gates; the tau=0
 policy row still enforces at least two evidence records. Empty answer sets have
 null accuracy. Selection results cannot be presented as 2025 performance.
+
+Reproduce fitted parameters, the selection table and every stratified/bootstrap
+interval directly from the committed score cases, without FAA/network access:
+
+```bash
+# From repository root
+python docs/work/usman/verify_decision_selection.py
+```
+
+It first verifies the exact method fingerprint, then refits and replays the maths.
+`ERROR_ANALYSIS.md` reports the resulting miss counts and deterministic examples.
+This score replay supplements the full corpus-to-ranking command above.

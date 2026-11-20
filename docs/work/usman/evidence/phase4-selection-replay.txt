@@ -1,0 +1,89 @@
+{
+  "method_fingerprint_equal": true,
+  "fit_reproduced_exactly": true,
+  "selection_and_all_intervals_reproduced_exactly": true,
+  "stratified_results_reproduced_exactly": true,
+  "network_graph_model_calls": 0,
+  "held_out_evaluated": false,
+  "error_analysis": {
+    "n_pairs": 389,
+    "n_originals": 340,
+    "empty_ranking": 1,
+    "true_part_missing_top10": 246,
+    "true_part_missing_top3": 309,
+    "leading_hypothesis_fewer_than_two_records": 168,
+    "by_part_change": {
+      "unknown_to_named": {
+        "n": 53,
+        "missing_top10": 46,
+        "correct_top1": 2,
+        "correct_top3": 3
+      },
+      "same": {
+        "n": 144,
+        "missing_top10": 47,
+        "correct_top1": 49,
+        "correct_top3": 68
+      },
+      "named_to_named": {
+        "n": 192,
+        "missing_top10": 153,
+        "correct_top1": 5,
+        "correct_top3": 9
+      }
+    },
+    "examples": [
+      {
+        "case_id": "AALA202401032269->AALA202401112269",
+        "answer_part": "APU",
+        "ranked_top3": [
+          "LOCK",
+          "DOOR",
+          "BATTERY"
+        ],
+        "category": "unknown_to_named"
+      },
+      {
+        "case_id": "AALA202401035310->AALA202401101527",
+        "answer_part": "OVEN",
+        "ranked_top3": [
+          "FITTING",
+          "SLIDING WINDOW",
+          "PIN"
+        ],
+        "category": "unknown_to_named"
+      },
+      {
+        "case_id": "AALA202401035310->AALA202401105310",
+        "answer_part": "OVEN",
+        "ranked_top3": [
+          "FITTING",
+          "SLIDING WINDOW",
+          "PIN"
+        ],
+        "category": "unknown_to_named"
+      },
+      {
+        "case_id": "AALA202401038386->AALA202401098386",
+        "answer_part": "SEAL",
+        "ranked_top3": [
+          "DOOR",
+          "HANDLE",
+          "BOTTLE"
+        ],
+        "category": "unknown_to_named"
+      },
+      {
+        "case_id": "AALA202401057309->AALA202401087309",
+        "answer_part": "OVEN",
+        "ranked_top3": [
+          "BATTERY",
+          "TAT PROBE",
+          "TRANSMITTER"
+        ],
+        "category": "unknown_to_named"
+      }
+    ]
+  }
+}
+DECISION_SELECTION_REPLAY=PASS
