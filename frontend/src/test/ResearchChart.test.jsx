@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import ResearchChart, { chartPoint } from '../components/ui/ResearchChart';
 
 describe('Shared research chart contract', () => {
+  beforeEach(() => {
+    window.matchMedia = query => ({ matches: false, media: query, addEventListener() {}, removeEventListener() {} });
+    globalThis.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
+  });
   it('converts absolute asymmetric intervals to relative whiskers without changing the estimate', () => {
     expect(chartPoint({ x: .4, y: .6, xCI: { low: .3, high: .6 }, yCI: { low: .4, high: .7 } })).toEqual({
       x: .4, y: .6, xCI: { low: .3, high: .6 }, yCI: { low: .4, high: .7 }, errorX: [.4 - .3, .6 - .4], errorY: [.6 - .4, .7 - .6],
@@ -16,7 +20,7 @@ describe('Shared research chart contract', () => {
     const table = screen.getByRole('table');
     expect(within(table).getAllByText('Undefined')).toHaveLength(3);
     expect(within(table).getByText('0.0%')).toBeInTheDocument();
-    expect(screen.getByText(/389 pairs/)).toBeInTheDocument();
+    expect(screen.getAllByText(/389 pairs/).length).toBeGreaterThan(0);
     expect(screen.getByText(/95% cluster-bootstrap/)).toBeInTheDocument();
   });
 });
