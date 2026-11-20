@@ -319,3 +319,12 @@ list cannot by itself repair many misses.
 Case-score JSON formatting was compacted with parsed-value equality checks to
 keep the review small; no values or calculation sources changed. Removed a
 trailing blank line in a captured test log after the whitespace check flagged it.
+
+### Hosted acceptance
+
+PR #31 implementation and replay/error-analysis follow-up (`cb8200b`) passed
+all hosted checks: backend tests, frontend tests/build, Docker real-graph and
+session runtime smoke, Vercel preview and preview comments. Run:
+https://github.com/umaritics/halite/actions/runs/44715865191. Machine-readable
+check links/states are preserved in `evidence/phase4-github-checks.json`. This
+evidence-only commit does not change behavior or experiment calculations.
