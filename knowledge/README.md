@@ -44,6 +44,7 @@ When sources conflict: prefer code+tests; record a decision note; get team appro
 | Graph schema / Neo4j / data | [context/04_data_and_graph.md](context/04_data_and_graph.md) |
 | Investigation sessions, access, history and outcomes | [context/modules/investigation_sessions.md](context/modules/investigation_sessions.md) + [flows/FLOW-sessions.md](flows/FLOW-sessions.md) |
 | Beliefs / decision policy / calibration / abstention experiments | [context/modules/investigation_decisions.md](context/modules/investigation_decisions.md) + [flows/FLOW-decision-selection.md](flows/FLOW-decision-selection.md) |
+| Attributes / information gain / simulated technician | [context/modules/investigation_questions.md](context/modules/investigation_questions.md) + [flows/FLOW-question-selection.md](flows/FLOW-question-selection.md) |
 | Diagnostics / ranking / citations | [context/modules/diagnostics.md](context/modules/diagnostics.md) + [diagnostics_u1_audit.md](context/modules/diagnostics_u1_audit.md) + [flows/FLOW-diagnose.md](flows/FLOW-diagnose.md) |
 | Conflict engine / review queue | [context/modules/conflict_engine.md](context/modules/conflict_engine.md) + [flows/FLOW-conflict-review.md](flows/FLOW-conflict-review.md) |
 | Maintenance assets/history/ingest APIs | [context/modules/maintenance_api.md](context/modules/maintenance_api.md) + [flows/FLOW-ingest.md](flows/FLOW-ingest.md) |

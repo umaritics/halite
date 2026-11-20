@@ -81,4 +81,4 @@ ten equal-width bins for the leading named belief. 1,000 bootstrap draws cluster
 pairs sharing an original report; undefined answered accuracy stays null.
 
 The current benchmark is selection before the question policy, not final RQ4
-performance. No selected point, question effect or 2025 result is fabricated.
+performance. Question-policy effects are now measured separately in [the question package](investigation_questions.md). No selected operating point or 2025 result is claimed.

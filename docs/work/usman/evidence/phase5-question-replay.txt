@@ -1,0 +1,7 @@
+all_attributes: 389 traces, metrics and clustered intervals exactly reproduced
+structured_fields_only: 389 traces, metrics and clustered intervals exactly reproduced
+coded_fields_only: 389 traces, metrics and clustered intervals exactly reproduced
+QUESTION_METHOD_SOURCE=PASS
+FAA_ARCHIVE_EXTRACTION=PASS
+QUESTION_SELECTION_REPLAY=PASS
+HELD_OUT_2025_UNTOUCHED=true

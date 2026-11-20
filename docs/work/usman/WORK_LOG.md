@@ -328,3 +328,45 @@ session runtime smoke, Vercel preview and preview comments. Run:
 https://github.com/umaritics/halite/actions/runs/44715865191. Machine-readable
 check links/states are preserved in `evidence/phase4-github-checks.json`. This
 evidence-only commit does not change behavior or experiment calculations.
+
+## Phase 5 — offline question core and measured selection
+
+Implemented thirteen frozen report attributes, official FAA code descriptions,
+validated expected information gain/Bayesian updates, smoothed likelihoods and an
+incremental strict-submission-time index with full query-chain exclusion. The
+codebook is exactly reproducible from the retained official archive. Source:
+https://sdrs.faa.gov/Documents/SDRS%20Look-Up%20Tables.zip (archive SHA-256
+`5ab1d86f963a2f7c2ac2298c787bc875d5212aa4cd6f82df076122958651ced0`).
+
+Ran the original-report simulated technician on all 389 frozen 2024 pairs / 340
+originals. Compared information gain, seeded random and no questions using all
+thirteen, six structured and four coded attributes. Every likelihood uses earlier
+submissions outside the entire query chain. Correction parts are evaluation-only.
+Narrative mentions explicitly include negative mentions and can reuse initial
+text; structured-only controls expose that distinction. No 2025 source was read.
+
+At three questions, all-attribute top-1 is 0.2082 versus random 0.1799; paired
+95% interval for the difference includes zero. Top-3 differences also remain
+uncertain. Entropy reduction is clearer, but is not proof of diagnostic accuracy.
+Results, individual traces and 1,000-draw clustered intervals are committed under
+`backend/investigation/experiments/results/question_selection_2024_v2/`.
+No operating point, real-human answer or production question handling is claimed.
+
+Verification: **342 backend tests passed** with real isolated Neo4j/PostgreSQL,
+including hand-computed gain, not-sure, future/equal-time and chain exclusion,
+indexed/naive counting equality and complete synthetic experiment output. Ruff
+passed. `verify_question_selection.py` exactly reproduced all saved metrics and
+intervals, code-source hashes and official archive extraction without network.
+The pre-question baseline replay still matches all values and its original method
+fingerprint; its manifest now enumerates its frozen dependencies so new unrelated
+experiment files do not invalidate it. Broad backend coverage remains 76%.
+
+Generated a standalone PNG/PDF scientific figure with Matplotlib 3.9.4 in a
+separate reporting environment; no app dependency added. Visually inspected the
+nine-panel figure: readable legends, confidence bands, caveats and axes, no clipped
+text. Updated context, flow, registry/index, decision and acceptance matrix.
+
+The user authorized applying/testing the twelve-line coded-field patch on a
+separate review branch before backend preparation merges. That next change must
+retain pending Shahmeer review and Umar's actual staging backup/backfill. Live
+question integration and all remaining acceptance matrix items stay open.

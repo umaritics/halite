@@ -42,6 +42,8 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 | [DEC-20261016-docs-obsolete](DEC-20261016-docs-obsolete.md) | Move software/pitch docs to `docs/obsolete/` | accepted | Umar |
 | [DEC-20261016-ci-branch-trigger](DEC-20261016-ci-branch-trigger.md) | CI push includes graph-diagnostics branch | accepted | Umar, Usman |
 
+| [DEC-20261120-question-selection-protocol](DEC-20261120-question-selection-protocol.md) | Official codes, temporal likelihoods, three controls and authorized shared-field review preparation | offline implemented / integration review pending | Usman, Shahmeer |
+
 ## Template for new decisions
 
 Create `DEC-YYYYMMDD-short-slug.md` with: Status, Context, Decision, Consequences, Owners, Date. Add a row here.

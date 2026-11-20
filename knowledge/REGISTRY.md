@@ -67,3 +67,7 @@ owner review pending.
 | Module | Primary files | Owner | Knowledge |
 | --- | --- | --- | --- |
 | Decision core and offline selection | `backend/investigation/{ranker_port,beliefs,policy}.py`, `investigation/experiments/` | Usman | `context/modules/investigation_decisions.md`, `flows/FLOW-decision-selection.md` |
+
+## Question selection (Usman)
+
+`backend/investigation/{attributes,questions}.py`, `experiments/{temporal_questions,simulated_technician,import_faa_codes}.py`, `data/faa_codes.json`, `params/report-attributes-v1.json`: [context](context/modules/investigation_questions.md), [flow](flows/FLOW-question-selection.md). Offline core verified; live questions and shared ingest integration remain separate.

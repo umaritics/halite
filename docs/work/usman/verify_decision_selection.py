@@ -17,7 +17,10 @@ def main():
     output = root / 'results/decision_selection_2024_v2'
     result = json.loads((output / 'selection.json').read_text())
     digest = hashlib.sha256()
-    files = sorted(root.glob('*.py')) + [root.parent / n for n in ('beliefs.py', 'policy.py', 'ranker_port.py')]
+    # Precise dependencies of the frozen v2 baseline. New unrelated experiment
+    # modules must not invalidate an unchanged baseline method fingerprint.
+    files = [root / n for n in ('__init__.py', 'abstention_curve.py', 'calibration.py',
+                                'decision_benchmark.py', 'download_projection.py', 'offline.py')] + [root.parent / n for n in ('beliefs.py', 'policy.py', 'ranker_port.py')]
     for path in files:
         digest.update(path.name.encode() + b'\0' + path.read_bytes())
     assert digest.hexdigest() == result['method_source_sha256'], 'Method source has changed; do not silently reuse this result.'

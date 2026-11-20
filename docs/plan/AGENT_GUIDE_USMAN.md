@@ -501,3 +501,7 @@ Things only Usman does, which you support with tooling but never write for him:
 - Rashkin et al. (2023), *Measuring Attribution in Natural Language Generation Models*.
 - Min et al. (2023), *FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation*.
 - Es et al. (2023), *RAGAS: Automated Evaluation of Retrieval Augmented Generation*.
+
+### Verified implementation snapshot — offline WP-S5
+
+The pure question engine and three-control 2024 simulation are implemented. See `knowledge/context/modules/investigation_questions.md`, committed result traces and `docs/work/usman/evidence/phase5-*`. All 342 backend tests pass. Information-gain accuracy advantage is uncertain; no threshold or 2025 result is asserted. Live question UI/answers and the separately authorized shared-field integration remain open.

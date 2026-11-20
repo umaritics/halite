@@ -20,7 +20,7 @@ updated: 2026-11-20
    diagnostics and 1,000 cluster-bootstrap intervals; do not auto-select a point.
 7. Runtime Copilot derives uncalibrated beliefs and unconfigured abstention; the
    session service stores the exact response, hypothesis beliefs and entropy.
-8. Final questions/operating point/2025 evaluation are subsequent explicit gates.
+8. [Offline question selection](FLOW-question-selection.md) follows with strict temporal counts. Live questions, operating-point acceptance and 2025 evaluation remain explicit gates.
 
 ```mermaid
 flowchart LR
