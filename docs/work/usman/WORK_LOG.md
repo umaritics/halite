@@ -797,3 +797,11 @@ successful, 450 backend/279 frontend tests, real database/full-stack/browser
 checks. Transaction 89→66 distributions; CSV versions retained, dotenv settings
 test passed. Broad coverage 77.68%, still below 80%. Raw resolution/installed
 reports, JUnit and hash/job metadata committed; see DEPENDENCY_CLEANUP_VERIFICATION.md.
+
+Phase13 verified source 5817fd9 / hosted run 44882037412: all jobs successful,
+440 backend/279 frontend tests, actual fresh Neo4j empty and maintenance-only
+before ingest, all retired routes 404, idempotent ingest and full database/browser
+flows pass. Packages 89→64. Exact broad coverage 4,656/5,851 = 79.58%; rounded
+80% is not treated as target completion. Raw reports, runtime JSON, browser proof,
+JUnit and hash/job metadata retained. Separate owner review/merge remain pending.
+Next phase addresses meaningful missing coverage before remaining research work.

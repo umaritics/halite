@@ -1,6 +1,6 @@
 # Retire the software surface without purging existing graph data
 
-- Status: implemented on separate review branch; hosted verification pending
+- Status: implemented and hosted verified on 5817fd9; owner review/merge pending
 - Date: 2026-11-21
 - Owners: Usman; Shahmeer owner review required for importer/domain integration
 
@@ -29,4 +29,8 @@ Existing graph data is not deleted. Existing graph endpoints/reset guards and
 legacy graph mixins remain compatible, including explicit test/manual seeds.
 The Neo4j lifecycle unit adapter is synthetic; actual graph operation is checked
 separately by hosted disposable Neo4j tests and full-stack smoke. Staging is not
-modified. Owner review/merge and a green verified run remain explicit gates.
+modified. Owner review/merge remain explicit gates.
+
+Run 44882037412 passed 440 backend/279 frontend tests and full live disposable
+Neo4j/Postgres/browser smoke. Exact broad coverage 79.58% remains below 80%;
+see LEGACY_RETIREMENT_VERIFICATION.md and phase13 proof.

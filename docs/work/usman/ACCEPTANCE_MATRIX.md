@@ -6,8 +6,8 @@ A local pass is not a merge, deployment, cross-review or empirical research resu
 
 | Package / deliverable | Current authoritative evidence | State and remaining acceptance |
 | --- | --- | --- |
-| WP-S0 backend preparation | Phase 1 commit `51196fd`, structural proof, PR #27 | Extension points verified; legacy/dependency cleanup and cross-review/merge remain |
-| WP-S11 lint/coverage | CI workflow, Ruff config/dev dependency; phase 2 lint and coverage outputs | Latest hosted lint/JUnit/coverage verified on `ecdc264`: 445 backend tests, 78% broad coverage; NFR-04 80% target remains open |
+| WP-S0 backend preparation | Phase 1 commit `51196fd`, structural proof, PR #27 | Extension points and full software/dependency retirement verified (PR #42/#43; source 5817fd9). Cross-review/merge remain |
+| WP-S11 lint/coverage | CI workflow, Ruff config/dev dependency; phase 2 lint and coverage outputs | Latest hosted lint/JUnit/coverage verified on `5817fd9`: 440 backend tests, 4,656/5,851 statements = 79.58% exact broad coverage; NFR-04 80% target remains open |
 | Form 10 | `docs/fyp1-final/PANEL_ACTION_REGISTER.md` | Template/evidence register provided; actual Mid-I feedback and supervisor confirmation still required |
 | WP-S1 adapter / degraded / cache | Adapter and degraded tests; phase 1/2 results; production session smoke | Backend and feature UI verified; quick diagnosis sends `allow_degraded=true` |
 | WP-S2 sessions | Three tables; lifecycle/access/replay tests on SQLite and PostgreSQL; local production-startup smoke | Backend verified locally and by GitHub CI on `4764581` |
@@ -21,8 +21,9 @@ A local pass is not a merge, deployment, cross-review or empirical research resu
 | WP-S10 model comparison | Frozen twenty-real-case packet, portable standard-library runner, raw journals/resume and generated comparison table | PR #37; user requested self-contained runner for M4 execution; Eleven focused tests, isolated-Python HTTP/resume/error smoke and deterministic ZIP verified; actual M4 model measurements and Usman decision remain |
 | Research result product panel | PRs #38–#40; `ecdc264`, hosted run 44856875802; 445 backend / 275 frontend tests; real production-browser and retained screenshot proof | Implemented and verified: endpoint, controls, 95% intervals, both themes at 1280/390px, artifact parity and error/empty/retry. Shared-file owner review/merge, accepted-point marker and final held-out publication remain |
 | Report / diagrams / disclosure / defense | Explicitly authorized AI-assisted design draft; engineering knowledge and disclosure log | Student-owned report review, final traceability/diagrams, disclosure and genuine defense/rehearsal evidence remain |
-| Integration/release | Review PRs #27–#40 have hosted verification; source-tested research panel at `ecdc264`; staging unchanged | Cross-review, accepted shared contracts, merged green CI, deploy and full UI/runtime verification remain |
+| Integration/release | Review PRs #27–#43 have hosted verification; latest retirement 5817fd9 retains database/browser flows; staging unchanged | Cross-review, accepted shared contracts, merged green CI, deploy and full UI/runtime verification remain |
 
-Next execution: question-conditioned selection, accepted operating point and held-out
-evaluation; retain all human/review and backend cleanup/coverage gates. Never mark
+Next execution: meaningful verification for the exact coverage gap, then question-
+conditioned selection, accepted operating point and held-out evaluation; retain
+all human/review/release gates. Never mark
 the full goal complete while any required cell above remains unverified.

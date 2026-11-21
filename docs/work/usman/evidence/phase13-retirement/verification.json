@@ -1,0 +1,43 @@
+{
+  "source_commit": "5817fd9692dfe7ad1109de46a90987dc2a478d61",
+  "workflow_url": "https://github.com/umaritics/halite/actions/runs/44882037412",
+  "jobs": [
+    {
+      "name": "Backend tests (Python 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44882037412/job/136779283938"
+    },
+    {
+      "name": "Frontend tests and build (Node 20)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44882037412/job/136779284121"
+    },
+    {
+      "name": "Docker Compose real-graph smoke test",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44882037412/job/136779284160"
+    }
+  ],
+  "backend_tests": 440,
+  "frontend_tests": 279,
+  "coverage": {
+    "version": "7.17.4",
+    "timestamp": "1795247531946",
+    "lines-valid": "5851",
+    "lines-covered": "4656",
+    "line-rate": "0.7958",
+    "branches-covered": "0",
+    "branches-valid": "0",
+    "branch-rate": "0",
+    "complexity": "0"
+  },
+  "coverage_target_met": false,
+  "artifact_sha256": {
+    "coverage.xml": "a4c5d1810dfd99259ec7bd06cbcb0a28209c53fddbc5961a2ce1793a05f987ae",
+    "dependency-cleanup-summary.json": "8baf7aeec0b33122365092667a1bfb8f2d5c9a64af1c8173c7543ef4385c6d29",
+    "dependency-install-report.json": "d6834652f7296ebe39edbdfbeedc12408f9d57da2b859a5d81ebafaf8c88485e",
+    "dependency-installed.json": "c378761820b4212edce01a0c39671a5aed5e9048ab2a6e773a1e8b4a11541247",
+    "test-results.xml": "5ab5806e0fe760b8cbc2d1163da8949e17e392f921276d2b57d99b06aa407835"
+  },
+  "scope": "Full legacy retirement; explicit graph test/manual reset compatibility retained, no staging or stored-data purge."
+}
