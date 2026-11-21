@@ -41,7 +41,7 @@ function Results({ publication }) {
           {Object.entries(METRIC_LABELS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
         </select></label>
       </div>
-      <ResearchChart title={`${METRIC_LABELS[metric]} after follow-up questions`} {...sample} xLabel="Question budget" yLabel={METRIC_LABELS[metric]} xFormat={String} yFormat={format} xDomain={[0, 3]} yDomain={metric === 'entropy' ? [0, 'auto'] : [0, 1]}
+      <ResearchChart title={`${METRIC_LABELS[metric]} after follow-up questions`} {...sample} xLabel="Question budget" yLabel={METRIC_LABELS[metric]} xFormat={String} yFormat={format} xDomain={[0, Math.max(...cohort.policies.information_gain.map(row => row.after_questions))]} xTicks={cohort.policies.information_gain.map(row => row.after_questions)} yDomain={metric === 'entropy' ? [0, 'auto'] : [0, 1]}
         series={questionSeries(cohort, metric)} caption={`${GROUP_LABELS[group]}. A simulated technician supplies only original-report attributes; missing answers remain “not sure”. The question budget is a maximum, not a guarantee that every case was asked that many questions. Intervals cluster pairs sharing an original report.`} />
       <p className="text-sm text-secondary" data-testid="paired-difference">At budget {difference.after_questions}, {POLICY_LABELS.information_gain} minus {POLICY_LABELS.random}: {format(difference[metric])}; paired 95% interval {format(ci.low)} to {format(ci.high)}. {includesZero ? 'The interval includes zero; an advantage is not established at this budget.' : metric === 'entropy' ? 'Lower entropy means more concentrated relative support; it does not establish greater accuracy.' : 'The paired interval excludes zero for this metric and cohort.'}</p>
     </section>

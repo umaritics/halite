@@ -17,7 +17,7 @@ const intervalText = (interval, format) => interval?.low != null && interval?.hi
 
 /** Points are exact saved values. Missing values stay absent from the plot and explicit in the table. */
 export default function ResearchChart({ title, year, n, originals, resamples, caption, series,
-  xLabel, yLabel, xFormat = percentage, yFormat = percentage, xDomain = [0, 1], yDomain = [0, 1] }) {
+  xLabel, yLabel, xFormat = percentage, yFormat = percentage, xDomain = [0, 1], yDomain = [0, 1], xTicks }) {
   const id = useId();
   return <figure className="halite-card min-w-0 p-4 sm:p-6" aria-labelledby={`${id}-title`}>
     <h2 id={`${id}-title`} className="font-brand text-lg text-primary">{title}</h2>
@@ -25,7 +25,7 @@ export default function ResearchChart({ title, year, n, originals, resamples, ca
     <div className="mt-4 min-w-0" aria-hidden="true">
       <ScatterChart responsive style={{ width: '100%', height: 340 }} margin={{ top: 16, right: 24, bottom: 32, left: 12 }}>
         <CartesianGrid stroke="currentColor" className="text-secondary" opacity={0.18} />
-        <XAxis type="number" dataKey="x" domain={xDomain} tickFormatter={xFormat} name={xLabel} tick={{ fill: 'currentColor', fontSize: 12 }} label={{ value: xLabel, position: 'bottom', fill: 'currentColor', fontSize: 12 }} />
+        <XAxis type="number" dataKey="x" domain={xDomain} ticks={xTicks} tickFormatter={xFormat} name={xLabel} tick={{ fill: 'currentColor', fontSize: 12 }} label={{ value: xLabel, position: 'bottom', fill: 'currentColor', fontSize: 12 }} />
         <YAxis type="number" dataKey="y" domain={yDomain} tickFormatter={yFormat} name={yLabel} tick={{ fill: 'currentColor', fontSize: 12 }} width={64} />
         <Tooltip cursor={{ strokeDasharray: '3 3' }} content={({ active, payload }) => {
           const point = payload?.[0]?.payload;
@@ -44,7 +44,7 @@ export default function ResearchChart({ title, year, n, originals, resamples, ca
       {series.map(item => <li key={item.id} className="flex items-center gap-2"><span aria-hidden="true" className="h-3 w-3 rounded-full" style={{ backgroundColor: RESEARCH_COLOURS[item.role] }} />{item.label}</li>)}
     </ul>
     <figcaption className="mt-4 text-sm text-secondary">{caption}</figcaption>
-    <details className="mt-4 text-sm text-primary"><summary className="cursor-pointer underline">View exact values and intervals</summary>
+    <details className="mt-4 text-sm text-primary"><summary className="cursor-pointer underline">View values and intervals</summary>
       <div className="mt-3 overflow-x-auto"><table className="w-full text-left text-xs">
         <caption className="sr-only">{title}: {year}, {n} pairs. Undefined values are not plotted.</caption>
         <thead><tr>{['Policy / point', xLabel, '95% interval (x)', yLabel, '95% interval (y)'].map(label => <th key={label} scope="col" className="whitespace-nowrap border-b border-theme p-2">{label}</th>)}</tr></thead>

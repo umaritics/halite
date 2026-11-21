@@ -28,3 +28,6 @@ Official Recharts reference: https://recharts.github.io/en-US/api/ErrorBar/
 
 Targeted tests check asymmetric conversion and accessible undefined-value output.
 Full build/tests and later actual product-page browser checks run in hosted CI.
+
+The optional `xTicks` input accepts saved discrete budgets; investigation question
+charts pass the recorded 0/1/2/3 values rather than fractional auto-generated ticks.
