@@ -1,4 +1,4 @@
-\documentclass{fast-nuces-bs}
+\documentclass[openany]{fast-nuces-bs}
 %\documentclass{article}
 
 \usepackage{blindtext}
@@ -8,10 +8,15 @@
 \usepackage{sectsty}
 \usepackage{tikz-uml}
 \usepackage{titlesec}
+\usepackage{etoolbox}
 \usepackage{longtable,booktabs,array,graphicx,xcolor,tabularx,multirow,enumitem,float,caption,listings,url}
 \usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,calc,backgrounds,decorations.pathreplacing}
 \graphicspath{{./ThesisFigs/}{../screenshots/}{./figures/}}
 \setlist{itemsep=2pt,topsep=4pt}
+\newcommand{\tablefont}{\small}
+\AtBeginEnvironment{longtable}{\tablefont}
+\renewcommand{\topfraction}{0.9}\renewcommand{\bottomfraction}{0.9}\renewcommand{\textfraction}{0.1}\renewcommand{\floatpagefraction}{0.7}
+\setcounter{topnumber}{3}\setcounter{bottomnumber}{3}\setcounter{totalnumber}{5}
 \setlength{\tabcolsep}{3pt}
 \sloppy\setlength{\emergencystretch}{3em}
 \renewcommand{\arraystretch}{1.12}
@@ -73,7 +78,7 @@
 %Briefly state the (1) research problem, (2) methodology, (3) key results, and (4) conclusion. Generally, abstracts are between 150 and 200 words–roughly 10-15 sentences.
 %\end{abstract}
 
-\cleardoublepage
+\clearpage
 \pagenumbering{roman}
 \input{chapters/01_students_submission}
 \input{chapters/02_anti_plagiarism}
@@ -84,7 +89,7 @@
 % The class prints the contents and the lists of figures and tables with the title page.
 \input{chapters/07_abbreviations}
 
-\cleardoublepage
+\clearpage
 \pagenumbering{arabic}
 \input{chapters/chapter1_introduction}
 \input{chapters/chapter2_research}
