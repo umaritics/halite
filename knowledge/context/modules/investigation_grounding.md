@@ -91,3 +91,7 @@ the exact source without invented positions. Old saved audits are not recomputed
 Highlights are labelled word overlap; pending/experimental ratings remain clear.
 New turns save annotations with the existing atomic audit, and reload replays them
 exactly. Manual ranking/turn selection clears stale sentence highlights.
+
+Source `4136fc3` / hosted run 44858279238 verifies 449 backend and 279 frontend
+tests plus actual quick/session Unicode source marks, saved replay and both
+themes/phone layout. Proof: `docs/work/usman/SOURCE_HIGHLIGHTING_VERIFICATION.md`.

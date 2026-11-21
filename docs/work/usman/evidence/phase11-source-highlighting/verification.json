@@ -1,0 +1,37 @@
+{
+  "workflow_url": "https://github.com/umaritics/halite/actions/runs/44858279238",
+  "source_commit": "4136fc30f9c7feb25bd3bc9231e73d4b328cf087",
+  "conclusion": "success",
+  "backend_passed": 449,
+  "frontend_passed": 279,
+  "backend_coverage_percent": 78,
+  "jobs": [
+    {
+      "name": "Docker Compose real-graph smoke test",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44858279238/job/136705488824"
+    },
+    {
+      "name": "Frontend tests and build (Node 20)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44858279238/job/136705489071"
+    },
+    {
+      "name": "Backend tests (Python 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44858279238/job/136705489128"
+    }
+  ],
+  "visual_review": "Inspected quick-source dark/light, desktop saved-evidence dark and phone saved-evidence light. Exact emoji-prefixed text and both highlighted words are visible, with no clipped narrative or horizontal page overflow.",
+  "data_kind": "Explicitly synthetic CI fixtures; no empirical human/model performance claim.",
+  "files": {
+    "ci-summary.txt": "74a20501d9875a9842a2cb89b79e68c67488722ea39483b1da6c6934b4350587",
+    "research-browser-proof.json": "da2d8abed43797e100b56457eaa42ca0d76944986eb5ea779346c49665d69620",
+    "source-quick-dark.png": "bd61cb21cc9d1b3d80cc17d26c8e9b6e131cff4645043e8a0043921415cff819",
+    "source-quick-light.png": "840ed92cade95040f77dce16b71c3cc896e9d6a095d98e4bcc60796b61577984",
+    "source-session-dark-1280.png": "e9f9da449e9a87e941a97bf714cc6e5f294ac249109b8226b9a258258638d8f0",
+    "source-session-dark-390.png": "43f463229bad796f7897cafbd91662b735454102dc7506fdbbec344844e5f807",
+    "source-session-light-1280.png": "a6f8a42ec2c523de746f662df8b16207680566d664ab28b2d3c0caeb50bccea0",
+    "source-session-light-390.png": "dad7f46e7f712f45f249306465b0c16eec46a4a41ef48175e05d22933113a206"
+  }
+}

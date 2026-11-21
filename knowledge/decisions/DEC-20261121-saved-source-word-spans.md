@@ -1,6 +1,6 @@
 # Saved word locations use browser-native coordinates
 
-- Status: implemented; hosted verification pending
+- Status: implemented; hosted verification passed (source 4136fc3, run 44858279238)
 - Date: 2026-11-21
 - Owner: Usman
 

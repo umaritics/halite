@@ -754,3 +754,7 @@ Hosted regression/browser checks are pending; no local dependency install or
 heavy workload was started.
 
 Source-highlighting run 44857961828 passed backend/frontend but the browser fixture ingest rejected its stale login JWT after page reloads rotated the session. Preserved the correct product auth behavior; the verifier now uses the latest bearer token observed on the browser’s actual authenticated requests, including after each navigation. Tokens remain only in process memory and are not logged or saved. No auth workaround or credential persistence was added.
+
+### Phase 11 verified handoff
+
+Source 4136fc3 / hosted run 44858279238 passed all jobs: 449 backend tests, 279 frontend tests, lint, builds, real-graph/session smoke and production-browser source checks. Exact Unicode source text, word marks and saved grounding JSON replay verified in both themes and at phone width. Inspected screenshots and retained six source screenshots, combined browser JSON, filtered CI counts and job/file provenance in evidence/phase11-source-highlighting. SOURCE_HIGHLIGHTING_VERIFICATION.md records files, executed checks, AI assistance and remaining gates. Broad coverage remains 78%; full objective remains active. Phase 10 final documentation head 9476086 also passed all hosted checks in run 44857290515.
