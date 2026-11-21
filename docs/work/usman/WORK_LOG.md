@@ -892,3 +892,20 @@ pass. Raw reports, hosted preflight, browser/log/commit/hash evidence and a
 self-contained verification note are retained. The accepted .80/.50 point and
 pre-test freeze phase are complete; no 2025 access or runtime activation. Next
 is the held-out procedure and execution, with all remaining full-goal gates kept.
+
+## Phase 17 — verified procedure before real held-out execution
+
+Implemented a source-hash-guarded, receipt-backed 2025 procedure around the
+accepted .80/.50 point. No refit/vocabulary fit/sweep; unchanged ranker and
+temporal/chain filtering; original-field simulation; all controls/budgets/strata,
+fixed stopping, named-top ten-bin ECE and abstention-off at identical terminal
+beliefs/questions. Added a scalar point verifier and complete interval replay.
+
+Synthetic tests cover temporal/answer-key separation, ECE arithmetic, frozen
+preflight before networking, canonical download metadata/failure cleanup and
+full synthetic export plus independent replay. Normal PR events cannot download
+2025. The actual job requires a one-shot label event and successful exact-head
+backend/frontend/full-stack checks. Procedure hashes and the terminal comparison
+definition are declared before real access; accepted numeric settings unchanged.
+Historical prototype exposure is disclosed without claiming a project-wide blind
+2025 year. No real 2025 archive has been opened by this preparation.

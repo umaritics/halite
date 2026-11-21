@@ -96,3 +96,24 @@ Preflight only reads committed frozen artifacts. It does not download/evaluate
 2025 or enable managed runtime. Protocol retains all controls, part-change
 strata, 1000 cluster draws, ECE and abstention-off comparison, plus the
 predeclared label-availability sensitivity analysis.
+
+## Controlled held-out execution
+
+```mermaid
+flowchart LR
+  Synthetic[Synthetic 2025 cases / full CI on exact head] --> Label[Explicit run-frozen-held-out label event]
+  Label --> Hashes[Validate policy / protocol / procedure source hashes]
+  Hashes --> History[Download or load exact frozen 2023/2024 projections]
+  History --> Receipt[Write pre-access receipt]
+  Receipt --> Test[2025 official projection / frozen-receipt metadata]
+  Test --> Rank[Same bounded ranker / strict earlier time and chain exclusion]
+  Rank --> Questions[Original-field answers / fixed 2023 schema and beliefs]
+  Questions --> Metrics[All controls and strata / 1000 cluster intervals / ECE]
+  Metrics --> Verify[Independent point scoring and full interval replay]
+  Verify --> Artifacts[Results / traces / source fingerprints / receipts]
+```
+
+Ordinary PR events perform preflight only. Download/evaluation requires an
+explicit label event and successful exact-head full-stack checks. No source
+overwrite, refitting or sweep is allowed. Missing/mismatched historical data
+stops before test access; existing test data needs matching freeze provenance.

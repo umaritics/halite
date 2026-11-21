@@ -96,3 +96,10 @@ The regular full CI still runs separately and enforces the 80% coverage gate.
 Backend CI also runs `python -m investigation.experiments.frozen_policy` and
 uploads `frozen-policy-preflight.json`. This validates the accepted research
 choice/protocol without touching a 2025 archive or enabling the live flag.
+
+`held-out.yml` runs procedure preflight on ordinary relevant PR events. The real
+one-thread, 35-minute-bounded evaluation runs only for the explicit
+`run-frozen-held-out` label event, after successful backend/frontend/full-stack
+checks on the exact head. Only existing NumPy is installed. Results/traces and
+compressed source projections are separate CI artifacts; raw CSVs are not
+committed. No staging or model endpoint is used.

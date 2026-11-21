@@ -116,3 +116,5 @@ Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/wo
 | selected .80/.50 policy, held-out preflight, label availability | decisions/DEC-20261121-frozen-research-point.md; investigation/experiments/frozen_policy.py; docs/fyp1-final/OPERATING_POINT_DECISION.md |
 
 | reproduce fit/selection label timing | docs/work/usman/audit_label_availability.py; evidence/phase16-frozen-policy/label-availability-audit.json |
+
+| held-out 2025 execution, ECE, fixed terminal counterfactual | investigation/experiments/held_out.py; docs/work/usman/verify_held_out.py; decisions/DEC-20261121-held-out-procedure.md |

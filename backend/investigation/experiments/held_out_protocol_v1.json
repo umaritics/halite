@@ -54,5 +54,15 @@
     "No tuning, threshold sweeps, refitting or new vocabulary after held-out access.",
     "Report all part-change strata, source fingerprints, discarded pairs, missing labels and temporal availability.",
     "Expose poor results, sensitivity overlap and relative-support wording."
-  ]
+  ],
+  "procedure_files_sha256": {
+    "backend/investigation/experiments/held_out.py": "ad332351948a0e6fce8d5e1a26e3f5174a00e791322775d9a97a7e2a062ae741",
+    "backend/tests/test_held_out.py": "5ebbd70fd0dedf634c6b36f9ae22fec49c2978c1f5ca85df9a124977bec64ff6",
+    "docs/work/usman/verify_held_out.py": "6a452f3c441073a68a6da86c4adc032c0a3c1a74544d11f5591d16d7b6ccf005",
+    "docs/work/usman/verify_policy_selection.py": "6848d749e1218bdfe573d9811db8be3083c2d5791941b35b4ec2c574449fc776",
+    ".github/workflows/held-out.yml": "9fab758da959302c1e3734f36d54e7ac96c12a425a76e20ec1e9e6f05dd1b1dd"
+  },
+  "execution_gate": "Synthetic/full-stack CI must succeed on the exact head before the one-shot run-frozen-held-out label event.",
+  "abstention_off_terminal_definition": "Use identical chosen-policy terminal beliefs and questions; remove only final confidence/evidence answer gates.",
+  "historical_exposure_note": "The legacy Mid-I ranker was developed with an earlier 2025 POC; this is a frozen-configuration temporal benchmark, not a claim of project-wide blind exposure."
 }

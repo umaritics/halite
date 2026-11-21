@@ -148,3 +148,25 @@ Frozen choice/preflight is hosted verified on b97954d / run 44903750796: 476
 backend/279 frontend tests and full database/browser flows pass; coverage 81.37%.
 Hosted preflight fingerprints match committed policy/protocol files. See
 FROZEN_POLICY_VERIFICATION.md; actual held-out execution remains next.
+
+## Frozen held-out procedure
+
+`experiments/held_out.py` validates the accepted choice and procedure hashes
+before source access. It verifies historical projections against the frozen
+2024 fingerprint before opening the 2025 archive and writes a pre-access receipt.
+The dedicated downloader records source/projection and pre-access policy/protocol
+fingerprints. Existing held-out sources need that matching receipt. No fitting,
+vocabulary fitting or threshold search is called.
+
+Evaluation reuses the unchanged bounded ranker, strict temporal/chain adapter,
+2023 belief/schema files, original-report simulation and fixed stopping helper.
+All pools/strategies/budgets/part-change strata and primary/post-selection-label
+strata remain. Calibration is named-top ECE with ten equal-width bins on every
+terminal case (including abstentions). Abstention-off retains exactly the same
+terminal beliefs/questions and removes only answer gates. Raw traces support
+independent scalar scoring and full interval replay.
+
+The existing Mid-I ranker came from a prototype with an earlier 2025 POC. The
+report therefore describes a frozen-configuration temporal benchmark rather
+than a project-wide claim of no prior exposure to any 2025 report. Poor results
+and retrieval misses remain visible; the accepted thresholds cannot be retuned.

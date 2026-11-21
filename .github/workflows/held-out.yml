@@ -1,0 +1,74 @@
+name: Frozen held-out evaluation
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled]
+    paths:
+      - 'backend/investigation/experiments/held_out*'
+      - 'backend/tests/test_held_out.py'
+      - 'docs/work/usman/verify_held_out.py'
+      - '.github/workflows/held-out.yml'
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate frozen procedure without test-data access
+        env:
+          PYTHONPATH: backend
+        run: python -m investigation.experiments.held_out --preflight-only
+  evaluate:
+    if: github.event.action == 'labeled' && github.event.label.name == 'run-frozen-held-out'
+    needs: preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      PYTHONPATH: backend
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Require successful synthetic and full-stack checks on this exact head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" > "$RUNNER_TEMP/check-runs.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          checks = json.loads((Path(os.environ['RUNNER_TEMP'])/'check-runs.json').read_text())['check_runs']
+          required = {'Backend tests (Python 3.11)', 'Frontend tests and build (Node 20)', 'Docker Compose real-graph smoke test'}
+          passed = {row['name'] for row in checks if row['conclusion'] == 'success' and row['head_sha'] == os.environ['HEAD_SHA']}
+          if not required.issubset(passed):
+              raise SystemExit('The exact head must pass synthetic/full-stack verification before held-out access.')
+          print('EXACT_HEAD_VERIFICATION=PASS')
+          PY
+      - name: Install existing pinned numerical dependency
+        run: python -m pip install numpy==1.26.4
+      - name: Execute fixed test with pre-access receipt
+        run: python -m investigation.experiments.held_out --data-directory "$RUNNER_TEMP/frozen-sources" --output "$RUNNER_TEMP/held-out-results" --download
+      - name: Independently verify point metrics and replay all intervals
+        run: python docs/work/usman/verify_held_out.py "$RUNNER_TEMP/held-out-results"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frozen-held-out-results
+          path: ${{ runner.temp }}/held-out-results/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frozen-held-out-source-projections
+          path: ${{ runner.temp }}/frozen-sources/
