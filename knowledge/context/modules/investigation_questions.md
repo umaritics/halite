@@ -51,3 +51,9 @@ scientific figure are under `docs/work/usman` and `docs/fyp1-final/figures`.
 The four-field ingest patch and idempotent backfill are applied/tested on the
 separate user-authorized review branch. Shared staging backup/backfill and Shahmeer review remain distinct
 acceptance steps. See `CODED_FIELDS_INTEGRATION.md` for exact scope and authorization.
+
+`test_research_artifact_tools.py` reproduces every checked-in official codebook
+entry and fingerprint from the retained archive. It also exercises checksum
+refusal through the actual command and malformed/missing/duplicate workbook
+failures with explicitly synthetic containers. These checks do not introduce
+new FAA meanings or download updated tables.

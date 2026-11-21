@@ -71,7 +71,7 @@ jobs:
         run: >-
           python -m pytest -q --junitxml=test-results.xml
           --cov=api --cov=agents --cov=services --cov=graph --cov=db --cov=investigation
-          --cov-report=term-missing --cov-report=xml:coverage.xml
+          --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=80
       - name: Upload backend verification reports
         if: always()
         uses: actions/upload-artifact@v4

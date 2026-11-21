@@ -108,3 +108,5 @@ Source-word interaction (Usman): `backend/investigation/grounding.py::source_mat
 Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/workflows/ci.yml`, `docs/work/usman/verify_dependency_cleanup.py`, `backend/tests/test_settings_env_file.py`; [decision](decisions/DEC-20261121-dependency-cleanup.md), [CI context](context/modules/devops.md). Separate legacy retirement authorization/proposal: `docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md`.
 
 | legacy retirement, 404, no startup seed | decisions/DEC-20261121-legacy-retirement.md; docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md |
+
+| exact coverage gate, artifact provenance tests | decisions/DEC-20261121-research-tool-verification.md; backend/tests/test_research_artifact_tools.py |

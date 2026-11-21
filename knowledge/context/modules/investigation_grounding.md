@@ -95,3 +95,9 @@ exactly. Manual ranking/turn selection clears stale sentence highlights.
 Source `4136fc3` / hosted run 44858279238 verifies 449 backend and 279 frontend
 tests plus actual quick/session Unicode source marks, saved replay and both
 themes/phone layout. Proof: `docs/work/usman/SOURCE_HIGHLIGHTING_VERIFICATION.md`.
+
+Artifact-tool tests execute the actual part-vocabulary fitter and command on
+synthetic CSVs, checking normalization, unknown exclusion, provenance and saved
+output preservation. Selection/held-out years and empty corpora must fail
+without publishing an output. No human labels or empirical metrics are created
+by these tests.

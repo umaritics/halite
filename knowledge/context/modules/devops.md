@@ -73,3 +73,12 @@ collection. Declare its baseline version explicitly and audit its presence.
 
 After software retirement, pypdf and docx2txt are also removed because their
 sole importer was deleted. Dependency audit now rejects both roots/packages.
+
+## Exact coverage acceptance gate
+
+Backend pytest retains the existing six source scopes and adds
+`--cov-fail-under=80`. `backend/.coveragerc` reports two decimals so a 79.58%
+result cannot round into acceptance. No files are omitted from measurement.
+Artifact-tool integration tests reproduce the retained official FAA archive,
+exercise checksum rejection and malformed lookup rows, and enforce 2023-only
+grounding vocabulary fitting with no overwrite of saved results.

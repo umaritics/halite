@@ -805,3 +805,13 @@ flows pass. Packages 89→64. Exact broad coverage 4,656/5,851 = 79.58%; rounded
 80% is not treated as target completion. Raw reports, runtime JSON, browser proof,
 JUnit and hash/job metadata retained. Separate owner review/merge remain pending.
 Next phase addresses meaningful missing coverage before remaining research work.
+
+## Phase 14 — research artifact-tool verification and exact coverage gate
+
+The phase13 exact broad report was 79.58%, below target despite rounded terminal
+80%. Added meaningful integration tests for official FAA codebook reproduction,
+checksum refusal, malformed table rejection and 2023-only vocabulary fitting/CLI
+output preservation. Added the 80% CI gate at two-decimal precision, retaining
+all existing measured source scopes and no omissions. Tiny local standard-library
+archive extraction reproduced all 71 official entries and fingerprints exactly;
+full hosted regression and exact coverage evidence remain pending.

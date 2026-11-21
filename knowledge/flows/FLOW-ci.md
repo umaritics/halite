@@ -70,3 +70,16 @@ flowchart LR
 Pandas is an actual runtime dependency. Dotenv remains needed transitively;
 removing its direct requirement does not mean the package disappears. NumPy
 remains at the already-installed baseline instead of an unrelated major upgrade.
+
+## Coverage target enforcement
+
+```mermaid
+flowchart LR
+  Tests[Existing six source scopes / pytest] --> Coverage[Coverage with two-decimal precision]
+  Coverage --> Gate[Require at least 80 percent]
+  Gate --> Result[CI pass or explicit failure]
+  Coverage --> XML[Raw XML / JUnit artifacts even after failure]
+```
+
+No file omission or source-scope reduction is used to cross the target. Artifact
+tooling tests exercise retained real inputs and explicit isolation/error paths.
