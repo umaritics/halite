@@ -72,6 +72,8 @@ jobs:
           python -m pytest -q --junitxml=test-results.xml
           --cov=api --cov=agents --cov=services --cov=graph --cov=db --cov=investigation
           --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=80
+      - name: Validate frozen research choice without held-out access
+        run: python -m investigation.experiments.frozen_policy > frozen-policy-preflight.json
       - name: Upload backend verification reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -83,6 +85,7 @@ jobs:
             backend/dependency-install-report.json
             backend/dependency-installed.json
             backend/dependency-cleanup-summary.json
+            backend/frozen-policy-preflight.json
 
   frontend:
     name: Frontend tests and build (Node 20)

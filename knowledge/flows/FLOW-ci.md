@@ -83,3 +83,7 @@ flowchart LR
 
 No file omission or source-scope reduction is used to cross the target. Artifact
 tooling tests exercise retained real inputs and explicit isolation/error paths.
+
+The backend job runs the frozen-policy preflight after successful tests. Its
+JSON artifact records policy/protocol fingerprints and confirms no held-out
+access or runtime activation. The full test/coverage artifact retains it.

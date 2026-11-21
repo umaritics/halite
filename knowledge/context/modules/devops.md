@@ -92,3 +92,7 @@ method/protocol/tests/verifier. It installs only the existing pinned NumPy, limi
 numerical threads to one, verifies every stopping-table metric independently and
 uploads the selection artifact. It does not deploy or read staging/raw FAA data.
 The regular full CI still runs separately and enforces the 80% coverage gate.
+
+Backend CI also runs `python -m investigation.experiments.frozen_policy` and
+uploads `frozen-policy-preflight.json`. This validates the accepted research
+choice/protocol without touching a 2025 archive or enabling the live flag.

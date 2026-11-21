@@ -58,3 +58,10 @@ uncited-sentence whitelist and grounding thresholds remain separate decisions.
 Evidence: [hosted sweep and independent verification](https://github.com/umaritics/halite/actions/runs/44883664943).
 The full 4,536-row JSON/CSV is in `backend/investigation/experiments/results/policy_selection_2024_v1/`.
 Its JSON SHA-256 is `6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e`.
+
+## Subsequent user decision
+
+Usman explicitly selected **0.80 answer / 0.50 gain** after this review. The
+acceptance and frozen-input details are recorded in
+`docs/fyp1-final/OPERATING_POINT_DECISION.md`. This original review remains as
+the evidence shown before that choice; 2025 was not used to select it.

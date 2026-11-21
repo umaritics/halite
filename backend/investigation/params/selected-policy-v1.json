@@ -1,0 +1,92 @@
+{
+  "version": "selected-research-policy-v1",
+  "status": "selected",
+  "selection_year": 2024,
+  "ranker_version": "mid_heuristic-v1",
+  "parameters": {
+    "tau_answer": 0.8,
+    "g_min": 0.5,
+    "n_min": 2,
+    "max_questions": 3
+  },
+  "strategy": "information_gain",
+  "attribute_pool": "all_attributes",
+  "decision_reference": "docs/fyp1-final/OPERATING_POINT_DECISION.md",
+  "user_decision": "Freeze 0.80 answer / 0.50 gain (Recommended)",
+  "selection_sha256": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e",
+  "selected_2024_row": {
+    "cohort": "all_attributes",
+    "stratum": "all",
+    "strategy": "information_gain",
+    "tau_answer": 0.8,
+    "g_min": 0.5,
+    "stopped_states_sha256": "8d1a58d72d78f0b09d198f83b57f186e85553e23e30adc59eabbc4d07afd94f8",
+    "n_pairs": 389,
+    "n_originals": 340,
+    "n_answered": 23,
+    "n_correct_top1": 16,
+    "n_correct_top3": 17,
+    "coverage": 0.05912596401028278,
+    "accuracy_top1": 0.6956521739130435,
+    "accuracy_top3": 0.7391304347826086,
+    "unsupported_suggestion_rate": 0.015424164524421594,
+    "mean_questions": 1.262210796915167,
+    "abstention_rate": 0.9408740359897172,
+    "ci95": {
+      "coverage": {
+        "low": 0.03730438454379373,
+        "high": 0.08446866485013624,
+        "valid_resamples": 1000
+      },
+      "accuracy_top1": {
+        "low": 0.47619047619047616,
+        "high": 0.8888888888888888,
+        "valid_resamples": 1000
+      },
+      "accuracy_top3": {
+        "low": 0.5384615384615384,
+        "high": 0.9166666666666666,
+        "valid_resamples": 1000
+      },
+      "unsupported_suggestion_rate": {
+        "low": 0.004924021040327294,
+        "high": 0.02997275204359673,
+        "valid_resamples": 1000
+      },
+      "mean_questions": {
+        "low": 1.199494515516621,
+        "high": 1.3291341577907994,
+        "valid_resamples": 1000
+      },
+      "abstention_rate": {
+        "low": 0.9155313351498637,
+        "high": 0.9626956154562063,
+        "valid_resamples": 1000
+      }
+    }
+  },
+  "frozen_files_sha256": {
+    "docs/fyp1-final/OPERATING_POINT_DECISION.md": "7a27686b5873e1ba766de5939b83b09114e52f05b9298fe875141b9a54f14764",
+    "backend/investigation/params/mid_heuristic-v1.json": "d265c3dd794afacbb8ba5b3f55396d441298b6ff5aed6217e20c05054f60519b",
+    "backend/investigation/params/report-attributes-v1.json": "47f3ba2f2932186ac2b8cff2de00e7fc19f6b9f16d86ec44ad0216c72ecbdfb8",
+    "backend/investigation/data/faa_codes.json": "9f43d0105511d4f6c16ec55e6dd6fa6331954269e67b8ec76e23090aa980941e",
+    "backend/investigation/experiments/results/policy_selection_2024_v1/selection.json": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e",
+    "backend/investigation/experiments/policy_selection_protocol.json": "e9f362777bdfbbeaed710921f1cc6d5c2f8cec4bb6ec2fb2099b61b29082ba00",
+    "backend/investigation/beliefs.py": "ea7c15034cbb20d4d7efa2761ebc005a40b50424bfd6adf0a5242f36191476ba",
+    "backend/investigation/policy.py": "de4fe5fdeba4d23882a33726dd7654258b92d77ab038eae22fab42a46a70d520",
+    "backend/investigation/questions.py": "d3c2736548d928bf534047aaea1af8c9f4815e4b6c3d01641798d4118b5fdc92",
+    "backend/investigation/attributes.py": "f8b07bba65ce47307f517f20ec3de6b467167cc1567b6b871d02efef3c4b3a00",
+    "backend/investigation/ranker_port.py": "0df7a64ce6c9fe6f0aff9ffd34f84d36c76cea4724ab65c702e0d27ab27e807b",
+    "backend/investigation/experiments/offline.py": "db2fbc900f815f6118afb4977b9ce1e44d640059cefc9011572733e6cf78af26",
+    "backend/investigation/experiments/temporal_questions.py": "2a56e645f15f6ef8b029ae58236fbb43a16c0d80be18b02f26945788af2021d0",
+    "backend/investigation/experiments/simulated_technician.py": "d29944d402be41e5875334819ab7dc0b321752a0697932b76bfe63377ad403bb",
+    "backend/investigation/experiments/policy_selection.py": "a8eb1576511c0756f84b708f341a4bf2791e3f3f1736f3e5f503f60e42c89b86",
+    "backend/services/diagnostic_retrieval.py": "2d326746b00035da346c778b6d0f8d5d37b4f434d51481d414fe3f264c6c38bd",
+    "docs/work/usman/evidence/phase16-frozen-policy/label-availability-audit.json": "1e0714d8e80b18e02416ffc646f5106aec1a6c034937a1f511f1ee9c5be6c719",
+    "backend/investigation/experiments/abstention_curve.py": "964a92c45da095b946a1ffcef317479a97f5fe7e4c1d6e48a82e6d6772de7ce4",
+    "backend/investigation/experiments/calibration.py": "e408f514cf76522bb24ca0cbc14649abea78a30cd19835e7933bc6d8d1a892b7",
+    "backend/investigation/experiments/download_projection.py": "49a7ed1db61456060b6005dea06441a5a6e194d389f5754e22fd7d383978ebb1"
+  },
+  "held_out_evaluated_at_freeze": false,
+  "belief_label": "relative support"
+}

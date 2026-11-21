@@ -18,9 +18,9 @@ updated: 2026-11-20
 5. Run the unchanged bounded Mid-I ranker through the port. Fit T/c on 2023 only.
 6. Use those parameters on 2024, generate the threshold table, grouped error
    diagnostics and 1,000 cluster-bootstrap intervals; do not auto-select a point.
-7. Runtime Copilot derives uncalibrated beliefs and unconfigured abstention; the
+7. Default runtime Copilot derives uncalibrated beliefs and unconfigured abstention; the
    session service stores the exact response, hypothesis beliefs and entropy.
-8. [Offline question selection](FLOW-question-selection.md) follows with strict temporal counts. Live questions, operating-point acceptance and 2025 evaluation remain explicit gates.
+8. [Offline question selection](FLOW-question-selection.md) follows with strict temporal counts. Live questions and accepted research thresholds are implemented; activation and 2025 evaluation remain explicit gates.
 
 ```mermaid
 flowchart LR
@@ -73,9 +73,26 @@ flowchart LR
   Score --> Cluster[Shared original-report bootstrap draws]
   Cluster --> Table[All cohorts / controls / strata / intervals]
   Table --> Independent[Independent scalar stopping-metric verifier]
-  Independent --> Review[Unselected evidence for Usman's decision]
+  Independent --> Review[Usman accepts answer .80 / gain .50]
 ```
 
 The hosted-only full sweep reads committed 2024 artifacts, never raw 2025 data,
 a graph or a model endpoint. Inconsistent inputs and existing result directories
 fail. A saved posterior is never used before its simulated question is applied.
+
+## Frozen point before test access
+
+```mermaid
+flowchart LR
+  User[Explicit user selection] --> Decision[Recorded decision / AI-assisted rationale]
+  Decision --> Policy[Selected policy / 2024 row and source SHA pins]
+  Policy --> Protocol[Held-out protocol / policy fingerprint]
+  Audit[2023/2024 label-availability audit] --> Policy
+  Protocol --> Preflight[Validate every frozen input / no refit or sweeps]
+  Preflight --> Gate[Allow separately implemented held-out procedure]
+```
+
+Preflight only reads committed frozen artifacts. It does not download/evaluate
+2025 or enable managed runtime. Protocol retains all controls, part-change
+strata, 1000 cluster draws, ECE and abstention-off comparison, plus the
+predeclared label-availability sensitivity analysis.

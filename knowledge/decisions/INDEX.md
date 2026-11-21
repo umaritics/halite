@@ -12,7 +12,8 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
-| [DEC-20261121-question-conditioned-selection](DEC-20261121-question-conditioned-selection.md) | Combined stopping rule on frozen 2024 question prefixes | implemented / verified; choice pending | Usman |
+| [DEC-20261121-frozen-research-point](DEC-20261121-frozen-research-point.md) | User-selected .80/.50 point and pre-test chronology/provenance gate | accepted / verification pending | Usman |
+| [DEC-20261121-question-conditioned-selection](DEC-20261121-question-conditioned-selection.md) | Combined stopping rule on frozen 2024 question prefixes | implemented / verified; choice accepted | Usman |
 | [DEC-20261121-research-tool-verification](DEC-20261121-research-tool-verification.md) | Verify provenance/isolation tooling and enforce exact 80% coverage | implemented / verified | Usman |
 | [DEC-20261121-legacy-retirement](DEC-20261121-legacy-retirement.md) | Retire software APIs and startup seeds; preserve maintenance and graph safety | implemented / verified; owner review pending | Usman, Shahmeer |
 | [DEC-20261121-dependency-cleanup](DEC-20261121-dependency-cleanup.md) | Remove unused roots; preserve the verified CSV dependency stack | implemented / verified | Usman |

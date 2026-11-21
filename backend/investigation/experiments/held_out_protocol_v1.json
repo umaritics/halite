@@ -1,0 +1,58 @@
+{
+  "version": "held-out-2025-v1",
+  "status": "frozen-before-2025-access",
+  "selected_policy_sha256": "79a8ed676d50044678f4f347123c53bd39724e3fec5c7996bbe01a6afe72bb45",
+  "year": 2025,
+  "fit_years": [
+    2023
+  ],
+  "selection_years": [
+    2024
+  ],
+  "bootstrap_resamples": 1000,
+  "seed": 1729,
+  "primary_cases": "All eligible known-correction-part pairs whose original occurrence year is 2025; same frozen temporal/chain rules.",
+  "sensitivity_label_cutoff": "2025-01-02T13:46:55.987-05:00",
+  "sensitivity_rule": "Original SubmissionDate strictly greater than the latest 2024-selection outcome SubmissionDate; report overlap, never silently omit it from primary results.",
+  "strategies": [
+    "information_gain",
+    "random",
+    "no_questions"
+  ],
+  "attribute_pools": [
+    "all_attributes",
+    "structured_fields_only",
+    "coded_fields_only"
+  ],
+  "question_budgets": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "stopping_policy_grid_allowed": false,
+  "calibration_refit_allowed": false,
+  "probability_wording_allowed": false,
+  "required_metrics": [
+    "top1",
+    "top3",
+    "entropy_bits",
+    "coverage",
+    "answered_top1",
+    "answered_top3",
+    "unsupported_top3_outcome_key_rate",
+    "questions_per_case",
+    "named_top_ECE_10_equal_width_bins"
+  ],
+  "interval": "95% percentile original-report cluster bootstrap; undefined answered accuracy remains null.",
+  "rq4_comparators": [
+    "chosen stopping policy",
+    "answer every nonempty terminal ranking without confidence/evidence gates"
+  ],
+  "notes": [
+    "Abstention-off is an explicit diagnostic counterfactual; it is not silently installed.",
+    "No tuning, threshold sweeps, refitting or new vocabulary after held-out access.",
+    "Report all part-change strata, source fingerprints, discarded pairs, missing labels and temporal availability.",
+    "Expose poor results, sensitivity overlap and relative-support wording."
+  ]
+}

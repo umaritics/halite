@@ -860,3 +860,20 @@ source read while pending. Remaining independent tasks can continue.
 CSV retained-file hashes account for Git line-ending normalization: committed
 CSV uses LF with identical fields; raw CRLF artifact hash is stored separately.
 The verified selection JSON bytes/fingerprint are unchanged.
+
+## Phase 16 — accepted research point and pre-test freeze
+
+User explicitly chose “Freeze 0.80 answer / 0.50 gain (Recommended)”. Recorded
+that answer with AI-assisted rationale and a selected policy that pins the exact
+2024 point, decision, method/fit/schema/codebook and chronology audit. The protocol
+pins the policy and retains all controls, metrics, 1000 draws and no-refit/no-
+sweep rules. Preflight leaves runtime disabled and does not access 2025.
+
+A small constant-memory audit streamed only existing frozen 2023/2024 projections
+and recomputed both canonical hashes. All fit labels were submitted by April
+2024; four selection labels were submitted in January 2025, latest 2 January.
+Predeclared a sensitivity stratum strictly after that cutoff while retaining
+all eligible occurrence-year test pairs in the primary analysis. No 2025 source
+was read. Local preflight passed; hosted mutation/runtime-compatibility tests
+and full regression evidence are pending. PR45 final head eb3ff53 passed all
+four jobs in runs 44884119775 / 44884119746.

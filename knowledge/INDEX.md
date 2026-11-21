@@ -112,3 +112,5 @@ Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/wo
 | exact coverage gate, artifact provenance tests | decisions/DEC-20261121-research-tool-verification.md; backend/tests/test_research_artifact_tools.py |
 
 | question-conditioned policy selection, stopping prefixes | decisions/DEC-20261121-question-conditioned-selection.md; investigation/experiments/policy_selection.py |
+
+| selected .80/.50 policy, held-out preflight, label availability | decisions/DEC-20261121-frozen-research-point.md; investigation/experiments/frozen_policy.py; docs/fyp1-final/OPERATING_POINT_DECISION.md |

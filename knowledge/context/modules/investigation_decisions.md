@@ -43,8 +43,9 @@ all frozen fields retain their behavior, including null reply on model outage.
 Persisted sessions still supply the outage template. New snapshots save beliefs
 on hypotheses and entropy; full saved responses retain the exact derived inputs.
 Old snapshots/replies continue to replay without enrichment or recalculation.
-Runtime stays uncalibrated/unconfigured until selected parameters are accepted;
-structured answers still need the question package and are refused meanwhile.
+Default runtime remains unconfigured unless explicitly enabled with a policy
+file. Managed structured answers now use saved question snapshots; the selected
+research point below is available without automatically activating production.
 
 ## Offline protocol
 
@@ -81,7 +82,7 @@ ten equal-width bins for the leading named belief. 1,000 bootstrap draws cluster
 pairs sharing an original report; undefined answered accuracy stays null.
 
 The current benchmark is selection before the question policy, not final RQ4
-performance. Question-policy effects are now measured separately in [the question package](investigation_questions.md). No selected operating point or 2025 result is claimed.
+performance. Question-policy effects are now measured separately in [the question package](investigation_questions.md). The selected research operating point is recorded below; no 2025 result is claimed.
 
 ## Published experiment reads
 
@@ -122,5 +123,23 @@ activation and 2025 evaluation remain separate decisions.
 
 Joint stopping selection is verified on 28dcd3a: 4,536 rows / 389 pairs / 340
 originals, with 1,000 bootstrap draws and independent scalar metric replay. See
-POLICY_SELECTION_VERIFICATION.md. The proposed 0.80/0.50 research point remains
-unaccepted; bars remain relative support and 2025 remains untouched.
+POLICY_SELECTION_VERIFICATION.md. Usman explicitly accepted the 0.80/0.50 research point after reviewing counts
+and intervals. The frozen choice is in params/selected-policy-v1.json; bars
+remain relative support and 2025 remains untouched pending the frozen procedure.
+
+## Accepted point and held-out preflight
+
+The user explicitly answered “Freeze 0.80 answer / 0.50 gain (Recommended)”.
+`docs/fyp1-final/OPERATING_POINT_DECISION.md` records that decision and AI-assisted
+rationale. The selected policy pins the decision, exact accepted 2024 row, fit/
+schema/codebook, method sources and label-availability audit. The held-out
+protocol pins the policy; `experiments/frozen_policy.py` verifies both before
+held-out work. Tests reject changed sources, thresholds, wording, refit/sweep
+flags, missing metrics or shifted chronology. This does not activate runtime.
+
+A verified pre-test audit of the frozen 2023/2024 projections found all fit labels
+by April 2024, but four selection labels in January 2025 (latest 2 January).
+Primary test cases retain the occurrence-year definition. A predeclared
+sensitivity stratum contains only queries after the latest selection-label time;
+report overlap and separate intervals rather than claim a wholly prospective
+calendar split. No 2025 projection is read in the preflight.
