@@ -1,0 +1,6 @@
+Frontend tests and build (Node 20)	Run frontend tests	2026-11-21T07:57:44.0769254Z ^[[2m      Tests ^[[22m ^[[1m^[[32m279 passed^[[39m^[[22m^[[90m (279)^[[39m
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T07:59:11.7277581Z TOTAL                                                    5851   1107  81.08%
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T07:59:11.7278265Z Required test coverage of 80% reached. Total coverage: 81.08%
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T07:59:11.7278597Z 453 passed, 4 warnings in 57.15s
+Docker Compose real-graph smoke test	Verify Neo4j, corpus and maintenance APIs	2026-11-21T07:58:49.8247045Z MID1_RUNTIME_SMOKE=PASS
+Docker Compose real-graph smoke test	Verify persisted sessions and degraded turns	2026-11-21T07:58:51.0583974Z SESSION_RUNTIME_SMOKE=PASS

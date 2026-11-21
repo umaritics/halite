@@ -815,3 +815,13 @@ output preservation. Added the 80% CI gate at two-decimal precision, retaining
 all existing measured source scopes and no omissions. Tiny local standard-library
 archive extraction reproduced all 71 official entries and fingerprints exactly;
 full hosted regression and exact coverage evidence remain pending.
+
+Phase14 source c5d279a / hosted run 44882587938 verified all jobs: 453 backend
+and 279 frontend tests, real Neo4j/PostgreSQL/session and production browser
+flows. All 13 new artifact-tool tests passed. Exact unchanged-scope coverage
+4,744/5,851 = 81.08%; 80% gate passed (88 more covered statements, no omissions).
+Raw coverage/JUnit, test names, current browser proof and job/hash/log metadata
+committed under phase14 evidence. PR43 final evidence head da4ecc5 also passed
+all jobs in run 44882364296. Refreshed origin/main remains 0dd86d9. Laptop still
+has 24GiB free / ~12GiB available / zero swap. Next: question-conditioned 2024
+selection; human/review/model/report/release gates remain explicit.

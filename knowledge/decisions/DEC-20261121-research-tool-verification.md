@@ -1,6 +1,6 @@
 # Verify retained research tooling and enforce the exact coverage target
 
-- Status: implemented; hosted verification pending
+- Status: implemented and hosted verified on c5d279a; review/merge pending
 - Date: 2026-11-21
 - Owner: Usman
 
@@ -25,3 +25,8 @@ Tests provide useful reproducibility and error-path evidence; synthetic fixtures
 never substitute for research outcomes or human labels. Coverage failure remains
 a real CI failure with JUnit/XML artifacts. Hosted verification remains necessary
 before claiming the target achieved. Heavy runs stay off the developer laptop.
+
+Run 44882587938 passed all jobs: 453 backend/279 frontend tests, real database
+and browser flows. Exact coverage 4,744/5,851 = 81.08% exceeds the unchanged-scope
+80% gate. Raw coverage/JUnit, test names and job/hash proof are retained in
+phase14 evidence and RESEARCH_TOOL_VERIFICATION.md.

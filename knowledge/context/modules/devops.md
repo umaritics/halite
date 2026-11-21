@@ -82,3 +82,7 @@ result cannot round into acceptance. No files are omitted from measurement.
 Artifact-tool integration tests reproduce the retained official FAA archive,
 exercise checksum rejection and malformed lookup rows, and enforce 2023-only
 grounding vocabulary fitting with no overwrite of saved results.
+
+Verified on c5d279a / run 44882587938: 453 backend tests; 4,744/5,851 measured
+statements = 81.08%, exact gate passed. Coverage/JUnit and source-scope evidence
+are retained in docs/work/usman/evidence/phase14-research-tool-verification/.
