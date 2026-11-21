@@ -10,6 +10,21 @@ name and tell Usman what changed.
 
 ---
 
+## Current implementation evidence
+
+Original code-map line numbers below are the baseline snapshot. Foundation/adapter
+work is in PR #27, sessions/degraded/CI in #28, feature UI in #29 and the separately
+authorized shared integration in #30. All have passed hosted checks; owner review,
+merge and staging remain separate gates. The user explicitly authorized an
+AI-assisted design note on his behalf, now in
+`docs/fyp1-final/DECISION_LAYER_DESIGN.md` before WP-S4 code.
+
+The decision-core branch adds tested beliefs/policy, exact stored beliefs/entropy,
+a ranker boundary and real 2023-fit/2024-selection tooling. Runtime beliefs remain
+uncalibrated and policy unconfigured pending measured selection. No 2025 result,
+manual label, owner review or completed full mission is implied. See
+`docs/work/usman/ACCEPTANCE_MATRIX.md` and `knowledge/context/modules/investigation_decisions.md`.
+
 ## 1. Mission
 
 Given ranked hypotheses and their evidence, decide what to tell the technician: commit to an answer, ask one more
@@ -486,3 +501,38 @@ Things only Usman does, which you support with tooling but never write for him:
 - Rashkin et al. (2023), *Measuring Attribution in Natural Language Generation Models*.
 - Min et al. (2023), *FActScore: Fine-grained Atomic Evaluation of Factual Precision in Long Form Text Generation*.
 - Es et al. (2023), *RAGAS: Automated Evaluation of Retrieval Augmented Generation*.
+
+### Verified implementation snapshot — offline WP-S5
+
+The pure question engine and three-control 2024 simulation are implemented. See `knowledge/context/modules/investigation_questions.md`, committed result traces and `docs/work/usman/evidence/phase5-*`. All 342 backend tests pass. Information-gain accuracy advantage is uncertain; no threshold or 2025 result is asserted. Live question UI/answers and the separately authorized shared-field integration remain open.
+
+### Verified implementation snapshot — coded-field review preparation
+
+User-authorized separate branch adds exactly twelve shared-file lines and the idempotent/dry-run backfill. All 355 backend tests pass with isolated Neo4j/PostgreSQL; actual CLI apply/repeat proof is saved. See `docs/work/usman/CODED_FIELDS_INTEGRATION.md`. Shahmeer review/merge and Umar’s actual staging backup/backfill remain pending; no staging mutation claimed.
+
+### Verified implementation snapshot — managed live WP-S5
+
+The session question/answer controller is implemented behind disabled-by-default `SESSION_QUESTIONS_ENABLED` and an explicit policy file. It saves a unique question ID, model basis/matrices, policy, prior/posterior and answer history. Answers never read graph/model state. The production-built browser verifies changing bars, not-sure, three-question budget and exact reload replay with real local databases. The synthetic policy fixture is not the chosen operating point; shared responsive-shell preparation was separately authorized after visual QA exposed the phone-width sidebar problem.
+
+### Implemented sentence-audit/review preparation
+
+L2/L3 audits now accompany managed turns and quick diagnosis; original prose and
+stateless response fields remain intact. Default valid citations are unrated until
+calibration is accepted. Explicit experimental settings are labelled. The frozen
+150-pair constructed FAA-text packet has separate blinded copies for Usman and
+Muhammad Umar (chosen by the user). No human labels or results are fabricated.
+The strict importer/agreement/adjudication/fit-validation tooling and protocol are
+in `docs/work/usman/grounding_review_v1/README.md` and
+`knowledge/context/modules/investigation_grounding.md`. Actual labels, accepted
+thresholds/whitelist, L4 and generated-answer/no-evidence measurements remain gates.
+
+### Portable model-comparison preparation
+
+The user requested a self-contained runner for Shahmeer to execute on the M4.
+`model_prompts.py`, `model_compare.py` and `model_bundle.py` provide a frozen real
+20-case packet, strict serial Ollama measurements, saved raw responses/failures,
+resume verification and a generated comparison table. The portable ZIP needs
+only Python and already installed models/Ollama, and verifies its source hashes.
+Protocol, role/hardware distinctions and the handoff are documented in
+`docs/work/usman/MODEL_COMPARISON_RUNNER.md`. Synthetic verification is not real
+M4 measurement, human grounding accuracy or the interactive-model decision.

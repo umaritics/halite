@@ -1,0 +1,37 @@
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	﻿2026-11-21T13:02:58.6528320Z ##[group]Run python ../docs/work/usman/verify_held_out.py investigation/experiments/results/held_out_2025_v1
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6529291Z ^[[36;1mpython ../docs/work/usman/verify_held_out.py investigation/experiments/results/held_out_2025_v1^[[0m
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6549821Z shell: /usr/bin/bash -e {0}
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6550088Z env:
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6550285Z   DEMO_MODE: true
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6550528Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6550789Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6551022Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6551268Z   GROQ_API_KEY:
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6551874Z   SESSION_TEST_DATABASE_URL: ***localhost:5432/halite_session_test
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6552290Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6552701Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6553126Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6553515Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6553932Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6554313Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:02:58.6554622Z ##[endgroup]
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8397328Z {
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8398547Z   "independent_held_out_point_metrics": "PASS",
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8399724Z   "all_question_and_stopping_intervals_replayed": "PASS",
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8400784Z   "tables_verified": 72,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8401555Z   "case_counts": {
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8402237Z     "n_pairs": 157,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8402975Z     "n_originals": 140,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8403787Z     "before_or_at_selection_label_time_pairs": 0,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8404778Z     "unknown_outcome_pairs_excluded": 0,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8405526Z     "pair_discards": {
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8406433Z       "missing_id": 12,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8406916Z       "tail_mismatch_or_empty": 2,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8407456Z       "nonforward_submission": 1
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8407961Z     },
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8408749Z     "true_part_missing_top10": 113
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8409233Z   },
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8409618Z   "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8410152Z   "held_out_tuning": false,
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8410699Z   "results_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:03:20.8411299Z }

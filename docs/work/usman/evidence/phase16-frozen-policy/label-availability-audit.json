@@ -1,0 +1,75 @@
+{
+  "purpose": "Pre-held-out label-availability audit; no 2025 archive read.",
+  "splits": {
+    "fit": {
+      "n_case_pairs": 406,
+      "n_unique_answer_reports": 406,
+      "answer_submission_years": {
+        "2023": 372,
+        "2024": 34
+      },
+      "latest_answer_submission": "2024-04-11T15:48:55.383-05:00",
+      "source_projection_metadata": {
+        "source": "https://external.apic4e.faa.gov/sdrs/retrieve/SDR-2023.csv",
+        "year": 2023,
+        "n_rows": 62691,
+        "columns": [
+          "OperatorControlNumber",
+          "DifficultyDate",
+          "SubmissionDate",
+          "RegistryNNumber",
+          "AircraftMake",
+          "AircraftModel",
+          "PartName",
+          "PartCondition",
+          "PartLocation",
+          "JASCCode",
+          "Discrepancy",
+          "NatureOfConditionA",
+          "PrecautionaryProcedureA",
+          "StageOfOperationCode",
+          "HowDiscoveredCode"
+        ],
+        "projection_sha256": "d94620eb59ea86dfb4ac53ebc614d5eb42901cef4328cab20a1ecfbd9c2206cd",
+        "fingerprint_definition": "Canonical ordered projected-row JSON UTF-8, newline per row."
+      },
+      "missing_answer_reports": 0,
+      "source_projection_fingerprint_verified": true
+    },
+    "selection": {
+      "n_case_pairs": 389,
+      "n_unique_answer_reports": 389,
+      "answer_submission_years": {
+        "2024": 385,
+        "2025": 4
+      },
+      "latest_answer_submission": "2025-01-02T13:46:55.987-05:00",
+      "source_projection_metadata": {
+        "source": "https://external.apic4e.faa.gov/sdrs/retrieve/SDR-2024.csv",
+        "year": 2024,
+        "n_rows": 66080,
+        "columns": [
+          "OperatorControlNumber",
+          "DifficultyDate",
+          "SubmissionDate",
+          "RegistryNNumber",
+          "AircraftMake",
+          "AircraftModel",
+          "PartName",
+          "PartCondition",
+          "PartLocation",
+          "JASCCode",
+          "Discrepancy",
+          "NatureOfConditionA",
+          "PrecautionaryProcedureA",
+          "StageOfOperationCode",
+          "HowDiscoveredCode"
+        ],
+        "projection_sha256": "da33b8d064fc8ce1ba8133a5719aa135ffb9d01ac3be911172bf483755f447cb",
+        "fingerprint_definition": "Canonical ordered projected-row JSON UTF-8, newline per row."
+      },
+      "missing_answer_reports": 0,
+      "source_projection_fingerprint_verified": true
+    }
+  }
+}

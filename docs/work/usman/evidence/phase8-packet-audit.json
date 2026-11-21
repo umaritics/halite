@@ -1,0 +1,12 @@
+{
+  "pairs": 150,
+  "fit_pairs": 99,
+  "validation_pairs": 51,
+  "reference_overlap": 0,
+  "blank_templates": true,
+  "single_sentence_and_exact_citation_checks": true,
+  "method_hashes_match": true,
+  "held_out_2025_used": false,
+  "human_labels_supplied": false,
+  "review_sha256": "d95097fd449ed58d2432a1a8fcf1ef932c65a01b8d2318442207b6b9662017b8"
+}

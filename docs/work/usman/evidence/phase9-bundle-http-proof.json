@@ -1,0 +1,17 @@
+{
+  "source": "Synthetic HTTP protocol verification only; not a real model or M4 measurement",
+  "python_isolated_no_site_packages": true,
+  "real_packet_cases": 20,
+  "primary_prompts": 20,
+  "paired_no_evidence_prompts": 10,
+  "excluded_warmups": 1,
+  "http_chat_posts": 31,
+  "second_run_provider_error_kept_in_denominator": true,
+  "provider_failure_cli_exit": 2,
+  "responses_journaled": 30,
+  "exact_resume_without_extra_chat": true,
+  "strict_temporal_and_chain_audit": true,
+  "packet_sha256": "2e12df9469de9b8c15be818d8989f902dca5c4d3b687b733a70b0152ab42aa77",
+  "real_model_measurements": false,
+  "selected_model": null
+}

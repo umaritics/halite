@@ -13,12 +13,16 @@ updated: 2026-10-17
 1. `python scripts/fetch_sdr_data.py` (or use existing processed CSV).
 2. `POST /api/maintenance/ingest` with default path `data/processed/sdr_poc_corpus.csv`.
 3. `MaintenanceAgent` creates `Asset` + unscored `ServiceRecord` (`confidence=null`), `ABOUT`, and chronological `PRECEDED_BY`.
-4. Idempotent: second ingest skips duplicates (`duplicates_skipped`).
-5. UI path: the Ingest page's **Upload CSV** panel posts the file (multipart `file`) to
+4. Four optional raw coded fields are preserved as strings on both stores.
+   Existing nodes can be enriched with the exact-ID, dry-run-default
+   `scripts/backfill_coded_fields.py`; conflicts are preserved and reported.
+   Staging execution remains the database owner’s backed-up operation.
+5. Idempotent: second ingest skips duplicates (`duplicates_skipped`).
+6. UI path: the Ingest page's **Upload CSV** panel posts the file (multipart `file`) to
    `POST /api/maintenance/ingest/upload`, which runs the same agent on a temporary file.
    Dates must be `MM/DD/YYYY`; an unreadable CSV currently returns an unhandled HTTP 500.
-6. Health shows `maintenance_corpus_loaded` + non-zero count.
-7. `GET /api/maintenance/assets` returns assets and counts through one
+7. Health shows `maintenance_corpus_loaded` + non-zero count.
+8. `GET /api/maintenance/assets` returns assets and counts through one
    repository aggregation; it does not issue one history query per asset.
 
 ## Dependency graph
@@ -36,7 +40,9 @@ flowchart LR
   CE --> GR
   Assets[GET /maintenance/assets] --> Count[list_assets_with_counts]
   Count --> GR
+  Backfill[Validated original FAA CSV / dry-run backfill] --> GR
   GR --> N[(Neo4j)]
+  GR --> Memory[(Memory store)]
   Compose[docker-compose.yml] --> N
   Compose --> BE[backend container]
 ```
@@ -49,3 +55,17 @@ flowchart LR
   handled by `scripts/migrate_conflict_analysis_state.py`, dry-run by default.
 - Conflict scoring is separate and resumable via the backfill CLI or the
   ops-token batch endpoint. Shared staging is not mutated without approval.
+
+## Standalone importer after retirement
+
+```mermaid
+flowchart LR
+  API[Maintenance ingest API] --> Agent[Standalone MaintenanceAgent]
+  Agent --> CSV[Pandas / official coded fields]
+  Agent --> Graph[Existing graph repository]
+  Graph --> Store[Memory or Neo4j]
+```
+
+The constructor preserves graph_repo/groq_service arguments. There is no legacy
+BaseAgent dependency or software document-ingest path. Runtime startup leaves
+existing data intact and does not seed software demo nodes.

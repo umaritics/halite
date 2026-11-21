@@ -1,0 +1,13 @@
+{
+  "preflight": "PASS",
+  "parameters": {
+    "tau_answer": 0.8,
+    "g_min": 0.5,
+    "n_min": 2,
+    "max_questions": 3
+  },
+  "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+  "protocol_sha256": "543796e247776031f9db9e62c72b6ad814978d4f4785a08210aa5592aed4fbc8",
+  "held_out_accessed": false,
+  "runtime_activated": false
+}

@@ -1,0 +1,8 @@
+Simulated 1/389 pairs
+Simulated 101/389 pairs
+Simulated 201/389 pairs
+Simulated 301/389 pairs
+{
+  "elapsed_seconds": 45.298816709000675,
+  "n_pairs": 389
+}

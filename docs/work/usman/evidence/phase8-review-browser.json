@@ -1,0 +1,16 @@
+{
+  "real_packet": {
+    "pairs": 150,
+    "labels_entered": 0,
+    "reviewer": "Muhammad Umar"
+  },
+  "synthetic_packet": {
+    "pairs": 6,
+    "draft_roundtrip": true,
+    "incomplete_csv_blocked": true,
+    "mixed_reviewers_blocked": true,
+    "foreign_draft_blocked": true,
+    "completed_csv_exported": true
+  },
+  "page_errors": []
+}

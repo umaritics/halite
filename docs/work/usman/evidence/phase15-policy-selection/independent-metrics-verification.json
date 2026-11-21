@@ -1,0 +1,10 @@
+{
+  "independent_stopping_metrics": "PASS",
+  "rows_verified": 4536,
+  "n_pairs": 389,
+  "n_originals": 340,
+  "year": 2024,
+  "held_out_2025_read": false,
+  "operating_point_selected": false,
+  "selection_sha256": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
+}

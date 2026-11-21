@@ -1,0 +1,278 @@
+{
+  "themes": [
+    {
+      "sourceHighlights": {
+        "source_record_id": "HGLT2024010100001",
+        "matched_words": 2,
+        "replay_exact": true,
+        "quick_and_session": true,
+        "unicode_offsets": true
+      },
+      "theme": "dark",
+      "desktop": 1280,
+      "phone": 390,
+      "charts": 3,
+      "accepted_policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+      "held_out_cases": 157,
+      "verified_tables": 72,
+      "accepted_2024_marker": true,
+      "undefined_coded_control": true,
+      "publication_sha256": "9b9efedbcd0da1973f0616568c1bd26050560b90cb429f796b9330d77d78e420",
+      "phoneFigure": {
+        "x": 80,
+        "y": 11,
+        "width": 294,
+        "height": 822
+      },
+      "phoneFigures": [
+        {
+          "x": 80,
+          "y": 11,
+          "width": 294,
+          "height": 822
+        },
+        {
+          "x": 80,
+          "y": -43,
+          "width": 294,
+          "height": 930
+        },
+        {
+          "x": 80,
+          "y": -7,
+          "width": 294,
+          "height": 858
+        }
+      ],
+      "tableGeometry": {
+        "table": 640,
+        "viewport": 294,
+        "content": 640
+      }
+    },
+    {
+      "sourceHighlights": {
+        "source_record_id": "HGLT2024010100001",
+        "matched_words": 2,
+        "replay_exact": true,
+        "quick_and_session": true,
+        "unicode_offsets": true
+      },
+      "theme": "light",
+      "desktop": 1280,
+      "phone": 390,
+      "charts": 3,
+      "accepted_policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+      "held_out_cases": 157,
+      "verified_tables": 72,
+      "accepted_2024_marker": true,
+      "undefined_coded_control": true,
+      "publication_sha256": "9b9efedbcd0da1973f0616568c1bd26050560b90cb429f796b9330d77d78e420",
+      "phoneFigure": {
+        "x": 80,
+        "y": 11,
+        "width": 294,
+        "height": 822
+      },
+      "phoneFigures": [
+        {
+          "x": 80,
+          "y": 11,
+          "width": 294,
+          "height": 822
+        },
+        {
+          "x": 80,
+          "y": -43,
+          "width": 294,
+          "height": 930
+        },
+        {
+          "x": 80,
+          "y": -7,
+          "width": 294,
+          "height": 858
+        }
+      ],
+      "tableGeometry": {
+        "table": 640,
+        "viewport": 294,
+        "content": 640
+      }
+    }
+  ],
+  "network": "real authenticated endpoint; UI empty/error checks explicitly mocked",
+  "checks": [
+    "real JWT endpoint and artifact hashes",
+    "three rendered SVG charts with whiskers",
+    "saved value and interval table parity",
+    "frozen 2025 primary and timing view",
+    "accepted 2024 marker only on its actual curve",
+    "undefined zero-answer control and preserved historical study",
+    "cohort/metric controls",
+    "production deep-link reload",
+    "dark/light 1280 and 390 geometry for every chart and confined horizontal table",
+    "unclipped accepted-selection charts on desktop and phone",
+    "explicitly mocked failure/retry/empty states",
+    "no browser exceptions",
+    "real quick/session source spans, Unicode offsets and exact saved replay"
+  ],
+  "captureViewports": [
+    {
+      "file": "research-dark-accepted-2024.png",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "element": {
+        "x": 280,
+        "y": 0,
+        "width": 976,
+        "height": 598
+      }
+    },
+    {
+      "file": "research-dark-accepted-2024-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 974
+      },
+      "element": {
+        "x": 80,
+        "y": 0,
+        "width": 294,
+        "height": 910
+      }
+    },
+    {
+      "file": "research-dark-chart-0-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 886
+      },
+      "element": {
+        "x": 80,
+        "y": 11,
+        "width": 294,
+        "height": 822
+      }
+    },
+    {
+      "file": "research-dark-chart-1-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 994
+      },
+      "element": {
+        "x": 80,
+        "y": 0,
+        "width": 294,
+        "height": 930
+      }
+    },
+    {
+      "file": "research-dark-chart-2-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 922
+      },
+      "element": {
+        "x": 80,
+        "y": 0,
+        "width": 294,
+        "height": 858
+      }
+    },
+    {
+      "file": "research-dark-comparison-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "element": {
+        "x": 80,
+        "y": 196,
+        "width": 294,
+        "height": 451
+      }
+    },
+    {
+      "file": "research-light-accepted-2024.png",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      },
+      "element": {
+        "x": 280,
+        "y": 0,
+        "width": 976,
+        "height": 598
+      }
+    },
+    {
+      "file": "research-light-accepted-2024-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 974
+      },
+      "element": {
+        "x": 80,
+        "y": 0,
+        "width": 294,
+        "height": 910
+      }
+    },
+    {
+      "file": "research-light-chart-0-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 886
+      },
+      "element": {
+        "x": 80,
+        "y": 11,
+        "width": 294,
+        "height": 822
+      }
+    },
+    {
+      "file": "research-light-chart-1-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 994
+      },
+      "element": {
+        "x": 80,
+        "y": 0,
+        "width": 294,
+        "height": 930
+      }
+    },
+    {
+      "file": "research-light-chart-2-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 922
+      },
+      "element": {
+        "x": 80,
+        "y": 0,
+        "width": 294,
+        "height": 858
+      }
+    },
+    {
+      "file": "research-light-comparison-390.png",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "element": {
+        "x": 80,
+        "y": 196,
+        "width": 294,
+        "height": 451
+      }
+    }
+  ]
+}

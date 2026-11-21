@@ -1,0 +1,26 @@
+{
+  "failed_before_2025_access_run": "https://github.com/umaritics/halite/actions/runs/44905292132",
+  "diagnosis": [
+    {
+      "year": 2023,
+      "frozen_rows": 62691,
+      "current_rows": 62691,
+      "added_ids": [],
+      "frozen_rows_unchanged": true,
+      "filtered_projection_sha256": "d94620eb59ea86dfb4ac53ebc614d5eb42901cef4328cab20a1ecfbd9c2206cd",
+      "original_full_hash_verified": true
+    },
+    {
+      "year": 2024,
+      "frozen_rows": 66080,
+      "current_rows": 66081,
+      "added_ids": [
+        "2026FA0000953"
+      ],
+      "frozen_rows_unchanged": true,
+      "filtered_projection_sha256": "da33b8d064fc8ce1ba8133a5719aa135ffb9d01ac3be911172bf483755f447cb",
+      "original_full_hash_verified": true
+    }
+  ],
+  "workaround": "Restore the exact original identifier set/order and require its unchanged full canonical projection hash; never refit or accept modified rows."
+}

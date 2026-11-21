@@ -1,0 +1,104 @@
+........................................................................ [ 18%]
+........................................................................ [ 37%]
+........................................................................ [ 56%]
+........................................................................ [ 75%]
+........................................................................ [ 93%]
+........................                                                 [100%]
+=============================== warnings summary ===============================
+../../../../../../../../tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41
+  /tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/muhammadusmanalhaq/Desktop/Halite (FYP)/halite_repo/.worktrees/usman-phase1/docs/work/usman/evidence/phase6-backend-junit.xml -
+
+---------- coverage: platform linux, python 3.12.3-final-0 -----------
+Name                                                Stmts   Miss  Cover
+-----------------------------------------------------------------------
+agents/__init__.py                                      0      0   100%
+agents/base_agent.py                                    8      1    88%
+agents/code_agent.py                                   58     44    24%
+agents/decision_agent.py                               11      7    36%
+agents/document_agent.py                               49      9    82%
+agents/gitea_agent.py                                 128    103    20%
+agents/maintenance_agent.py                            96      7    93%
+api/__init__.py                                         0      0   100%
+api/deps.py                                             9      0   100%
+api/router.py                                          28      0   100%
+api/routes/__init__.py                                  0      0   100%
+api/routes/alerts.py                                   12      4    67%
+api/routes/auth.py                                    240     66    72%
+api/routes/chat.py                                     16      0   100%
+api/routes/decisions.py                                49     18    63%
+api/routes/diagnostics.py                             334     55    84%
+api/routes/evaluation.py                                5      0   100%
+api/routes/graph.py                                    37     11    70%
+api/routes/ingest.py                                   37      7    81%
+api/routes/integrity.py                                 5      0   100%
+api/routes/maintenance.py                             235     60    74%
+api/routes/ops.py                                      47      9    81%
+api/routes/retrieval.py                                 5      0   100%
+api/routes/sessions.py                                 81      1    99%
+api/routes/webhooks.py                                 29      0   100%
+api/security.py                                       251     25    90%
+db/__init__.py                                          0      0   100%
+db/models/__init__.py                                   3      0   100%
+db/models/evaluation.py                                 0      0   100%
+db/models/identity.py                                  75      0   100%
+db/models/integrity.py                                  0      0   100%
+db/models/sessions.py                                  52      0   100%
+db/session.py                                          73     11    85%
+graph/__init__.py                                       0      0   100%
+graph/invalidation.py                                   2      1    50%
+graph/memory/__init__.py                                2      0   100%
+graph/memory/_helpers.py                                3      0   100%
+graph/memory/core.py                                  202     29    86%
+graph/memory/integrity.py                              55      5    91%
+graph/memory/legacy.py                                133     41    69%
+graph/memory/retrieval.py                              37      4    89%
+graph/memory_store.py                                   2      0   100%
+graph/neo4j_client.py                                  16      0   100%
+graph/queries.py                                        2      0   100%
+graph/repo/__init__.py                                  2      0   100%
+graph/repo/_helpers.py                                 22     16    27%
+graph/repo/core.py                                    130     12    91%
+graph/repo/integrity.py                                57      4    93%
+graph/repo/legacy.py                                  274    207    24%
+graph/repo/retrieval.py                                69     31    55%
+graph/schema.py                                         3      0   100%
+investigation/__init__.py                               0      0   100%
+investigation/attributes.py                            66      6    91%
+investigation/beliefs.py                               60      4    93%
+investigation/experiments/__init__.py                   0      0   100%
+investigation/experiments/abstention_curve.py          69      4    94%
+investigation/experiments/calibration.py               58      4    93%
+investigation/experiments/decision_benchmark.py        62     62     0%
+investigation/experiments/download_projection.py       46     28    39%
+investigation/experiments/import_faa_codes.py          69     69     0%
+investigation/experiments/offline.py                  144      9    94%
+investigation/experiments/simulated_technician.py     141     14    90%
+investigation/experiments/temporal_questions.py        52      0   100%
+investigation/explain.py                               20      0   100%
+investigation/live_graph.py                            62      8    87%
+investigation/live_questions.py                       180      8    96%
+investigation/policy.py                                40      2    95%
+investigation/prompts.py                                1      0   100%
+investigation/questions.py                             96      8    92%
+investigation/ranker_port.py                           35      3    91%
+investigation/report.py                                10      0   100%
+investigation/sessions.py                             139      7    95%
+investigation/turns.py                                 23      2    91%
+services/__init__.py                                    0      0   100%
+services/analysis_budget.py                            51      1    98%
+services/analysis_state.py                              8      0   100%
+services/auth_service.py                              289     39    87%
+services/citation_validation.py                        37      4    89%
+services/conflict_engine.py                           296     36    88%
+services/conflict_screen.py                            27      0   100%
+services/context_builder.py                           231    161    30%
+services/diagnostic_retrieval.py                      158      6    96%
+services/groq_service.py                              123     19    85%
+-----------------------------------------------------------------------
+TOTAL                                                5577   1292    77%
+
+384 passed, 1 warning in 92.84s (0:01:32)

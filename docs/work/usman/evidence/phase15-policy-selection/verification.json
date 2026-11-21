@@ -1,0 +1,80 @@
+{
+  "source_commit": "28dcd3ab76a808cfca092a6beb0b9fa0950455c6",
+  "sweep_checkout_commit": "9d526170956a59601292f51147e4be4d0822cfc0",
+  "sweep_working_tree_dirty": false,
+  "runs": [
+    {
+      "url": "https://github.com/umaritics/halite/actions/runs/44883665006",
+      "headSha": "28dcd3ab76a808cfca092a6beb0b9fa0950455c6",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "Backend tests (Python 3.11)",
+          "conclusion": "success",
+          "url": "https://github.com/umaritics/halite/actions/runs/44883665006/job/136784275903"
+        },
+        {
+          "name": "Frontend tests and build (Node 20)",
+          "conclusion": "success",
+          "url": "https://github.com/umaritics/halite/actions/runs/44883665006/job/136784276167"
+        },
+        {
+          "name": "Docker Compose real-graph smoke test",
+          "conclusion": "success",
+          "url": "https://github.com/umaritics/halite/actions/runs/44883665006/job/136784276169"
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/umaritics/halite/actions/runs/44883664943",
+      "headSha": "28dcd3ab76a808cfca092a6beb0b9fa0950455c6",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "selection",
+          "conclusion": "success",
+          "url": "https://github.com/umaritics/halite/actions/runs/44883664943/job/136784199398"
+        }
+      ]
+    }
+  ],
+  "backend_tests": 461,
+  "frontend_tests": 279,
+  "coverage": {
+    "version": "7.17.4",
+    "timestamp": "1795248817666",
+    "lines-valid": "6018",
+    "lines-covered": "4892",
+    "line-rate": "0.8129",
+    "branches-covered": "0",
+    "branches-valid": "0",
+    "branch-rate": "0",
+    "complexity": "0"
+  },
+  "selection_rows_independently_verified": 4536,
+  "original_reports": 340,
+  "correction_pairs": 389,
+  "bootstrap_resamples_per_stratum": 1000,
+  "held_out_evaluated": false,
+  "selected_operating_point": null,
+  "numpy_pin": "1.26.4",
+  "initial_failed_sweep": "https://github.com/umaritics/halite/actions/runs/44883542069",
+  "correction": "Recomputed prior roundoff tolerance only; frozen trace/input hashes remain exact.",
+  "raw_backend_artifact_sha256": {
+    "coverage.xml": "8c70ec5262782b5477be2be9bc25b67504b5106342a2d5652675016c837a1ffe",
+    "dependency-cleanup-summary.json": "864b2d2a6d45a1638230ce32c7ab5473722f9d0e7609bc9ae99cc00af6db7634",
+    "dependency-install-report.json": "d6834652f7296ebe39edbdfbeedc12408f9d57da2b859a5d81ebafaf8c88485e",
+    "dependency-installed.json": "c378761820b4212edce01a0c39671a5aed5e9048ab2a6e773a1e8b4a11541247",
+    "test-results.xml": "f09f4c2560ad65e0db2c3677c161ca9131d9cdfb7a6c69884076d29d2101f2cf"
+  },
+  "retained_selection_files_sha256": {
+    "selection.csv": "1554632dd29592b7a66d56dbf1e9e9f515a7968492863e7e5361bc68dc079e12",
+    "selection.json": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
+  },
+  "independent_verifier_sha256": "6848d749e1218bdfe573d9811db8be3083c2d5791941b35b4ec2c574449fc776",
+  "raw_selection_artifact_sha256": {
+    "selection.csv": "bec6ea103f103ab3e04d7622ac4b9c29ca4aebbaa09b84bfe88e077f4369daff",
+    "selection.json": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
+  },
+  "csv_normalization": "CSV line endings normalized from CRLF to LF for Git; field values unchanged. Raw artifact hash retained separately."
+}

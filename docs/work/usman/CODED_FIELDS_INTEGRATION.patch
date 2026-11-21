@@ -1,0 +1,39 @@
+--- a/backend/agents/maintenance_agent.py
++++ b/backend/agents/maintenance_agent.py
+@@ -178,6 +178,10 @@
+                 "part_name": (raw.get("PartName") or "").strip(),
+                 "part_condition": (raw.get("PartCondition") or "").strip(),
+                 "part_location": (raw.get("PartLocation") or "").strip(),
++                "stage_of_operation": (raw.get("StageOfOperationCode") or "").strip(),
++                "how_discovered": (raw.get("HowDiscoveredCode") or "").strip(),
++                "nature_of_condition": (raw.get("NatureOfConditionA") or "").strip(),
++                "precautionary_procedure": (raw.get("PrecautionaryProcedureA") or "").strip(),
+                 "jasc_code": (raw.get("JASCCode") or "").strip(),
+                 "text": (raw.get("Discrepancy") or "").strip(),
+                 "status": "unscored",
+--- a/backend/graph/repo/core.py
++++ b/backend/graph/repo/core.py
+@@ -90,6 +90,10 @@
+             "part_name": data.get("part_name", ""),
+             "part_condition": data.get("part_condition", ""),
+             "part_location": data.get("part_location", ""),
++            "stage_of_operation": data.get("stage_of_operation", ""),
++            "how_discovered": data.get("how_discovered", ""),
++            "nature_of_condition": data.get("nature_of_condition", ""),
++            "precautionary_procedure": data.get("precautionary_procedure", ""),
+             "jasc_code": data.get("jasc_code", ""),
+             "text": data.get("text", ""),
+             "status": data.get("status", "unscored"),
+--- a/backend/graph/memory/core.py
++++ b/backend/graph/memory/core.py
+@@ -121,6 +121,10 @@
+             "part_name": data.get("part_name", ""),
+             "part_condition": data.get("part_condition", ""),
+             "part_location": data.get("part_location", ""),
++            "stage_of_operation": data.get("stage_of_operation", ""),
++            "how_discovered": data.get("how_discovered", ""),
++            "nature_of_condition": data.get("nature_of_condition", ""),
++            "precautionary_procedure": data.get("precautionary_procedure", ""),
+             "jasc_code": data.get("jasc_code", ""),
+             "text": data.get("text", ""),
+             "status": data.get("status", "unscored"),

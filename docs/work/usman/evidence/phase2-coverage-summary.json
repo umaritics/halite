@@ -1,0 +1,15 @@
+{
+  "scope": "api, agents, services, graph, db, investigation (includes retained legacy)",
+  "broad_statement_coverage_percent": 75.35,
+  "session_modules_statement_coverage_percent": 95.78,
+  "session_modules": {
+    "explain.py": 100.0,
+    "prompts.py": 100.0,
+    "report.py": 100.0,
+    "sessions.py": 94.7,
+    "turns.py": 61.54,
+    "models/sessions.py": 100.0,
+    "routes/sessions.py": 98.75
+  },
+  "note": "Broad scope below NFR-04 80%; no whole-project acceptance claimed. Final fallback-citation lines were added during this run; separately verified in phase2-final-citation-boundary.txt; remote CI will measure final source."
+}

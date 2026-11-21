@@ -12,6 +12,22 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261121-final-research-publication](DEC-20261121-final-research-publication.md) | Frozen test display and exact accepted joint-selection marker | implemented / verified; owner review pending | Usman, Shahmeer |
+| [DEC-20261121-held-out-procedure](DEC-20261121-held-out-procedure.md) | Receipt-backed fixed 2025 evaluation and exact-head access gate | implemented / evaluation verified | Usman |
+| [DEC-20261121-frozen-research-point](DEC-20261121-frozen-research-point.md) | User-selected .80/.50 point and pre-test chronology/provenance gate | accepted / verified | Usman |
+| [DEC-20261121-question-conditioned-selection](DEC-20261121-question-conditioned-selection.md) | Combined stopping rule on frozen 2024 question prefixes | implemented / verified; choice accepted | Usman |
+| [DEC-20261121-research-tool-verification](DEC-20261121-research-tool-verification.md) | Verify provenance/isolation tooling and enforce exact 80% coverage | implemented / verified | Usman |
+| [DEC-20261121-legacy-retirement](DEC-20261121-legacy-retirement.md) | Retire software APIs and startup seeds; preserve maintenance and graph safety | implemented / verified; owner review pending | Usman, Shahmeer |
+| [DEC-20261121-dependency-cleanup](DEC-20261121-dependency-cleanup.md) | Remove unused roots; preserve the verified CSV dependency stack | implemented / verified | Usman |
+| [DEC-20261121-saved-source-word-spans](DEC-20261121-saved-source-word-spans.md) | Frozen UTF-16 source-word locations without new support judgments | implemented / verified | Usman |
+| [DEC-20261120-research-publication](DEC-20261120-research-publication.md) | Checksum-pinned read-only selection publication | implemented / charts verified | Usman |
+| [DEC-20261120-portable-model-comparison](DEC-20261120-portable-model-comparison.md) | Fixed real prompts, portable measured comparison and explicit M4 provenance | implemented / measurements pending | Usman |
+| [DEC-20261120-grounding-human-calibration](DEC-20261120-grounding-human-calibration.md) | Saved audits, explicit calibration and blinded independent human review | implemented / calibration pending | Usman |
+| [DEC-20261120-responsive-shell-review](DEC-20261120-responsive-shell-review.md) | User-authorized responsive App/Sidebar preparation with measured phone usability | proposed / review pending | Usman, Shahmeer |
+| [DEC-20261120-managed-question-snapshots](DEC-20261120-managed-question-snapshots.md) | Saved question IDs, graph/model-independent answers and explicit activation | implemented / selection pending | Usman |
+| [DEC-20261120-decision-core-protocol](DEC-20261120-decision-core-protocol.md) | Uncalibrated runtime beliefs and temporally isolated selection | accepted | Usman |
+| [DEC-20261120-investigation-ui-handoff](DEC-20261120-investigation-ui-handoff.md) | Independent investigation UI and separately reviewed shared registration | proposed | Usman, Shahmeer |
+| [DEC-20261120-durable-investigations](DEC-20261120-durable-investigations.md) | User-owned atomic session turns, replay and opt-in degraded diagnosis | accepted | Usman |
 | [DEC-20261120-backend-foundation](DEC-20261120-backend-foundation.md) | Compatible vertical backend packages and explicit model JSON mode | accepted | Usman |
 | [DEC-20261120-vertical-ownership](DEC-20261120-vertical-ownership.md) | Ownership moves from layers to three full-stack verticals | accepted | Umar, Usman, Shahmeer |
 | [DEC-20261116-staging-corpus-analysis-complete](DEC-20261116-staging-corpus-analysis-complete.md) | Staging full-corpus conflict analysis complete (0 unscored) | accepted | Umar, Usman |
@@ -38,6 +54,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 | [DEC-20261016-usman-baseline](DEC-20261016-usman-baseline.md) | Accept Usman Mid-I baseline with open blockers | accepted | Umar (audit) |
 | [DEC-20261016-docs-obsolete](DEC-20261016-docs-obsolete.md) | Move software/pitch docs to `docs/obsolete/` | accepted | Umar |
 | [DEC-20261016-ci-branch-trigger](DEC-20261016-ci-branch-trigger.md) | CI push includes graph-diagnostics branch | accepted | Umar, Usman |
+| [DEC-20261120-question-selection-protocol](DEC-20261120-question-selection-protocol.md) | Official codes, temporal likelihoods, three controls and authorized shared-field review preparation | offline implemented / integration review pending | Usman, Shahmeer |
 
 ## Template for new decisions
 

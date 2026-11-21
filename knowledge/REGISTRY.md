@@ -14,6 +14,8 @@ updated: 2026-11-16
 
 | Module | Primary owner (Mid-I) | Primary code | Context | Flow |
 | --- | --- | --- | --- | --- |
+| Interactive-model comparison | Usman (current vertical) | `backend/investigation/experiments/model_{prompts,compare,bundle}.py`, `data/model_prompts_2024_v1.json` | [modules/investigation_model_comparison.md](context/modules/investigation_model_comparison.md) | [FLOW-model-comparison.md](flows/FLOW-model-comparison.md) |
+| Sentence grounding and human evaluation | Usman (current vertical) | `backend/investigation/{grounding,grounding_runtime,embed_port}.py`, `experiments/{grounding_packet,grounding_eval,fit_grounding_vocabulary}.py`, investigation `DecisionView.jsx` / `QuickDiagnose.jsx` | [modules/investigation_grounding.md](context/modules/investigation_grounding.md) | [FLOW-grounding.md](flows/FLOW-grounding.md) |
 | Diagnostics retrieval, ranking & copilot | Umar (cross-owner waiver for copilot) | `backend/services/diagnostic_retrieval.py`, `backend/api/routes/diagnostics.py`, `backend/services/groq_service.py` | [modules/diagnostics.md](context/modules/diagnostics.md) | [FLOW-diagnose.md](flows/FLOW-diagnose.md) |
 | Graph schema & maintenance queries | Umar (cross-owner waiver for this task) | `backend/graph/schema.py`, `backend/graph/repo/{core,retrieval,integrity,legacy}.py`, `backend/graph/memory/`, compatibility `backend/graph/queries.py`, `backend/graph/neo4j_client.py` | [04_data_and_graph.md](context/04_data_and_graph.md) | FLOW-diagnose, FLOW-ingest, FLOW-conflict-review |
 | Conflict engine + analysis migration/backfill | Usman (cross-owner waiver for this task) | `backend/services/conflict_engine.py`, `backend/services/conflict_screen.py`, `backend/services/analysis_budget.py`, `backend/scripts/migrate_conflict_analysis_state.py`, `backend/scripts/backfill_conflict_scores.py`, `backend/scripts/benchmark_local_llm_gt.py` | [modules/conflict_engine.md](context/modules/conflict_engine.md) | [FLOW-conflict-review.md](flows/FLOW-conflict-review.md) |
@@ -24,8 +26,8 @@ updated: 2026-11-16
 | CI / Compose | Usman | `.github/workflows/ci.yml`, `docker-compose.yml` | modules/devops.md | [FLOW-ci.md](flows/FLOW-ci.md) |
 | Shared staging deploy / ops | Umar + Usman | `.github/workflows/deploy-staging.yml`, `fetch-staging-logs.yml`, `docker-compose.vm.yml`, `backend/api/routes/ops.py`, `scripts/vm/run_analysis_backfill.sh`, `scripts/vm/setup_swap.sh`, `docs/local-llm-staging.md` | [modules/remote_backend.md](context/modules/remote_backend.md) | [FLOW-deploy.md](flows/FLOW-deploy.md) |
 | LLM adapter (Groq + openai-compatible / Ollama) | Usman + Umar | `backend/services/groq_service.py`, `backend/config.py` (`LLM_PROVIDER`, `OPENAI_COMPAT_*`), `docker-compose.vm.yml` (`halite-ollama`) | [modules/remote_backend.md](context/modules/remote_backend.md), `docs/local-llm-staging.md` | FLOW-conflict-review, FLOW-diagnose |
-| Domain registry | shared (freeze) | `backend/domains/*` | [03_architecture.md](context/03_architecture.md) | — |
-| Legacy software domain | frozen / non-product | Decisions, Components, software ingest routes | [01_domain_scope_deferred.md](context/01_domain_scope_deferred.md) | — |
+| Domain registry | Shahmeer; user-authorized retirement review | `backend/domains/{base,maintenance,registry}.py` | [03_architecture.md](context/03_architecture.md) | — |
+| Legacy graph compatibility | frozen / non-product; software routers retired | `backend/graph/{repo,memory}/legacy.py`, existing graph endpoints | [01_domain_scope_deferred.md](context/01_domain_scope_deferred.md) | — |
 
 ## Shared contracts (controlled owners)
 
@@ -44,3 +46,46 @@ updated: 2026-11-16
 - Authenticated summary routers: `backend/api/routes/{retrieval,evaluation,integrity,sessions}.py`; route registration in `backend/api/router.py`. Statistics start empty.
 - Model adapter `backend/services/groq_service.py` (Usman) selects JSON format explicitly; prose is the default.
 - Evidence and phase scope: `docs/work/usman/WORK_LOG.md`; decision: DEC-20261120-backend-foundation.
+
+## Persisted investigations (Usman)
+
+- `backend/investigation/{sessions,turns,explain,report,prompts}.py`, `backend/db/models/sessions.py`, `backend/api/routes/sessions.py` own user-scoped persistence and replay.
+- `backend/tests/test_investigation_sessions.py` verifies SQLite and isolated PostgreSQL; `test_investigation_degraded.py` covers opt-in diagnosis and cache/citation boundaries.
+- `backend/requirements-dev.txt`, `backend/ruff.toml`, `.github/workflows/ci.yml` provide runtime-error lint and coverage/JUnit artifacts. PostgreSQL session contracts execute in CI alongside Neo4j contracts.
+- Context/flow: `context/modules/investigation_sessions.md`, `flows/FLOW-sessions.md`. University feedback tracking: `docs/fyp1-final/PANEL_ACTION_REGISTER.md` (no invented feedback/sign-off).
+
+## Investigation/home feature interface (Usman)
+
+- `frontend/src/features/investigation/{InvestigationsPage,InvestigationWorkspace,QuickDiagnose,DecisionView,CloseSessionDialog}.jsx`, `api.js`, `privacy.js`, `manifest.jsx`.
+- `frontend/src/features/home/{HomePage,manifest}.jsx`; shared design classes/client are consumed unchanged.
+- Feature tests in `frontend/src/test/Investigation*.test.*`; independent browser/build harness in `frontend/e2e/`.
+- Context: `context/modules/investigation_frontend.md`; shared-shell review proposal: `docs/work/usman/FRONTEND_INTEGRATION.md` (user authorized preparation; owner review not claimed).
+
+Integration registration review: `frontend/src/app/registry.js`, `App.jsx`,
+`components/Sidebar.jsx`, `context/AuthContext.jsx`, login/invite defaults — shared
+Shahmeer ownership; authorized Usman preparation on `codex/usman-ui-integration`,
+owner review pending.
+
+| Module | Primary files | Owner | Knowledge |
+| --- | --- | --- | --- |
+| Decision core and offline selection | `backend/investigation/{ranker_port,beliefs,policy}.py`, `investigation/experiments/` | Usman | `context/modules/investigation_decisions.md`, `flows/FLOW-decision-selection.md` |
+
+## Question selection (Usman)
+
+`backend/investigation/{attributes,questions}.py`, `experiments/{temporal_questions,simulated_technician,import_faa_codes}.py`, `data/faa_codes.json`, `params/report-attributes-v1.json`: [context](context/modules/investigation_questions.md), [flow](flows/FLOW-question-selection.md). Offline core verified; live questions and shared ingest integration remain separate.
+
+Raw coded-field ingest integration: `backend/scripts/backfill_coded_fields.py` and `backend/tests/test_coded_fields_integration.py` (Usman; shared creation-list/ingest review Shahmeer). [Context](context/modules/maintenance_api.md), [flow](flows/FLOW-ingest.md).
+
+Managed questions (Usman): `backend/investigation/{live_graph,live_questions}.py`, session service/API, `SESSION_*` settings; [context](context/modules/investigation_live_questions.md), [flow](flows/FLOW-live-questions.md). UI: `DecisionView.jsx`; real browser: `frontend/e2e/verify-question-ui.cjs`.
+
+Responsive shell preparation: `frontend/src/App.jsx`, `frontend/src/components/Sidebar.jsx` (Shahmeer; user-authorized integration preparation Usman), tested by `InvestigationMobileIntegration.test.jsx` and the question browser verifier. [Decision](decisions/DEC-20261120-responsive-shell-review.md).
+
+Research publication (Usman): `backend/investigation/research_results.py`, `experiments/results/publication.json`, sessions experiments route and `tests/test_research_results*.py`; [context](context/modules/investigation_decisions.md), [flow](flows/FLOW-decision-selection.md).
+
+Shared research-chart proposal: `frontend/src/components/ui/Research{Chart,Primitives}.jsx` (Shahmeer ownership; Usman review preparation), [context](context/modules/research_charts.md), [flow](flows/FLOW-research-publication.md).
+
+Research product panel (Usman): `frontend/src/features/investigation/{ResearchPage.jsx,research.js}`, `frontend/e2e/verify-research-ui.cjs`; [context](context/modules/investigation_frontend.md), [flow](flows/FLOW-research-publication.md). Hosted browser verification is part of CI; owner review/merge remain separate.
+
+Source-word interaction (Usman): `backend/investigation/grounding.py::source_matches`, `frontend/src/features/investigation/SourceNarrative.jsx`, sentence callbacks in DecisionView and source selection in quick/session pages. [Context](context/modules/investigation_grounding.md), [flow](flows/FLOW-grounding.md), [decision](decisions/DEC-20261121-saved-source-word-spans.md).
+
+Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/workflows/ci.yml`, `docs/work/usman/verify_dependency_cleanup.py`, `backend/tests/test_settings_env_file.py`; [decision](decisions/DEC-20261121-dependency-cleanup.md), [CI context](context/modules/devops.md). Separate legacy retirement authorization/proposal: `docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md`.

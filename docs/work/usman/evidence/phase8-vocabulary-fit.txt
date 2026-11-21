@@ -1,0 +1,1 @@
+{"parts": 1006, "fit_years": [2023], "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"}

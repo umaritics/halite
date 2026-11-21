@@ -8,9 +8,9 @@ updated: 2026-11-20
 
 # Backend foundation
 
-The compatible foundation implements master-plan WP-S0 steps 2–5. Legacy
-retirement remains separate because existing maintenance/domain and security
-contracts explicitly consume it. See DEC-20261120-backend-foundation.
+The compatible foundation implements master-plan WP-S0 steps 2–5. The separate
+user-authorized retirement branch implements step 1; hosted verification and
+owner review status are recorded in DEC-20261121-legacy-retirement.
 
 ## Graph access
 
@@ -24,8 +24,9 @@ packages use `core`, `retrieval`, `integrity` and isolated `legacy` mixins.
   neighborhood. Umar owns query evolution.
 - Integrity: supersession links, correction lists, analysis state and partial
   record updates. Shahmeer owns query evolution.
-- Legacy: existing software behavior and seeding, preserved until its retirement
-  contract is resolved. No new product functionality belongs here.
+- Legacy: compatibility methods used by the existing graph endpoints and explicit
+  test/manual-reset fixtures. Software routers and startup seeding are removed;
+  no new product functionality belongs here.
 
 The split changes neither method signatures nor bodies. Facades preserve
 existing application, test and script imports. Mixins call shared methods
@@ -64,3 +65,23 @@ accounting remains intact, and no canned maintenance answer is introduced.
 
 Unchanged existing tests plus `test_backend_preparation.py` and
 `test_model_adapter_format.py`; phase evidence in `docs/work/usman/WORK_LOG.md`.
+
+## Remaining retirement and dependency cleanup
+
+The independent dependency branch removes unused direct requirements without
+changing route/domain behavior. Actual CSV/document consumers are retained and
+hosted reports verify resolution. See DEC-20261121-dependency-cleanup.
+
+The concrete legacy retirement proposal is in
+`docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md` and its exact two-file integration
+patch. The user authorized preparing/testing it on a separate review branch on
+21 November; runtime retirement and owner review are not claimed by this branch.
+
+## User-authorized retirement branch
+
+Software chat/decision/ingest/alert/webhook routes and their agents/context
+builder/domain/invalidation helper are removed. The sole/default domain is
+maintenance. All three production startup paths omit software demo seeding.
+Existing data is preserved; graph endpoints and ops-protected manual reset
+remain compatible. MaintenanceAgent directly stores the same constructor
+arguments; ingest method bodies are unchanged. See the retirement ADR and handoff.

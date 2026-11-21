@@ -1,0 +1,3 @@
+-r requirements.txt
+# Required by the master plan's CI quality work package (WP-S11).
+ruff==0.8.6

@@ -4,6 +4,7 @@ import {
   setRefreshSessionHandler,
   setSessionTokenGetter,
 } from '../api/client';
+import { clearLegacyInvestigations } from '../features/investigation/privacy';
 
 const REFRESH_STORAGE_KEY = 'halite.session.refresh.v1';
 
@@ -48,6 +49,7 @@ export function AuthProvider({ children }) {
   const accessTokenRef = useRef('');
 
   const applySessionPayload = useCallback((data) => {
+    clearLegacyInvestigations();
     const access = String(data?.access_token || '').trim();
     const refresh = String(data?.refresh_token || '').trim();
     accessTokenRef.current = access;
@@ -60,6 +62,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const clearLocalSession = useCallback(() => {
+    clearLegacyInvestigations();
     accessTokenRef.current = '';
     writeStoredRefreshToken('');
     setUser(null);

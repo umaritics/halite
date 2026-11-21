@@ -1,0 +1,111 @@
+{
+  "source": "https://sdrs.faa.gov/Documents/SDRS%20Look-Up%20Tables.zip",
+  "archive_sha256": "5ab1d86f963a2f7c2ac2298c787bc875d5212aa4cd6f82df076122958651ced0",
+  "source_kind": "FAA official SDRS Look-up Tables download",
+  "retrieved_at_utc": "2026-11-20",
+  "attributes": {
+    "stage_of_operation": {
+      "file": "2026-07-09_StageofOperation.xlsx",
+      "file_sha256": "08eb2083da4d137142e484b0b2c6a7b599a568079d463bdbcbbcce5e0c9eec60",
+      "sheet": "Stage of Operation",
+      "range": "A2:B19",
+      "values": {
+        "00": "Not Available",
+        "AA": "AIR AMBULANCE",
+        "AB": "AEROBATIC",
+        "AG": "AGRICULTURE",
+        "AP": "APPROACH",
+        "CL": "CLIMB",
+        "CR": "CRUISE",
+        "DE": "DESCENT",
+        "EX": "EXTERNAL LOAD",
+        "FF": "FIRE FIGHTING",
+        "HO": "HOVERING",
+        "IN": "INSP/MAINT",
+        "LD": "LANDING",
+        "MS": "MAPPING/SURVEY",
+        "NR": "NOT REPORTED",
+        "TO": "TAKEOFF",
+        "TX": "TAXI/GRND HDL",
+        "UK": "UNKNOWN"
+      }
+    },
+    "how_discovered": {
+      "file": "2026-07-09_HowDiscovered.xlsx",
+      "file_sha256": "390c36d1c17f4b29de15f2a8d36b8c589c31f2418067cf4ac76cd88e996b384d",
+      "sheet": "How Discovered",
+      "range": "A2:B15",
+      "values": {
+        "9": "Unknown",
+        "B": "Boroscope",
+        "C": "Functional Check",
+        "D": "Dye Penetrant",
+        "E": "Eddy Current",
+        "L": "Light Source",
+        "M": "Magnetic Particle",
+        "O": "Other",
+        "T": "Thermal",
+        "U": "Ultrasonic",
+        "V": "Visual",
+        "W": "Magnified Visual",
+        "X": "X-Ray",
+        "0": "Not Available"
+      }
+    },
+    "nature_of_condition": {
+      "file": "2026-07-09_NatureofCondition.xlsx",
+      "file_sha256": "a7d4b12b2c7448fdefa0410442a0bae6603e5469334c1921bcd2fd7f28ea0275",
+      "sheet": "Nature of Condition",
+      "range": "A2:B25",
+      "values": {
+        "A": "FLAME/FIRE",
+        "B": "SMOKE/FUMES/ODORS/SPARKS",
+        "C": "F.O.D.",
+        "D": "INFLIGHT SEPARATION",
+        "E": "VIBRATION/BUFFET",
+        "F": "FLT CONT AFFECTED",
+        "G": "MULTIPLE FAILURE",
+        "H": "ELECT. POWER LOSS-50 PC",
+        "I": "FLT. ATTITUDE INST.",
+        "J": "WARNING INDICATION",
+        "K": "FLUID LOSS",
+        "L": "NO TEST",
+        "M": "OVER TEMP",
+        "N": "FALSE WARNING",
+        "O": "OTHER",
+        "P": "NO WARNING INDICATION",
+        "R": "PARTIAL RPM/PWR LOSS",
+        "S": "AFFECT SYSTEMS",
+        "T": "ENGINE CASE PENETRATION",
+        "W": "INADEQUATE Q C",
+        "X": "ENGINE FLAMEOUT",
+        "Y": "ENGINE STOPPAGE",
+        "Z": "SIGNIFICANT FAILURE REPORT",
+        "0": "NOT AVAILABLE"
+      }
+    },
+    "precautionary_procedure": {
+      "file": "2026-07-09_PrecautionCode.xlsx",
+      "file_sha256": "d9383c72982518d77ebb65d389fd6a841ac260bce42143d8950abec4e435fb47",
+      "sheet": "Precautionary Conditions",
+      "range": "A2:B16",
+      "values": {
+        "A": "UNSCHED LANDING",
+        "B": "EMER. DESCENT",
+        "C": "ABORTED TAKEOFF",
+        "D": "RETURN TO BLOCK",
+        "E": "ENGINE SHUTDOWN",
+        "F": "ACTIVATE FIRE EXT.",
+        "G": "O2 MASK DEPLOYED",
+        "H": "DEACTIVATE SYST/CIRCUITS",
+        "I": "CABIN DEPRESSURIZATION",
+        "J": "DUMP FUEL",
+        "K": "NONE",
+        "L": "ABORTED APPROACH",
+        "O": "OTHER",
+        "R": "AUTOROTATION",
+        "0": "NOT AVAILABLE"
+      }
+    }
+  }
+}

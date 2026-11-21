@@ -1,8 +1,8 @@
 """
 maintenance_agent.py — Ingests FAA SDR records into the maintenance graph domain.
 
-Follows the pattern of DocumentAgent exactly:
-  - Subclass BaseAgent
+Maintenance-only ingest agent:
+  - Construct with graph_repo and optional groq_service
   - Implement run(payload) -> dict
   - No placeholders, no TODOs, real counts only
 
@@ -29,7 +29,6 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-from agents.base_agent import BaseAgent
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +52,7 @@ def _parse_difficulty_date(raw: str) -> str | None:
         return None
 
 
-class MaintenanceAgent(BaseAgent):
+class MaintenanceAgent:
     """
     Ingest FAA SDR records into the maintenance domain graph.
 
@@ -61,6 +60,10 @@ class MaintenanceAgent(BaseAgent):
       {"csv_path": str, "limit": int | None}   — load records from file
       {"records": [dict, ...]}                  — inline list of raw record dicts
     """
+
+    def __init__(self, graph_repo, groq_service=None):
+        self.graph_repo = graph_repo
+        self.groq_service = groq_service
 
     def run(self, payload: dict) -> dict:
         records = self._load_records(payload)
@@ -178,6 +181,10 @@ class MaintenanceAgent(BaseAgent):
                 "part_name": (raw.get("PartName") or "").strip(),
                 "part_condition": (raw.get("PartCondition") or "").strip(),
                 "part_location": (raw.get("PartLocation") or "").strip(),
+                "stage_of_operation": (raw.get("StageOfOperationCode") or "").strip(),
+                "how_discovered": (raw.get("HowDiscoveredCode") or "").strip(),
+                "nature_of_condition": (raw.get("NatureOfConditionA") or "").strip(),
+                "precautionary_procedure": (raw.get("PrecautionaryProcedureA") or "").strip(),
                 "jasc_code": (raw.get("JASCCode") or "").strip(),
                 "text": (raw.get("Discrepancy") or "").strip(),
                 "status": "unscored",

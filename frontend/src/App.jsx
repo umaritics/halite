@@ -13,12 +13,12 @@ import AssetHistory from './pages/AssetHistory';
 import ServiceRecords from './pages/ServiceRecords';
 import ReviewQueue from './pages/ReviewQueue';
 import MaintenanceIngest from './pages/MaintenanceIngest';
-import Diagnostics from './pages/Diagnostics';
+import { featureRoutes } from './app/registry';
 import { maintenanceAPI } from './api/client';
 import { useTheme } from './context/ThemeContext';
 import { DomainProvider } from './context/DomainContext';
 
-const HOME = '/app/assets';
+const HOME = '/app/home';
 
 // Software-domain URLs from the original prototype. The pages still exist in the
 // repository but are not part of the Mid-I product, so old bookmarks and deep links
@@ -43,13 +43,17 @@ function AppShell() {
   return (
     <div className={`flex h-screen overflow-hidden bg-page ${isDark ? 'text-[#F5F5F5]' : 'text-[#0A0A0A]'}`}>
       <Sidebar reviewCount={reviewCount} />
-      <main className="relative flex-1 overflow-hidden">
+      <main className="relative min-w-0 flex-1 overflow-hidden">
         <Routes>
           <Route index element={<Navigate to={HOME} replace />} />
+          {featureRoutes.map(({ path, element, roles }) => (
+            <Route key={path} path={path.replace(/^\/app\//, '')} element={
+              roles?.length ? <ProtectedRoute roles={roles}>{element}</ProtectedRoute> : element
+            } />
+          ))}
           <Route path="assets" element={<Assets />} />
           <Route path="asset-history/:assetId" element={<AssetHistory />} />
           <Route path="records" element={<ServiceRecords />} />
-          <Route path="diagnostics" element={<Diagnostics />} />
           <Route path="review-queue" element={<ReviewQueue />} />
           <Route path="maintenance-ingest" element={<MaintenanceIngest />} />
           <Route path="graph" element={<Graph />} />

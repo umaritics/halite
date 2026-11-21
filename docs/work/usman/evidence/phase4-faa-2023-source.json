@@ -1,0 +1,24 @@
+{
+  "source": "https://external.apic4e.faa.gov/sdrs/retrieve/SDR-2023.csv",
+  "year": 2023,
+  "n_rows": 62691,
+  "columns": [
+    "OperatorControlNumber",
+    "DifficultyDate",
+    "SubmissionDate",
+    "RegistryNNumber",
+    "AircraftMake",
+    "AircraftModel",
+    "PartName",
+    "PartCondition",
+    "PartLocation",
+    "JASCCode",
+    "Discrepancy",
+    "NatureOfConditionA",
+    "PrecautionaryProcedureA",
+    "StageOfOperationCode",
+    "HowDiscoveredCode"
+  ],
+  "projection_sha256": "d94620eb59ea86dfb4ac53ebc614d5eb42901cef4328cab20a1ecfbd9c2206cd",
+  "fingerprint_definition": "Canonical ordered projected-row JSON UTF-8, newline per row."
+}

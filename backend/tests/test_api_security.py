@@ -9,15 +9,12 @@ Comprehensive security test suite for Halite public API hardening:
   - R3: OpenAPI / `/docs` / `/redoc` disabled by default when `DEMO_MODE=false`,
         bounded sliding-window rate limiting + auth brute-force lockout,
         forwarded-IP anti-spoofing, and hardened response headers.
-  - R5: Gitea webhook & repo-ingest retired (`410 Gone`) by default, and fail
-        closed (`503`/`401`) without valid HMAC-SHA256 when opted in.
+  - R5: Legacy software routes fully retired (404), including with old enable flags.
   - Filesystem path-jail on `POST /api/maintenance/ingest` (`csv_path`).
   - Log redaction for `HALITE_API_KEY`, `Bearer` tokens, `OPS_TOKEN`, and Bolt URIs.
 """
 from __future__ import annotations
 
-import hashlib
-import hmac
 import json
 import os
 import sys
@@ -69,15 +66,9 @@ class TestPublicAllowlistAndAuthGate:
     @pytest.mark.parametrize(
         ("method", "path", "json_body"),
         [
-            ("POST", "/api/chat", {"message": "hello"}),
             ("GET", "/api/graph/overview", None),
             ("GET", "/api/graph/export/context", None),
             ("DELETE", "/api/graph/reset", None),
-            ("GET", "/api/decisions", None),
-            ("POST", "/api/decisions", {"title": "t", "reasoning": "r"}),
-            ("POST", "/api/ingest/gitea", {"owner": "o", "repo": "r"}),
-            ("POST", "/api/ingest/code", {"owner": "o", "repo": "r"}),
-            ("GET", "/api/alerts", None),
             ("GET", "/api/domains", None),
             ("GET", "/api/maintenance/assets", None),
             ("GET", "/api/maintenance/records", None),
@@ -216,17 +207,17 @@ class TestRateLimitingAndAntiSpoofing:
         with TestClient(app) as tc:
             # Spoofed left-hand XFF values with the same rightmost proxy client IP (203.0.113.9)
             r1 = tc.post(
-                "/api/chat",
+                "/api/maintenance/copilot/turn",
                 json={"message": "q1"},
                 headers={**headers_base, "X-Forwarded-For": "1.1.1.1, 203.0.113.9"},
             )
             r2 = tc.post(
-                "/api/chat",
+                "/api/maintenance/copilot/turn",
                 json={"message": "q2"},
                 headers={**headers_base, "X-Forwarded-For": "2.2.2.2, 203.0.113.9"},
             )
             r3 = tc.post(
-                "/api/chat",
+                "/api/maintenance/copilot/turn",
                 json={"message": "q3"},
                 headers={**headers_base, "X-Forwarded-For": "3.3.3.3, 203.0.113.9"},
             )
@@ -246,59 +237,6 @@ class TestRateLimitingAndAntiSpoofing:
             # Subsequent attempts while locked out stay 429
             locked = tc.get("/api/domains", headers={"Authorization": f"Bearer {TEST_API_KEY}"})
             assert locked.status_code == 429
-
-
-class TestGiteaRetirementAndWebhookHmac:
-    def test_gitea_webhook_and_ingest_return_410_by_default(self, prod_client: TestClient):
-        wh = prod_client.post("/api/webhook/gitea", json={"commits": []})
-        assert wh.status_code == 410
-
-        auth = {"Authorization": f"Bearer {TEST_API_KEY}"}
-        assert (
-            prod_client.post("/api/ingest/gitea", json={"owner": "a", "repo": "b"}, headers=auth).status_code
-            == 410
-        )
-        assert (
-            prod_client.post("/api/ingest/code", json={"owner": "a", "repo": "b"}, headers=auth).status_code
-            == 410
-        )
-
-    def test_reenabled_gitea_webhook_fails_closed_without_secret_or_valid_hmac(self):
-        # Re-enabled without secret -> 503 (never unsigned)
-        no_secret_app = _build_test_app(
-            _production_settings(ENABLE_GITEA_INTEGRATION=True, GITEA_WEBHOOK_SECRET="")
-        )
-        with TestClient(no_secret_app) as tc:
-            assert tc.post("/api/webhook/gitea", json={}).status_code == 503
-
-        # Re-enabled with secret -> requires valid HMAC-SHA256
-        secret = "webhook-shared-secret"
-        signed_app = _build_test_app(
-            _production_settings(ENABLE_GITEA_INTEGRATION=True, GITEA_WEBHOOK_SECRET=secret)
-        )
-        payload = b'{"repository":{"full_name":"org/repo"},"commits":[]}'
-        digest = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
-        with TestClient(signed_app) as tc:
-            assert tc.post("/api/webhook/gitea", content=payload).status_code == 401
-            assert (
-                tc.post(
-                    "/api/webhook/gitea",
-                    content=payload,
-                    headers={"X-Gitea-Signature": "deadbeef"},
-                ).status_code
-                == 401
-            )
-            ok = tc.post(
-                "/api/webhook/gitea",
-                content=payload,
-                headers={
-                    "Content-Type": "application/json",
-                    "X-Gitea-Event": "push",
-                    "X-Gitea-Signature": f"sha256={digest}",
-                },
-            )
-            assert ok.status_code == 200
-            assert ok.json()["processed"] is True
 
 
 class TestIngestPathJailAndLogRedaction:

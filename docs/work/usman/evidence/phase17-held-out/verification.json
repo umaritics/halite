@@ -1,0 +1,64 @@
+{
+  "source_commit": "5a5060b5e8bb54f1677be4acf93628dc89b03e0e",
+  "executed_pr_merge_commit": "237ab4115a19636e958302f67ac9be427517d5d7",
+  "pr": "https://github.com/umaritics/halite/pull/47",
+  "full_ci_run": "https://github.com/umaritics/halite/actions/runs/44905815091",
+  "held_out_run": "https://github.com/umaritics/halite/actions/runs/44906082558",
+  "failed_pre_access_run": "https://github.com/umaritics/halite/actions/runs/44905292132",
+  "backend_tests": 485,
+  "frontend_tests": 279,
+  "coverage": {
+    "covered": 5176,
+    "valid": 6339,
+    "percent": 81.65
+  },
+  "held_out_verification": {
+    "independent_held_out_point_metrics": "PASS",
+    "all_question_and_stopping_intervals_replayed": "PASS",
+    "tables_verified": 72,
+    "case_counts": {
+      "n_pairs": 157,
+      "n_originals": 140,
+      "before_or_at_selection_label_time_pairs": 0,
+      "unknown_outcome_pairs_excluded": 0,
+      "pair_discards": {
+        "missing_id": 12,
+        "tail_mismatch_or_empty": 2,
+        "nonforward_submission": 1
+      },
+      "true_part_missing_top10": 113
+    },
+    "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+    "held_out_tuning": false,
+    "results_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+  },
+  "retained_files_sha256": {
+    "backend/investigation/experiments/results/held_out_2025_v1/all_attributes_cases.json": "55b9e479b92561524cc35f6405246654520d3369b9fdb264ef846abf4f06ee64",
+    "backend/investigation/experiments/results/held_out_2025_v1/coded_fields_only_cases.json": "28cd1a75058a02c17e08b77640398883654705bb1787a0fdbd9d8cb4edcf885c",
+    "backend/investigation/experiments/results/held_out_2025_v1/pretest-receipt.json": "b3df32b8f28fd5a27012436e94560ecc66432ed439efbfe09a4eff874edd26f4",
+    "backend/investigation/experiments/results/held_out_2025_v1/results.json": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12",
+    "backend/investigation/experiments/results/held_out_2025_v1/structured_fields_only_cases.json": "79fc8c60650d2b3ce6bf729bcb88b5ce01ea0c4099316115f094084fbdc71206",
+    "backend/investigation/experiments/results/held_out_2025_v1/verification.json": "657bf76ed09574d35a25865c493cafb9bc234e50d4db20ed8e0283752c59f185",
+    "docs/work/usman/evidence/phase17-held-out/backend-coverage.xml": "c8f046b67501acdfffea416aed42a70075616de5398d09dce2a955f7a9df2c7b",
+    "docs/work/usman/evidence/phase17-held-out/ci-log-extract.txt": "f86b2d5bdfd5a0ce73733b0b5ad01070787c6e13aa9fd10049c282a659b70406",
+    "docs/work/usman/evidence/phase17-held-out/dependency-cleanup-summary.json": "2d5f3ca46fabcde6d4ca45d5fa6aa1471a70196e7cfbbab178887f6e93e1f203",
+    "docs/work/usman/evidence/phase17-held-out/frozen-policy-preflight.json": "cf9ac1dd9f4ada03869c4a324261584528bf5f17911f6adfb3bdad5b3ab96e49",
+    "docs/work/usman/evidence/phase17-held-out/full-ci-run.json": "853aa1217e0eb7ae02679bf7d844e4489aee626c879b5e53fe3bc6a51002936d",
+    "docs/work/usman/evidence/phase17-held-out/held-out-log.txt": "db67e9aebfb4c86520bf74cf1e3045d298164fd942576aeb247583063418d5d4",
+    "docs/work/usman/evidence/phase17-held-out/held-out-run.json": "e5243989bca4e56b9fccd876ea783f5a5bf603d01f88d5676595e7ec071f1de9",
+    "docs/work/usman/evidence/phase17-held-out/history-drift-diagnosis.json": "20eff05c1e527870815ac7ee0b4cc48c4da263f53e5cde9a46c356f163b261ac",
+    "docs/work/usman/evidence/phase17-held-out/research-browser-proof.json": "da2d8abed43797e100b56457eaa42ca0d76944986eb5ea779346c49665d69620",
+    "docs/work/usman/evidence/phase17-held-out/test-results.xml": "3e81ac716c83fcc2f3f92e61aabcb38498c0067d14ad2ba176b6e6e6d07d5ece",
+    "docs/work/usman/evidence/phase17-held-out/retained-results-ci-run.json": "fff09f57defd1925d510e55734606a7c4344de4cc3c12cc786a9a6f2921056d3",
+    "docs/work/usman/evidence/phase17-held-out/hosted-artifact-metadata.jsonl": "f4930ea0a0dd1438605351eb2635226cc29e8670ba77b89336af50b3c52e8d79",
+    "docs/work/usman/evidence/phase17-held-out/retained-result-replay-log.txt": "a0b20dabbbcbcc860213f9c8f15f5fe7a4c334292f4a39299b1e369a8f15ea2e"
+  },
+  "logs": "Hosted log text retained with trailing whitespace stripped; original full-log SHA retained below.",
+  "original_log_sha256": {
+    "/tmp/halite-held-out-run.log": "135d54adda76fd1ed4171b2db8ea419f846d272609233e83d329b1e5e7693769",
+    "/tmp/halite-phase17-restored-ci.log": "60fcea033e211eaf7a8aff59e2ad3780eb2905bcb53aff2771696540db16f834"
+  },
+  "retained_results_full_ci_run": "https://github.com/umaritics/halite/actions/runs/44906671095",
+  "retained_results_verified_commit": "d8a8510a2504cfdc343d6033ed819740da5a722e",
+  "retained_results_ci_replay": "PASS"
+}

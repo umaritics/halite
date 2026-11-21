@@ -1,0 +1,25 @@
+npm notice run halite-frontend@0.1.0 dev
+npm notice run vite --host 127.0.0.1 --port 15173
+
+  VITE v5.4.21  ready in 140 ms
+
+  ➜  Local:   http://127.0.0.1:15173/
+1:45:47 PM [vite] hmr update /src/features/investigation/InvestigationsPage.jsx, /src/index.css
+1:46:05 PM [vite] page reload dist/index.html
+1:46:06 PM [vite] page reload dist/index.html
+1:46:06 PM [vite] page reload dist/index.html
+1:48:21 PM [vite] hmr update /src/features/investigation/QuickDiagnose.jsx, /src/index.css
+1:48:21 PM [vite] hmr update /src/features/investigation/DecisionView.jsx, /src/index.css
+1:54:25 PM [vite] hmr update /src/features/investigation/InvestigationWorkspace.jsx, /src/index.css
+1:54:25 PM [vite] page reload src/test/InvestigationSessions.test.jsx
+1:56:07 PM [vite] hmr update /src/features/investigation/InvestigationWorkspace.jsx, /src/index.css
+1:58:35 PM [vite] page reload src/pages/AcceptInvite.jsx
+1:58:35 PM [vite] page reload src/test/Sidebar.test.jsx
+1:58:35 PM [vite] page reload src/components/Sidebar.jsx
+1:58:35 PM [vite] hmr update /src/pages/Login.jsx, /src/index.css
+1:58:35 PM [vite] page reload src/App.jsx
+1:58:35 PM [vite] hmr update /src/context/AuthContext.jsx, /src/index.css
+1:59:12 PM [vite] page reload src/test/Auth.test.jsx
+2:00:54 PM [vite] page reload dist/index.html
+2:00:54 PM [vite] page reload dist/index.html
+2:00:54 PM [vite] page reload dist/index.html

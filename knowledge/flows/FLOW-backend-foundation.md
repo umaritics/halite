@@ -50,3 +50,20 @@ flowchart TB
 - Existing graph/API failure semantics are unchanged.
 - Provider failure and empty content are errors; output-format selection never
   substitutes invented records, explanations or citations.
+
+## Software retirement and startup
+
+```mermaid
+flowchart TB
+  Startup[Production lifespan] --> Choice[Configured graph mode]
+  Choice --> Memory[Fresh empty memory store]
+  Choice --> Neo4j[Connect / initialize schema; preserve existing data]
+  Neo4j -->|connectivity failure| Memory
+  Router[Central route registration] --> Current[Maintenance / graph / auth / ops / vertical APIs]
+  Registry[Domain registry] --> Maintenance[Maintenance sole/default]
+```
+
+No startup branch calls seed_demo_data. Retired software routes are absent and
+return 404 even if obsolete Gitea settings are true. Explicit graph fixture and
+ops-protected manual-reset compatibility is retained; no data purge is part of
+this retirement.
