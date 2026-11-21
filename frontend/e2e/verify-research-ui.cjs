@@ -144,13 +144,20 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       assert.ok((await acceptedRow.innerText()).includes(pct(selected.coverage)));
       assert.ok((await acceptedRow.innerText()).includes(pct(selected.accuracy_top1)));
       assert.ok((await acceptedRow.innerText()).includes(pct(selected.ci95.accuracy_top1.low)));
+      await figures.nth(1).getByText('View values and intervals', { exact: true }).click();
       await figures.nth(1).screenshot({ path: path.join(directory, `research-${theme}-accepted-2024.png`) });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await figures.nth(1).scrollIntoViewIfNeeded();
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      await figures.nth(1).screenshot({ path: path.join(directory, `research-${theme}-accepted-2024-390.png`) });
+      await page.setViewportSize({ width: 1280, height: 1000 });
       await page.getByLabel('Attribute control').selectOption('coded_fields_only');
       assert.equal(await figures.nth(1).getByText('Accepted operating point', { exact: true }).count(), 0);
       await page.getByLabel('Evidence set').selectOption('pre_question');
       await page.getByText(/Historical study before questioning/).waitFor();
       assert.equal(await figures.nth(1).getByText('Accepted operating point', { exact: true }).count(), 0);
       await page.getByLabel('Evidence set').selectOption('held_out');
+      await figures.nth(1).getByText('View values and intervals', { exact: true }).click();
       const zeroAnswerRow = figures.nth(1).locator('tr').filter({ hasText: 'Information-gain control' });
       assert.ok((await zeroAnswerRow.innerText()).includes('Undefined'));
       await page.getByLabel('Time-availability check').selectOption('after_selection_labels');
@@ -168,6 +175,21 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       const dimensions = await figures.first().boundingBox();
       assert.ok(dimensions.width > 250 && dimensions.x >= 0 && dimensions.x + dimensions.width <= 390);
       await page.screenshot({ path: path.join(directory, `research-${theme}-390.png`), fullPage: true });
+      const phoneFigures = [];
+      for (let index = 0; index < 3; index++) {
+        await figures.nth(index).scrollIntoViewIfNeeded();
+        const box = await figures.nth(index).boundingBox();
+        assert.ok(box.width > 250 && box.x >= 0 && box.x + box.width <= 390);
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+        await figures.nth(index).screenshot({ path: path.join(directory, `research-${theme}-chart-${index}-390.png`) });
+        phoneFigures.push(box);
+      }
+      const comparison = page.getByRole('table', { name: /Fixed information-gain setting/ });
+      await comparison.scrollIntoViewIfNeeded();
+      const tableGeometry = await comparison.evaluate(table => ({ table: table.getBoundingClientRect().width, viewport: table.parentElement.clientWidth, content: table.parentElement.scrollWidth }));
+      assert.ok(tableGeometry.table >= 640 && tableGeometry.content > tableGeometry.viewport);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      await comparison.locator('..').screenshot({ path: path.join(directory, `research-${theme}-comparison-390.png`) });
       // Real data above; only these state-specific checks substitute endpoint responses.
       await page.route('**/api/sessions/experiments', route => route.fulfill({ status: 503, contentType: 'application/json', body: '{"detail":"synthetic outage"}' }));
       await page.reload();
@@ -178,11 +200,11 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       await page.getByRole('button', { name: 'Try again', exact: true }).click();
       await page.getByRole('heading', { name: 'No experiments published yet', exact: true }).waitFor();
       const sourceHighlights = await verifySourceHighlights(page, context, base, () => { assert.ok(currentAccessToken); return currentAccessToken; }, directory, theme);
-      proof.themes.push({ sourceHighlights, theme, desktop: 1280, phone: 390, charts: 3, accepted_policy_sha256: data.selected_policy.file_sha256, held_out_cases: data.held_out.case_counts.n_pairs, verified_tables: data.held_out_verification.tables_verified, accepted_2024_marker: true, undefined_coded_control: true, publication_sha256: data.publication_sha256, phoneFigure: dimensions });
+      proof.themes.push({ sourceHighlights, theme, desktop: 1280, phone: 390, charts: 3, accepted_policy_sha256: data.selected_policy.file_sha256, held_out_cases: data.held_out.case_counts.n_pairs, verified_tables: data.held_out_verification.tables_verified, accepted_2024_marker: true, undefined_coded_control: true, publication_sha256: data.publication_sha256, phoneFigure: dimensions, phoneFigures, tableGeometry });
       await context.close();
     }
     assert.deepEqual(errors, []);
-    proof.checks = ['real JWT endpoint and artifact hashes', 'three rendered SVG charts with whiskers', 'saved value and interval table parity', 'frozen 2025 primary and timing view', 'accepted 2024 marker only on its actual curve', 'undefined zero-answer control and preserved historical study', 'cohort/metric controls', 'production deep-link reload', 'dark/light 1280 and 390 geometry', 'explicitly mocked failure/retry/empty states', 'no browser exceptions', 'real quick/session source spans, Unicode offsets and exact saved replay'];
+    proof.checks = ['real JWT endpoint and artifact hashes', 'three rendered SVG charts with whiskers', 'saved value and interval table parity', 'frozen 2025 primary and timing view', 'accepted 2024 marker only on its actual curve', 'undefined zero-answer control and preserved historical study', 'cohort/metric controls', 'production deep-link reload', 'dark/light 1280 and 390 geometry for every chart and confined horizontal table', 'unclipped accepted-selection charts on desktop and phone', 'explicitly mocked failure/retry/empty states', 'no browser exceptions', 'real quick/session source spans, Unicode offsets and exact saved replay'];
     fs.writeFileSync(path.join(directory, 'research-browser-proof.json'), JSON.stringify(proof, null, 2) + '\n');
     console.log(JSON.stringify(proof, null, 2));
   } finally { await browser.close(); }

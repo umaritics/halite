@@ -14,7 +14,7 @@ function MetricTable({ table }) {
     const ci = stats.ci95[key];
     return stats[key] == null ? 'Undefined (no answered cases)' : `${format(stats[key])}; 95% CI ${format(ci.low)} to ${format(ci.high)}; ${ci.valid_resamples} valid draws`;
   };
-  return <div className="overflow-x-auto"><table className="w-full text-left text-sm">
+  return <div className="overflow-x-auto"><table className="w-full min-w-[40rem] text-left text-sm">
     <caption className="mb-3 text-left text-secondary">Fixed information-gain setting: {table.chosen.n_pairs} cases, {table.chosen.n_originals} original reports. {table.chosen.n_answered} answers, {table.chosen.n_correct_top1} top-one matches, {table.chosen.n_pairs - table.chosen.n_answered} abstentions.</caption>
     <thead><tr>{['Measurement', 'Frozen policy', 'Abstention off · same terminal questions'].map(label => <th key={label} scope="col" className="border-b border-theme p-2">{label}</th>)}</tr></thead>
     <tbody>{rows.map(([label, key, format]) => <tr key={key}><th scope="row" className="border-b border-theme p-2 font-normal">{label}</th>{['chosen', 'abstention_off'].map(id => <td key={id} className="border-b border-theme p-2">{value(table[id], key, format)}</td>)}</tr>)}</tbody>
@@ -80,12 +80,12 @@ function Results({ publication }) {
     </section>
     <section className="space-y-4" aria-labelledby="abstention-heading">
       <h2 id="abstention-heading" className="font-brand text-xl text-primary">What changes when Halite abstains?</h2>
-      <p className="text-sm text-secondary">{isHeld ? 'Fixed test-year points only; no test-year threshold curve was searched. Abstention off uses the same terminal beliefs and questions, disabling only the final confidence and evidence gates.' : isLegacy ? 'Historical study before questioning. Its curve is separate from the accepted question-conditioned policy; it has no accepted-point marker.' : `Saved selection curves at the accepted minimum gain of ${policy.parameters.g_min.toFixed(2)} bits. The green accepted-point marker appears only for all-attribute information gain on all cases.`}</p>
+      <p className="text-sm text-secondary">{isHeld ? 'Fixed test-year points only; no test-year threshold curve was searched. Abstention off uses the same terminal beliefs and questions, disabling only the final confidence and evidence gates.' : isLegacy ? 'Historical study before questioning. Its abstention charts use all cases independently of the question attribute/cohort controls. This curve is separate from the accepted question-conditioned policy and has no accepted-point marker.' : `Saved selection curves at the accepted minimum gain of ${policy.parameters.g_min.toFixed(2)} bits. The green accepted-point marker appears only for all-attribute information gain on all cases.`}</p>
       <label className="block max-w-sm text-sm text-primary">Answered-case accuracy<select className="halite-input mt-1" value={decisionMetric} onChange={event => setDecisionMetric(event.target.value)}>
         <option value="accuracy_top1">Top-1 accuracy</option><option value="accuracy_top3">Top-3 accuracy</option>
       </select></label>
       <ResearchChart title="Accuracy against coverage" {...decisionSample} xLabel="Coverage" yLabel={decisionMetric === 'accuracy_top1' ? 'Top-1 accuracy' : 'Top-3 accuracy'} series={series(decisionMetric)}
-        caption="Coverage is answered cases divided by all eligible cases. Accuracy is measured only among answered cases and is undefined with no answers. Horizontal and vertical whiskers retain the saved 95% intervals. The values table preserves undefined points instead of plotting zero." />
+        caption="Coverage is answered cases divided by all eligible cases. Accuracy is measured only among answered cases and is undefined with no answers. Horizontal and vertical whiskers retain the saved 95% intervals. The values table preserves undefined points instead of plotting zero. Resamples with no answers cannot define answered accuracy; valid-draw counts appear in the fixed-test comparison table." />
       <ResearchChart title="Unsupported top-3 outcome-key proxy" {...decisionSample} xLabel="Coverage" yLabel="Unsupported proxy" series={series('unsupported_suggestion_rate')}
         caption="Answered cases whose top three parts omit the recorded correction key, divided by all eligible cases. This is an outcome-key proxy, not a sentence hallucination or safety rate. Empty rankings cannot answer even with abstention off." />
       {isHeld && <>

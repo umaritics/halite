@@ -981,3 +981,13 @@ that runtime dependency with packaged-backend policy/protocol/input verification
 the full original pre-access/documentation checker remains unchanged in CI.
 Added an isolated backend-only package parity/tamper test. No Docker context,
 source pin, experiment result or ownership boundary was changed.
+
+Source38ed4d7 / hosted44908576114 passed499backend/283frontend tests,81.83%
+coverage and real Compose/API/browser flows. Retrieved raw reports and images.
+Manual image QA found the accepted-selection screenshot clipped because its
+63-row values table was open. Corrected proof capture by collapsing the table
+after exact row/interval checks, and added dedicated desktop/phone accepted-
+curve captures plus every test chart at390px. The fixed-test comparison table
+now retains readable columns with horizontal scrolling confined to its own
+container on phones. Added geometry proof for that containment, clarified
+historical all-case scope and missing-answer bootstrap draws. Revalidation next.
