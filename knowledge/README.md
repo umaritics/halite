@@ -52,6 +52,7 @@ When sources conflict: prefer code+tests; record a decision note; get team appro
 | Conflict engine / review queue | [context/modules/conflict_engine.md](context/modules/conflict_engine.md) + [flows/FLOW-conflict-review.md](flows/FLOW-conflict-review.md) |
 | Maintenance assets/history/ingest APIs | [context/modules/maintenance_api.md](context/modules/maintenance_api.md) + [flows/FLOW-ingest.md](flows/FLOW-ingest.md) |
 | Ingestion / corpus | [flows/FLOW-ingest.md](flows/FLOW-ingest.md) |
+| Published research charts and artifact integrity | [context/modules/investigation_frontend.md](context/modules/investigation_frontend.md), [research_charts.md](context/modules/research_charts.md) + [flows/FLOW-research-publication.md](flows/FLOW-research-publication.md) |
 | Investigation/home UI | [context/modules/investigation_frontend.md](context/modules/investigation_frontend.md) + [flows/FLOW-sessions.md](flows/FLOW-sessions.md) |
 | Frontend UX | [context/modules/frontend.md](context/modules/frontend.md) |
 | Backend preparation, graph/model packages, vertical summaries | [context/modules/backend_foundation.md](context/modules/backend_foundation.md) + [flows/FLOW-backend-foundation.md](flows/FLOW-backend-foundation.md) |

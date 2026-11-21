@@ -1,0 +1,41 @@
+{
+  "themes": [
+    {
+      "theme": "dark",
+      "desktop": 1280,
+      "phone": 390,
+      "charts": 3,
+      "publication_sha256": "5aa34ab45492c559772b32a479792479f09c71a3c05849c9057ca6c93f0f3755",
+      "phoneFigure": {
+        "x": 80,
+        "y": 42,
+        "width": 294,
+        "height": 802
+      }
+    },
+    {
+      "theme": "light",
+      "desktop": 1280,
+      "phone": 390,
+      "charts": 3,
+      "publication_sha256": "5aa34ab45492c559772b32a479792479f09c71a3c05849c9057ca6c93f0f3755",
+      "phoneFigure": {
+        "x": 80,
+        "y": 42,
+        "width": 294,
+        "height": 802
+      }
+    }
+  ],
+  "network": "real authenticated endpoint; UI empty/error checks explicitly mocked",
+  "checks": [
+    "real JWT endpoint and artifact hashes",
+    "three rendered SVG charts with whiskers",
+    "saved value table parity",
+    "cohort/metric controls",
+    "production deep-link reload",
+    "dark/light 1280 and 390 geometry",
+    "explicitly mocked failure/retry/empty states",
+    "no browser exceptions"
+  ]
+}

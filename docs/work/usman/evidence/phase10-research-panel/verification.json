@@ -1,0 +1,41 @@
+{
+  "workflow_url": "https://github.com/umaritics/halite/actions/runs/44856875802",
+  "source_commit": "ecdc2646e6db8e4fa20bf0573d8c11290df1bb41",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "Docker Compose real-graph smoke test",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44856875802/job/136701023159"
+    },
+    {
+      "name": "Backend tests (Python 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44856875802/job/136701023378"
+    },
+    {
+      "name": "Frontend tests and build (Node 20)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44856875802/job/136701023490"
+    }
+  ],
+  "backend_passed": 445,
+  "frontend_passed": 275,
+  "backend_coverage_percent": 78,
+  "integer_budget_assertion": "browser checks exact axis labels against saved artifact budgets",
+  "visual_review": "Inspected final light question chart and dark phone screenshot, plus prior same-layout desktop/dark/light accuracy and proxy charts. No clipped text or horizontal page overflow observed.",
+  "files": {
+    "ci-summary.txt": "42dd5dfc809b36173e48354c0861ca561a03f6de1bff446bb27704651403dd95",
+    "research-browser-proof.json": "07121722ac2757ee611aec9e315b0f184889e5011c38e5e4cd5d50e02c880bd1",
+    "research-dark-1280.png": "9f2c0b612e7c68b81d37a4d03204ee3ba6c2c7cb4081ab5a2aee2117fe46cb01",
+    "research-dark-390.png": "d5dbbc63cbb4da5287001d3d738ad3424a2386abfe73be5f9bcd0de907cc9cf6",
+    "research-dark-chart-0.png": "ca3904b380b0c8b71fb38f46244ba42348e120e84b48fac08db59eacba517de9",
+    "research-dark-chart-1.png": "f0aaef2cce2d5ae003eefd207f3914cabf2be707f89c687f75146a65f67145f0",
+    "research-dark-chart-2.png": "dd36f702ab10019fc821e3e063c99b14d9d989155bf89f9ea294aaf7eb94e5f1",
+    "research-light-1280.png": "720f16f389c73117f0b3fde150899eb0f4ff8186a7c466412aa9faaca3051aaa",
+    "research-light-390.png": "c0234b7b5a2c848292609eefb64b10bd163cfe847fe88c12138b237318025909",
+    "research-light-chart-0.png": "b48329c1c130690739816c194ef89c9c89459de1704d0b00825b7bc6b7ea44bd",
+    "research-light-chart-1.png": "66a817bc5fbcf5addb66295f70017c5585f1377359c8d815368091f703b685c3",
+    "research-light-chart-2.png": "c729ebca3720b83a8a2d25b640b3c37b5690cae16023d207ca0621fd4acaff4a"
+  }
+}

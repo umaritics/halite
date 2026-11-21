@@ -123,3 +123,8 @@ controls, failure/retry/empty states and account-change cancellation. Hosted
 Compose API, SVG whiskers, table parity, deep-link reload and both themes at
 1280px and 390px. Its outage/empty subchecks explicitly mock those responses;
 normal publication reads use the real authenticated endpoint.
+
+Verified research-page source `ecdc264`: hosted workflow 44856875802 passed
+445 backend/275 frontend tests, builds, real-graph/session smoke and production
+browser checks, including exact recorded budget ticks and phone geometry.
+Retained proof: `docs/work/usman/evidence/phase10-research-panel/`.
