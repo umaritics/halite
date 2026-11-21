@@ -48,11 +48,17 @@
     "docs/work/usman/evidence/phase17-held-out/held-out-run.json": "e5243989bca4e56b9fccd876ea783f5a5bf603d01f88d5676595e7ec071f1de9",
     "docs/work/usman/evidence/phase17-held-out/history-drift-diagnosis.json": "20eff05c1e527870815ac7ee0b4cc48c4da263f53e5cde9a46c356f163b261ac",
     "docs/work/usman/evidence/phase17-held-out/research-browser-proof.json": "da2d8abed43797e100b56457eaa42ca0d76944986eb5ea779346c49665d69620",
-    "docs/work/usman/evidence/phase17-held-out/test-results.xml": "3e81ac716c83fcc2f3f92e61aabcb38498c0067d14ad2ba176b6e6e6d07d5ece"
+    "docs/work/usman/evidence/phase17-held-out/test-results.xml": "3e81ac716c83fcc2f3f92e61aabcb38498c0067d14ad2ba176b6e6e6d07d5ece",
+    "docs/work/usman/evidence/phase17-held-out/retained-results-ci-run.json": "fff09f57defd1925d510e55734606a7c4344de4cc3c12cc786a9a6f2921056d3",
+    "docs/work/usman/evidence/phase17-held-out/hosted-artifact-metadata.jsonl": "f4930ea0a0dd1438605351eb2635226cc29e8670ba77b89336af50b3c52e8d79",
+    "docs/work/usman/evidence/phase17-held-out/retained-result-replay-log.txt": "a0b20dabbbcbcc860213f9c8f15f5fe7a4c334292f4a39299b1e369a8f15ea2e"
   },
   "logs": "Hosted log text retained with trailing whitespace stripped; original full-log SHA retained below.",
   "original_log_sha256": {
     "/tmp/halite-held-out-run.log": "135d54adda76fd1ed4171b2db8ea419f846d272609233e83d329b1e5e7693769",
     "/tmp/halite-phase17-restored-ci.log": "60fcea033e211eaf7a8aff59e2ad3780eb2905bcb53aff2771696540db16f834"
-  }
+  },
+  "retained_results_full_ci_run": "https://github.com/umaritics/halite/actions/runs/44906671095",
+  "retained_results_verified_commit": "d8a8510a2504cfdc343d6033ed819740da5a722e",
+  "retained_results_ci_replay": "PASS"
 }

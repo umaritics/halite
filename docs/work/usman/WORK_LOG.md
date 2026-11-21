@@ -948,3 +948,9 @@ controls, strata, exact uncertainty, error analysis and provenance. Label remove
 ordinary CI now replays saved evidence without source downloads. No local heavy
 job, staging write or runtime activation. Acceptance/knowledge bank updated;
 final publication and all other full-goal gates remain.
+
+Retained-result commit d8a8510 / CI44906671095 passed all three jobs and the
+new saved-result replay step. Retained its actual job metadata and replay log,
+alongside hosted artifact IDs/sizes/SHA digests. Proof hashes were checked
+locally against retained bytes; each hosted result file is byte-identical and
+the accepted policy SHA is unchanged. Phase17 is fully verified.

@@ -87,3 +87,5 @@ New procedure checks cover temporal and outcome-key isolation, ECE arithmetic, p
 - Ordinary full CI now replays the retained results without network source downloads, fits or sweeps.
 
 The research evaluation phase is complete. Publishing the final results/accepted marker, independent human grounding labels, actual model measurements, final report/defense review, owner review/merge and release remain explicit items in the acceptance matrix. No staging write, model call or local heavy computation was used.
+
+Final retained-result commit `d8a8510` also passed every job in [run 44906671095](https://github.com/umaritics/halite/actions/runs/44906671095), including the new saved-result replay step. Its exact-head job metadata and replay log are retained in the evidence directory. The replay reproduced all 72 tables and intervals without downloading or tuning against a new source.
