@@ -1,6 +1,6 @@
 # Freeze the user-selected research point before held-out access
 
-- Status: accepted choice; implementation complete; hosted preflight verification pending
+- Status: accepted and hosted verified on b97954d; held-out execution/review pending
 - Date: 2026-11-21
 - Owner: Usman
 
@@ -38,3 +38,8 @@ unselected snapshot; the separate selected-policy file records later acceptance.
 The retained audit_label_availability.py reproduces the audit exactly, checking
 both canonical source hashes before dates. Policy pins include this tool and
 the preflight implementation; frozen numeric settings remain unchanged.
+
+Run 44903750796 passed all jobs, 476 backend/279 frontend tests and the hosted
+frozen-policy CLI preflight; coverage 81.37%. Proof is retained in phase16 and
+FROZEN_POLICY_VERIFICATION.md. The selected point is accepted; runtime remains
+disabled and held-out execution is the next separate phase.

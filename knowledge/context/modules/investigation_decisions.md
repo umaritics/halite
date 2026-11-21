@@ -143,3 +143,8 @@ Primary test cases retain the occurrence-year definition. A predeclared
 sensitivity stratum contains only queries after the latest selection-label time;
 report overlap and separate intervals rather than claim a wholly prospective
 calendar split. No 2025 projection is read in the preflight.
+
+Frozen choice/preflight is hosted verified on b97954d / run 44903750796: 476
+backend/279 frontend tests and full database/browser flows pass; coverage 81.37%.
+Hosted preflight fingerprints match committed policy/protocol files. See
+FROZEN_POLICY_VERIFICATION.md; actual held-out execution remains next.

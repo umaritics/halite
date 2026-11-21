@@ -883,3 +883,12 @@ only the pinned 2023/2024 inputs, verifying their canonical projection hashes
 before accepting dates. The selected policy also pins that tool and its own
 preflight implementation. Reproduction and local preflight passed; the accepted
 numeric choice is unchanged and 2025 remains untouched.
+
+Phase16 source b97954d / run 44903750796 verified all jobs: 476 backend and
+279 frontend tests, 81.37% coverage, real database/session/browser checks and
+actual frozen-policy preflight. Hosted policy/protocol fingerprints match the
+committed files; fifteen new validation/mutation/runtime-compatibility checks
+pass. Raw reports, hosted preflight, browser/log/commit/hash evidence and a
+self-contained verification note are retained. The accepted .80/.50 point and
+pre-test freeze phase are complete; no 2025 access or runtime activation. Next
+is the held-out procedure and execution, with all remaining full-goal gates kept.

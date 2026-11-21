@@ -1,0 +1,58 @@
+{
+  "source_commit": "b97954dbf4e5d191231a2838d1d1bc5b369f5faf",
+  "workflow_url": "https://github.com/umaritics/halite/actions/runs/44903750796",
+  "jobs": [
+    {
+      "name": "Frontend tests and build (Node 20)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44903750796/job/136844877214"
+    },
+    {
+      "name": "Docker Compose real-graph smoke test",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44903750796/job/136844877340"
+    },
+    {
+      "name": "Backend tests (Python 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44903750796/job/136844877392"
+    }
+  ],
+  "backend_tests": 476,
+  "frontend_tests": 279,
+  "coverage": {
+    "version": "7.17.4",
+    "timestamp": "1795263989767",
+    "lines-valid": "6093",
+    "lines-covered": "4958",
+    "line-rate": "0.8137",
+    "branches-covered": "0",
+    "branches-valid": "0",
+    "branch-rate": "0",
+    "complexity": "0"
+  },
+  "preflight": {
+    "preflight": "PASS",
+    "parameters": {
+      "tau_answer": 0.8,
+      "g_min": 0.5,
+      "n_min": 2,
+      "max_questions": 3
+    },
+    "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+    "protocol_sha256": "543796e247776031f9db9e62c72b6ad814978d4f4785a08210aa5592aed4fbc8",
+    "held_out_accessed": false,
+    "runtime_activated": false
+  },
+  "backend_artifact_sha256": {
+    "coverage.xml": "fb669cabd6fe73836656f6b7ba1f998d2c78505ef921ba5d6436bf533e06596c",
+    "dependency-cleanup-summary.json": "b84b7b8e33c619e2557fac0448c715e5226abba03eee7124ce2c0ebcac21df52",
+    "dependency-install-report.json": "489220fb2d1c4df3181da7da9ea27f53ff59f05dc852ed5d64fea4cff48ba5a9",
+    "dependency-installed.json": "c378761820b4212edce01a0c39671a5aed5e9048ab2a6e773a1e8b4a11541247",
+    "frozen-policy-preflight.json": "0f2b55e1f5d322c4616563fc361c21f64ab3a9fbb9f7de50e50c732b4c756ec5",
+    "test-results.xml": "e1d2a64a4270430562d14ad4ca686e96cb15a6fd2c1ad1216226c3aa441c65df"
+  },
+  "audit_reproduction": "Retained audit tool exactly reproduced verified frozen 2023/2024 label dates and canonical projection hashes.",
+  "user_acceptance": "Freeze 0.80 answer / 0.50 gain (Recommended)",
+  "selected_for": "Research evaluation; not production activation or repair approval."
+}
