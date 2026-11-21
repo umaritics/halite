@@ -74,6 +74,8 @@ jobs:
           --cov-report=term-missing --cov-report=xml:coverage.xml --cov-fail-under=80
       - name: Validate frozen research choice without held-out access
         run: python -m investigation.experiments.frozen_policy > frozen-policy-preflight.json
+      - name: Replay retained frozen held-out results without source downloads
+        run: python ../docs/work/usman/verify_held_out.py investigation/experiments/results/held_out_2025_v1
       - name: Upload backend verification reports
         if: always()
         uses: actions/upload-artifact@v4

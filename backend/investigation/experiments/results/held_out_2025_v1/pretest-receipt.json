@@ -1,0 +1,33 @@
+{
+  "recorded_before_test_access_utc": "2026-11-21T12:53:36.444866+00:00",
+  "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+  "protocol_sha256": "93ff4fcc4ffc9e64e59ff97da953fed82f2208dda1bf63da0fdad2e7ee2e61a9",
+  "procedure_files_sha256": {
+    "backend/investigation/experiments/held_out.py": "f9f884a4232a47c8874547c823b64db382d16a0b38b856c5f6731045a4083ec1",
+    "backend/tests/test_held_out.py": "e23bbac74dbac085d355d1f19b027502eaa787ddc958b9ec30559636d3707bda",
+    "docs/work/usman/verify_held_out.py": "6a452f3c441073a68a6da86c4adc032c0a3c1a74544d11f5591d16d7b6ccf005",
+    "docs/work/usman/verify_policy_selection.py": "6848d749e1218bdfe573d9811db8be3083c2d5791941b35b4ec2c574449fc776",
+    ".github/workflows/held-out.yml": "cd65d2869f92c2461e9025e2afc0a342c119e8de2b7eea8c1a96560624812112",
+    "backend/investigation/data/frozen-history-order-v1.json.gz": "2ea2484293e038d893c903e8e78d73849d7a12619f38a11b2079c4a1be2500db"
+  },
+  "history_corpus_sha256": "bec0b4f2083ce8f03034fbe5dbd71b2fb120603254f149b60b7c795c605380bf",
+  "history_restorations": [
+    {
+      "file": "usman_decision_2024.csv.gz",
+      "retrieved_projection_sha256": "6c4d2a7d2c9b0afa7015b4ec0b237cb3fab686c7a55367c05e2f18704095fb43",
+      "restored_projection_sha256": "da33b8d064fc8ce1ba8133a5719aa135ffb9d01ac3be911172bf483755f447cb",
+      "frozen_rows": 66080,
+      "excluded_new_ids": [
+        "2026FA0000953"
+      ],
+      "original_full_hash_verified": true
+    }
+  ],
+  "parameters": {
+    "tau_answer": 0.8,
+    "g_min": 0.5,
+    "n_min": 2,
+    "max_questions": 3
+  },
+  "git_commit": "237ab4115a19636e958302f67ac9be427517d5d7"
+}

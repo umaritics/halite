@@ -20,7 +20,7 @@ updated: 2026-11-20
    diagnostics and 1,000 cluster-bootstrap intervals; do not auto-select a point.
 7. Default runtime Copilot derives uncalibrated beliefs and unconfigured abstention; the
    session service stores the exact response, hypothesis beliefs and entropy.
-8. [Offline question selection](FLOW-question-selection.md) follows with strict temporal counts. Live questions and accepted research thresholds are implemented; activation and 2025 evaluation remain explicit gates.
+8. [Offline question selection](FLOW-question-selection.md) follows with strict temporal counts. Live questions and accepted research thresholds are implemented; activation remains an explicit gate; the fixed 2025 run is now verified.
 
 ```mermaid
 flowchart LR
@@ -117,3 +117,11 @@ Ordinary PR events perform preflight only. Download/evaluation requires an
 explicit label event and successful exact-head full-stack checks. No source
 overwrite, refitting or sweep is allowed. Missing/mismatched historical data
 stops before test access; existing test data needs matching freeze provenance.
+
+Completed hosted run 44906082558 / source 5a5060b retains 157 test pairs, all
+72 stopping tables, question curves, intervals, ECE, source fingerprints and
+pre-access history-restoration receipt. Independent metric and interval replay
+passed. Source 5a5060b passed exact-head full CI before access. The run label
+is removed; ordinary CI replays saved artifacts without a new source access.
+See HELD_OUT_VERIFICATION.md for results and preserved errors; numeric settings
+and policy fingerprint remain unchanged. Product publication is still separate.

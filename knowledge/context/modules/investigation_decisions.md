@@ -82,7 +82,7 @@ ten equal-width bins for the leading named belief. 1,000 bootstrap draws cluster
 pairs sharing an original report; undefined answered accuracy stays null.
 
 The current benchmark is selection before the question policy, not final RQ4
-performance. Question-policy effects are now measured separately in [the question package](investigation_questions.md). The selected research operating point is recorded below; no 2025 result is claimed.
+performance. Question-policy effects are now measured separately in [the question package](investigation_questions.md). The selected research operating point and verified frozen 2025 result are recorded below.
 
 ## Published experiment reads
 
@@ -125,7 +125,7 @@ Joint stopping selection is verified on 28dcd3a: 4,536 rows / 389 pairs / 340
 originals, with 1,000 bootstrap draws and independent scalar metric replay. See
 POLICY_SELECTION_VERIFICATION.md. Usman explicitly accepted the 0.80/0.50 research point after reviewing counts
 and intervals. The frozen choice is in params/selected-policy-v1.json; bars
-remain relative support and 2025 remains untouched pending the frozen procedure.
+remain relative support; the subsequent frozen evaluation is documented below.
 
 ## Accepted point and held-out preflight
 
@@ -147,7 +147,7 @@ calendar split. No 2025 projection is read in the preflight.
 Frozen choice/preflight is hosted verified on b97954d / run 44903750796: 476
 backend/279 frontend tests and full database/browser flows pass; coverage 81.37%.
 Hosted preflight fingerprints match committed policy/protocol files. See
-FROZEN_POLICY_VERIFICATION.md; actual held-out execution remains next.
+FROZEN_POLICY_VERIFICATION.md; subsequent actual execution is recorded below.
 
 ## Frozen held-out procedure
 
@@ -177,3 +177,24 @@ manifest restores the exact approved snapshot and still requires its original
 full canonical hash. Current downloaded revisions are archived; changed/missing
 frozen content fails. The restoration is in the pre-access receipt and does not
 refit parameters or add the new historical row to the research snapshot.
+
+## Verified 2025 result
+
+Source 5a5060b / hosted run 44906082558 completed the actual frozen test and
+independent replay: 157 pairs / 140 originals, 72 stopping tables, all curves/
+intervals/ECE preserved. The accepted all-attribute IG point answered 7 (5
+part-key top-one matches, 2 misses) and abstained on 150, mean questions 1.4586.
+Answered accuracy 71.43% has a wide cluster 95% interval 33.33–100% (999 valid
+draws); coverage is 4.46% (1.32–8.13%). Abstention-off at identical terminal
+beliefs/questions answers all 157 with 31 top-one/40 top-three matches. Named-top
+ECE is .18364 (.13114–.24616). All test queries follow the predeclared latest
+selection-label cutoff, so sensitivity and primary tables agree.
+
+The true part was absent from the initial ten candidates in 113 cases, including
+both answered misses. All five correct answers were same-part cases; coded-only
+IG answered none. These results stay frozen and do not authorize tuning, live
+activation or probability wording. Full CI passed 485 backend/279 frontend tests,
+81.65% coverage and real disposable database/browser flows. See
+docs/work/usman/HELD_OUT_VERIFICATION.md and retained held_out_2025_v1 artifacts.
+The existing product manifest still publishes only the earlier 2024 artifacts;
+final results/accepted-marker publication is separate remaining work.

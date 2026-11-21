@@ -1,0 +1,509 @@
+preflight	Set up job	﻿2026-11-21T12:52:57.5422442Z Current runner version: '2.338.2'
+preflight	Set up job	2026-11-21T12:52:57.5444371Z ##[group]Runner Image Provisioner
+preflight	Set up job	2026-11-21T12:52:57.5445098Z Hosted Compute Agent
+preflight	Set up job	2026-11-21T12:52:57.5445570Z Version: 20261111.635
+preflight	Set up job	2026-11-21T12:52:57.5446177Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed
+preflight	Set up job	2026-11-21T12:52:57.5446785Z Build Date: 2026-11-11T01:49:01Z
+preflight	Set up job	2026-11-21T12:52:57.5447379Z Worker ID: {2d8652dd-b412-4991-bddc-35bd388a0744}
+preflight	Set up job	2026-11-21T12:52:57.5447995Z Region: westus2
+preflight	Set up job	2026-11-21T12:52:57.5448431Z Cloud: Azure
+preflight	Set up job	2026-11-21T12:52:57.5448947Z ##[endgroup]
+preflight	Set up job	2026-11-21T12:52:57.5450227Z ##[group]Operating System
+preflight	Set up job	2026-11-21T12:52:57.5450787Z Ubuntu
+preflight	Set up job	2026-11-21T12:52:57.5451226Z 26.04.1
+preflight	Set up job	2026-11-21T12:52:57.5451652Z LTS
+preflight	Set up job	2026-11-21T12:52:57.5452138Z ##[endgroup]
+preflight	Set up job	2026-11-21T12:52:57.5452593Z ##[group]Runner Image
+preflight	Set up job	2026-11-21T12:52:57.5453065Z Image: ubuntu-26.04
+preflight	Set up job	2026-11-21T12:52:57.5453605Z Version: 20261116.202.1
+preflight	Set up job	2026-11-21T12:52:57.5454458Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261116.202/images/ubuntu/Ubuntu2604-Readme.md
+preflight	Set up job	2026-11-21T12:52:57.5455914Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261116.202
+preflight	Set up job	2026-11-21T12:52:57.5456758Z ##[endgroup]
+preflight	Set up job	2026-11-21T12:52:57.5457694Z ##[group]GITHUB_TOKEN Permissions
+preflight	Set up job	2026-11-21T12:52:57.5459640Z Checks: read
+preflight	Set up job	2026-11-21T12:52:57.5460154Z Contents: read
+preflight	Set up job	2026-11-21T12:52:57.5460618Z Metadata: read
+preflight	Set up job	2026-11-21T12:52:57.5461117Z ##[endgroup]
+preflight	Set up job	2026-11-21T12:52:57.5462808Z Secret source: Actions
+preflight	Set up job	2026-11-21T12:52:57.5463661Z Cache mode: write
+preflight	Set up job	2026-11-21T12:52:57.5464491Z Prepare workflow directory
+preflight	Set up job	2026-11-21T12:52:57.5721673Z Prepare all required actions
+preflight	Set up job	2026-11-21T12:52:57.5759871Z Getting action download info
+preflight	Set up job	2026-11-21T12:52:57.9124499Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+preflight	Set up job	2026-11-21T12:52:58.0507348Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+preflight	Set up job	2026-11-21T12:52:58.2270236Z Complete job name: preflight
+preflight	Run actions/checkout@v4	﻿2026-11-21T12:52:58.2948829Z ##[group]Run actions/checkout@v4
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2949671Z with:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2950046Z   repository: umaritics/halite
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2953077Z   token: ***
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2953443Z   ssh-strict: true
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2953806Z   ssh-user: git
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2954178Z   persist-credentials: true
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2954652Z   clean: true
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2955022Z   sparse-checkout-cone-mode: true
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2955451Z   fetch-depth: 1
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2955808Z   fetch-tags: false
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2956171Z   show-progress: true
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2956533Z   lfs: false
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2956875Z   submodules: false
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2957243Z   set-safe-directory: true
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2957659Z   allow-unsafe-pr-checkout: false
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.2958241Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5000896Z Syncing repository: umaritics/halite
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5002759Z ##[group]Getting Git version info
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5003575Z Working directory is '/home/runner/work/halite/halite'
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5004605Z [command]/usr/bin/git version
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5005873Z git version 2.56.1
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5024068Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5036039Z Temporarily overriding HOME='/home/runner/work/_temp/e452e66a-cfbb-4ed9-94f4-a7fa486e04be' before making global git config changes
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5037803Z Adding repository directory to the temporary git global config as a safe directory
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5040037Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/halite/halite
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5190813Z Deleting the contents of '/home/runner/work/halite/halite'
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5198082Z ##[group]Initializing the repository
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5206453Z [command]/usr/bin/git init /home/runner/work/halite/halite
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5604427Z hint: Using 'master' as the name for the initial branch. This default branch name
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5605999Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5607633Z hint: to use in all of your new repositories, which will suppress this warning,
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5608561Z hint: call:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5609044Z hint:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5609770Z hint: 	git config --global init.defaultBranch <name>
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5610527Z hint:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5611299Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5612463Z hint: 'development'. The just-created branch can be renamed via this command:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5613360Z hint:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5613907Z hint: 	git branch -m <name>
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5614529Z hint:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5615306Z hint: Disable this message with "git config set advice.defaultBranchName false"
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5616494Z Initialized empty Git repository in /home/runner/work/halite/halite/.git/
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5625580Z [command]/usr/bin/git remote add origin https://github.com/umaritics/halite
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5678230Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5679085Z ##[group]Disabling automatic garbage collection
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5682793Z [command]/usr/bin/git config --local gc.auto 0
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5714673Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5715285Z ##[group]Setting up auth
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5721764Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.5752500Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6097315Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6132490Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6391866Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6430066Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6686483Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6722395Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6723065Z ##[group]Fetching the repository
+preflight	Run actions/checkout@v4	2026-11-21T12:52:58.6729276Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +237ab4115a19636e958302f67ac9be427517d5d7:refs/remotes/pull/47/merge
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.7396543Z From https://github.com/umaritics/halite
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.7398938Z  * [new ref]         237ab4115a19636e958302f67ac9be427517d5d7 -> pull/47/merge
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.7404064Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.7405534Z ##[group]Determining the checkout info
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.7407115Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.7408027Z [command]/usr/bin/git sparse-checkout disable
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.8424487Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.8453310Z ##[group]Checking out the ref
+preflight	Run actions/checkout@v4	2026-11-21T12:52:59.8455680Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1030804Z Note: switching to 'refs/remotes/pull/47/merge'.
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1031250Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1031484Z You are in 'detached HEAD' state. You can look around, make experimental
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1031936Z changes and commit them, and you can discard any commits you make in this
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1032398Z state without impacting any branches by switching back to a branch.
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1032649Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1032878Z If you want to create a new branch to retain commits you create, you may
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1033297Z do so (now or later) by using -c with the switch command. Example:
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1033544Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1033666Z   git switch -c <new-branch-name>
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1034142Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1034280Z Or undo this operation with:
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1034445Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1034605Z   git switch -
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1034816Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1035027Z Turn off this advice by setting config variable advice.detachedHead to false
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1035299Z
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1035673Z HEAD is now at 237ab41 Merge 5a5060b5e8bb54f1677be4acf93628dc89b03e0e into cfe9107607ff7b7a076308f628a336b6ca60df29
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1052109Z ##[endgroup]
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1094557Z [command]/usr/bin/git log -1 --format=%H
+preflight	Run actions/checkout@v4	2026-11-21T12:53:00.1116239Z 237ab4115a19636e958302f67ac9be427517d5d7
+preflight	Run actions/setup-python@v5	﻿2026-11-21T12:53:00.2302959Z ##[group]Run actions/setup-python@v5
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2303276Z with:
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2303492Z   python-version: 3.11
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2303722Z   check-latest: false
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2305771Z   token: ***
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2305986Z   update-environment: true
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2306227Z   allow-prereleases: false
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2306479Z   freethreaded: false
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.2306715Z ##[endgroup]
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.3469131Z ##[group]Installed versions
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.3937416Z (node:2193) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.3938401Z (Use `node --trace-deprecation ...` to show where the warning was created)
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.3952911Z Successfully set up CPython (3.11.18)
+preflight	Run actions/setup-python@v5	2026-11-21T12:53:00.3953695Z ##[endgroup]
+preflight	Validate frozen procedure without test-data access	﻿2026-11-21T12:53:00.4097498Z ##[group]Run python -m investigation.experiments.held_out --preflight-only
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4098142Z ^[[36;1mpython -m investigation.experiments.held_out --preflight-only^[[0m
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4226501Z shell: /usr/bin/bash -e {0}
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4226860Z env:
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4227151Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4227564Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4227968Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4228338Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4228679Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4229026Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4229525Z   PYTHONPATH: backend
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:00.4229759Z ##[endgroup]
+preflight	Validate frozen procedure without test-data access	2026-11-21T12:53:02.0445958Z {"preflight": "PASS", "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76", "protocol_sha256": "93ff4fcc4ffc9e64e59ff97da953fed82f2208dda1bf63da0fdad2e7ee2e61a9", "held_out_accessed": false}
+preflight	Post Run actions/setup-python@v5	﻿2026-11-21T12:53:02.0651452Z Post job cleanup.
+preflight	Post Run actions/setup-python@v5	2026-11-21T12:53:02.1617503Z (node:2204) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+preflight	Post Run actions/setup-python@v5	2026-11-21T12:53:02.1618203Z (Use `node --trace-deprecation ...` to show where the warning was created)
+preflight	Post Run actions/checkout@v4	﻿2026-11-21T12:53:02.1839664Z Post job cleanup.
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2547322Z [command]/usr/bin/git version
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2585836Z git version 2.56.1
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2619020Z Temporarily overriding HOME='/home/runner/work/_temp/bfac9e31-d0f2-457d-8273-45f1f201fe4d' before making global git config changes
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2623961Z Adding repository directory to the temporary git global config as a safe directory
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2624717Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/halite/halite
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2661519Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2694719Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2966141Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.2990774Z http.https://github.com/.extraheader
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.3000640Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.3053053Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.3312617Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+preflight	Post Run actions/checkout@v4	2026-11-21T12:53:02.3343471Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+preflight	Complete job	﻿2026-11-21T12:53:02.3710791Z Cleaning up orphan processes
+preflight	Complete job	2026-11-21T12:53:02.4034559Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+evaluate	Set up job	﻿2026-11-21T12:53:07.9857788Z Current runner version: '2.338.2'
+evaluate	Set up job	2026-11-21T12:53:07.9875003Z ##[group]Runner Image Provisioner
+evaluate	Set up job	2026-11-21T12:53:07.9875744Z Hosted Compute Agent
+evaluate	Set up job	2026-11-21T12:53:07.9876195Z Version: 20261111.635
+evaluate	Set up job	2026-11-21T12:53:07.9876665Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed
+evaluate	Set up job	2026-11-21T12:53:07.9877194Z Build Date: 2026-11-11T01:49:01Z
+evaluate	Set up job	2026-11-21T12:53:07.9877703Z Worker ID: {7f123f77-0a2b-4844-8359-5b20a2c3b207}
+evaluate	Set up job	2026-11-21T12:53:07.9878215Z Region: us-west-2
+evaluate	Set up job	2026-11-21T12:53:07.9878621Z Cloud: AWS
+evaluate	Set up job	2026-11-21T12:53:07.9879002Z ##[endgroup]
+evaluate	Set up job	2026-11-21T12:53:07.9879875Z ##[group]Operating System
+evaluate	Set up job	2026-11-21T12:53:07.9880295Z Ubuntu
+evaluate	Set up job	2026-11-21T12:53:07.9880689Z 26.04.1
+evaluate	Set up job	2026-11-21T12:53:07.9881069Z LTS
+evaluate	Set up job	2026-11-21T12:53:07.9881436Z ##[endgroup]
+evaluate	Set up job	2026-11-21T12:53:07.9881886Z ##[group]Runner Image
+evaluate	Set up job	2026-11-21T12:53:07.9882320Z Image: ubuntu-26.04
+evaluate	Set up job	2026-11-21T12:53:07.9882736Z Version: 20261116.88.1
+evaluate	Set up job	2026-11-21T12:53:07.9883737Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261116.88/images/ubuntu/Ubuntu2604-Readme.md
+evaluate	Set up job	2026-11-21T12:53:07.9884979Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261116.88
+evaluate	Set up job	2026-11-21T12:53:07.9885690Z ##[endgroup]
+evaluate	Set up job	2026-11-21T12:53:07.9886550Z ##[group]GITHUB_TOKEN Permissions
+evaluate	Set up job	2026-11-21T12:53:07.9888422Z Checks: read
+evaluate	Set up job	2026-11-21T12:53:07.9888882Z Contents: read
+evaluate	Set up job	2026-11-21T12:53:07.9889285Z Metadata: read
+evaluate	Set up job	2026-11-21T12:53:07.9889706Z ##[endgroup]
+evaluate	Set up job	2026-11-21T12:53:07.9891200Z Secret source: Actions
+evaluate	Set up job	2026-11-21T12:53:07.9891911Z Cache mode: write
+evaluate	Set up job	2026-11-21T12:53:07.9892403Z Prepare workflow directory
+evaluate	Set up job	2026-11-21T12:53:08.0154071Z Prepare all required actions
+evaluate	Set up job	2026-11-21T12:53:08.0189452Z Getting action download info
+evaluate	Set up job	2026-11-21T12:53:08.3290496Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+evaluate	Set up job	2026-11-21T12:53:09.8451826Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+evaluate	Set up job	2026-11-21T12:53:09.9844472Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+evaluate	Set up job	2026-11-21T12:53:10.2452270Z Complete job name: evaluate
+evaluate	Run actions/checkout@v4	﻿2026-11-21T12:53:10.3043854Z ##[group]Run actions/checkout@v4
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3044499Z with:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3044783Z   repository: umaritics/halite
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3047145Z   token: ***
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3047448Z   ssh-strict: true
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3047718Z   ssh-user: git
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3048037Z   persist-credentials: true
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3048327Z   clean: true
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3048719Z   sparse-checkout-cone-mode: true
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3049041Z   fetch-depth: 1
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3049314Z   fetch-tags: false
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3049606Z   show-progress: true
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3049891Z   lfs: false
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3050189Z   submodules: false
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3050513Z   set-safe-directory: true
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3050835Z   allow-unsafe-pr-checkout: false
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3051327Z env:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3051594Z   PYTHONPATH: backend
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3051916Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3052228Z   OMP_NUM_THREADS: 1
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3052502Z   MKL_NUM_THREADS: 1
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:10.3052850Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9124925Z Syncing repository: umaritics/halite
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9127097Z ##[group]Getting Git version info
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9127832Z Working directory is '/home/runner/work/halite/halite'
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9128806Z [command]/usr/bin/git version
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9129247Z git version 2.56.1
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9135675Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9146514Z Temporarily overriding HOME='/home/runner/work/_temp/99c16a49-0a52-4a44-be0a-cebe1cdbf329' before making global git config changes
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9147625Z Adding repository directory to the temporary git global config as a safe directory
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9150267Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/halite/halite
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9238908Z Deleting the contents of '/home/runner/work/halite/halite'
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9240854Z ##[group]Initializing the repository
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:13.9245463Z [command]/usr/bin/git init /home/runner/work/halite/halite
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0026169Z hint: Using 'master' as the name for the initial branch. This default branch name
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0026882Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0027541Z hint: to use in all of your new repositories, which will suppress this warning,
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0028068Z hint: call:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0028340Z hint:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0028733Z hint: 	git config --global init.defaultBranch <name>
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0029062Z hint:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0029434Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0029907Z hint: 'development'. The just-created branch can be renamed via this command:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0030282Z hint:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0030555Z hint: 	git branch -m <name>
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0030899Z hint:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0031332Z hint: Disable this message with "git config set advice.defaultBranchName false"
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0050843Z Initialized empty Git repository in /home/runner/work/halite/halite/.git/
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0059816Z [command]/usr/bin/git remote add origin https://github.com/umaritics/halite
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0123038Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0124156Z ##[group]Disabling automatic garbage collection
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0126605Z [command]/usr/bin/git config --local gc.auto 0
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0148461Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0149133Z ##[group]Setting up auth
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0154033Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.0176258Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.3921982Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.3946943Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.4124223Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.4148882Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.4323538Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.4347271Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.4347930Z ##[group]Fetching the repository
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:14.4353761Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +237ab4115a19636e958302f67ac9be427517d5d7:refs/remotes/pull/47/merge
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5745050Z From https://github.com/umaritics/halite
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5745647Z  * [new ref]         237ab4115a19636e958302f67ac9be427517d5d7 -> pull/47/merge
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5754774Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5755343Z ##[group]Determining the checkout info
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5755815Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5756671Z [command]/usr/bin/git sparse-checkout disable
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5834339Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5835746Z ##[group]Checking out the ref
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.5836245Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/47/merge
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7417610Z Note: switching to 'refs/remotes/pull/47/merge'.
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7417949Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7418199Z You are in 'detached HEAD' state. You can look around, make experimental
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7418666Z changes and commit them, and you can discard any commits you make in this
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7419116Z state without impacting any branches by switching back to a branch.
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7419574Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7419755Z If you want to create a new branch to retain commits you create, you may
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7420190Z do so (now or later) by using -c with the switch command. Example:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7420392Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7420578Z   git switch -c <new-branch-name>
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7420730Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7420862Z Or undo this operation with:
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7421097Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7421195Z   git switch -
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7421335Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7421514Z Turn off this advice by setting config variable advice.detachedHead to false
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7421785Z
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7422090Z HEAD is now at 237ab41 Merge 5a5060b5e8bb54f1677be4acf93628dc89b03e0e into cfe9107607ff7b7a076308f628a336b6ca60df29
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7432861Z ##[endgroup]
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7481286Z [command]/usr/bin/git log -1 --format=%H
+evaluate	Run actions/checkout@v4	2026-11-21T12:53:15.7498785Z 237ab4115a19636e958302f67ac9be427517d5d7
+evaluate	Run actions/setup-python@v5	﻿2026-11-21T12:53:15.7711411Z ##[group]Run actions/setup-python@v5
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7711710Z with:
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7711943Z   python-version: 3.11
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7712175Z   check-latest: false
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7714439Z   token: ***
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7714681Z   update-environment: true
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7714950Z   allow-prereleases: false
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7715195Z   freethreaded: false
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7715410Z env:
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7715604Z   PYTHONPATH: backend
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7715894Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7716147Z   OMP_NUM_THREADS: 1
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7716408Z   MKL_NUM_THREADS: 1
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.7716624Z ##[endgroup]
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:15.8743043Z ##[group]Installed versions
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:16.3225151Z (node:2341) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:16.3226257Z (Use `node --trace-deprecation ...` to show where the warning was created)
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:16.3226817Z Successfully set up CPython (3.11.18)
+evaluate	Run actions/setup-python@v5	2026-11-21T12:53:16.3227810Z ##[endgroup]
+evaluate	Require successful synthetic and full-stack checks on this exact head	﻿2026-11-21T12:53:16.3390083Z ##[group]Run gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" > "$RUNNER_TEMP/check-runs.json"
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3391075Z ^[[36;1mgh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" > "$RUNNER_TEMP/check-runs.json"^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3391712Z ^[[36;1mpython - <<'PY'^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3392042Z ^[[36;1mimport json, os^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3392385Z ^[[36;1mfrom pathlib import Path^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3392975Z ^[[36;1mchecks = json.loads((Path(os.environ['RUNNER_TEMP'])/'check-runs.json').read_text())['check_runs']^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3394094Z ^[[36;1mrequired = {'Backend tests (Python 3.11)', 'Frontend tests and build (Node 20)', 'Docker Compose real-graph smoke test'}^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3395047Z ^[[36;1mpassed = {row['name'] for row in checks if row['conclusion'] == 'success' and row['head_sha'] == os.environ['HEAD_SHA']}^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3395705Z ^[[36;1mif not required.issubset(passed):^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3396354Z ^[[36;1m    raise SystemExit('The exact head must pass synthetic/full-stack verification before held-out access.')^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3397111Z ^[[36;1mprint('EXACT_HEAD_VERIFICATION=PASS')^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3397528Z ^[[36;1mPY^[[0m
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3455217Z shell: /usr/bin/bash -e {0}
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3455706Z env:
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3456002Z   PYTHONPATH: backend
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3456311Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3456665Z   OMP_NUM_THREADS: 1
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3456981Z   MKL_NUM_THREADS: 1
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3457385Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3457937Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3458441Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3458939Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3459382Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3460089Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3462906Z   GH_TOKEN: ***
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3463350Z   HEAD_SHA: 5a5060b5e8bb54f1677be4acf93628dc89b03e0e
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:16.3463703Z ##[endgroup]
+evaluate	Require successful synthetic and full-stack checks on this exact head	2026-11-21T12:53:19.5838809Z EXACT_HEAD_VERIFICATION=PASS
+evaluate	Install existing pinned numerical dependency	﻿2026-11-21T12:53:19.5909294Z ##[group]Run python -m pip install numpy==1.26.4
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5909659Z ^[[36;1mpython -m pip install numpy==1.26.4^[[0m
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5929663Z shell: /usr/bin/bash -e {0}
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5929942Z env:
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5930214Z   PYTHONPATH: backend
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5930463Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5930697Z   OMP_NUM_THREADS: 1
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5930969Z   MKL_NUM_THREADS: 1
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5931268Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5931668Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5932047Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5932424Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5932787Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5933275Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:19.5933604Z ##[endgroup]
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:22.6634223Z Collecting numpy==1.26.4
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:22.6980798Z   Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:22.7219410Z Downloading numpy-1.26.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (18.3 MB)
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:22.8378626Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 18.3/18.3 MB 257.3 MB/s  0:00:00
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:23.2251941Z Installing collected packages: numpy
+evaluate	Install existing pinned numerical dependency	2026-11-21T12:53:24.4107399Z Successfully installed numpy-1.26.4
+evaluate	Execute fixed test with pre-access receipt	﻿2026-11-21T12:53:24.4667522Z ##[group]Run python -m investigation.experiments.held_out --data-directory "$RUNNER_TEMP/frozen-sources" --output "$RUNNER_TEMP/held-out-results" --download
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4668420Z ^[[36;1mpython -m investigation.experiments.held_out --data-directory "$RUNNER_TEMP/frozen-sources" --output "$RUNNER_TEMP/held-out-results" --download^[[0m
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4686577Z shell: /usr/bin/bash -e {0}
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4686863Z env:
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4687470Z   PYTHONPATH: backend
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4687720Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4687945Z   OMP_NUM_THREADS: 1
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4688186Z   MKL_NUM_THREADS: 1
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4688454Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4688832Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4689213Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4689568Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4689995Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4690341Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:53:24.4690667Z ##[endgroup]
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:54:15.1626284Z Evaluated fixed held-out path 1/157
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:54:18.8348563Z Evaluated fixed held-out path 101/157
+evaluate	Execute fixed test with pre-access receipt	2026-11-21T12:54:30.0084423Z {"status": "HELD_OUT_EVALUATED", "case_counts": {"n_pairs": 157, "n_originals": 140, "before_or_at_selection_label_time_pairs": 0, "unknown_outcome_pairs_excluded": 0, "pair_discards": {"missing_id": 12, "tail_mismatch_or_empty": 2, "nonforward_submission": 1}, "true_part_missing_top10": 113}}
+evaluate	Independently verify point metrics and replay all intervals	﻿2026-11-21T12:54:30.0384329Z ##[group]Run python docs/work/usman/verify_held_out.py "$RUNNER_TEMP/held-out-results"
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0384883Z ^[[36;1mpython docs/work/usman/verify_held_out.py "$RUNNER_TEMP/held-out-results"^[[0m
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0402549Z shell: /usr/bin/bash -e {0}
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0402827Z env:
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0403042Z   PYTHONPATH: backend
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0403496Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0403792Z   OMP_NUM_THREADS: 1
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0404155Z   MKL_NUM_THREADS: 1
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0404439Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0404829Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0405216Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0405604Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0405947Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0406296Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:30.0406678Z ##[endgroup]
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2555751Z {
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2556268Z   "independent_held_out_point_metrics": "PASS",
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2557611Z   "all_question_and_stopping_intervals_replayed": "PASS",
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2558079Z   "tables_verified": 72,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2558368Z   "case_counts": {
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2558623Z     "n_pairs": 157,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2558887Z     "n_originals": 140,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2559162Z     "before_or_at_selection_label_time_pairs": 0,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2559557Z     "unknown_outcome_pairs_excluded": 0,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2559886Z     "pair_discards": {
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2560209Z       "missing_id": 12,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2560534Z       "tail_mismatch_or_empty": 2,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2560886Z       "nonforward_submission": 1
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2561251Z     },
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2561518Z     "true_part_missing_top10": 113
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2561873Z   },
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2562278Z   "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2562794Z   "held_out_tuning": false,
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2563396Z   "results_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+evaluate	Independently verify point metrics and replay all intervals	2026-11-21T12:54:42.2563834Z }
+evaluate	Run actions/upload-artifact@v4	﻿2026-11-21T12:54:42.2836297Z ##[group]Run actions/upload-artifact@v4
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2836581Z with:
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2836899Z   name: frozen-held-out-results
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2837197Z   path: /home/runner/work/_temp/held-out-results/
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2837484Z   if-no-files-found: warn
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2837743Z   compression-level: 6
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2837972Z   overwrite: false
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2838221Z   include-hidden-files: false
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2838457Z env:
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2838685Z   PYTHONPATH: backend
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2838917Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2839144Z   OMP_NUM_THREADS: 1
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2839512Z   MKL_NUM_THREADS: 1
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2839775Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2840134Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2840525Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2840862Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2841288Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2841629Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.2841960Z ##[endgroup]
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.4067603Z (node:2410) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.4068354Z (Use `node --trace-deprecation ...` to show where the warning was created)
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.4154114Z With the provided path, there will be 6 files uploaded
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.4155394Z Artifact name is valid!
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.4155758Z Root directory input is valid!
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:42.9033909Z Beginning upload of artifact content to blob storage
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:43.1676605Z (node:2410) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:43.9392577Z Uploaded bytes 657929
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.0324472Z Finished uploading artifact content to blob storage!
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.0325816Z SHA256 digest of uploaded artifact zip is e9d26a04ca09b77dd94a4567e33b850f68775da6d8c7056e2823baf0b969799d
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.0326706Z Finalizing artifact upload
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4727593Z Artifact frozen-held-out-results.zip successfully finalized. Artifact ID 14707848398
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4728598Z Artifact frozen-held-out-results has been successfully uploaded! Final size is 657929 bytes. Artifact ID is 14707848398
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4735085Z Artifact download URL: https://github.com/umaritics/halite/actions/runs/44906082558/artifacts/14707848398
+evaluate	Run actions/upload-artifact@v4	﻿2026-11-21T12:54:44.4851800Z ##[group]Run actions/upload-artifact@v4
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4852098Z with:
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4852399Z   name: frozen-held-out-source-projections
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4852714Z   path: /home/runner/work/_temp/frozen-sources/
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4853011Z   if-no-files-found: warn
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4853468Z   compression-level: 6
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4853729Z   overwrite: false
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4854030Z   include-hidden-files: false
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4854281Z env:
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4854491Z   PYTHONPATH: backend
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4854763Z   OPENBLAS_NUM_THREADS: 1
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4854996Z   OMP_NUM_THREADS: 1
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4855268Z   MKL_NUM_THREADS: 1
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4855545Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4855963Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib/pkgconfig
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4856353Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4856714Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4857174Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.18/x64
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4857558Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.18/x64/lib
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.4857881Z ##[endgroup]
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.6166183Z (node:2422) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.6166880Z (Use `node --trace-deprecation ...` to show where the warning was created)
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.6222289Z With the provided path, there will be 8 files uploaded
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.6225678Z Artifact name is valid!
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:44.6226362Z Root directory input is valid!
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:45.0334782Z Beginning upload of artifact content to blob storage
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:45.2554842Z (node:2422) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:46.3245350Z Uploaded bytes 8388608
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:46.6159309Z Uploaded bytes 16777216
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:46.8445450Z Uploaded bytes 25165824
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:46.9543547Z Uploaded bytes 26955007
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:47.0464459Z Finished uploading artifact content to blob storage!
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:47.0465092Z SHA256 digest of uploaded artifact zip is 47fc60254033605a2a9d759ff5ffe2b3dbcff523f2bdd40730a59268382770d6
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:47.0466727Z Finalizing artifact upload
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:47.4411379Z Artifact frozen-held-out-source-projections.zip successfully finalized. Artifact ID 14707942889
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:47.4412440Z Artifact frozen-held-out-source-projections has been successfully uploaded! Final size is 26955007 bytes. Artifact ID is 14707942889
+evaluate	Run actions/upload-artifact@v4	2026-11-21T12:54:47.4417817Z Artifact download URL: https://github.com/umaritics/halite/actions/runs/44906082558/artifacts/14707942889
+evaluate	Post Run actions/setup-python@v5	﻿2026-11-21T12:54:47.4579118Z Post job cleanup.
+evaluate	Post Run actions/setup-python@v5	2026-11-21T12:54:47.5459473Z (node:2434) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+evaluate	Post Run actions/setup-python@v5	2026-11-21T12:54:47.5460197Z (Use `node --trace-deprecation ...` to show where the warning was created)
+evaluate	Post Run actions/checkout@v4	﻿2026-11-21T12:54:47.5613521Z Post job cleanup.
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6268238Z [command]/usr/bin/git version
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6299072Z git version 2.56.1
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6323000Z Temporarily overriding HOME='/home/runner/work/_temp/f472d5f2-7ab0-47d9-bdc5-187a5bf13d2c' before making global git config changes
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6324534Z Adding repository directory to the temporary git global config as a safe directory
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6326074Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/halite/halite
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6356389Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6380261Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6607242Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6624232Z http.https://github.com/.extraheader
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6634139Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6656974Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6850310Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+evaluate	Post Run actions/checkout@v4	2026-11-21T12:54:47.6888139Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+evaluate	Complete job	﻿2026-11-21T12:54:47.7217603Z Cleaning up orphan processes
+evaluate	Complete job	2026-11-21T12:54:47.7480669Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

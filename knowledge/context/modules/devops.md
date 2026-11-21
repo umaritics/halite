@@ -103,3 +103,8 @@ one-thread, 35-minute-bounded evaluation runs only for the explicit
 checks on the exact head. Only existing NumPy is installed. Results/traces and
 compressed source projections are separate CI artifacts; raw CSVs are not
 committed. No staging or model endpoint is used.
+
+The actual frozen evaluation is verified on source 5a5060b / run 44906082558.
+The one-shot label has been removed. Ordinary backend CI now runs the saved-case
+verifier on committed held_out_2025_v1 results after policy preflight; this
+replays saved evidence only, without source downloads/fits/sweeps.

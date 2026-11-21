@@ -87,3 +87,17 @@ tooling tests exercise retained real inputs and explicit isolation/error paths.
 The backend job runs the frozen-policy preflight after successful tests. Its
 JSON artifact records policy/protocol fingerprints and confirms no held-out
 access or runtime activation. The full test/coverage artifact retains it.
+
+## Replay completed frozen test evidence
+
+```mermaid
+flowchart LR
+  Backend[Hosted backend tests / coverage] --> Freeze[Frozen-policy preflight]
+  Freeze --> Cases[Committed 2025 results / saved case traces]
+  Cases --> Replay[Independent point scoring / all interval replay]
+  Replay --> Gate[Pass or explicit integrity failure]
+```
+
+This is verification of retained evidence, without downloading or reranking a
+new test archive. Actual evaluation and source receipts remain pinned to run
+44906082558 / source 5a5060b. The one-shot access label is removed.

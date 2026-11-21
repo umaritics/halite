@@ -1,6 +1,6 @@
 # Validate and execute the frozen held-out procedure without tuning
 
-- Status: implemented; synthetic/full-stack verification pending; real access gated
+- Status: implemented and verified; actual frozen evaluation complete; owner review pending
 - Date: 2026-11-21
 - Owner: Usman
 
@@ -45,3 +45,16 @@ recorded in the receipt. Missing/modified original content is rejected. This
 preserves the actual approved training/selection inputs instead of relaxing
 hashes or using newly appended rows. Synthetic tests cover restoration and
 failure paths; method/index hashes are frozen before held-out access.
+
+## Executed result
+
+Exact-head full CI (44905815091) passed 485 backend/279 frontend tests and
+81.65% coverage. Actual evaluation 44906082558 on source 5a5060b completed,
+with 72 tables independently verified and all intervals replayed. Primary test
+has 157 pairs/140 originals: selected IG answers 7 with 5 part-key matches and
+150 abstentions. All queries are after the predeclared selection-label cutoff.
+Both answered misses lack the true part in the initial candidate set. No tuning
+was performed; selected-policy hash is unchanged. Results/traces/receipt are
+retained in held_out_2025_v1; HELD_OUT_VERIFICATION.md records counts, intervals,
+controls, error analysis and provenance. The one-shot label is removed. Ordinary
+CI replays the retained test evidence without source downloads or new evaluation.

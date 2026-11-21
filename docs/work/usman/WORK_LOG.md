@@ -924,3 +924,27 @@ reproduced both original full hashes after ignoring the new ID. Added synthetic
 restoration/reordered-input/modified-content/missing-content tests plus full
 export through restored history. Procedure is refrozen before any 2025 access;
 accepted .80/.50 and policy fingerprint remain unchanged. Full revalidation next.
+
+Phase17 source 5a5060b passed exact-head full CI (44905815091): 485 backend /
+279 frontend tests, 5,176/6,339 = 81.65%, real database/browser checks. Ordinary
+procedure preflight passed. The second one-shot run 44906082558 completed
+actual 2025 evaluation and independent verification on 157 pairs/140 originals:
+72 stopping tables and every saved curve/interval/ECE replayed. Primary and
+predeclared chronology sensitivity agree (zero timing-overlap pairs).
+
+At accepted .80/.50 all-attribute IG: 7 answers, 5 top-one/top-three matches,
+2 misses, 150 abstentions, mean 1.4586 questions. Answered accuracy 71.43%
+(cluster 95% CI 33.33–100%, 999 valid draws), coverage4.46% (1.32–8.13%).
+Abstention-off uses identical terminal questions/beliefs:157 answers,31top-one/
+40top-three matches. True part absent from top ten in113cases, including both
+answered misses. All five correct answers are same-part cases; coded-only IG
+answers none. Preserve these weak results and wide intervals without retuning.
+
+Unmodified results/three case files/pre-test receipt/verifier report retained in
+held_out_2025_v1. Raw hosted JUnit/coverage/browser/log/job/hash proof and the
+failed pre-access diagnosis are retained in phase17-held-out; source projections
+remain hosted artifacts. Added comprehensive HELD_OUT_VERIFICATION.md with
+controls, strata, exact uncertainty, error analysis and provenance. Label removed;
+ordinary CI now replays saved evidence without source downloads. No local heavy
+job, staging write or runtime activation. Acceptance/knowledge bank updated;
+final publication and all other full-goal gates remain.
