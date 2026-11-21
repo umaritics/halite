@@ -25,7 +25,7 @@ Full security architecture and runbook: [`docs/security-public-deployment.md`](.
 | `https://dev1.corp.curatech.pk/halite-api/api/ops/logs` | `X-Ops-Token` | Recent redacted app logs (**privileged operator secret**) |
 | `https://dev1.corp.curatech.pk/halite-api/api/maintenance/*` | `Authorization: Bearer <HALITE_API_KEY>` | Protected maintenance & diagnostic APIs (`401` without key) |
 | `https://dev1.corp.curatech.pk/halite-api/docs` | Disabled (`404`) | OpenAPI / Swagger hidden on public VM (`EXPOSE_OPENAPI=false`) |
-| `https://dev1.corp.curatech.pk/halite-api/api/webhook/gitea` | Retired (`410`) | Decommissioned Gitea webhook surface |
+| `https://dev1.corp.curatech.pk/halite-api/api/webhook/gitea` | Retired (`404`) | Decommissioned Gitea webhook surface |
 
 ## Frontend: point at the shared API
 
@@ -168,3 +168,9 @@ Actions → **Fetch staging backend logs** → Run workflow → download artifac
 - Flow: [FLOW-deploy.md](../../flows/FLOW-deploy.md)
 - Compose: `docker-compose.vm.yml`
 - Script: `scripts/vm/remote_deploy.sh`
+
+After full legacy retirement, `/api/webhook/gitea` is unregistered and returns
+404. Both VM-local and public release probes require404; they no longer expect
+the earlier disabled-handler410. A cross-layer test compares both release
+expectations with the actual router response. Authenticated/anonymous asset,
+closed docs, PostgreSQL and exact-version checks remain unchanged.

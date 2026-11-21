@@ -1,0 +1,24 @@
+{
+  "base": "https://halite-mu.vercel.app",
+  "paths": {
+    "/login": {
+      "status": 200,
+      "final_url": "https://halite-mu.vercel.app/login",
+      "title": "Halite \u2014 Maintenance Diagnostics and Asset Intelligence"
+    },
+    "/app/investigations/experiments": {
+      "status": 200,
+      "final_url": "https://halite-mu.vercel.app/app/investigations/experiments",
+      "title": "Halite \u2014 Maintenance Diagnostics and Asset Intelligence"
+    }
+  },
+  "frontend_bundle": {
+    "path": "/assets/index-B0JYE_3d.js",
+    "sha256": "52a0d3d7f809a749db766297cc36a4236346775ad72ff3ba9ed1490a3dc6a149",
+    "bytes": 2440700,
+    "has_frozen_research": true,
+    "has_evidence_set": true,
+    "has_session_routes": true,
+    "has_remote_backend_host": true
+  }
+}

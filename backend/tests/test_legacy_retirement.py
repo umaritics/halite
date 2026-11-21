@@ -1,5 +1,8 @@
 """Retired surfaces cannot reactivate; real startup never injects software data."""
 import asyncio
+import ast
+from pathlib import Path
+import re
 
 import pytest
 from fastapi import FastAPI
@@ -107,3 +110,22 @@ def test_actual_lifespan_preserves_existing_data_and_never_seeds_software(profil
     asyncio.run(exercise())
     assert all(store.closed for store in memory_instances + neo_instances)
     assert len(neo_instances) == (0 if profile == 'demo' else 1)
+
+
+def test_vm_and_public_release_guards_match_the_actual_retired_route():
+    repo = Path(__file__).resolve().parents[2]
+    vm = (repo/'scripts/vm/remote_deploy.sh').read_text()
+    embedded = vm.split("python3 - <<'PY'\n",1)[1].split('\nPY',1)[0]
+    comparisons = [node for node in ast.walk(ast.parse(embedded))
+                   if isinstance(node,ast.Compare) and isinstance(node.left,ast.Name)
+                   and node.left.id=='webhook_code' and len(node.comparators)==1
+                   and isinstance(node.ops[0],ast.NotEq) and isinstance(node.comparators[0],ast.Constant)]
+    assert len(comparisons)==1
+    vm_expected = comparisons[0].comparators[0].value
+    workflow = (repo/'.github/workflows/deploy-staging.yml').read_text()
+    public_expected = re.findall(r'test "\$webhook_code" = "(\d+)"',workflow)
+    assert len(public_expected)==1
+    app = _build_test_app(Settings(_env_file=None,DEMO_MODE=False,HALITE_API_KEY='synthetic-release-key'))
+    with TestClient(app) as client:
+        actual = client.post('/api/webhook/gitea',json={}).status_code
+    assert vm_expected==int(public_expected[0])==actual
