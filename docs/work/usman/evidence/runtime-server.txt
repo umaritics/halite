@@ -1,0 +1,37 @@
+INFO:     Started server process [25377]
+INFO:     Waiting for application startup.
+INFO:api.routes.ops:Ops ring-buffer logging installed
+INFO:main:Halite connecting to Neo4j AuraDB
+INFO:main:Neo4j connected and seeded
+INFO:main:LLM provider=groq configured=False model=openai/gpt-oss-20b
+INFO:main:Relational auth store mode: postgresql
+INFO:services.auth_service:Bootstrapped initial Halite admin user: admin@halite.local
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:42302 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:api.security:Rejected unauthenticated request method=GET path=/api/maintenance/assets client_ip=127.0.0.1
+INFO:     127.0.0.1:42316 - "GET /api/maintenance/assets HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:42332 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42342 - "POST /api/admin/invites HTTP/1.1" 201 Created
+INFO:     127.0.0.1:42354 - "POST /api/auth/invites/accept HTTP/1.1" 200 OK
+INFO:api.routes.maintenance:Maintenance ingest: {'assets_created': 1, 'records_created': 3, 'rows_skipped_no_tail': 0, 'rows_skipped_bad_date': 0, 'duplicates_skipped': 0}
+INFO:     127.0.0.1:42358 - "POST /api/maintenance/ingest HTTP/1.1" 200 OK
+INFO:api.routes.maintenance:Maintenance ingest: {'assets_created': 1, 'records_created': 0, 'rows_skipped_no_tail': 0, 'rows_skipped_bad_date': 0, 'duplicates_skipped': 3}
+INFO:     127.0.0.1:42370 - "POST /api/maintenance/ingest HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42378 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42390 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42406 - "GET /api/maintenance/assets/e60e2b7d-ec6a-4d3b-a7cb-9160bf467a1d/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42414 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42424 - "POST /api/maintenance/review-queue/CI-SMOKE-002/accept HTTP/1.1" 403 Forbidden
+INFO:api.routes.maintenance:Record 'CI-SMOKE-002' accepted by admin@halite.local (admin). Note: 'CI smoke acceptance'
+INFO:     127.0.0.1:42432 - "POST /api/maintenance/review-queue/CI-SMOKE-002/accept HTTP/1.1" 200 OK
+INFO:api.routes.maintenance:Record 'CI-SMOKE-003' rejected by service:api-key (supervisor). Note: 'CI smoke rejection'
+INFO:     127.0.0.1:42434 - "POST /api/maintenance/review-queue/CI-SMOKE-003/reject HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42450 - "GET /api/maintenance/records/CI-SMOKE-001 HTTP/1.1" 503 Service Unavailable
+INFO:     127.0.0.1:42462 - "GET /api/maintenance/assets/not-a-real-asset/history HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25377]
+
+Aborted!

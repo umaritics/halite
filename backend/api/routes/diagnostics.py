@@ -218,6 +218,7 @@ def _extract_case_facts(groq_service, current: dict, message: str) -> tuple[dict
             [{"role": "user", "content": prompt}],
             system_prompt="Return only strict JSON. Do not add markdown.",
             max_tokens=1200,
+            json_mode=True,
         )
         parsed = _parse_json_object(raw)
         additions = {}
@@ -440,6 +441,7 @@ def diagnose(
                 "Never invent record IDs."
             ),
             max_tokens=2048,
+            json_mode=True,
         )
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc

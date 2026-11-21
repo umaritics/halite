@@ -1,0 +1,16 @@
+npm notice run halite-frontend@0.1.0 build
+npm notice run vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 1122 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     1.30 kB │ gzip:   0.59 kB
+dist/assets/index-D4O9quvw.css     42.01 kB │ gzip:   7.55 kB
+dist/assets/index-DTCtHhdF.js   2,018.16 kB │ gzip: 563.11 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 11.13s

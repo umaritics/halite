@@ -81,6 +81,15 @@ class Settings(BaseSettings):
     MAINT_BUDGET_TOKEN_RESERVE: int = 1000
     MAINT_BUDGET_STATE_FILE: str = ""          # defaults to MAINT_DATA_DIR/analysis_budget.json
 
+    # --- RETRIEVAL_ ---
+    RETRIEVAL_MODE: str = "mid_heuristic"
+
+    # --- INTEGRITY_ ---
+    # Reserved for the integrity owner's additive settings.
+
+    # --- SESSION_ ---
+    # Reserved for investigation settings after session persistence lands.
+
     @property
     def neo4j_configured(self) -> bool:
         return bool(self.NEO4J_URI and self.NEO4J_PASSWORD)

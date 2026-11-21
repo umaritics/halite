@@ -356,7 +356,8 @@ class TestConflictAnalysisApi:
             headers={"X-Ops-Token": "analysis-token"},
         )
         assert response.status_code == 503
-        assert "live Groq" in response.json()["detail"]
+        # Provider-neutral since the local-model adapter: Groq or an OpenAI-compatible endpoint.
+        assert "live LLM" in response.json()["detail"]
 
     def test_no_candidate_is_analysed_without_model_call_and_scored_is_skipped(self, client):
         class LiveModelThatMustNotBeCalled:

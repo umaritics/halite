@@ -25,6 +25,8 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, FastAPI
 
 from api.routes import alerts, chat, decisions, graph, ingest, webhooks
+# --- Vertical registration points (backend preparation) ---
+from api.routes import evaluation, integrity, retrieval, sessions
 from api.routes.auth import admin_router, protected_auth_router, public_auth_router
 from api.routes.diagnostics import router as diagnostics_router
 from api.routes.maintenance import domains_router, router as maintenance_router
@@ -60,5 +62,9 @@ def register_api_routers(app: FastAPI) -> None:
     protected_api.include_router(diagnostics_router)
     protected_api.include_router(domains_router)
     protected_api.include_router(ops_router)
+
+    # --- Vertical registration points (backend preparation) ---
+    for vertical in (retrieval, evaluation, integrity, sessions):
+        protected_api.include_router(vertical.router)
 
     app.include_router(protected_api)

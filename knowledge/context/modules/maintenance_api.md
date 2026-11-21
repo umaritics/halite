@@ -19,7 +19,7 @@ contracts under `/api/maintenance`.
 | File | Role |
 | --- | --- |
 | `backend/api/routes/maintenance.py` | HTTP contracts and controlled errors |
-| `backend/graph/queries.py` | GraphRepository reads/writes used by the API |
+| `backend/graph/repo/` (compatibility import `backend/graph/queries.py`) | GraphRepository reads/writes used by the API |
 | `backend/agents/maintenance_agent.py` | Validated, idempotent FAA ingestion |
 | `backend/tests/test_api_maintenance.py` | Endpoint and failure-path coverage |
 | `backend/tests/test_graph_maintenance.py` | Memory/Neo4j repository contract coverage |
