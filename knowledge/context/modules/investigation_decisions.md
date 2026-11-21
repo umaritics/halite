@@ -216,3 +216,13 @@ in CI and remains byte-for-byte unchanged; publication does not require a fake
 repository mount. An isolated backend-only package test and the real Compose
 API/browser verify this boundary. Documentation/audit hashes remain provenance
 in the frozen policy and are verified by the original CI preflight.
+
+## FYP I reporting and defense evidence
+
+`docs/fyp1-final/USMAN_FINAL_REPORT_DRAFT.md` consolidates the implemented
+design, frozen temporal protocol, 2024 selection and fixed 2025 measurements,
+uncertainty, error analysis and prospective RQ4/RQ5 study. The companion
+`USMAN_ARCHITECTURE_AND_DEFENSE.md` contains runtime/experiment diagrams and
+practice questions. Both are explicitly AI-assisted drafts for student review;
+neither asserts human labels, M4 timings, signatures or completed rehearsal.
+The acceptance matrix retains those distinct gates.
