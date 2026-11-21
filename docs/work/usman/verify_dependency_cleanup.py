@@ -52,14 +52,17 @@ def audit(install_report=None, installed=None):
                'added_direct_constraints': sorted(direct - direct_names(before['requirements'])),
                'removed_imports_found': {name: imports.get(name, []) for name in sorted(REMOVED_ROOTS)},
                'required_pandas_imports': imports.get('pandas', []),
+               'required_requests_imports': imports.get('requests', []),
                'note': 'python-dotenv remains required transitively; NumPy was already installed and is pinned to the verified baseline.'}
     assert summary['required_pandas_imports'], 'Do not describe pandas as unused.'
+    assert 'requests' in direct and summary['required_requests_imports'], 'Retained verification scripts require requests.'
     if install_report is not None:
         assert installed is not None, 'Installed-environment evidence is also required.'
         selected = {canonical(row['metadata']['name']): row['metadata']['version'] for row in install_report['install']}
         actual = {canonical(row['name']): row['version'] for row in installed}
         assert actual['numpy'] == before['installed_transaction']['numpy'] == '1.26.4'
         assert actual['pandas'] == before['installed_transaction']['pandas'] == '2.2.2'
+        assert actual['requests'] == before['installed_transaction']['requests']
         assert 'python-dotenv' in actual and 'pydantic-settings' in actual
         assert not any(name.startswith(('langchain', 'langsmith')) or name == 'python-docx' for name in actual)
         old = before['installed_transaction']

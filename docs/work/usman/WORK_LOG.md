@@ -775,3 +775,9 @@ The user explicitly authorized “Prepare and test retirement for review” afte
 seeing the domain/default/API changes and Shahmeer-owned dependencies. Apply only
 on a separate retirement review branch; actual owner review/merge/deploy remain
 pending. Dependency-only runtime leaves those contracts unchanged.
+
+Phase12 first hosted run 44881679485: dependency resolution/import-root audit
+passed, but pytest collection correctly failed because retained scripts import
+requests, previously supplied by LangChain. Added its actual baseline version
+as a direct dependency and expanded the audit. No successful test claim is made
+for that initial run. Reverification required on the corrected commit.

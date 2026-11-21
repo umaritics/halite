@@ -17,3 +17,5 @@ pandas==2.2.2
 # Retain the NumPy version used by the verified CSV importer; removing
 # LangChain must not incidentally move pandas onto a different NumPy major.
 numpy==1.26.4
+# Retained verification scripts import requests directly.
+requests==2.34.2

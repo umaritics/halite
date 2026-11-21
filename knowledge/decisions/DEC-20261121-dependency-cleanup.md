@@ -28,3 +28,7 @@ transitive and is not falsely reported absent. The separate legacy retirement
 proposal has explicit user authorization for preparation/testing; owner review
 and merge are still pending. Future intentional dependency changes must update
 the audit/baseline explicitly rather than bypassing it.
+
+Retained verification scripts import requests directly. The first hosted run
+exposed its previous accidental LangChain transitive dependency during pytest
+collection. Declare its baseline version explicitly and audit its presence.

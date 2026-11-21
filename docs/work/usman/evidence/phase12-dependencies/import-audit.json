@@ -13,7 +13,8 @@
     "python-dotenv"
   ],
   "added_direct_constraints": [
-    "numpy"
+    "numpy",
+    "requests"
   ],
   "removed_imports_found": {
     "docx": [],
@@ -28,6 +29,12 @@
     "backend/scripts/d3_latency.py:17",
     "backend/scripts/fetch_sdr_data.py:22",
     "backend/scripts/recalc_baseline.py:5"
+  ],
+  "required_requests_imports": [
+    "backend/scripts/check_demo_assets.py:8",
+    "backend/scripts/d3_latency.py:2",
+    "backend/scripts/gather_g1_evidence.py:3",
+    "backend/scripts/test_g3_queries.py:3"
   ],
   "note": "python-dotenv remains required transitively; NumPy was already installed and is pinned to the verified baseline."
 }

@@ -66,3 +66,7 @@ the summary ship with the backend test/coverage artifact. Unused LangChain roots
 and python-docx must be absent; pandas/NumPy stay on the verified CSV versions.
 Dotenv remains transitively installed, with a real `.env` Settings test. No
 package installation is needed on the developer laptop for this verification.
+
+Retained verification scripts import requests directly. The first hosted run
+exposed its previous accidental LangChain transitive dependency during pytest
+collection. Declare its baseline version explicitly and audit its presence.
