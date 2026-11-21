@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 
 export function narrativeSegments(text, annotation) {
-  if (annotation?.version !== 'content-token-spans-v1' || annotation.encoding !== 'utf-16' || !Array.isArray(annotation.spans)) return null;
+  if (typeof text !== 'string' || annotation?.version !== 'content-token-spans-v1' || annotation.encoding !== 'utf-16' || !Array.isArray(annotation.spans)) return null;
   const segments = [];
   let offset = 0;
   for (const span of annotation.spans) {
@@ -16,8 +16,8 @@ export function narrativeSegments(text, annotation) {
 }
 
 export default function SourceNarrative({ text, annotation, selected = false }) {
-  const narrative = text || 'No narrative was saved.';
-  const segments = selected && text ? narrativeSegments(narrative, annotation) : null;
+  const narrative = typeof text === 'string' && text ? text : 'No narrative was saved.';
+  const segments = selected && typeof text === 'string' && text ? narrativeSegments(narrative, annotation) : null;
   return <div>
     {selected && <p className="mt-2 text-xs text-secondary">{segments ? (segments.some(segment => segment.match) ? 'Highlights show word overlap with the selected sentence.' : 'No matching content words occur in this saved narrative.') : 'Word positions were not saved or could not be matched to this narrative.'}</p>}
     <p data-source-narrative className="mt-2 whitespace-pre-wrap break-words text-sm text-primary">{segments ? segments.map((segment, index) => segment.match

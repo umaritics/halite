@@ -16,6 +16,7 @@ describe('Saved source word positions', () => {
     expect(screen.getByText(/Highlights show word overlap/)).toBeInTheDocument();
   });
   it('rejects stale, overlapping, negative, foreign-encoding and out-of-range positions', () => {
+    expect(narrativeSegments(null, pump)).toBeNull();
     for (const value of [annotation([{ start: -1, end: 2, token: 'pump' }]), annotation([{ start: 3, end: 99, token: 'pump' }]), annotation([{ start: 3, end: 7, token: 'wrong' }]), annotation([{ start: 3, end: 7, token: 'pump' }, { start: 3, end: 7, token: 'pump' }]), { ...pump, encoding: 'codepoints' }]) {
       expect(narrativeSegments('😀 Pump leak.', value)).toBeNull();
     }
