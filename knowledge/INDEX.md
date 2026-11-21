@@ -118,3 +118,8 @@ Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/wo
 | reproduce fit/selection label timing | docs/work/usman/audit_label_availability.py; evidence/phase16-frozen-policy/label-availability-audit.json |
 
 | held-out 2025 execution, ECE, fixed terminal counterfactual | investigation/experiments/held_out.py; docs/work/usman/verify_held_out.py; decisions/DEC-20261121-held-out-procedure.md |
+
+- Final research publication, accepted marker, frozen 2025 display, v2 receipts:
+  [investigation frontend](context/modules/investigation_frontend.md),
+  [publication flow](flows/FLOW-research-publication.md),
+  [decision](decisions/DEC-20261121-final-research-publication.md).

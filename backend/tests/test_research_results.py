@@ -36,14 +36,17 @@ class ResearchPublicationTests(unittest.TestCase):
         result = load_results()
         self.assertEqual(result['state'], 'available')
         for key, relative in FILES.items():
-            self.assertEqual(result[key], json.loads((ROOT / relative).read_text()))
+            expected = json.loads((ROOT / relative).read_text())
+            if key == 'stopping_selection':
+                expected['tables'] = [r for r in expected['tables'] if r['g_min'] == result['selected_policy']['parameters']['g_min']]
+            self.assertEqual(result[key], expected)
         self.assertIsNone(result['decision_selection']['selection']['selected_operating_point'])
         self.assertFalse(result['question_selection']['held_out_evaluated'])
         self.assertEqual(result['publication_sha256'], hashlib.sha256((ROOT / 'publication.json').read_bytes()).hexdigest())
 
     def test_explicit_empty_publication(self):
         self.manifest(lambda m: m.update(artifacts=[]))
-        self.assertEqual(load_results(self.root), {'schema_version': 'investigation-results-v1', 'state': 'empty', 'artifacts': []})
+        self.assertEqual(load_results(self.root), {'schema_version': 'investigation-results-v2', 'state': 'empty', 'artifacts': []})
 
     def test_missing_manifest_is_failure_not_empty(self):
         (self.root / 'publication.json').unlink()
@@ -101,6 +104,81 @@ class ResearchPublicationTests(unittest.TestCase):
         self.artifact('question_selection', lambda d: d['summaries']['all_attributes']['all']['policies']['random'][0]['ci95']['top1'].update(low=1, high=0))
         with self.assertRaises(ResultsUnavailable):
             load_results(self.root)
+
+    def held_artifact(self, mutate):
+        self.artifact('held_out',mutate)
+        path = self.root/FILES['held_out']
+        data = json.loads(path.read_text())
+        self.artifact('held_out_verification',lambda v:v.update(results_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),case_counts=data['case_counts']))
+
+    def test_accepted_point_is_exact_and_only_accepted_gain_rows_are_sent(self):
+        result = load_results()
+        policy = result['selected_policy']
+        self.assertEqual(policy['parameters'], {'tau_answer':.8,'g_min':.5,'n_min':2,'max_questions':3})
+        self.assertIn(policy['selected_2024_row'],result['stopping_selection']['tables'])
+        self.assertEqual(len(result['stopping_selection']['tables']),756)
+        self.assertTrue(all(r['g_min']==.5 for r in result['stopping_selection']['tables']))
+        self.assertEqual(result['held_out']['case_counts']['n_pairs'],157)
+        self.assertEqual(result['held_out_verification']['tables_verified'],72)
+
+    def test_rehashed_selection_cannot_replace_the_frozen_choice(self):
+        self.artifact('stopping_selection',lambda d:d['tables'][0].update(g_min=.123))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_rehashed_held_out_policy_change_is_rejected(self):
+        self.held_artifact(lambda d:d['policy']['parameters'].update(tau_answer=.75))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_held_out_tuning_flag_is_rejected(self):
+        self.held_artifact(lambda d:d.update(selection_or_tuning_performed=True))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_bad_pre_access_receipt_is_rejected(self):
+        self.held_artifact(lambda d:d['pretest_receipt'].update(protocol_sha256='wrong'))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_changed_result_cannot_reuse_its_verification_receipt(self):
+        self.artifact('held_out',lambda d:d['notes'].append('unverified change'))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_missing_or_duplicate_control_is_rejected(self):
+        self.held_artifact(lambda d:d['stopping'].__setitem__(1,d['stopping'][0]))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_stopping_count_and_interval_validation(self):
+        from investigation.research_results import stopping_metrics
+        row = json.loads((ROOT/FILES['held_out']).read_text())['stopping'][0]['chosen']
+        mutations = [lambda s:s.update(coverage=.123), lambda s:s.update(n_answered=-1),
+                     lambda s:s.update(mean_questions=float('nan')),lambda s:s['ci95']['coverage'].update(valid_resamples=1001),
+                     lambda s:s['ci95']['coverage'].update(low=1,high=0)]
+        for mutate in mutations:
+            copy = json.loads(json.dumps(row));mutate(copy)
+            with self.subTest(row=copy), self.assertRaises(ResultsUnavailable):stopping_metrics(copy)
+
+    def test_undefined_accuracy_remains_undefined(self):
+        from investigation.research_results import stopping_metrics
+        data = json.loads((ROOT/FILES['held_out']).read_text())
+        row = next(t['chosen'] for t in data['stopping'] if t['cohort']=='coded_fields_only' and t['stratum']=='all' and t['strategy']=='information_gain')
+        stopping_metrics(row)
+        self.assertIsNone(row['accuracy_top1'])
+        row['ci95']['accuracy_top1']['valid_resamples']=1000
+        with self.assertRaises(ResultsUnavailable):stopping_metrics(row)
+
+    def test_abstention_off_cannot_change_question_burden(self):
+        self.held_artifact(lambda d:d['stopping'][0]['abstention_off'].update(mean_questions=2.99))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_missing_calibration_bin_and_wrong_ece_are_rejected(self):
+        self.held_artifact(lambda d:d['stopping'][0]['named_top_ece']['bins'].pop())
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_calibration_bin_math_is_checked(self):
+        self.held_artifact(lambda d:d['stopping'][0]['named_top_ece'].update(value=.99))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
+
+    def test_question_stopping_samples_cannot_disagree(self):
+        self.held_artifact(lambda d:d['question_budget_summaries']['all_attributes']['primary_all/all'].update(n_pairs=156))
+        with self.assertRaises(ResultsUnavailable):load_results(self.root)
 
 
 if __name__ == '__main__':

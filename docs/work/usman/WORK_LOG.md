@@ -954,3 +954,23 @@ new saved-result replay step. Retained its actual job metadata and replay log,
 alongside hosted artifact IDs/sizes/SHA digests. Proof hashes were checked
 locally against retained bytes; each hosted result file is byte-identical and
 the accepted policy SHA is unchanged. Phase17 is fully verified.
+
+## Phase18 — publish accepted selection and frozen test
+
+Previous goal turn completed actual evaluation and changed authoritative results:
+progress, not a wait. Inspected current clean head5466ae5, plan/context/flow and
+publication code before creating codex/usman-final-research-publication.
+
+Prepared v2 fixed-source publication with actual frozen-policy/protocol and
+verifier/receipt validation, all controls/strata and saved accepted-gain selection
+projection. Product defaults to 2025 with saved budget curves, fixed comparisons,
+chosen/off exact intervals/valid draws, ECE, time/part-change controls and proxy/
+retrieval disclosures. Joint 2024 view marks the exact accepted point only in
+its actual scope; earlier pre-question study remains distinct. No experiment
+was rerun and all frozen source/policy bytes remain unchanged.
+
+Prepared minimal shared-caption stage option for owner review (no shell change).
+Added real-artifact integrity/component checks and expanded hosted browser
+verification for accepted marker, test intervals, null controls, earlier-study
+preservation and timing sensitivity in both themes/widths. Syntax checks and
+one bounded stdlib actual-publication load passed; hosted verification next.

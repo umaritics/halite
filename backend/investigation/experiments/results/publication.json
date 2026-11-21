@@ -1,5 +1,5 @@
 {
-  "schema_version": "investigation-publication-v1",
+  "schema_version": "investigation-publication-v2",
   "artifacts": [
     {
       "id": "question_selection",
@@ -10,6 +10,21 @@
       "id": "decision_selection",
       "path": "decision_selection_2024_v2/selection.json",
       "sha256": "7ed4c694974ecdfb80366dff9b8965fd22e386b949ccf6f547600fb9bf21c265"
+    },
+    {
+      "id": "stopping_selection",
+      "path": "policy_selection_2024_v1/selection.json",
+      "sha256": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
+    },
+    {
+      "id": "held_out",
+      "path": "held_out_2025_v1/results.json",
+      "sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+    },
+    {
+      "id": "held_out_verification",
+      "path": "held_out_2025_v1/verification.json",
+      "sha256": "657bf76ed09574d35a25865c493cafb9bc234e50d4db20ed8e0283752c59f185"
     }
   ]
 }

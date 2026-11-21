@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261121-final-research-publication](DEC-20261121-final-research-publication.md) | Frozen test display and exact accepted joint-selection marker | implemented / verification pending | Usman, Shahmeer |
 | [DEC-20261121-held-out-procedure](DEC-20261121-held-out-procedure.md) | Receipt-backed fixed 2025 evaluation and exact-head access gate | implemented / evaluation verified | Usman |
 | [DEC-20261121-frozen-research-point](DEC-20261121-frozen-research-point.md) | User-selected .80/.50 point and pre-test chronology/provenance gate | accepted / verified | Usman |
 | [DEC-20261121-question-conditioned-selection](DEC-20261121-question-conditioned-selection.md) | Combined stopping rule on frozen 2024 question prefixes | implemented / verified; choice accepted | Usman |

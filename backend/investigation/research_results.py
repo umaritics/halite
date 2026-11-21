@@ -3,11 +3,15 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from investigation.experiments.frozen_policy import preflight_held_out
 
 ROOT = Path(__file__).parent / 'experiments/results'
 FILES = {
     'question_selection': 'question_selection_2024_v2/results.json',
     'decision_selection': 'decision_selection_2024_v2/selection.json',
+    'stopping_selection': 'policy_selection_2024_v1/selection.json',
+    'held_out': 'held_out_2025_v1/results.json',
+    'held_out_verification': 'held_out_2025_v1/verification.json',
 }
 GROUPS = ('all_attributes', 'structured_fields_only', 'coded_fields_only')
 POLICIES = ('information_gain', 'random', 'no_questions')
@@ -98,6 +102,97 @@ def validate(question, decision):
         number(value, low=0, high=1)
 
 
+def stopping_metrics(row):
+    n, answered = row['n_pairs'], row['n_answered']
+    counts = [n, row['n_originals'], answered, row['n_correct_top1'], row['n_correct_top3']]
+    if any(type(v) is not int for v in counts) or not 0 < counts[1] <= n or not 0 <= counts[3] <= counts[4] <= answered <= n:
+        raise ResultsUnavailable('Invalid stopping denominators.')
+    expected = {'coverage': answered/n, 'abstention_rate': 1-answered/n,
+                'unsupported_suggestion_rate': (answered-row['n_correct_top3'])/n,
+                'accuracy_top1': row['n_correct_top1']/answered if answered else None,
+                'accuracy_top3': row['n_correct_top3']/answered if answered else None}
+    for key in (*expected, 'mean_questions'):
+        value = row[key]
+        ci = row['ci95'][key]
+        if key in expected:
+            target = expected[key]
+            if (value is None) != (target is None) or (value is not None and abs(value-target)>1e-10):
+                raise ResultsUnavailable('Stopping metric disagrees with its denominator.')
+        if value is None:
+            if ci != {'low':None,'high':None,'valid_resamples':0}:
+                raise ResultsUnavailable('Undefined answered accuracy needs an empty interval.')
+        else:
+            number(value,low=0,high=3 if key=='mean_questions' else 1)
+            interval(ci,probability=key!='mean_questions')
+            if ci['valid_resamples']>1000:
+                raise ResultsUnavailable('Unexpected bootstrap count.')
+
+
+def validate_completed(contents, entries):
+    proof = preflight_held_out()
+    policy = proof['policy']
+    selected = contents['stopping_selection']
+    held = contents['held_out']
+    verification = contents['held_out_verification']
+    fingerprints = {e['id']:e['sha256'] for e in entries}
+    if (fingerprints['stopping_selection'] != policy['selection_sha256'] or
+        selected['method_version'] != 'question-conditioned-selection-v1' or
+        selected['held_out_evaluated'] is not False or policy['selected_2024_row'] not in selected['tables']):
+        raise ResultsUnavailable('Selection must match the frozen accepted decision.')
+    if (held['method_version']!='fixed-held-out-2025-v1' or held['year']!=2025 or
+        held['held_out_evaluated'] is not True or held['selection_or_tuning_performed'] is not False or
+        held['policy']!=policy or held['protocol']!=proof['protocol']):
+        raise ResultsUnavailable('Held-out evidence does not match the pre-test freeze.')
+    receipt = held['pretest_receipt']
+    if (receipt['policy_sha256']!=policy['file_sha256'] or receipt['protocol_sha256']!=proof['protocol_sha256'] or
+        receipt['parameters']!=policy['parameters']):
+        raise ResultsUnavailable('Missing matching pre-access receipt.')
+    if (verification['independent_held_out_point_metrics']!='PASS' or
+        verification['all_question_and_stopping_intervals_replayed']!='PASS' or
+        verification['held_out_tuning'] is not False or verification['policy_sha256']!=policy['file_sha256'] or
+        verification['results_sha256']!=fingerprints['held_out'] or verification['case_counts']!=held['case_counts']):
+        raise ResultsUnavailable('Held-out verifier receipt is incompatible.')
+    signatures = set()
+    for table in held['stopping']:
+        signature = (table['cohort'],table['availability'],table['stratum'],table['strategy'])
+        if signature in signatures:
+            raise ResultsUnavailable('Duplicate held-out comparison.')
+        signatures.add(signature)
+        for key in ('chosen','abstention_off'):
+            stopping_metrics(table[key])
+        chosen, off = table['chosen'],table['abstention_off']
+        if (chosen['n_pairs']!=off['n_pairs'] or chosen['n_originals']!=off['n_originals'] or
+            chosen['mean_questions']!=off['mean_questions'] or chosen['ci95']['mean_questions']!=off['ci95']['mean_questions']):
+            raise ResultsUnavailable('Abstention-off must preserve question burden and samples.')
+        cohort = held['question_budget_summaries'][table['cohort']][table['availability']+'/'+table['stratum']]
+        question_cohort(cohort)
+        if cohort['n_pairs']!=chosen['n_pairs'] or cohort['n_originals']!=chosen['n_originals']:
+            raise ResultsUnavailable('Question and stopping samples disagree.')
+        ece = table['named_top_ece']
+        number(ece['value'],low=0,high=1);interval(ece['ci95'],probability=True)
+        bins = ece['bins']
+        if [b['bin'] for b in bins]!=list(range(10)) or sum(b['n'] for b in bins)!=chosen['n_pairs']:
+            raise ResultsUnavailable('Incomplete calibration bins.')
+        for b in bins:
+            if type(b['n']) is not int or type(b['correct_top1']) is not int or not 0 <= b['correct_top1'] <= b['n']:
+                raise ResultsUnavailable('Invalid calibration bin counts.')
+            number(b['support_sum'],low=0,high=b['n'])
+        if abs(sum(abs(b['support_sum']-b['correct_top1']) for b in bins)/chosen['n_pairs']-ece['value'])>1e-10:
+            raise ResultsUnavailable('Calibration bins disagree with ECE.')
+    required = {(pool,availability,stratum,strategy) for pool in GROUPS
+                for availability in ('primary_all','after_selection_labels')
+                for stratum in ('all','same','named_to_named','unknown_to_named') for strategy in POLICIES}
+    if signatures!=required or verification['tables_verified']!=len(required):
+        raise ResultsUnavailable('All declared held-out controls and strata are required.')
+    for pool in GROUPS:
+        n = held['case_counts']['n_pairs']
+        if held['question_budget_summaries'][pool]['primary_all/all']['n_pairs']!=n:
+            raise ResultsUnavailable('Primary held-out counts disagree.')
+    # Keep the full source checksum/provenance, send only the accepted gain slice.
+    # This is a projection of saved rows, never a new sweep or calculation.
+    return policy, {**selected,'tables':[r for r in selected['tables'] if r['g_min']==policy['parameters']['g_min']]}
+
+
 def load_results(root=None):
     root = Path(root) if root is not None else ROOT
     try:
@@ -106,11 +201,11 @@ def load_results(root=None):
             raise ResultsUnavailable('Publication manifest is too large.')
         raw_manifest = manifest.read_bytes()
         publication = json.loads(raw_manifest)
-        if publication['schema_version'] != 'investigation-publication-v1':
+        if publication['schema_version'] != 'investigation-publication-v2':
             raise ResultsUnavailable('Unknown publication version.')
         entries = publication['artifacts']
         if entries == []:
-            return {'schema_version': 'investigation-results-v1', 'state': 'empty', 'artifacts': []}
+            return {'schema_version': 'investigation-results-v2', 'state': 'empty', 'artifacts': []}
         if len(entries) != len(FILES) or {r['id'] for r in entries} != set(FILES):
             raise ResultsUnavailable('Publication artifacts are incomplete or duplicated.')
         contents = {}
@@ -119,16 +214,18 @@ def load_results(root=None):
             if entry['path'] != relative:
                 raise ResultsUnavailable('Only the fixed published artifact paths are allowed.')
             path = root / relative
-            if not path.resolve().is_relative_to(root.resolve()) or path.stat().st_size > 2 * 1024 * 1024:
+            if not path.resolve().is_relative_to(root.resolve()) or path.stat().st_size > 8 * 1024 * 1024:
                 raise ResultsUnavailable('Artifact path or size is invalid.')
             raw = path.read_bytes()
             if hashlib.sha256(raw).hexdigest() != entry['sha256']:
                 raise ResultsUnavailable('Published experiment checksum changed.')
             contents[entry['id']] = json.loads(raw)
         validate(contents['question_selection'], contents['decision_selection'])
-        return {'schema_version': 'investigation-results-v1', 'state': 'available',
+        policy, selection = validate_completed(contents,entries)
+        contents['stopping_selection'] = selection
+        return {'schema_version': 'investigation-results-v2', 'state': 'available',
                 'publication_sha256': hashlib.sha256(raw_manifest).hexdigest(),
-                'artifacts': entries, **contents}
+                'artifacts': entries, 'selected_policy':policy, **contents}
     except ResultsUnavailable:
         raise
     except (OSError, ValueError, KeyError, TypeError, AttributeError, ZeroDivisionError) as exc:

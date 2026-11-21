@@ -17,11 +17,11 @@ const intervalText = (interval, format) => interval?.low != null && interval?.hi
 
 /** Points are exact saved values. Missing values stay absent from the plot and explicit in the table. */
 export default function ResearchChart({ title, year, n, originals, resamples, caption, series,
-  xLabel, yLabel, xFormat = percentage, yFormat = percentage, xDomain = [0, 1], yDomain = [0, 1], xTicks }) {
+  stage = 'selection', xLabel, yLabel, xFormat = percentage, yFormat = percentage, xDomain = [0, 1], yDomain = [0, 1], xTicks }) {
   const id = useId();
   return <figure className="halite-card min-w-0 p-4 sm:p-6" aria-labelledby={`${id}-title`}>
     <h2 id={`${id}-title`} className="font-brand text-lg text-primary">{title}</h2>
-    <p className="mt-1 text-sm text-secondary">{year} selection · n={n} pairs · {originals} original reports · 95% cluster-bootstrap intervals ({resamples} resamples)</p>
+    <p className="mt-1 text-sm text-secondary">{year} {stage} · n={n} pairs · {originals} original reports · 95% cluster-bootstrap intervals ({resamples} resamples)</p>
     <div className="mt-4 min-w-0" aria-hidden="true">
       <ScatterChart responsive style={{ width: '100%', height: 340 }} margin={{ top: 16, right: 24, bottom: 32, left: 12 }}>
         <CartesianGrid stroke="currentColor" className="text-secondary" opacity={0.18} />

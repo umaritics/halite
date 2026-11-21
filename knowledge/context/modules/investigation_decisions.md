@@ -196,5 +196,18 @@ IG answered none. These results stay frozen and do not authorize tuning, live
 activation or probability wording. Full CI passed 485 backend/279 frontend tests,
 81.65% coverage and real disposable database/browser flows. See
 docs/work/usman/HELD_OUT_VERIFICATION.md and retained held_out_2025_v1 artifacts.
-The existing product manifest still publishes only the earlier 2024 artifacts;
-final results/accepted-marker publication is separate remaining work.
+The v2 product manifest now prepares the frozen test and accepted question-
+conditioned selection for display; hosted publication verification is pending.
+
+## Read-only completed-research publication
+
+Publication v2 retains both earlier 2024 studies and pins the full joint stopping
+selection, frozen 2025 result and its independent verifier report. The endpoint
+checks the real frozen policy/protocol, exact selection SHA/accepted row, matching
+pre-access receipt, verifier/result SHA and all 72 control/stratum tables. It
+validates denominator arithmetic, undefined intervals, equal chosen/off question
+burden, calibration bins/ECE and question/stopping sample parity. The transport
+projects only saved rows at accepted gain .50 (756 rows) from the full pinned
+selection source. No refit, rerank, source download, threshold sweep or live
+policy activation happens during reads. Missing/changed/incompatible evidence
+returns 503; an explicitly empty manifest remains an empty publication.

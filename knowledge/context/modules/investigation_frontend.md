@@ -112,7 +112,8 @@ The page reads all three saved question policies, three attribute controls,
 part-change cohorts and top-1/top-3/entropy (bits) metrics. It displays the paired
 information-gain-minus-random interval at the last recorded budget, including
 zero-crossing uncertainty. Two saved abstention charts show accuracy–coverage and
-the top-3 outcome-key proxy. No accepted point or 2025 performance is invented.
+the top-3 outcome-key proxy. The verified frozen test is now the default view;
+selection and historical pre-question studies are separate evidence-set choices.
 The runtime policy is unaffected. Method versions, corpus split, ECE interval and
 publication/artifact hashes remain visible. Shared primitives and Recharts
 wrapper are isolated on the preceding owner-review branch.
@@ -128,3 +129,21 @@ Verified research-page source `ecdc264`: hosted workflow 44856875802 passed
 445 backend/275 frontend tests, builds, real-graph/session smoke and production
 browser checks, including exact recorded budget ticks and phone geometry.
 Retained proof: `docs/work/usman/evidence/phase10-research-panel/`.
+
+## Final frozen research publication (v2)
+
+The default 2025 view reads the saved three-control question-budget curves and
+fixed stopping comparisons, with primary/post-selection-label and part-change
+controls. It shows chosen/off metrics and exact 95% intervals, valid bootstrap
+draws, named-top ECE, candidate misses, proxy definitions and prior-prototype
+exposure. Zero-answer accuracy stays undefined. No test threshold curve is
+invented. The 2024 question-conditioned view reads only the frozen .50-bit gain
+slice; its accepted .80 point is marked solely on the all-attribute IG/all-case
+curve. The earlier pre-question study remains available without that marker.
+
+The v2 API checks the actual frozen policy/protocol and independent test receipt;
+it returns saved values and provenance only. The page performs no experiment or
+runtime activation. Shared ResearchChart gains an optional stage label (default
+selection), so held-out figures are not mislabelled. This small shared follow-up
+is prepared for Shahmeer review in CHART_FOUNDATION_REVIEW.md. Phase18 synthetic,
+artifact-contract and full hosted browser verification is pending.

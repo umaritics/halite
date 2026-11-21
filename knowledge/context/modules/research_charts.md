@@ -31,3 +31,8 @@ Full build/tests and later actual product-page browser checks run in hosted CI.
 
 The optional `xTicks` input accepts saved discrete budgets; investigation question
 charts pass the recorded 0/1/2/3 values rather than fractional auto-generated ticks.
+
+The phase18 follow-up adds optional `stage` (default `selection`) to the sample
+caption. Frozen test figures pass `held-out`; no year is called selection by
+accident. Existing role colours/accepted marker/whiskers and the undefined-value
+table are unchanged. The exact small shared change remains for Shahmeer review.

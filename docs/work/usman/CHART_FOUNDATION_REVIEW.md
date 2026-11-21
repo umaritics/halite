@@ -16,3 +16,12 @@ be marked as selected. Recharts API checked against its official documentation.
 
 Verification: metadata-only dependency preparation and hosted tests/build.
 No local full dependency installation or application/container build is run.
+
+## Phase18 follow-up for review
+
+The final publication needs a correct sample-stage label. ResearchChart now takes
+optional `stage` with its existing `selection` default; the 2025 feature passes
+`held-out`. This two-line shared-wrapper follow-up and its caption test are
+prepared on the separate final-publication review branch. Colours, chart maths
+and existing callers retain their behavior. Shahmeer review/merge is still
+required; this preparation does not claim his approval. No shell file is touched.

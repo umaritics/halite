@@ -14,6 +14,11 @@ describe('Shared research chart contract', () => {
     expect(chartPoint({ x: 0, y: null })).toBeNull();
     expect(chartPoint({ x: 0, y: NaN })).toBeNull();
   });
+  it('labels a held-out sample without calling it selection', () => {
+    render(<ResearchChart title="Frozen test" year={2025} stage="held-out" n={157} originals={140} resamples={1000} caption="Saved intervals" xLabel="Coverage" yLabel="Accuracy" series={[]} />);
+    expect(screen.getByText(/2025 held-out · n=157/)).toBeInTheDocument();
+    expect(screen.queryByText(/2025 selection/)).not.toBeInTheDocument();
+  });
   it('retains undefined accuracy in its accessible table instead of inventing zero', () => {
     render(<ResearchChart title="Saved evidence" year={2024} n={389} originals={340} resamples={1000} caption="Saved intervals" xLabel="Coverage" yLabel="Accuracy"
       series={[{ id: 'ours', label: 'Ours', role: 'ours', points: [{ x: 0, y: null, label: 'No answers' }] }]} />);
