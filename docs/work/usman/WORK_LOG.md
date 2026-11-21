@@ -781,3 +781,9 @@ passed, but pytest collection correctly failed because retained scripts import
 requests, previously supplied by LangChain. Added its actual baseline version
 as a direct dependency and expanded the audit. No successful test claim is made
 for that initial run. Reverification required on the corrected commit.
+
+Phase12 corrected commit c2936e4 verified by hosted run 44881901280: all jobs
+successful, 450 backend/279 frontend tests, real database/full-stack/browser
+checks. Transaction 89→66 distributions; CSV versions retained, dotenv settings
+test passed. Broad coverage 77.68%, still below 80%. Raw resolution/installed
+reports, JUnit and hash/job metadata committed; see DEPENDENCY_CLEANUP_VERIFICATION.md.
