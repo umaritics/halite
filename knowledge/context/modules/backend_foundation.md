@@ -64,3 +64,14 @@ accounting remains intact, and no canned maintenance answer is introduced.
 
 Unchanged existing tests plus `test_backend_preparation.py` and
 `test_model_adapter_format.py`; phase evidence in `docs/work/usman/WORK_LOG.md`.
+
+## Remaining retirement and dependency cleanup
+
+The independent dependency branch removes unused direct requirements without
+changing route/domain behavior. Actual CSV/document consumers are retained and
+hosted reports verify resolution. See DEC-20261121-dependency-cleanup.
+
+The concrete legacy retirement proposal is in
+`docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md` and its exact two-file integration
+patch. The user authorized preparing/testing it on a separate review branch on
+21 November; runtime retirement and owner review are not claimed by this branch.

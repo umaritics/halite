@@ -104,3 +104,5 @@ Research publication (Usman): `backend/investigation/research_results.py`, `expe
 Research product panel (Usman): `frontend/src/features/investigation/{ResearchPage.jsx,research.js}`, `frontend/e2e/verify-research-ui.cjs`; [context](context/modules/investigation_frontend.md), [flow](flows/FLOW-research-publication.md). Hosted browser verification is part of CI; owner review/merge remain separate.
 
 Source-word interaction (Usman): `backend/investigation/grounding.py::source_matches`, `frontend/src/features/investigation/SourceNarrative.jsx`, sentence callbacks in DecisionView and source selection in quick/session pages. [Context](context/modules/investigation_grounding.md), [flow](flows/FLOW-grounding.md), [decision](decisions/DEC-20261121-saved-source-word-spans.md).
+
+Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/workflows/ci.yml`, `docs/work/usman/verify_dependency_cleanup.py`, `backend/tests/test_settings_env_file.py`; [decision](decisions/DEC-20261121-dependency-cleanup.md), [CI context](context/modules/devops.md). Separate legacy retirement authorization/proposal: `docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md`.

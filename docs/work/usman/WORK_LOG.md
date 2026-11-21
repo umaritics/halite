@@ -758,3 +758,20 @@ Source-highlighting run 44857961828 passed backend/frontend but the browser fixt
 ### Phase 11 verified handoff
 
 Source 4136fc3 / hosted run 44858279238 passed all jobs: 449 backend tests, 279 frontend tests, lint, builds, real-graph/session smoke and production-browser source checks. Exact Unicode source text, word marks and saved grounding JSON replay verified in both themes and at phone width. Inspected screenshots and retained six source screenshots, combined browser JSON, filtered CI counts and job/file provenance in evidence/phase11-source-highlighting. SOURCE_HIGHLIGHTING_VERIFICATION.md records files, executed checks, AI assistance and remaining gates. Broad coverage remains 78%; full objective remains active. Phase 10 final documentation head 9476086 also passed all hosted checks in run 44857290515.
+
+### Phase 12 — dependency cleanup preparation
+
+Audited 165 backend Python files: no imports of LangChain roots, docx or dotenv;
+pandas is actually used by the CSV importer and FAA tools, while pypdf/docx2txt
+still serve legacy documents. Removed five unused/redundant direct requirements
+and retained the already-installed NumPy 1.26.4 to avoid an unrelated CSV stack
+upgrade. Baseline requirements SHA/source and actual prior hosted package versions
+retained under evidence/phase12-dependencies. Standard-library import verifier
+passed locally; no dependency installation performed. Added hosted pip/installed
+reports and real env-file parsing test; full CI verification pending.
+
+Prepared an exact clean-applying shared retirement patch and contract proposal.
+The user explicitly authorized “Prepare and test retirement for review” after
+seeing the domain/default/API changes and Shahmeer-owned dependencies. Apply only
+on a separate retirement review branch; actual owner review/merge/deploy remain
+pending. Dependency-only runtime leaves those contracts unchanged.

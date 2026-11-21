@@ -56,3 +56,13 @@ ephemeral. Local heavy builds are avoided after the machine storage incident.
 
 The host browser build uses a git-archived frontend copy under RUNNER_TEMP,
 avoiding Compose-created root-owned bind-mount directories in the checkout.
+
+## Dependency cleanup evidence
+
+The backend install step writes a pip install report and installed-distribution
+list. `docs/work/usman/verify_dependency_cleanup.py` audits actual backend imports
+and checks the resolved environment against the retained baseline. Reports and
+the summary ship with the backend test/coverage artifact. Unused LangChain roots
+and python-docx must be absent; pandas/NumPy stay on the verified CSV versions.
+Dotenv remains transitively installed, with a real `.env` Settings test. No
+package installation is needed on the developer laptop for this verification.

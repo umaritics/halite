@@ -53,3 +53,20 @@ flowchart LR
 Normal chart reads use real JWT/API/artifact checksums. Only UI failure/empty
 subchecks intercept responses, explicitly labelled in proof. No staging data is
 used; the job tears down its own Compose volumes after verification.
+
+## Measured dependency resolution
+
+```mermaid
+flowchart LR
+  Requirements[Runtime and dev requirements] --> Install[Hosted pip install / JSON report]
+  Install --> Inventory[Installed distribution inventory]
+  Inventory --> Audit[Static import and dependency audit]
+  Baseline[Verified baseline package evidence] --> Audit
+  Audit --> Tests[Lint / runtime tests / real env-file parsing]
+  Audit --> Artifacts[Dependency summary and raw reports]
+  Tests --> Artifacts
+```
+
+Pandas is an actual runtime dependency. Dotenv remains needed transitively;
+removing its direct requirement does not mean the package disappears. NumPy
+remains at the already-installed baseline instead of an unrelated major upgrade.

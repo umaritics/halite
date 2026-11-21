@@ -61,7 +61,10 @@ jobs:
             backend/requirements.txt
             backend/requirements-dev.txt
       - name: Install backend dependencies
-        run: python -m pip install -r requirements-dev.txt
+        run: |
+          python -m pip install --report dependency-install-report.json -r requirements-dev.txt
+          python -m pip list --format=json > dependency-installed.json
+          python ../docs/work/usman/verify_dependency_cleanup.py --install-report dependency-install-report.json --installed dependency-installed.json --output dependency-cleanup-summary.json
       - name: Lint runtime errors
         run: python -m ruff check .
       - name: Run backend tests with coverage
@@ -77,6 +80,9 @@ jobs:
           path: |
             backend/coverage.xml
             backend/test-results.xml
+            backend/dependency-install-report.json
+            backend/dependency-installed.json
+            backend/dependency-cleanup-summary.json
 
   frontend:
     name: Frontend tests and build (Node 20)
