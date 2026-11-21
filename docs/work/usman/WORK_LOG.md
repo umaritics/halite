@@ -856,3 +856,7 @@ A concrete async question now asks Usman to choose the research point: proposed
 0.80/0.50 (23 answers:16 top-one matches/7 misses) versus 0.75/0.50 (33:21/12),
 both 1.26 questions/case. No answer is inferred; no threshold activated or 2025
 source read while pending. Remaining independent tasks can continue.
+
+CSV retained-file hashes account for Git line-ending normalization: committed
+CSV uses LF with identical fields; raw CRLF artifact hash is stored separately.
+The verified selection JSON bytes/fingerprint are unchanged.

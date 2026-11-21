@@ -68,8 +68,13 @@
     "test-results.xml": "f09f4c2560ad65e0db2c3677c161ca9131d9cdfb7a6c69884076d29d2101f2cf"
   },
   "retained_selection_files_sha256": {
+    "selection.csv": "1554632dd29592b7a66d56dbf1e9e9f515a7968492863e7e5361bc68dc079e12",
+    "selection.json": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
+  },
+  "independent_verifier_sha256": "6848d749e1218bdfe573d9811db8be3083c2d5791941b35b4ec2c574449fc776",
+  "raw_selection_artifact_sha256": {
     "selection.csv": "bec6ea103f103ab3e04d7622ac4b9c29ca4aebbaa09b84bfe88e077f4369daff",
     "selection.json": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
   },
-  "independent_verifier_sha256": "6848d749e1218bdfe573d9811db8be3083c2d5791941b35b4ec2c574449fc776"
+  "csv_normalization": "CSV line endings normalized from CRLF to LF for Git; field values unchanged. Raw artifact hash retained separately."
 }
