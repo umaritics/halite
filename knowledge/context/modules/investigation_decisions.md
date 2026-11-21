@@ -98,3 +98,24 @@ graph query, policy activation or held-out read happens on this path.
 The abstention rate is an outcome-key top-3 proxy, not a sentence-grounding rate.
 Undefined answered accuracy stays null; the accepted operating point stays null.
 The product page must retain those distinctions and display saved intervals.
+
+## Question-conditioned stopping selection
+
+`experiments/policy_selection.py` uses the actual `decide` rule on prefixes of
+the checksum-pinned 2024 question traces. A threshold can stop a trajectory but
+does not change the next deterministic question when continuation is permitted.
+Named posterior ties keep original rank order and evidence counts remain attached
+to their named hypothesis. Scoring receives the correction key only after the
+stopping path is complete. The versioned protocol fixes 21 answer thresholds, six
+gain thresholds, two-record evidence and three-question budgets before results.
+All three attribute cohorts, three strategies and three part-change strata plus
+all cases are retained. Random uses the selected random question's gain as an
+explicit control; information gain is the managed-runtime path.
+
+Original-report cluster resampling uses identical draws for every grid point and
+strategy in a stratum. Undefined answered accuracy stays null and reports valid
+resample counts. Metrics include coverage, answered top-1/top-3 accuracy, outcome-
+key top-3 unsupported proxy and mean question burden over all cases. An independent
+scalar verifier recalculates all point metrics; tests check hand-computed cluster
+ratios and parity with the actual managed question controller. Numeric selection,
+activation and 2025 evaluation remain separate decisions.

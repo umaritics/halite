@@ -110,3 +110,5 @@ Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/wo
 | legacy retirement, 404, no startup seed | decisions/DEC-20261121-legacy-retirement.md; docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md |
 
 | exact coverage gate, artifact provenance tests | decisions/DEC-20261121-research-tool-verification.md; backend/tests/test_research_artifact_tools.py |
+
+| question-conditioned policy selection, stopping prefixes | decisions/DEC-20261121-question-conditioned-selection.md; investigation/experiments/policy_selection.py |

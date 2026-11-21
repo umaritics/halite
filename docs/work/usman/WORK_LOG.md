@@ -825,3 +825,17 @@ committed under phase14 evidence. PR43 final evidence head da4ecc5 also passed
 all jobs in run 44882364296. Refreshed origin/main remains 0dd86d9. Laptop still
 has 24GiB free / ~12GiB available / zero swap. Next: question-conditioned 2024
 selection; human/review/model/report/release gates remain explicit.
+
+## Phase 15 — question-conditioned 2024 operating-point preparation
+
+Added a fixed grid/provenance protocol before computing results, prefix replay
+through actual answer/ask/abstain decisions, all three cohorts/strategies/strata,
+shared original-report bootstrap and a separate scalar metric verifier. Selection
+scoring remains downstream of the answer-key-free stopping path. Added tests for
+answer priority, gain boundaries, posterior/evidence identity, actual managed
+controller parity, cluster ratios/null intervals and frozen-input export.
+
+Tiny local validation read only committed inputs: all cohorts match 389 pairs/340
+originals and provenance (0.16s). The full comparison is hosted in its own bounded
+one-thread workflow. No threshold is selected/activated and no 2025 source is read.
+Phase14 final documentation head c41b3d2 also passed all CI jobs in run 44882911677.

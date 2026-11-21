@@ -86,3 +86,9 @@ grounding vocabulary fitting with no overwrite of saved results.
 Verified on c5d279a / run 44882587938: 453 backend tests; 4,744/5,851 measured
 statements = 81.08%, exact gate passed. Coverage/JUnit and source-scope evidence
 are retained in docs/work/usman/evidence/phase14-research-tool-verification/.
+
+`policy-selection.yml` runs the frozen 2024 stopping sweep on PR changes to its
+method/protocol/tests/verifier. It installs only the existing pinned NumPy, limits
+numerical threads to one, verifies every stopping-table metric independently and
+uploads the selection artifact. It does not deploy or read staging/raw FAA data.
+The regular full CI still runs separately and enforces the 80% coverage gate.

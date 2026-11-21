@@ -61,3 +61,21 @@ flowchart LR
 
 Service/API-key principals receive 403; anonymous callers receive the shared
 authentication failure. Reads do not activate a policy or evaluate 2025.
+
+## Stopping-policy comparison after questions
+
+```mermaid
+flowchart LR
+  Protocol[Fixed grid / 2024 input SHA pins] --> Verify[Validate traces / initial fit / methods]
+  Verify --> Prefix[Replay actual policy on saved question prefixes]
+  Prefix --> Stop[Answer / ask / abstain with unchanged named evidence counts]
+  Stop --> Score[Downstream correction-key scoring only]
+  Score --> Cluster[Shared original-report bootstrap draws]
+  Cluster --> Table[All cohorts / controls / strata / intervals]
+  Table --> Independent[Independent scalar stopping-metric verifier]
+  Independent --> Review[Unselected evidence for Usman's decision]
+```
+
+The hosted-only full sweep reads committed 2024 artifacts, never raw 2025 data,
+a graph or a model endpoint. Inconsistent inputs and existing result directories
+fail. A saved posterior is never used before its simulated question is applied.

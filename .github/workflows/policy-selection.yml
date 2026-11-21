@@ -1,0 +1,42 @@
+name: Frozen 2024 stopping-policy selection
+
+on:
+  pull_request:
+    paths:
+      - 'backend/investigation/experiments/policy_selection*'
+      - 'backend/tests/test_investigation_policy_selection.py'
+      - '.github/workflows/policy-selection.yml'
+      - 'docs/work/usman/verify_policy_selection.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: policy-selection-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  selection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: backend
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing pinned numerical dependency
+        run: python -m pip install numpy==1.26.4
+      - name: Replay frozen selection inputs only
+        run: python -m investigation.experiments.policy_selection --output "$RUNNER_TEMP/policy-selection"
+      - name: Independently verify stopping metrics
+        run: python docs/work/usman/verify_policy_selection.py "$RUNNER_TEMP/policy-selection/selection.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stopping-policy-selection-2024
+          path: ${{ runner.temp }}/policy-selection/
