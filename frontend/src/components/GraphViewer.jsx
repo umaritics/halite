@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
@@ -43,12 +43,54 @@ function getNodeLabel(node) {
   );
 }
 
+// WebGL is required by the 3D graph. Some browsers (sandboxed panes, machines with
+// hardware acceleration off) don't provide it; without this check the 3D renderer
+// throws and, with no error boundary, blanks the whole app.
+function hasWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+  } catch {
+    return false;
+  }
+}
+
+function NoWebGL() {
+  return (
+    <div className="flex h-full min-h-[520px] items-center justify-center p-8">
+      <div className="max-w-md text-center font-sans">
+        <p className="text-sm text-primary">The 3D graph needs WebGL, which this browser isn't providing.</p>
+        <p className="mt-2 text-xs text-secondary">
+          Open Halite in Chrome or Safari with hardware acceleration turned on. The rest of the app works normally.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+class GraphErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { failed: false };
+  }
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(err) {
+    console.error('Graph render failed:', err);
+  }
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children;
+  }
+}
+
 export default function GraphViewer({ data, onNodeSelect, searchQuery = '', typeFilters = {} }) {
   const fgRef = useRef();
   const containerRef = useRef();
   const { isDark } = useTheme();
   const [size, setSize] = useState({ w: 800, h: 560 });
   const [error, setError] = useState(null);
+  const webgl = useMemo(() => hasWebGL(), []);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -155,7 +197,10 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
         <div className="flex h-full min-h-[520px] items-center justify-center">
           <p className="font-sans text-sm text-secondary">No nodes to display</p>
         </div>
+      ) : !webgl ? (
+        <NoWebGL />
       ) : (
+        <GraphErrorBoundary fallback={<NoWebGL />}>
         <ForceGraph3D
           ref={fgRef}
           graphData={graphData}
@@ -191,6 +236,7 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
             }
           }}
         />
+        </GraphErrorBoundary>
       )}
 
       <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/50 px-2 py-1 font-sans text-[11px] text-[#888888]">

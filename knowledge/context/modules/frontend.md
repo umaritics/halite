@@ -75,6 +75,7 @@ not capture `/api/*` or `/assets/*`.
 | Only backend-supplied values are displayed (no invented supersession reason, no "Invalid Date") | `AssetHistory.jsx`, `utils/format.js` |
 | No UI control may wipe the graph (Settings reset removed) | `Settings.jsx` |
 | Ingest writes only after an explicit confirm; counts are the backend's own numbers; failures are inline, never `alert()` | `MaintenanceIngest.jsx`, `CsvUploader.jsx`, `IngestResult.jsx`, [DEC-20261017-ingest-csv-upload-ui](../../decisions/DEC-20261017-ingest-csv-upload-ui.md) |
+| The 3D graph never blanks the app: no WebGL, or a renderer error, shows a message while the rest of the Graph page keeps working | `components/GraphViewer.jsx` (`hasWebGL`, `GraphErrorBoundary`) |
 | Graph shows only stored edges for one aircraft; counts are what is drawn; `SUPERSEDES` is styled apart; no invented edges | `Graph.jsx`, `utils/graphScope.js`, [DEC-20261017-graph-aircraft-focus](../../decisions/DEC-20261017-graph-aircraft-focus.md) |
 
 ## Performance
