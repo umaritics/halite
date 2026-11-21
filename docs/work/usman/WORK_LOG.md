@@ -974,3 +974,10 @@ Added real-artifact integrity/component checks and expanded hosted browser
 verification for accepted marker, test intervals, null controls, earlier-study
 preservation and timing sensitivity in both themes/widths. Syntax checks and
 one bounded stdlib actual-publication load passed; hosted verification next.
+
+Pre-CI packaging review found that the frozen pre-access checker assumes the full
+repository, whereas production Docker contains only backend under /app. Replaced
+that runtime dependency with packaged-backend policy/protocol/input verification;
+the full original pre-access/documentation checker remains unchanged in CI.
+Added an isolated backend-only package parity/tamper test. No Docker context,
+source pin, experiment result or ownership boundary was changed.

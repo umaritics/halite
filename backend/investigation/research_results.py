@@ -3,7 +3,8 @@ import hashlib
 import json
 import math
 from pathlib import Path
-from investigation.experiments.frozen_policy import preflight_held_out
+from investigation.experiments.frozen_policy import POLICY, PROTOCOL
+from investigation.policy import PolicyParameters
 
 ROOT = Path(__file__).parent / 'experiments/results'
 FILES = {
@@ -128,8 +129,36 @@ def stopping_metrics(row):
                 raise ResultsUnavailable('Unexpected bootstrap count.')
 
 
+def publication_freeze(backend_root=None):
+    """Verify packaged backend inputs; full doc/source preflight remains in CI.
+
+    Backend Docker images contain /app, not the repository's docs directory.
+    Do not weaken the original pre-access checker or invent a repository mount.
+    """
+    backend_root = Path(backend_root) if backend_root is not None else Path(__file__).resolve().parents[1]
+    policy_path = backend_root/POLICY.removeprefix('backend/')
+    policy = json.loads(policy_path.read_bytes())
+    if (policy['status']!='selected' or policy['selection_year']!=2024 or policy['belief_label']!='relative support' or
+        policy['held_out_evaluated_at_freeze'] is not False):
+        raise ResultsUnavailable('A recorded pre-test research choice is required.')
+    parameters = PolicyParameters(**policy['parameters'])
+    if parameters.n_min!=2 or parameters.max_questions!=3:
+        raise ResultsUnavailable('Preserve the frozen evidence and question budgets.')
+    for relative, expected in policy['frozen_files_sha256'].items():
+        if relative.startswith('backend/'):
+            path = (backend_root/relative.removeprefix('backend/')).resolve()
+            if not path.is_relative_to(backend_root.resolve()) or hashlib.sha256(path.read_bytes()).hexdigest()!=expected:
+                raise ResultsUnavailable('A packaged frozen research input changed.')
+    policy['file_sha256'] = hashlib.sha256(policy_path.read_bytes()).hexdigest()
+    protocol_path = backend_root/PROTOCOL.removeprefix('backend/')
+    protocol = json.loads(protocol_path.read_bytes())
+    if protocol['selected_policy_sha256']!=policy['file_sha256']:
+        raise ResultsUnavailable('Packaged protocol does not match the selected policy.')
+    return {'policy':policy,'protocol':protocol,'protocol_sha256':hashlib.sha256(protocol_path.read_bytes()).hexdigest()}
+
+
 def validate_completed(contents, entries):
-    proof = preflight_held_out()
+    proof = publication_freeze()
     policy = proof['policy']
     selected = contents['stopping_selection']
     held = contents['held_out']

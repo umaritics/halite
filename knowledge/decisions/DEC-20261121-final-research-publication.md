@@ -35,3 +35,11 @@ Only saved values are displayed; no fit/rerank/sweep/download or live activation
 is added. The version change is explicit and malformed/stale publications fail.
 The existing raw experiments, selected-policy bytes and pre-test protocol remain
 unchanged. Human calibration/model measurements/report/release gates remain.
+
+Runtime packaging checks the actual backend policy/protocol and every pinned
+backend input relative to the installed backend root. The backend-only Docker
+image does not contain project docs. Full documentation/source preflight stays
+in CI and remains byte-for-byte unchanged; publication does not require a fake
+repository mount. An isolated backend-only package test and the real Compose
+API/browser verify this boundary. Documentation/audit hashes remain provenance
+in the frozen policy and are verified by the original CI preflight.

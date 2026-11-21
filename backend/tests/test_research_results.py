@@ -111,6 +111,20 @@ class ResearchPublicationTests(unittest.TestCase):
         data = json.loads(path.read_text())
         self.artifact('held_out_verification',lambda v:v.update(results_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),case_counts=data['case_counts']))
 
+    def test_backend_only_packaging_needs_no_project_document_mount(self):
+        from investigation.research_results import publication_freeze
+        original = publication_freeze()
+        packaged = Path(self.temp.name)/'packaged_backend'
+        backend_root = ROOT.parents[2]
+        names = [name.removeprefix('backend/') for name in original['policy']['frozen_files_sha256'] if name.startswith('backend/')]
+        names += ['investigation/params/selected-policy-v1.json', 'investigation/experiments/held_out_protocol_v1.json']
+        for name in names:
+            path = packaged/name;path.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(backend_root/name,path)
+        self.assertEqual(publication_freeze(packaged),original)
+        (packaged/'investigation/params/report-attributes-v1.json').write_text('{}')
+        with self.assertRaises(ResultsUnavailable):publication_freeze(packaged)
+
     def test_accepted_point_is_exact_and_only_accepted_gain_rows_are_sent(self):
         result = load_results()
         policy = result['selected_policy']
