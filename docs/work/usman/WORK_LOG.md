@@ -877,3 +877,9 @@ all eligible occurrence-year test pairs in the primary analysis. No 2025 source
 was read. Local preflight passed; hosted mutation/runtime-compatibility tests
 and full regression evidence are pending. PR45 final head eb3ff53 passed all
 four jobs in runs 44884119775 / 44884119746.
+
+Retained audit_label_availability.py reproduces the timing audit exactly from
+only the pinned 2023/2024 inputs, verifying their canonical projection hashes
+before accepting dates. The selected policy also pins that tool and its own
+preflight implementation. Reproduction and local preflight passed; the accepted
+numeric choice is unchanged and 2025 remains untouched.

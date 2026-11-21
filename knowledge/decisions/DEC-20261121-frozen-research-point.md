@@ -34,3 +34,7 @@ The research point is accepted and frozen. Held-out execution/results, owner
 review/merge, runtime activation and final report/other human research gates
 remain. The saved selection artifact itself stays unchanged as a historical
 unselected snapshot; the separate selected-policy file records later acceptance.
+
+The retained audit_label_availability.py reproduces the audit exactly, checking
+both canonical source hashes before dates. Policy pins include this tool and
+the preflight implementation; frozen numeric settings remain unchanged.

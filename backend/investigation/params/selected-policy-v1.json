@@ -85,7 +85,9 @@
     "docs/work/usman/evidence/phase16-frozen-policy/label-availability-audit.json": "1e0714d8e80b18e02416ffc646f5106aec1a6c034937a1f511f1ee9c5be6c719",
     "backend/investigation/experiments/abstention_curve.py": "964a92c45da095b946a1ffcef317479a97f5fe7e4c1d6e48a82e6d6772de7ce4",
     "backend/investigation/experiments/calibration.py": "e408f514cf76522bb24ca0cbc14649abea78a30cd19835e7933bc6d8d1a892b7",
-    "backend/investigation/experiments/download_projection.py": "49a7ed1db61456060b6005dea06441a5a6e194d389f5754e22fd7d383978ebb1"
+    "backend/investigation/experiments/download_projection.py": "49a7ed1db61456060b6005dea06441a5a6e194d389f5754e22fd7d383978ebb1",
+    "docs/work/usman/audit_label_availability.py": "e4fe135cdd9c5e46aed37a2da30761548cd5cb4ae825670c720938342bbd57ec",
+    "backend/investigation/experiments/frozen_policy.py": "f434d33bbff6db84920b96082eddf4cde305ec34208e8035732b9f14727c4b8a"
   },
   "held_out_evaluated_at_freeze": false,
   "belief_label": "relative support"

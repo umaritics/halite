@@ -114,3 +114,5 @@ Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/wo
 | question-conditioned policy selection, stopping prefixes | decisions/DEC-20261121-question-conditioned-selection.md; investigation/experiments/policy_selection.py |
 
 | selected .80/.50 policy, held-out preflight, label availability | decisions/DEC-20261121-frozen-research-point.md; investigation/experiments/frozen_policy.py; docs/fyp1-final/OPERATING_POINT_DECISION.md |
+
+| reproduce fit/selection label timing | docs/work/usman/audit_label_availability.py; evidence/phase16-frozen-policy/label-availability-audit.json |
