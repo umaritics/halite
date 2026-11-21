@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import random
 import subprocess
@@ -156,8 +157,13 @@ def load_inputs(root=ROOT, protocol=None):
             for strategy in POLICIES:
                 trace = row['traces'][strategy]
                 initial = [h['belief'] for h in beliefs['hypotheses']] + [beliefs['other']]
-                if trace[0]['beliefs'] != initial or score_trace(trace, row['names'], row['answer_part']) != row['metrics'][strategy]:
-                    raise ValueError('Question prior or saved downstream metrics changed.')
+                # Recomputed exp/log values can differ by an ULP across Python
+                # platforms. Saved trace bytes stay exact and remain authoritative.
+                saved = trace[0]['beliefs']
+                if len(saved) != len(initial) or not all(math.isclose(a, b, rel_tol=1e-12, abs_tol=1e-14) for a, b in zip(saved, initial)):
+                    raise ValueError('Question prior changed: ' + row['case_id'])
+                if score_trace(trace, row['names'], row['answer_part']) != row['metrics'][strategy]:
+                    raise ValueError('Saved downstream metrics changed: ' + row['case_id'])
             row['hypotheses'] = beliefs['hypotheses']
         cohorts[group] = rows
     return protocol, cohorts

@@ -29,3 +29,8 @@ The output is selection evidence, not an accepted numeric operating point or a
 managed production policy. Top-three key misses remain a proxy, not measured
 sentence hallucination. Existing runtime/UI parameters and publication artifacts
 remain untouched; human decision/review and held-out evaluation remain required.
+
+Recomputed softmax priors use 1e-12 relative / 1e-14 absolute tolerance across
+Python platforms. Exact saved traces (protected by input SHA pins) remain the
+replayed source; material prior changes fail, and tests distinguish roundoff
+from such changes. This does not relax any artifact fingerprint.

@@ -839,3 +839,10 @@ Tiny local validation read only committed inputs: all cohorts match 389 pairs/34
 originals and provenance (0.16s). The full comparison is hosted in its own bounded
 one-thread workflow. No threshold is selected/activated and no 2025 source is read.
 Phase14 final documentation head c41b3d2 also passed all CI jobs in run 44882911677.
+
+Phase15 initial hosted sweep 44883542069 stopped before metrics on a strict
+recomputed-prior equality check that passed on local Python 3.12. Added tight
+relative/absolute roundoff tolerance (1e-12 / 1e-14) for recomputed exp/log values
+only, with explicit small-noise acceptance/material-change rejection tests.
+Frozen source hashes and saved trace bytes remain exact and authoritative.
+Hosted revalidation is required; initial failure is not reported as success.

@@ -128,3 +128,23 @@ def test_exact_frozen_2024_inputs_and_small_grid_export_are_verified(tmp_path):
     bad['input_sha256'][path] = '0' * 64
     with pytest.raises(ValueError, match='fingerprint mismatch'):
         load_inputs(protocol=bad)
+
+
+@pytest.mark.parametrize('delta,accepted', [(1e-16, True), (1e-3, False)])
+def test_recomputed_prior_tolerates_roundoff_but_rejects_material_change(monkeypatch, delta, accepted):
+    from investigation.experiments import policy_selection as module
+    original = module.score_beliefs
+
+    def changed(*args, **kwargs):
+        result = original(*args, **kwargs)
+        if result['hypotheses']:
+            result['hypotheses'][0]['belief'] += delta
+            result['other'] -= delta
+        return result
+
+    monkeypatch.setattr(module, 'score_beliefs', changed)
+    if accepted:
+        assert len(module.load_inputs()[1]['all_attributes']) == 389
+    else:
+        with pytest.raises(ValueError, match='Question prior changed'):
+            module.load_inputs()
