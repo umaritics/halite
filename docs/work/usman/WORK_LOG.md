@@ -791,3 +791,9 @@ graph compatibility/reset security and explicit fixture seeds, with no stored
 data purge. Removed the now-unused pypdf/docx2txt parsers. Retargeted auth/rate
 checks to current endpoints and added real lifespan/route-absence coverage.
 Static audit and hosted regression results will be recorded before completion.
+
+Phase12 corrected commit c2936e4 verified by hosted run 44881901280: all jobs
+successful, 450 backend/279 frontend tests, real database/full-stack/browser
+checks. Transaction 89→66 distributions; CSV versions retained, dotenv settings
+test passed. Broad coverage 77.68%, still below 80%. Raw resolution/installed
+reports, JUnit and hash/job metadata committed; see DEPENDENCY_CLEANUP_VERIFICATION.md.

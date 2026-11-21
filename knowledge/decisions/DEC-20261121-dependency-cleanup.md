@@ -1,6 +1,6 @@
 # Remove unused dependency roots while preserving required runtime libraries
 
-- Status: implemented; hosted dependency/regression verification pending
+- Status: implemented and hosted verified on c2936e4; review/merge pending
 - Date: 2026-11-21
 - Owner: Usman
 
@@ -32,3 +32,7 @@ the audit/baseline explicitly rather than bypassing it.
 Retained verification scripts import requests directly. The first hosted run
 exposed its previous accidental LangChain transitive dependency during pytest
 collection. Declare its baseline version explicitly and audit its presence.
+
+Verification: run 44881901280 passed 450 backend/279 frontend tests and all
+full-stack/browser jobs. Pip selected 66 distributions versus 89 baseline;
+raw report/inventory/JUnit and hashes are retained in phase12 evidence.
