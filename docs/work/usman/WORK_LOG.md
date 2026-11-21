@@ -1015,3 +1015,24 @@ foundation has exact-head green CI and compatibility evidence. User-authorized
 merge is separate from absent teammate cross-review; no human approval is forged.
 Initiated ordinary merge of27with exact head51196fde (no admin bypass/branch
 deletion); verify GitHub result and main CI before proceeding.
+
+User-authorized integration completed: PR27merged9ffb322; exact-head711d8ce
+CI44910992549passed all jobs. Retargeted48to main; predicted merge tree matched
+tested head exactly (9016f1f9). Merged48atb5c9626, preserving every dependent
+commit. Verified heads28–47are main ancestors, then closed20superseded PR
+records without deleting branches or claiming teammate approval. Main CI
+44911321968passed; frontend production deployment7964312582succeeded. Public
+https://halite-mu.vercel.app/login and /app/investigations/experiments return200;
+its current JS includes the frozen research and session views and remote backend
+host. This is static delivery proof, not authenticated browser acceptance.
+
+Backend deployment44911572175built/startedb5c9626 with liveNeo4j/model/Postgres,
+2079existing maintenance records and exact public revision. Its release gate
+failed only because it still expected410from the now-unregistered Gitea webhook;
+actual404matches tested legacy retirement. Updated both deploy expectations to
+strict404, retaining all other security/version checks. Added a cross-layer test
+that extracts both deployment expectations and compares the real router response.
+Current release proof branch is codex/usman-release-verification. Primary root
+checkout has pre-existing user changes on feat/copilot-ranking-updates; left
+all of them untouched. Connected Vercel account lacks Umar-team access; used
+GitHub deployment provenance and the public canonical site, keeping protection.

@@ -120,3 +120,9 @@ curl -i -H "Authorization: Bearer <HALITE_API_KEY>" "$BASE/api/maintenance/asset
 curl -i -H "Authorization: Bearer <HALITE_API_KEY>" "$BASE/api/ops/logs?lines=20"
 curl -i -H "X-Ops-Token: <OPS_TOKEN>" "$BASE/api/ops/logs?lines=20"
 ```
+
+After full legacy retirement, `/api/webhook/gitea` is unregistered and returns
+404. Both VM-local and public release probes require404; they no longer expect
+the earlier disabled-handler410. A cross-layer test compares both release
+expectations with the actual router response. Authenticated/anonymous asset,
+closed docs, PostgreSQL and exact-version checks remain unchanged.

@@ -247,7 +247,7 @@ jobs:
 
           webhook_code=$(curl --max-time 30 -s -o /dev/null -w "%{http_code}" -X POST "$BASE/api/webhook/gitea")
           echo "Retired /api/webhook/gitea -> HTTP $webhook_code"
-          test "$webhook_code" = "410"
+          test "$webhook_code" = "404"
 
           if [ -n "${HALITE_API_KEY:-}" ]; then
             code=$(curl --max-time 30 -s -o /tmp/assets.json -w "%{http_code}" \
