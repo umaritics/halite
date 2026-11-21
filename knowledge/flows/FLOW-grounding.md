@@ -44,3 +44,21 @@ reported and cannot silently convert dense thresholds into validated lexical
 ratings. Unknown citations remain unsupported. Invalid/partial/foreign labels,
 mixed reviewer identities, overlapping source splits or unresolved adjudications
 fail evaluation; they are never dropped to improve a reported metric.
+
+## Word-location extension
+
+```mermaid
+flowchart LR
+  Tokens[Existing sentence/source content tokens] --> Spans[Source-body matches / citation IDs excluded]
+  Exact[Exact saved source text] --> Spans
+  Spans --> UTF16[Versioned UTF-16 offsets]
+  UTF16 --> Saved[(Same saved sentence audit)]
+  Saved --> Select[Sentence hover / citation or badge focus]
+  Select --> Validate[Validate bounds and source substring]
+  Validate --> Marks[Escaped source text with word-overlap marks]
+  Validate --> Plain[Plain exact narrative if annotation unavailable]
+```
+
+The display annotation does not participate in support thresholds, guard decisions
+or calibration. Never recreate old audit positions on GET or infer a support label
+from highlighted words. Source selection stays bound to its saved turn.

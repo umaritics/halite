@@ -80,6 +80,26 @@ def content_tokens(text):
     return {t.lower() for t in TOKEN.findall(stripped) if t.lower() not in STOP}
 
 
+
+def source_matches(text, tokens):
+    """Exact source-body token locations, in JavaScript UTF-16 code units.
+
+    Display annotation only: never changes containment, guards or ratings.
+    Exclude citation IDs and preserve negation, quantities and repeated words.
+    """
+    offsets = [0]
+    for character in text:
+        offsets.append(offsets[-1] + (2 if ord(character) > 0xffff else 1))
+    identifiers = [(match.start(), match.end()) for match in ID.finditer(text)]
+    spans = []
+    for match in TOKEN.finditer(text):
+        token = match.group().lower()
+        if token not in tokens or any(start < match.end() and end > match.start() for start, end in identifiers):
+            continue
+        spans.append({'start': offsets[match.start()], 'end': offsets[match.end()], 'token': token})
+    return {'version': 'content-token-spans-v1', 'encoding': 'utf-16', 'spans': spans}
+
+
 def _cosine(a,b):
     if len(a)!=len(b) or not a:
         raise ValueError('Embedding dimensions do not match.')
@@ -158,7 +178,8 @@ def check_reply(text, evidence, *, parameters=None, embedder=None, part_vocabula
                     'missing_numbers':missing_numbers,'negation_mismatch':negation_mismatch,
                     'empty_content':not bool(tokens)}
             candidates.append({'record_id':rid,'containment':containment,'cosine':dense,'score':score,
-                               'guards':guards,'eligible_for_supported':not any(guards.values())})
+                               'guards':guards,'eligible_for_supported':not any(guards.values()),
+                               'source_matches':source_matches(str(record.get('text') or ''),tokens & report_tokens)})
         best=max(candidates,key=lambda c:(c['score'],c['eligible_for_supported'],c['record_id'])) if candidates else None
         acceptable=False
         if not citations:

@@ -5,6 +5,72 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
 
+async function verifySourceHighlights(page, context, base, token, directory, theme) {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  const ingest = await context.request.post(base + '/api/maintenance/ingest', {
+    headers: { Authorization: 'Bearer ' + token }, data: { csv_path: '/app/tests/fixtures/grounding_highlight_smoke.csv' },
+  });
+  assert.equal(ingest.status(), 200);
+  const ingested = await ingest.json();
+  assert.equal(ingested.records_created + ingested.duplicates_skipped, 3);
+  const pick = grounding => {
+    const source = grounding.evidence.find(record => record.text.includes('😀'));
+    assert.ok(source, 'Exact Unicode source retained');
+    const sentence = grounding.sentences.find(item => item.candidates?.some(candidate => candidate.record_id === source.record_id && candidate.source_matches?.spans.length));
+    assert.ok(sentence, 'Source has a sentence with recorded word positions');
+    const candidate = sentence.candidates.find(item => item.record_id === source.record_id);
+    return { source, sentence, annotation: candidate.source_matches };
+  };
+  const checkText = async (locator, selected) => {
+    await locator.waitFor();
+    assert.equal(await locator.textContent(), selected.source.text);
+    assert.deepEqual(await locator.locator('mark').allTextContents(), selected.annotation.spans.map(span => selected.source.text.slice(span.start, span.end)));
+  };
+  await page.goto(base + '/app/investigations/quick');
+  await page.getByRole('button', { name: /Select aircraft/ }).click();
+  await page.getByRole('button', { name: /N-HGL-LIVE/ }).click();
+  await page.getByLabel('Symptom', { exact: true }).fill('Hydraulic pump pressure loss');
+  const quickResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/maintenance/diagnose');
+  await page.getByRole('button', { name: 'Run diagnostic', exact: true }).click();
+  const quick = await (await quickResponse).json();
+  assert.equal(quick.llm_status, 'unavailable');
+  const quickSource = pick(quick.grounding);
+  await page.getByRole('region', { name: 'Checked explanation' }).getByRole('button', { name: quickSource.source.record_id, exact: true }).first().focus();
+  const quickPanel = page.getByRole('region', { name: 'Cited report text' });
+  await checkText(quickPanel.locator('[data-source-narrative]'), quickSource);
+  await quickPanel.screenshot({ path: path.join(directory, `source-quick-${theme}.png`) });
+  await page.goto(base + '/app/investigations');
+  await page.getByLabel('Investigation title (optional)').fill('Synthetic saved word highlighting');
+  const assetsResponse = await context.request.get(base + '/api/maintenance/assets', { headers: { Authorization: 'Bearer ' + token } });
+  const asset = (await assetsResponse.json()).find(item => item.tail_number === 'N-HGL-LIVE');
+  assert.ok(asset);
+  await page.getByLabel('Aircraft', { exact: true }).selectOption(asset.id);
+  await page.getByRole('button', { name: 'Create investigation', exact: true }).click();
+  await page.getByRole('heading', { name: 'Synthetic saved word highlighting', exact: true }).waitFor();
+  const sessionId = page.url().split('/app/investigations/')[1];
+  await page.getByLabel('Symptom, observation or check result').fill('Hydraulic pump pressure loss');
+  const turnResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/sessions/' + sessionId + '/turns');
+  await page.getByRole('button', { name: 'Send observation', exact: true }).click();
+  const turn = await (await turnResponse).json();
+  const selected = pick(turn.grounding);
+  const sentenceRegion = page.getByRole('region', { name: 'Checked explanation' }).last();
+  await sentenceRegion.getByRole('button', { name: selected.source.record_id, exact: true }).first().hover();
+  const saved = page.getByRole('region', { name: 'Saved evidence' });
+  await checkText(saved.locator('details[open] [data-source-narrative]'), selected);
+  await saved.screenshot({ path: path.join(directory, `source-session-${theme}-1280.png`) });
+  const replayResponse = page.waitForResponse(response => response.request().method() === 'GET' && new URL(response.url()).pathname === '/api/sessions/' + sessionId);
+  await page.reload();
+  const replay = await (await replayResponse).json();
+  assert.deepEqual(replay.turns[0].response.grounding, turn.grounding);
+  await page.getByRole('region', { name: 'Checked explanation' }).last().getByRole('button', { name: selected.source.record_id, exact: true }).first().focus();
+  await checkText(saved.locator('details[open] [data-source-narrative]'), selected);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await saved.scrollIntoViewIfNeeded();
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+  await saved.screenshot({ path: path.join(directory, `source-session-${theme}-390.png`) });
+  return { source_record_id: selected.source.record_id, matched_words: selected.annotation.spans.length, replay_exact: true, quick_and_session: true, unicode_offsets: true };
+}
+
 (async () => {
   const base = process.env.HALITE_UI_BASE_URL || 'http://127.0.0.1:5174';
   assert.ok(['127.0.0.1', 'localhost'].includes(new URL(base).hostname), 'Disposable loopback only');
@@ -22,7 +88,9 @@ const { createHash } = require('node:crypto');
       await page.goto(base + '/login');
       await page.getByLabel(/work email/i).fill(process.env.HALITE_UI_ADMIN_EMAIL || 'admin@halite.local');
       await page.getByLabel(/^password$/i).fill(process.env.HALITE_UI_ADMIN_PASSWORD || 'HaliteDevAdmin2026');
+      const loginResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/auth/login');
       await page.getByRole('button', { name: /^sign in$/i }).click();
+      const login = await (await loginResponse).json();
       await page.getByRole('heading', { name: 'Maintenance workspace', exact: true }).waitFor();
       await page.getByRole('link', { name: 'Open investigations', exact: true }).click();
       const responsePromise = page.waitForResponse(r => new URL(r.url()).pathname === '/api/sessions/experiments');
@@ -72,11 +140,12 @@ const { createHash } = require('node:crypto');
       await page.route('**/api/sessions/experiments', route => route.fulfill({ contentType: 'application/json', body: '{"schema_version":"investigation-results-v1","state":"empty","artifacts":[]}' }));
       await page.getByRole('button', { name: 'Try again', exact: true }).click();
       await page.getByRole('heading', { name: 'No experiments published yet', exact: true }).waitFor();
-      proof.themes.push({ theme, desktop: 1280, phone: 390, charts: 3, publication_sha256: data.publication_sha256, phoneFigure: dimensions });
+      const sourceHighlights = await verifySourceHighlights(page, context, base, login.access_token, directory, theme);
+      proof.themes.push({ sourceHighlights, theme, desktop: 1280, phone: 390, charts: 3, publication_sha256: data.publication_sha256, phoneFigure: dimensions });
       await context.close();
     }
     assert.deepEqual(errors, []);
-    proof.checks = ['real JWT endpoint and artifact hashes', 'three rendered SVG charts with whiskers', 'saved value table parity', 'cohort/metric controls', 'production deep-link reload', 'dark/light 1280 and 390 geometry', 'explicitly mocked failure/retry/empty states', 'no browser exceptions'];
+    proof.checks = ['real JWT endpoint and artifact hashes', 'three rendered SVG charts with whiskers', 'saved value table parity', 'cohort/metric controls', 'production deep-link reload', 'dark/light 1280 and 390 geometry', 'explicitly mocked failure/retry/empty states', 'no browser exceptions', 'real quick/session source spans, Unicode offsets and exact saved replay'];
     fs.writeFileSync(path.join(directory, 'research-browser-proof.json'), JSON.stringify(proof, null, 2) + '\n');
     console.log(JSON.stringify(proof, null, 2));
   } finally { await browser.close(); }

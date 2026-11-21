@@ -5,6 +5,7 @@ import { describeDiagnosticError, extractExplanation, splitUnverified } from '..
 import { sessionsAPI } from './api';
 import { useAuth } from '../../context/AuthContext';
 import { GroundedReply } from './DecisionView';
+import SourceNarrative from './SourceNarrative';
 const MAX_IDS_PER_CHECK = 5;
 
 function QuickContents() {
@@ -19,6 +20,7 @@ function QuickContents() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [groundingFocus, setGroundingFocus] = useState(null);
+  const [groundingSentence, setGroundingSentence] = useState(null);
   const [submitted, setSubmitted] = useState(null);
   const [error, setError] = useState(null);
   const [rareExpanded, setRareExpanded] = useState(false);
@@ -41,7 +43,7 @@ function QuickContents() {
     if (loading) return;
     setLoading(true);
     setResult(null);
-    setGroundingFocus(null);
+    setGroundingFocus(null); setGroundingSentence(null);
     setError(null);
     setRareExpanded(false);
     setSubmitted({ asset, symptom: symptomText });
@@ -69,7 +71,7 @@ function QuickContents() {
   const handleClear = () => {
     setSymptom('');
     setResult(null);
-    setGroundingFocus(null);
+    setGroundingFocus(null); setGroundingSentence(null);
     setError(null);
     setSubmitted(null);
     setRareExpanded(false);
@@ -383,7 +385,7 @@ function QuickContents() {
                     No supporting records were found. The text below was returned by the model and is not backed by retrieved evidence.
                   </p>
                 )}
-                {result.grounding?.sentences?.length ? <GroundedReply reply={explanation.text} grounding={result.grounding} onCitationFocus={setGroundingFocus} /> : <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
+                {result.grounding?.sentences?.length ? <GroundedReply reply={explanation.text} grounding={result.grounding} onCitationFocus={setGroundingFocus} onSentenceFocus={(_, sentence) => setGroundingSentence(sentence)} /> : <p className="font-sans text-sm text-primary leading-relaxed whitespace-pre-wrap">
                   {splitUnverified(explanation.text).map((seg, k) =>
                     seg.flagged ? (
                       <mark
@@ -400,8 +402,8 @@ function QuickContents() {
                 </p>}
                 {groundingFocus && <section aria-label="Cited report text" className="mt-4 rounded border border-theme p-3">
                   <h4 className="break-all text-sm text-primary">{groundingFocus}</h4>
-                  <p className="mt-2 whitespace-pre-wrap break-words text-sm text-secondary">{result.grounding?.evidence?.find(record => record.record_id === groundingFocus)?.text || 'This report narrative is absent from the saved explanation evidence.'}</p>
-                  <button type="button" className="mt-2 text-xs text-accent" onClick={() => setGroundingFocus(null)}>Close cited report</button>
+                  <SourceNarrative text={result.grounding?.evidence?.find(record => record.record_id === groundingFocus)?.text || 'This report narrative is absent from the saved explanation evidence.'} annotation={groundingSentence?.candidates?.find(candidate => candidate.record_id === groundingFocus)?.source_matches} selected={Boolean(groundingSentence)} />
+                  <button type="button" className="mt-2 text-xs text-accent" onClick={() => { setGroundingFocus(null); setGroundingSentence(null); }}>Close cited report</button>
                 </section>}
                 {invalidIds.length > 0 ? (
                   <p className="mt-2 font-sans text-xs text-amber-400">

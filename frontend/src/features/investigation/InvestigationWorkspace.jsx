@@ -6,8 +6,9 @@ import { clearLegacyInvestigations } from './privacy';
 import { ErrorCard, investigationError, PageHeader } from './feedback';
 import { BeliefBars, DecisionBadge, GroundedReply, QuestionCard } from './DecisionView';
 import CloseSessionDialog from './CloseSessionDialog';
+import SourceNarrative from './SourceNarrative';
 
-function SavedEvidence({ response, highlighted, onHighlight }) {
+function SavedEvidence({ response, highlighted, onHighlight, sourceSelection }) {
   const checks = response?.ranked_checks || [];
   const evidence = response?.evidence || [];
   return <div className="space-y-4">
@@ -32,7 +33,7 @@ function SavedEvidence({ response, highlighted, onHighlight }) {
         <summary className="cursor-pointer break-all text-sm text-accent">{record.record_id} · {record.part_name || 'Unnamed part'}</summary>
         <p className="mt-2 text-xs text-secondary">{record.asset_id ? `Aircraft identifier: ${record.asset_id} · ` : ''}{record.occurred_at}</p>
         {record.is_superseded && <p className="mt-2 text-xs text-amber-500">Superseded — historical context only</p>}
-        <p className="mt-2 whitespace-pre-wrap break-words text-sm text-primary">{record.text || 'No narrative was saved.'}</p>
+        <SourceNarrative text={response.grounding?.evidence?.find(source => source.record_id === record.record_id)?.text ?? record.text} annotation={sourceSelection?.recordId === record.record_id ? sourceSelection.sentence.candidates?.find(candidate => candidate.record_id === record.record_id)?.source_matches : undefined} selected={sourceSelection?.recordId === record.record_id} />
       </details>)}</div>
     </section>
   </div>;
@@ -50,13 +51,14 @@ function Workspace({ sessionId, user }) {
   const [closeError, setCloseError] = useState(null);
   const [selectedTurnId, setSelectedTurnId] = useState(null);
   const [highlighted, setHighlighted] = useState(null);
+  const [sourceSelection, setSourceSelection] = useState(null);
   const [reload, setReload] = useState(0);
   const alive = useRef(true);
   useEffect(() => {
     alive.current = true;
     clearLegacyInvestigations();
     const abort = new AbortController();
-    setLoading(true); setError(null); setSession(null); setNeedsReload(false);
+    setLoading(true); setError(null); setSession(null); setNeedsReload(false); setSourceSelection(null);
     sessionsAPI.get(sessionId, abort.signal).then(({ data }) => {
       if (!abort.signal.aborted) {
         setSession(data);
@@ -84,7 +86,7 @@ function Workspace({ sessionId, user }) {
       setSession(previous => ({ ...previous, turn_count: data.turn_index, turns: [
         ...previous.turns, { id: data.turn_id, idx: data.turn_index, user_text: text, response: data },
       ] }));
-      setMessage(''); messageRef.current = ''; setSelectedTurnId(data.turn_id); setHighlighted(null);
+      setMessage(''); messageRef.current = ''; setSelectedTurnId(data.turn_id); setHighlighted(null); setSourceSelection(null);
     } catch (err) {
       if (alive.current) {
         setError(investigationError(err));
@@ -145,12 +147,12 @@ function Workspace({ sessionId, user }) {
           <div className="min-w-0 space-y-4">
             {!turns.length && <div className="halite-card p-6 text-sm text-secondary">Describe the symptom or what you have observed to begin.</div>}
             <ol aria-label="Investigation conversation" className="space-y-4">{turns.map(turn => <li key={turn.id} className="halite-card min-w-0 p-4">
-              <div className="flex flex-wrap justify-between gap-2"><h2 className="font-brand text-base text-primary">Turn {turn.idx}</h2><button type="button" className="text-xs text-accent underline" onClick={() => { setSelectedTurnId(turn.id); setHighlighted(null); }}>View evidence for turn {turn.idx}</button></div>
+              <div className="flex flex-wrap justify-between gap-2"><h2 className="font-brand text-base text-primary">Turn {turn.idx}</h2><button type="button" className="text-xs text-accent underline" onClick={() => { setSelectedTurnId(turn.id); setHighlighted(null); setSourceSelection(null); }}>View evidence for turn {turn.idx}</button></div>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-primary">{turn.user_text}</p>
               <div className="mt-4 space-y-3 border-t border-theme pt-4">
                 <DecisionBadge response={turn.response} />
                 {turn.response.llm_status === 'unavailable' && <p role="status" className="text-xs text-secondary">Model unavailable · deterministic explanation</p>}
-                <GroundedReply reply={turn.response.reply} grounding={turn.response.grounding} onCitationFocus={id => { setSelectedTurnId(turn.id); setHighlighted(id); }} />
+                <GroundedReply reply={turn.response.reply} grounding={turn.response.grounding} onCitationFocus={id => { setSelectedTurnId(turn.id); setHighlighted(id); }} onSentenceFocus={(id, sentence) => setSourceSelection({ turnId: turn.id, recordId: id, sentence })} />
                 {(turn.response.warnings || []).length > 0 && <details><summary className="cursor-pointer text-xs text-secondary">Turn notices</summary><ul className="mt-2 space-y-1 text-xs text-secondary">{turn.response.warnings.map((notice, i) => <li key={i}>{notice}</li>)}</ul></details>}
               </div>
             </li>)}</ol>
@@ -170,7 +172,7 @@ function Workspace({ sessionId, user }) {
             {selectedResponse?.case_state && <section className="halite-card p-4" aria-label="Reported case information"><h2 className="font-brand text-lg text-primary">Case information</h2>
               {Object.entries(selectedResponse.case_state).map(([field, values]) => Array.isArray(values) && values.length > 0 && <div key={field} className="mt-3"><h3 className="text-xs uppercase text-secondary">{field.replaceAll('_', ' ')}</h3><ul className="mt-1 list-inside list-disc text-sm text-primary">{values.map((value, i) => <li key={i}>{value}</li>)}</ul></div>)}
             </section>}
-            {selectedResponse && <SavedEvidence response={selectedResponse} highlighted={highlighted} onHighlight={setHighlighted} />}
+            {selectedResponse && <SavedEvidence response={selectedResponse} highlighted={highlighted} onHighlight={id => { setHighlighted(id); setSourceSelection(null); }} sourceSelection={sourceSelection?.turnId === selectedTurn?.id ? sourceSelection : null} />}
           </aside>
         </div>
         {closeOpen && <CloseSessionDialog pending={pending} onCancel={() => setCloseOpen(false)} onSubmit={close} error={closeError} />}

@@ -102,3 +102,5 @@ Managed questions (Usman): `backend/investigation/{live_graph,live_questions}.py
 Research publication (Usman): `backend/investigation/research_results.py`, `experiments/results/publication.json`, sessions experiments route and `tests/test_research_results*.py`; [context](context/modules/investigation_decisions.md), [flow](flows/FLOW-decision-selection.md).
 
 Research product panel (Usman): `frontend/src/features/investigation/{ResearchPage.jsx,research.js}`, `frontend/e2e/verify-research-ui.cjs`; [context](context/modules/investigation_frontend.md), [flow](flows/FLOW-research-publication.md). Hosted browser verification is part of CI; owner review/merge remain separate.
+
+Source-word interaction (Usman): `backend/investigation/grounding.py::source_matches`, `frontend/src/features/investigation/SourceNarrative.jsx`, sentence callbacks in DecisionView and source selection in quick/session pages. [Context](context/modules/investigation_grounding.md), [flow](flows/FLOW-grounding.md), [decision](decisions/DEC-20261121-saved-source-word-spans.md).

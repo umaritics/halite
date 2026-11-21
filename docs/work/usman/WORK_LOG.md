@@ -737,3 +737,18 @@ Run 44856533622 passed backend/frontend but the added integer-axis browser asser
 ### Phase 10 verified handoff
 
 Source ecdc264 / hosted workflow 44856875802 passed all jobs: 445 backend tests, 275 frontend tests, lint, both builds, Neo4j/PostgreSQL/session smoke and production Chromium research checks. Exact 0/1/2/3 axis labels now match committed budgets. Downloaded and visually inspected final chart/phone screenshots; all screenshots, JSON browser proof, job metadata/checksums and filtered test summary retained under evidence/phase10-research-panel. RESEARCH_PANEL_VERIFICATION.md records implementation, acceptance evidence, source versions, owner review and AI-assistance note. Updated matrix and knowledge routing. Source-word highlighting is the next implementation gap; no full-goal completion claimed. Heavy verification stayed hosted; local disk remained 24 GiB free.
+
+### Phase 11 — saved source-word highlighting
+
+Prepared on codex/usman-source-highlighting, stacked after the verified research
+panel. New candidate audits save exact UTF-16 source token spans; citation IDs
+are excluded, repeated words/negation/quantities retained, and scoring/ratings
+unchanged. Four standard-library tests passed in 0.003 seconds, including Unicode
+offsets and metadata-only matches. Quick/session pages render validated escaped
+marks on sentence hover and citation/badge focus, with original source preserved.
+Old audits are never recomputed; stale/invalid positions do not produce marks.
+Added focused UI contracts and extended hosted production-browser verification
+with a three-record explicitly synthetic Unicode fixture, real quick/session
+requests, exact text/mark parity, saved replay and dark/light phone screenshots.
+Hosted regression/browser checks are pending; no local dependency install or
+heavy workload was started.

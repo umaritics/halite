@@ -56,7 +56,7 @@ function QuestionForm({ question, disabled, onAnswer }) {
   </form>;
 }
 
-export function GroundedReply({ reply, grounding, onCitationFocus }) {
+export function GroundedReply({ reply, grounding, onCitationFocus, onSentenceFocus }) {
   if (!grounding?.sentences?.length) return <div>
     {reply ? <CopilotMarkdown>{reply}</CopilotMarkdown> : <p className="text-sm text-secondary">No written explanation was returned.</p>}
     <p className="mt-2 text-xs text-secondary">Sentence support has not been checked for this reply.</p>
@@ -66,12 +66,15 @@ export function GroundedReply({ reply, grounding, onCitationFocus }) {
   return <section aria-label="Checked explanation">
     <p className="mb-2 text-xs text-secondary">{pending ? 'Sentence ratings await validation' : `${supported} of ${grounding.sentences.length} sentences supported`} · {grounding.checked_with}</p>
     {grounding.configuration?.status === 'experimental' && <p className="mb-2 text-xs text-secondary">Experimental sentence ratings — settings have not been accepted.</p>}
-    {grounding.sentences.map((sentence, index) => <div key={index} className="mb-3 text-sm text-primary">
+    {grounding.sentences.map((sentence, index) => {
+      const focus = id => { onCitationFocus?.(id || null); onSentenceFocus?.(id || null, sentence); };
+      const focusSentence = () => focus(sentence.best_record_id || sentence.valid_citations?.[0] || sentence.citations?.[0]);
+      return <div key={index} className="mb-3 text-sm text-primary" onMouseEnter={focusSentence} onFocusCapture={focusSentence}>
       <div className={sentence.level === 'unsupported' ? 'opacity-60' : ''}><CopilotMarkdown>{sentence.text}</CopilotMarkdown></div>
       <span tabIndex={0} title={sentence.reason || `Sentence check: ${sentence.level}`}
         aria-label={`Sentence check: ${sentence.level}. ${sentence.reason || ''}`} className="rounded border border-theme px-1 text-xs">{sentence.level}{sentence.acceptable_uncited ? ' · allowed template' : ''}</span>
       {(sentence.citations || []).map(id => <button type="button" key={id} className="ml-2 break-all text-xs text-accent underline"
-        onMouseEnter={() => onCitationFocus?.(id)} onFocus={() => onCitationFocus?.(id)} onClick={() => onCitationFocus?.(id)}>{id}</button>)}
-    </div>)}
+        onMouseEnter={() => focus(id)} onFocus={() => focus(id)} onClick={() => focus(id)}>{id}</button>)}
+    </div>; })}
   </section>;
 }

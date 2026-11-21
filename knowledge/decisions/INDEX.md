@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261121-saved-source-word-spans](DEC-20261121-saved-source-word-spans.md) | Frozen UTF-16 source-word locations without new support judgments | implemented / verification pending | Usman |
 | [DEC-20261120-research-publication](DEC-20261120-research-publication.md) | Checksum-pinned read-only selection publication | implemented / charts pending | Usman |
 | [DEC-20261120-portable-model-comparison](DEC-20261120-portable-model-comparison.md) | Fixed real prompts, portable measured comparison and explicit M4 provenance | implemented / measurements pending | Usman |
 | [DEC-20261120-grounding-human-calibration](DEC-20261120-grounding-human-calibration.md) | Saved audits, explicit calibration and blinded independent human review | implemented / calibration pending | Usman |

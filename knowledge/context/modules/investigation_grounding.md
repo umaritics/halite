@@ -71,3 +71,23 @@ For model-written quick diagnosis, L2 uses exact bounded prompt sources. The
 model-off deterministic template instead receives the full collected evidence
 list: its audit uses that supplied/displayed list. This distinction prevents
 false out-of-context marks on the template's legitimately listed citations.
+
+## Exact source-word display
+
+Each new sentence candidate adds `source_matches`: version
+`content-token-spans-v1`, encoding `utf-16`, and ordered `{start,end,token}` spans
+into that candidate's exact saved narrative. Matches use the existing content
+token intersection, exclude citation IDs, preserve repeated words/negation/
+quantities and do not change scores, guards, thresholds or rating semantics.
+Metadata-only part matches produce no invented narrative locations. UTF-16
+offsets match browser string slicing even after non-BMP characters.
+
+GroundedReply keeps its existing citation callback and adds sentence-selection
+context. Hovering a sentence chooses its recorded best source; explicit citation
+focus/click selects that cited report. Quick diagnosis and saved session evidence
+share `SourceNarrative.jsx`, which validates ordered bounds and actual source
+substrings before creating escaped React marks. Invalid/absent annotations render
+the exact source without invented positions. Old saved audits are not recomputed.
+Highlights are labelled word overlap; pending/experimental ratings remain clear.
+New turns save annotations with the existing atomic audit, and reload replays them
+exactly. Manual ranking/turn selection clears stale sentence highlights.

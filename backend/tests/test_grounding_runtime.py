@@ -30,6 +30,7 @@ def test_diagnose_adds_sentence_sources_without_altering_explanation_or_evidence
     assert audit['sentences'][1]['invalid_citations']==['ZZZZ2024123456789']
     assert any(r['text']=='Hydraulic pump leak at seal' for r in audit['evidence'])
     assert all('text' not in r for r in result['evidence'])  # frozen metadata-only evidence unchanged
+    assert [span['token'] for span in audit['sentences'][0]['candidates'][0]['source_matches']['spans']] == ['hydraulic', 'pump', 'leak', 'seal']
 
 
 def test_grounding_setting_change_rechecks_cached_prose_without_new_model_call(client,monkeypatch,tmp_path):
