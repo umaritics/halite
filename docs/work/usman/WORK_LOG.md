@@ -846,3 +846,13 @@ relative/absolute roundoff tolerance (1e-12 / 1e-14) for recomputed exp/log valu
 only, with explicit small-noise acceptance/material-change rejection tests.
 Frozen source hashes and saved trace bytes remain exact and authoritative.
 Hosted revalidation is required; initial failure is not reported as success.
+
+Phase15 source 28dcd3a verified: sweep 44883664943 and CI 44883665006 both
+successful. All 4,536 rows independently replay, 389 pairs/340 originals, 1,000
+cluster draws; 461 backend/279 frontend tests, 81.29% coverage and all real
+database/browser flows pass. Raw full selection JSON/CSV, review proposal,
+coverage/JUnit, independent verifier result and job/hash/log/browser proof saved.
+A concrete async question now asks Usman to choose the research point: proposed
+0.80/0.50 (23 answers:16 top-one matches/7 misses) versus 0.75/0.50 (33:21/12),
+both 1.26 questions/case. No answer is inferred; no threshold activated or 2025
+source read while pending. Remaining independent tasks can continue.

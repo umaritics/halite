@@ -119,3 +119,8 @@ key top-3 unsupported proxy and mean question burden over all cases. An independ
 scalar verifier recalculates all point metrics; tests check hand-computed cluster
 ratios and parity with the actual managed question controller. Numeric selection,
 activation and 2025 evaluation remain separate decisions.
+
+Joint stopping selection is verified on 28dcd3a: 4,536 rows / 389 pairs / 340
+originals, with 1,000 bootstrap draws and independent scalar metric replay. See
+POLICY_SELECTION_VERIFICATION.md. The proposed 0.80/0.50 research point remains
+unaccepted; bars remain relative support and 2025 remains untouched.

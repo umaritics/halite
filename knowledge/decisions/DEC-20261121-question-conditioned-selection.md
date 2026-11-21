@@ -1,6 +1,6 @@
 # Replay the actual stopping rule before choosing an operating point
 
-- Status: implemented; hosted numeric verification pending
+- Status: implemented and hosted verified on 28dcd3a; numeric choice/review pending
 - Date: 2026-11-21
 - Owner: Usman
 
@@ -34,3 +34,8 @@ Recomputed softmax priors use 1e-12 relative / 1e-14 absolute tolerance across
 Python platforms. Exact saved traces (protected by input SHA pins) remain the
 replayed source; material prior changes fail, and tests distinguish roundoff
 from such changes. This does not relax any artifact fingerprint.
+
+Verified: sweep 44883664943 and CI 44883665006. All 4,536 point-metric rows
+independently match; 461 backend/279 frontend tests and database/browser flows
+pass, coverage 81.29%. Full tables and interval/provenance proof are retained.
+OPERATING_POINT_REVIEW.md is an AI-assisted proposal, not Usman acceptance.
