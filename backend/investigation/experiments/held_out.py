@@ -23,13 +23,14 @@ from investigation.policy import PolicyParameters
 
 ROOT = REPO/'backend/investigation'
 SOURCE_2025 = 'https://external.apic4e.faa.gov/sdrs/retrieve/SDR-2025.csv'
+HISTORY_INDEX = 'backend/investigation/data/frozen-history-order-v1.json.gz'
 
 
 def preflight_procedure():
     proof = preflight_held_out()
     files = proof['protocol'].get('procedure_files_sha256', {})
     required = {'backend/investigation/experiments/held_out.py',
-                'docs/work/usman/verify_held_out.py', '.github/workflows/held-out.yml'}
+                'docs/work/usman/verify_held_out.py', '.github/workflows/held-out.yml', HISTORY_INDEX}
     if not required.issubset(files):
         raise ValueError('Freeze the complete evaluation procedure before held-out access.')
     for relative, expected in files.items():
@@ -37,6 +38,54 @@ def preflight_procedure():
         if not path.is_relative_to(REPO) or sha(path) != expected:
             raise ValueError('The pre-test procedure changed: '+relative)
     return proof
+
+
+def restore_history(path, specification):
+    """Restore only an approved snapshot, with its ORIGINAL full content hash."""
+    path = Path(path)
+    order = specification['ordered_ids']
+    if not order or len(order)!=len(set(order)):
+        raise ValueError('Frozen history needs a unique original identifier order.')
+    wanted = set(order)
+    rows, extra = {}, set()
+    with gzip.open(path,'rt',encoding='utf-8-sig',newline='') as stream:
+        for row in csv.DictReader(stream):
+            rid = row['OperatorControlNumber']
+            if rid not in wanted:
+                extra.add(rid)
+                continue
+            if rid in rows and rows[rid]!=row:
+                raise ValueError('Ambiguous changed frozen history row.')
+            rows[rid] = row
+    if wanted!=rows.keys():
+        raise ValueError('Frozen history identifiers are missing from the retrieved source.')
+    partial = path.with_suffix(path.suffix+'.restore.partial')
+    digest = hashlib.sha256()
+    try:
+        with gzip.open(partial,'wt',encoding='utf-8',newline='') as stream:
+            writer = csv.DictWriter(stream,fieldnames=COLUMNS);writer.writeheader()
+            for rid in order:
+                projected = {key:rows[rid][key] for key in COLUMNS}
+                digest.update((json.dumps(projected,ensure_ascii=False,separators=(',',':'))+'\n').encode())
+                writer.writerow(projected)
+        if digest.hexdigest()!=specification['projection_sha256']:
+            raise ValueError('Original frozen history content changed; do not substitute it.')
+        metadata_path = path.with_suffix(path.suffix+'.json')
+        retrieved_metadata = json.loads(metadata_path.read_text())
+        archived = path.with_name(path.name+'.retrieved')
+        archived_metadata = metadata_path.with_name(metadata_path.name+'.retrieved')
+        if archived.exists() or archived_metadata.exists():
+            raise FileExistsError('Preserve the first retrieved historical snapshot.')
+        path.rename(archived);metadata_path.rename(archived_metadata)
+        partial.replace(path)
+        metadata_path.write_text(json.dumps({**retrieved_metadata,'n_rows':len(order),
+            'projection_sha256':digest.hexdigest(),'restored_frozen_history':True,
+            'retrieved_projection_sha256':retrieved_metadata['projection_sha256']},indent=2)+'\n')
+        return {'file':path.name,'retrieved_projection_sha256':retrieved_metadata['projection_sha256'],
+                'restored_projection_sha256':digest.hexdigest(),'frozen_rows':len(order),
+                'excluded_new_ids':sorted(extra),'original_full_hash_verified':True}
+    finally:
+        partial.unlink(missing_ok=True)
 
 
 def download_test(destination):
@@ -196,14 +245,27 @@ def run(data_directory, output, *, allow_download=False):
             if not allow_download:raise FileNotFoundError('Frozen history projection is missing.')
             download(year,path)
     _,history_meta = load_records(history)
+    restorations = []
     if history_meta['corpus_sha256'] != baseline['selection_corpus']['corpus_sha256']:
-        raise ValueError('Historical FAA projections changed; do not open held-out data.')
+        del _
+        try:
+            with gzip.open(REPO/HISTORY_INDEX,'rt') as stream:index=json.load(stream)
+            expected = {r['file']:r['projection_sha256'] for r in baseline['selection_corpus']['sources']}
+            for year,path,source in zip((2023,2024),history,history_meta['sources']):
+                if source['projection_sha256']!=expected[path.name]:
+                    restorations.append(restore_history(path,index['years'][str(year)]))
+            _,history_meta = load_records(history)
+        except (ValueError,KeyError,FileNotFoundError) as exc:
+            raise ValueError('Historical FAA projections changed; exact snapshot restoration failed before test access.') from exc
+        if history_meta['corpus_sha256'] != baseline['selection_corpus']['corpus_sha256']:
+            raise ValueError('Historical FAA projections changed; restored corpus is not the frozen input.')
     del _
     output.mkdir(parents=True)
     receipt = {'recorded_before_test_access_utc':datetime.now(timezone.utc).isoformat(),
                'policy_sha256':proof['policy']['file_sha256'],'protocol_sha256':proof['protocol_sha256'],
                'procedure_files_sha256':proof['protocol']['procedure_files_sha256'],
-               'history_corpus_sha256':history_meta['corpus_sha256'],'parameters':proof['policy']['parameters'],
+               'history_corpus_sha256':history_meta['corpus_sha256'],'history_restorations':restorations,
+               'parameters':proof['policy']['parameters'],
                'git_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()}
     (output/'pretest-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
     test = data/'usman_decision_2025.csv.gz'

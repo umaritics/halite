@@ -145,6 +145,16 @@ def test_full_synthetic_export_and_independent_verification(synthetic_sources,tm
     from verify_held_out import verify
     assert verify(output)['independent_held_out_point_metrics']=='PASS'
     with pytest.raises(FileExistsError):module.run(tmp_path,output)
+    # An appended history row is removed only through an exact original hash.
+    with gzip.open(synthetic_sources[0],'rt',newline='') as stream:old_rows=list(csv.DictReader(stream))
+    spec=json.loads(synthetic_sources[0].with_suffix(synthetic_sources[0].suffix+'.json').read_text())
+    index=tmp_path/'synthetic-order.json.gz'
+    with gzip.open(index,'wt') as stream:json.dump({'years':{'2023':{'ordered_ids':[r['OperatorControlNumber'] for r in old_rows],'projection_sha256':spec['projection_sha256']}}},stream)
+    write_projection(synthetic_sources[0],[*old_rows,raw('SYNEXTRA2023001',2023,day='08')])
+    monkeypatch.setattr(module,'HISTORY_INDEX',str(index))
+    restored=module.run(tmp_path,tmp_path/'synthetic-restored-results')
+    assert restored['case_counts']==result['case_counts']
+    assert restored['pretest_receipt']['history_restorations'][0]['original_full_hash_verified']
     baseline.write_text(json.dumps({'selection_corpus':{'corpus_sha256':'different-history'}}))
     with pytest.raises(ValueError,match='Historical FAA projections changed'):
         module.run(tmp_path,tmp_path/'refused-results')
@@ -155,3 +165,31 @@ def test_procedure_requires_frozen_implementation_and_verifier(monkeypatch):
     proof=preflight_held_out();proof['protocol']['procedure_files_sha256']={}
     monkeypatch.setattr(module,'preflight_held_out',lambda:proof)
     with pytest.raises(ValueError,match='complete evaluation procedure'):module.preflight_procedure()
+
+
+def test_history_restoration_ignores_additions_restores_order_and_keeps_full_original_hash(tmp_path):
+    old=[raw('SYNOLD2024001',2024),raw('SYNOLD2024002',2024,day='02')]
+    path=tmp_path/'history.csv.gz';write_projection(path,old)
+    expected=json.loads(path.with_suffix(path.suffix+'.json').read_text())['projection_sha256']
+    write_projection(path,[raw('SYNEXTRA2024001',2024),old[1],old[0]])
+    restored=module.restore_history(path,{'ordered_ids':[r['OperatorControlNumber'] for r in old],
+                                        'projection_sha256':expected})
+    assert restored['original_full_hash_verified'] is True
+    assert restored['excluded_new_ids']==['SYNEXTRA2024001']
+    assert restored['restored_projection_sha256']==expected
+    with gzip.open(path,'rt',newline='') as stream:assert list(csv.DictReader(stream))==old
+    assert path.with_name(path.name+'.retrieved').exists()
+    assert path.with_suffix(path.suffix+'.json').with_name(path.name+'.json.retrieved').exists()
+
+
+@pytest.mark.parametrize('change', ['modified','missing'])
+def test_history_restoration_rejects_changed_or_missing_frozen_content(tmp_path,change):
+    original=raw('SYNOLD2024001',2024)
+    path=tmp_path/'history.csv.gz';write_projection(path,[original])
+    expected=json.loads(path.with_suffix(path.suffix+'.json').read_text())['projection_sha256']
+    changed={**original,'Discrepancy':'Materially changed synthetic narrative.'}
+    write_projection(path,[changed] if change=='modified' else [raw('SYNEXTRA2024001',2024)])
+    before=path.read_bytes()
+    with pytest.raises(ValueError):
+        module.restore_history(path,{'ordered_ids':['SYNOLD2024001'],'projection_sha256':expected})
+    assert path.read_bytes()==before and not path.with_suffix(path.suffix+'.restore.partial').exists()

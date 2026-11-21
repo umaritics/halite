@@ -56,13 +56,15 @@
     "Expose poor results, sensitivity overlap and relative-support wording."
   ],
   "procedure_files_sha256": {
-    "backend/investigation/experiments/held_out.py": "ad332351948a0e6fce8d5e1a26e3f5174a00e791322775d9a97a7e2a062ae741",
-    "backend/tests/test_held_out.py": "5ebbd70fd0dedf634c6b36f9ae22fec49c2978c1f5ca85df9a124977bec64ff6",
+    "backend/investigation/experiments/held_out.py": "f9f884a4232a47c8874547c823b64db382d16a0b38b856c5f6731045a4083ec1",
+    "backend/tests/test_held_out.py": "e23bbac74dbac085d355d1f19b027502eaa787ddc958b9ec30559636d3707bda",
     "docs/work/usman/verify_held_out.py": "6a452f3c441073a68a6da86c4adc032c0a3c1a74544d11f5591d16d7b6ccf005",
     "docs/work/usman/verify_policy_selection.py": "6848d749e1218bdfe573d9811db8be3083c2d5791941b35b4ec2c574449fc776",
-    ".github/workflows/held-out.yml": "9fab758da959302c1e3734f36d54e7ac96c12a425a76e20ec1e9e6f05dd1b1dd"
+    ".github/workflows/held-out.yml": "cd65d2869f92c2461e9025e2afc0a342c119e8de2b7eea8c1a96560624812112",
+    "backend/investigation/data/frozen-history-order-v1.json.gz": "2ea2484293e038d893c903e8e78d73849d7a12619f38a11b2079c4a1be2500db"
   },
   "execution_gate": "Synthetic/full-stack CI must succeed on the exact head before the one-shot run-frozen-held-out label event.",
   "abstention_off_terminal_definition": "Use identical chosen-policy terminal beliefs and questions; remove only final confidence/evidence answer gates.",
-  "historical_exposure_note": "The legacy Mid-I ranker was developed with an earlier 2025 POC; this is a frozen-configuration temporal benchmark, not a claim of project-wide blind exposure."
+  "historical_exposure_note": "The legacy Mid-I ranker was developed with an earlier 2025 POC; this is a frozen-configuration temporal benchmark, not a claim of project-wide blind exposure.",
+  "history_restoration_rule": "Reconstruct only the original frozen identifier set/order, then require the unchanged complete canonical projection hash. Archive the retrieved revision; added rows cannot enter the frozen history. Missing/changed frozen content fails before test access."
 }

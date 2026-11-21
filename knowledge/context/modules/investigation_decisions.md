@@ -170,3 +170,10 @@ The existing Mid-I ranker came from a prototype with an earlier 2025 POC. The
 report therefore describes a frozen-configuration temporal benchmark rather
 than a project-wide claim of no prior exposure to any 2025 report. Poor results
 and retrieval misses remain visible; the accepted thresholds cannot be retuned.
+
+The first real attempt stopped before 2025 because FAA appended one 2024 row.
+All original history rows were verified unchanged. A compact identifier/order
+manifest restores the exact approved snapshot and still requires its original
+full canonical hash. Current downloaded revisions are archived; changed/missing
+frozen content fails. The restoration is in the pre-access receipt and does not
+refit parameters or add the new historical row to the research snapshot.

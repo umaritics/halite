@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, labeled]
     paths:
       - 'backend/investigation/experiments/held_out*'
+      - 'backend/investigation/data/frozen-history-order-v1.json.gz'
       - 'backend/tests/test_held_out.py'
       - 'docs/work/usman/verify_held_out.py'
       - '.github/workflows/held-out.yml'

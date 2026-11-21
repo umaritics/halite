@@ -34,3 +34,14 @@ with intervals. The legacy Mid-I ranker had prior prototype exposure to a 2025
 POC; this is a frozen-configuration temporal test rather than a claim that the
 project never saw any 2025 report. The primary occurrence-year case set and
 predeclared chronology sensitivity are retained without silently omitting cases.
+
+## Exact history restoration before test access
+
+Attempt 44905292132 stopped before 2025: FAA appended one 2024 record. All
+original rows and the complete 2023 archive remain unchanged. An identifier/
+order-only manifest reconstructs the frozen history and requires its original
+complete projection SHA. Retrieved revisions are retained and restoration is
+recorded in the receipt. Missing/modified original content is rejected. This
+preserves the actual approved training/selection inputs instead of relaxing
+hashes or using newly appended rows. Synthetic tests cover restoration and
+failure paths; method/index hashes are frozen before held-out access.

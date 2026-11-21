@@ -909,3 +909,18 @@ backend/frontend/full-stack checks. Procedure hashes and the terminal comparison
 definition are declared before real access; accepted numeric settings unchanged.
 Historical prototype exposure is disclosed without claiming a project-wide blind
 2025 year. No real 2025 archive has been opened by this preparation.
+
+The first gated hosted attempt (44905292132) stopped before any 2025 access:
+FAA 2024 now has one additional historical record. A bounded hash-only comparison
+proved all original rows unchanged (2023 62,691; frozen 2024 66,080 vs current
+66,081). Retained diagnosis records the extra ID and original full hashes.
+
+Workaround: a 429KB identifier/order-only manifest reconstructs the exact frozen
+history, requiring the unchanged full canonical projection hash before acceptance.
+It archives the retrieved revision and records added exclusions in the pre-test
+receipt. No raw CSV/narrative blob is committed, no fitting input changes, and
+modified/missing original content still fails closed. A constant-memory check
+reproduced both original full hashes after ignoring the new ID. Added synthetic
+restoration/reordered-input/modified-content/missing-content tests plus full
+export through restored history. Procedure is refrozen before any 2025 access;
+accepted .80/.50 and policy fingerprint remain unchanged. Full revalidation next.
