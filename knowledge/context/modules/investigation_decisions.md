@@ -86,19 +86,16 @@ performance. Question-policy effects are now measured separately in [the questio
 
 ## Published experiment reads
 
-`GET /api/sessions/experiments` requires an active website-user JWT, independently
-of the session database service. The static route precedes session-ID lookup.
-`investigation/research_results.py` reads only the two fixed 2024 selection JSON
-artifacts named in `experiments/results/publication.json`. SHA-256, method/split,
-corpus compatibility, denominators and interval checks precede publication. The
-response preserves exact measurements and provenance and is private/no-store.
-A deliberately empty manifest returns an explicit empty state; missing/corrupt/
-incompatible evidence returns 503, never substitute data. No inference, fitting,
-graph query, policy activation or held-out read happens on this path.
-
-The abstention rate is an outcome-key top-3 proxy, not a sentence-grounding rate.
-Undefined answered accuracy stays null; the accepted operating point stays null.
-The product page must retain those distinctions and display saved intervals.
+`GET /api/sessions/experiments` requires an active website-user JWT and retains
+private/no-store responses. Static route precedes session lookup. Publication v2
+pins both earlier2024studies, joint stopping selection, frozen2025results and
+independent verifier. Exact packaged policy/protocol, backend source pins, pre-
+access receipt, denominator/interval/ECE/control validation precede publication.
+Only saved rows at accepted gain are projected; no raw CSV, fit, sweep, ranking
+or graph/model access occurs. Empty manifest is explicit; corrupt/incompatible
+evidence returns503without substitute data. Earlier selected_operating_point
+fields remain null as historical evidence; selected_policy separately records
+the user's actual joint-selection decision. See final publication section below.
 
 ## Question-conditioned stopping selection
 
@@ -197,7 +194,7 @@ activation or probability wording. Full CI passed 485 backend/279 frontend tests
 81.65% coverage and real disposable database/browser flows. See
 docs/work/usman/HELD_OUT_VERIFICATION.md and retained held_out_2025_v1 artifacts.
 The v2 product manifest now prepares the frozen test and accepted question-
-conditioned selection for display; hosted publication verification is pending.
+conditioned selection for display; hosted publication verification passed on2af4d97/run44909092445.
 
 ## Read-only completed-research publication
 

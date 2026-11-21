@@ -7,7 +7,7 @@ A local pass is not a merge, deployment, cross-review or empirical research resu
 | Package / deliverable | Current authoritative evidence | State and remaining acceptance |
 | --- | --- | --- |
 | WP-S0 backend preparation | Phase 1 commit `51196fd`, structural proof, PR #27 | Extension points and full software/dependency retirement verified (PR #42/#43; source 5817fd9). Cross-review/merge remain |
-| WP-S11 lint/coverage | CI workflow, Ruff config/dev dependency; phase 2 lint and coverage outputs | Verified on `5a5060b` / run 44905815091: 485 backend tests; 5,176/6,339 = 81.65% with the exact 80% gate passed and unchanged six source scopes. Review/merge and actual Form 10 confirmation remain separate gates |
+| WP-S11 lint/coverage | CI workflow, Ruff config/dev dependency; phase 2 lint and coverage outputs | Verified on `2af4d97` / run 44909092445: 499 backend tests; 5,264/6,433 = 81.83% with the exact 80% gate passed and unchanged six source scopes. Review/merge and actual Form 10 confirmation remain separate gates |
 | Form 10 | `docs/fyp1-final/PANEL_ACTION_REGISTER.md` | Template/evidence register provided; actual Mid-I feedback and supervisor confirmation still required |
 | WP-S1 adapter / degraded / cache | Adapter and degraded tests; phase 1/2 results; production session smoke | Backend and feature UI verified; quick diagnosis sends `allow_degraded=true` |
 | WP-S2 sessions | Three tables; lifecycle/access/replay tests on SQLite and PostgreSQL; local production-startup smoke | Backend verified locally and by GitHub CI on `4764581` |
@@ -19,12 +19,12 @@ A local pass is not a merge, deployment, cross-review or empirical research resu
 | WP-S8 model judge / labels / grounding evaluation | Frozen 150-pair constructed FAA-text packet, blinded Usman/Umar review copies, strict CSV import/agreement/adjudication and separate 99/51 threshold fit/validation tools | Tooling verified with synthetic tests only; actual independent labels, adjudication, human metrics, generated-answer validation, L4 and no-evidence comparison remain |
 | WP-S9 printable report | Escaped authenticated closed-session HTML endpoint and integration test | Backend and print layout verified (1280px and A4 width); one-click feature action verified with real browser; production-shell integration verified on review branch; owner review/merge pending |
 | WP-S10 model comparison | Frozen twenty-real-case packet, portable standard-library runner, raw journals/resume and generated comparison table | PR #37; user requested self-contained runner for M4 execution; Eleven focused tests, isolated-Python HTTP/resume/error smoke and deterministic ZIP verified; actual M4 model measurements and Usman decision remain |
-| Research result product panel | PRs #38–#40; `ecdc264`, hosted run 44856875802; 445 backend / 275 frontend tests; real production-browser and retained screenshot proof | Implemented and verified: endpoint, controls, 95% intervals, both themes at 1280/390px, artifact parity and error/empty/retry. Shared-file owner review/merge, accepted-point marker and final held-out publication remain |
+| Research result product panel | PRs #38–#40; `ecdc264`, hosted run 44856875802; 445 backend / 275 frontend tests; real production-browser and retained screenshot proof | Implemented and verified: endpoint, controls, 95% intervals, both themes at 1280/390px, artifact parity and error/empty/retry. Accepted joint-selection marker and frozen2025publication verified on2af4d97/run44909092445 (499backend/283frontend tests,81.83%, real container/browser, all phone charts). Shared-file owner review/merge remain |
 | Report / diagrams / disclosure / defense | Explicitly authorized AI-assisted design draft; engineering knowledge and disclosure log | Student-owned report review, final traceability/diagrams, disclosure and genuine defense/rehearsal evidence remain |
-| Integration/release | Review PRs #27–#47 have hosted verification; latest 5a5060b retains database/browser flows and passes coverage gate; staging unchanged | Cross-review, accepted shared contracts, merged green CI, deploy and full UI/runtime verification remain |
+| Integration/release | Review PRs #27–#48 have hosted verification; latest 2af4d97 retains database/browser flows and passes coverage gate; staging unchanged | Cross-review, accepted shared contracts, merged green CI, deploy and full UI/runtime verification remain |
 
-Next execution: publish accepted-point marker and final frozen results, then complete
-remaining human/model/report/review/release work. Joint selection, user numeric
+Next execution: user-authorized merge/integration alongside remaining
+human/model/report/review/release work. Final product publication is verified. Joint selection, user numeric
 choice, pre-test freeze and actual 2025 evaluation are verified. Retain all human/review/release gates. Exact backend coverage
 acceptance is now verified; this does not complete the remaining research or release. Never mark
 the full goal complete while any required cell above remains unverified.

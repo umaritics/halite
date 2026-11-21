@@ -1,6 +1,6 @@
 # Publish the accepted selection point and frozen test without a new experiment
 
-- Status: implemented; hosted verification pending; owner review pending
+- Status: implemented and verified; owner review pending
 - Date: 2026-11-21
 - Owner: Usman; shared-caption review: Shahmeer
 

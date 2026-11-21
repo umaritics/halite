@@ -997,3 +997,21 @@ viewport. For a tall figure it temporarily grows capture height while preserving
 the checked1280/390width, records that viewport, and restores1000/844 afterwards.
 This prevents clipped element PNGs while actual phone-width/844 geometry remains
 separately checked. No measurements or product behavior change.
+
+Phase18 finalsource2af4d97/run44909092445 passed all jobs:499backend/283frontend
+tests,5264/6433=81.83%, original frozen-policy preflight, saved-test replay and
+real database/API/Chromium flow. Retrieved final raw reports/screenshots and
+visually verified complete desktop/phone accepted curves, held-out chart and
+confined comparison table. Retained proof under phase18-final-publication and
+FINAL_RESEARCH_PUBLICATION_VERIFICATION.md; acceptance/knowledge updated.
+
+## Phase19 — user-authorized merging and continued completion
+
+User explicitly resumed and instructed “also alongside emrge existing work”.
+No end-of-session handoff is requested now. Goal remains active; full requirement
+scope and human/review/release gates remain. Refreshed origin/main (0dd86d9),
+inspected live PR27/48 checks/mergeability and ownership/deploy contracts. PR27
+foundation has exact-head green CI and compatibility evidence. User-authorized
+merge is separate from absent teammate cross-review; no human approval is forged.
+Initiated ordinary merge of27with exact head51196fde (no admin bypass/branch
+deletion); verify GitHub result and main CI before proceeding.

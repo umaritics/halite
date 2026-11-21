@@ -145,5 +145,6 @@ The v2 API checks the actual frozen policy/protocol and independent test receipt
 it returns saved values and provenance only. The page performs no experiment or
 runtime activation. Shared ResearchChart gains an optional stage label (default
 selection), so held-out figures are not mislabelled. This small shared follow-up
-is prepared for Shahmeer review in CHART_FOUNDATION_REVIEW.md. Phase18 synthetic,
-artifact-contract and full hosted browser verification is pending.
+is prepared for Shahmeer review in CHART_FOUNDATION_REVIEW.md. Phase18 verification passed on2af4d97/run44909092445:499backend/283frontend
+tests,81.83%coverage, actual API/Compose/browser and manually reviewed screenshots.
+See docs/work/usman/FINAL_RESEARCH_PUBLICATION_VERIFICATION.md.
