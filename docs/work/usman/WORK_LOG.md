@@ -991,3 +991,9 @@ curve captures plus every test chart at390px. The fixed-test comparison table
 now retains readable columns with horizontal scrolling confined to its own
 container on phones. Added geometry proof for that containment, clarified
 historical all-case scope and missing-answer bootstrap draws. Revalidation next.
+
+Figure capture also now asserts the entire target lies inside the app's scroll
+viewport. For a tall figure it temporarily grows capture height while preserving
+the checked1280/390width, records that viewport, and restores1000/844 afterwards.
+This prevents clipped element PNGs while actual phone-width/844 geometry remains
+separately checked. No measurements or product behavior change.

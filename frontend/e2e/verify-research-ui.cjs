@@ -5,6 +5,21 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { createHash } = require('node:crypto');
 
+const captureViewports = [];
+async function captureElement(page, locator, destination) {
+  const viewport = page.viewportSize();
+  const initial = await locator.boundingBox();
+  // The app scrolls inside its viewport. Grow only capture height when needed,
+  // otherwise an element taller than that container yields clipped PNG content.
+  if (initial.height > viewport.height - 32) await page.setViewportSize({ width: viewport.width, height: Math.ceil(initial.height) + 64 });
+  await locator.scrollIntoViewIfNeeded();
+  const box = await locator.boundingBox();
+  assert.ok(box.y >= 0 && box.y + box.height <= page.viewportSize().height, 'Entire captured element lies inside the scroll viewport');
+  await locator.screenshot({ path: destination });
+  captureViewports.push({ file: path.basename(destination), viewport: page.viewportSize(), element: box });
+  await page.setViewportSize(viewport);
+}
+
 async function verifySourceHighlights(page, context, base, token, directory, theme) {
   await page.setViewportSize({ width: 1280, height: 1000 });
   const ingest = await context.request.post(base + '/api/maintenance/ingest', {
@@ -145,11 +160,11 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       assert.ok((await acceptedRow.innerText()).includes(pct(selected.accuracy_top1)));
       assert.ok((await acceptedRow.innerText()).includes(pct(selected.ci95.accuracy_top1.low)));
       await figures.nth(1).getByText('View values and intervals', { exact: true }).click();
-      await figures.nth(1).screenshot({ path: path.join(directory, `research-${theme}-accepted-2024.png`) });
+      await captureElement(page, figures.nth(1), path.join(directory, `research-${theme}-accepted-2024.png`));
       await page.setViewportSize({ width: 390, height: 844 });
       await figures.nth(1).scrollIntoViewIfNeeded();
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-      await figures.nth(1).screenshot({ path: path.join(directory, `research-${theme}-accepted-2024-390.png`) });
+      await captureElement(page, figures.nth(1), path.join(directory, `research-${theme}-accepted-2024-390.png`));
       await page.setViewportSize({ width: 1280, height: 1000 });
       await page.getByLabel('Attribute control').selectOption('coded_fields_only');
       assert.equal(await figures.nth(1).getByText('Accepted operating point', { exact: true }).count(), 0);
@@ -181,7 +196,7 @@ async function verifySourceHighlights(page, context, base, token, directory, the
         const box = await figures.nth(index).boundingBox();
         assert.ok(box.width > 250 && box.x >= 0 && box.x + box.width <= 390);
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-        await figures.nth(index).screenshot({ path: path.join(directory, `research-${theme}-chart-${index}-390.png`) });
+        await captureElement(page, figures.nth(index), path.join(directory, `research-${theme}-chart-${index}-390.png`));
         phoneFigures.push(box);
       }
       const comparison = page.getByRole('table', { name: /Fixed information-gain setting/ });
@@ -189,7 +204,7 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       const tableGeometry = await comparison.evaluate(table => ({ table: table.getBoundingClientRect().width, viewport: table.parentElement.clientWidth, content: table.parentElement.scrollWidth }));
       assert.ok(tableGeometry.table >= 640 && tableGeometry.content > tableGeometry.viewport);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-      await comparison.locator('..').screenshot({ path: path.join(directory, `research-${theme}-comparison-390.png`) });
+      await captureElement(page, comparison.locator('..'), path.join(directory, `research-${theme}-comparison-390.png`));
       // Real data above; only these state-specific checks substitute endpoint responses.
       await page.route('**/api/sessions/experiments', route => route.fulfill({ status: 503, contentType: 'application/json', body: '{"detail":"synthetic outage"}' }));
       await page.reload();
@@ -204,6 +219,7 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       await context.close();
     }
     assert.deepEqual(errors, []);
+    proof.captureViewports = captureViewports;
     proof.checks = ['real JWT endpoint and artifact hashes', 'three rendered SVG charts with whiskers', 'saved value and interval table parity', 'frozen 2025 primary and timing view', 'accepted 2024 marker only on its actual curve', 'undefined zero-answer control and preserved historical study', 'cohort/metric controls', 'production deep-link reload', 'dark/light 1280 and 390 geometry for every chart and confined horizontal table', 'unclipped accepted-selection charts on desktop and phone', 'explicitly mocked failure/retry/empty states', 'no browser exceptions', 'real quick/session source spans, Unicode offsets and exact saved replay'];
     fs.writeFileSync(path.join(directory, 'research-browser-proof.json'), JSON.stringify(proof, null, 2) + '\n');
     console.log(JSON.stringify(proof, null, 2));
