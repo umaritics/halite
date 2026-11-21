@@ -8,7 +8,7 @@ const { createHash } = require('node:crypto');
 async function verifySourceHighlights(page, context, base, token, directory, theme) {
   await page.setViewportSize({ width: 1280, height: 1000 });
   const ingest = await context.request.post(base + '/api/maintenance/ingest', {
-    headers: { Authorization: 'Bearer ' + token }, data: { csv_path: '/app/tests/fixtures/grounding_highlight_smoke.csv' },
+    headers: { Authorization: 'Bearer ' + token() }, data: { csv_path: '/app/tests/fixtures/grounding_highlight_smoke.csv' },
   });
   assert.equal(ingest.status(), 200);
   const ingested = await ingest.json();
@@ -41,7 +41,7 @@ async function verifySourceHighlights(page, context, base, token, directory, the
   await quickPanel.screenshot({ path: path.join(directory, `source-quick-${theme}.png`) });
   await page.goto(base + '/app/investigations');
   await page.getByLabel('Investigation title (optional)').fill('Synthetic saved word highlighting');
-  const assetsResponse = await context.request.get(base + '/api/maintenance/assets', { headers: { Authorization: 'Bearer ' + token } });
+  const assetsResponse = await context.request.get(base + '/api/maintenance/assets', { headers: { Authorization: 'Bearer ' + token() } });
   const asset = (await assetsResponse.json()).find(item => item.tail_number === 'N-HGL-LIVE');
   assert.ok(asset);
   await page.getByLabel('Aircraft', { exact: true }).selectOption(asset.id);
@@ -84,13 +84,16 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       const context = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
       await context.addInitScript(value => localStorage.setItem('halite-theme', value), theme);
       const page = await context.newPage();
+      let currentAccessToken;
+      page.on('request', request => {
+        const authorization = request.headers().authorization;
+        if (authorization?.startsWith('Bearer ')) currentAccessToken = authorization.slice(7);
+      });
       page.on('pageerror', error => errors.push(error.message));
       await page.goto(base + '/login');
       await page.getByLabel(/work email/i).fill(process.env.HALITE_UI_ADMIN_EMAIL || 'admin@halite.local');
       await page.getByLabel(/^password$/i).fill(process.env.HALITE_UI_ADMIN_PASSWORD || 'HaliteDevAdmin2026');
-      const loginResponse = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === '/api/auth/login');
       await page.getByRole('button', { name: /^sign in$/i }).click();
-      const login = await (await loginResponse).json();
       await page.getByRole('heading', { name: 'Maintenance workspace', exact: true }).waitFor();
       await page.getByRole('link', { name: 'Open investigations', exact: true }).click();
       const responsePromise = page.waitForResponse(r => new URL(r.url()).pathname === '/api/sessions/experiments');
@@ -140,7 +143,7 @@ async function verifySourceHighlights(page, context, base, token, directory, the
       await page.route('**/api/sessions/experiments', route => route.fulfill({ contentType: 'application/json', body: '{"schema_version":"investigation-results-v1","state":"empty","artifacts":[]}' }));
       await page.getByRole('button', { name: 'Try again', exact: true }).click();
       await page.getByRole('heading', { name: 'No experiments published yet', exact: true }).waitFor();
-      const sourceHighlights = await verifySourceHighlights(page, context, base, login.access_token, directory, theme);
+      const sourceHighlights = await verifySourceHighlights(page, context, base, () => { assert.ok(currentAccessToken); return currentAccessToken; }, directory, theme);
       proof.themes.push({ sourceHighlights, theme, desktop: 1280, phone: 390, charts: 3, publication_sha256: data.publication_sha256, phoneFigure: dimensions });
       await context.close();
     }

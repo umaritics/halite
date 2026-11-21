@@ -752,3 +752,5 @@ with a three-record explicitly synthetic Unicode fixture, real quick/session
 requests, exact text/mark parity, saved replay and dark/light phone screenshots.
 Hosted regression/browser checks are pending; no local dependency install or
 heavy workload was started.
+
+Source-highlighting run 44857961828 passed backend/frontend but the browser fixture ingest rejected its stale login JWT after page reloads rotated the session. Preserved the correct product auth behavior; the verifier now uses the latest bearer token observed on the browser’s actual authenticated requests, including after each navigation. Tokens remain only in process memory and are not logged or saved. No auth workaround or credential persistence was added.
