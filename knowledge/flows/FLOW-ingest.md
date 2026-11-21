@@ -55,3 +55,17 @@ flowchart LR
   handled by `scripts/migrate_conflict_analysis_state.py`, dry-run by default.
 - Conflict scoring is separate and resumable via the backfill CLI or the
   ops-token batch endpoint. Shared staging is not mutated without approval.
+
+## Standalone importer after retirement
+
+```mermaid
+flowchart LR
+  API[Maintenance ingest API] --> Agent[Standalone MaintenanceAgent]
+  Agent --> CSV[Pandas / official coded fields]
+  Agent --> Graph[Existing graph repository]
+  Graph --> Store[Memory or Neo4j]
+```
+
+The constructor preserves graph_repo/groq_service arguments. There is no legacy
+BaseAgent dependency or software document-ingest path. Runtime startup leaves
+existing data intact and does not seed software demo nodes.

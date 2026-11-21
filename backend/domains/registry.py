@@ -5,14 +5,13 @@ Usage
 -----
     from domains.registry import get_adapter, list_domains, DEFAULT_DOMAIN
 
-    adapters = list_domains()             # [{"key": "software", ...}, ...]
+    adapters = list_domains()             # [{"key": "maintenance", ...}]
     adapter = get_adapter("maintenance")  # MaintenanceDomainAdapter instance
 """
 import logging
 
 from domains.base import DomainAdapter
 from domains.maintenance import MaintenanceDomainAdapter
-from domains.software import SoftwareDomainAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +20,10 @@ logger = logging.getLogger(__name__)
 # discovers them automatically via list_domains() / get_adapter().
 # ------------------------------------------------------------------
 _REGISTRY: dict[str, DomainAdapter] = {
-    "software": SoftwareDomainAdapter(),
     "maintenance": MaintenanceDomainAdapter(),
 }
 
-DEFAULT_DOMAIN: str = "software"
+DEFAULT_DOMAIN: str = "maintenance"
 
 
 def get_adapter(key: str) -> DomainAdapter:
@@ -33,7 +31,7 @@ def get_adapter(key: str) -> DomainAdapter:
     Return the adapter for the given domain key.
 
     Raises KeyError if the key is not registered (explicit failure — no
-    silent fallback to software domain).
+    silent fallback to another domain).
     """
     if key not in _REGISTRY:
         raise KeyError(

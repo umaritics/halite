@@ -781,3 +781,13 @@ passed, but pytest collection correctly failed because retained scripts import
 requests, previously supplied by LangChain. Added its actual baseline version
 as a direct dependency and expanded the audit. No successful test claim is made
 for that initial run. Reverification required on the corrected commit.
+
+## Phase 13 — authorized software retirement preparation
+
+Applied the exact approved importer/domain patch on a separate review branch.
+Removed all plan-named software runtime files/root scripts and regression suite;
+unregistered routes and removed all three startup seed calls. Retained existing
+graph compatibility/reset security and explicit fixture seeds, with no stored
+data purge. Removed the now-unused pypdf/docx2txt parsers. Retargeted auth/rate
+checks to current endpoints and added real lifespan/route-absence coverage.
+Static audit and hosted regression results will be recorded before completion.

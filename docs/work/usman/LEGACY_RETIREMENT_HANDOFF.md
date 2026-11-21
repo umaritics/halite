@@ -67,3 +67,13 @@ being shown the two shared-file dependencies and HTTP contract changes. This
 authorizes applying/testing the proposed retirement on a separate review branch.
 It does not represent Shahmeer/Umar review, merge approval or staging deployment.
 Do not request this preparation authorization again.
+
+## Implementation branch update
+
+`codex/usman-legacy-retirement` applies the authorized two-file patch and full
+retirement above. Removed document parsers pypdf/docx2txt now have no consumers.
+New retirement tests verify route absence under both obsolete flag settings and
+both auth states, no graph/model side effects, and actual startup lifecycle
+without software seeding in all three graph branches. Existing maintenance,
+graph reset, authentication and rate-limit coverage is retained. Hosted results
+and owner review are pending; this does not claim deployment.

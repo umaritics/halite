@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     LLM_REQUEST_TIMEOUT_S: float = 120.0
 
     # Deprecated: self-hosted Gitea was retired after the Nov 2026 VM incident.
-    # Routes fail closed (410 Gone) unless ENABLE_GITEA_INTEGRATION=true.
+    # Compatibility settings only: retired routes are unregistered regardless of this flag.
     ENABLE_GITEA_INTEGRATION: bool = False
     GITEA_BASE_URL: str = ""
     GITEA_TOKEN: str = ""

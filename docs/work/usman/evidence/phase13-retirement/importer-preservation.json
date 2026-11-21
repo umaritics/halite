@@ -1,0 +1,14 @@
+{
+  "baseline_commit": "c2936e4639646374b8006c2be1751c78b910ba02",
+  "unchanged_methods": [
+    "_ingest_records",
+    "_link_preceded_by",
+    "_load_records",
+    "_update_asset_latest",
+    "run"
+  ],
+  "added_methods": [
+    "__init__"
+  ],
+  "all_existing_method_bodies_identical": true
+}

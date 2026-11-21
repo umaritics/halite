@@ -6,7 +6,7 @@ No network calls, no file system access beyond synthetic in-memory records.
 
 Coverage required by §T6:
   - POST /api/maintenance/ingest (json body, no file system needed — test uses records endpoint after manual seeding)
-  - GET  /api/domains returns both domains
+  - GET  /api/domains returns maintenance as the sole/default domain
   - GET  /api/maintenance/assets returns empty list when no assets
   - GET  /api/maintenance/assets/{id}/history returns 404 for unknown asset
   - POST /api/maintenance/records — conflict detection on ingested record
@@ -38,25 +38,23 @@ def client():
 # ---------------------------------------------------------------------------
 
 class TestDomains:
-    def test_returns_two_domains(self, client):
+    def test_returns_only_maintenance_domain(self, client):
         resp = client.get("/api/domains")
         assert resp.status_code == 200
         data = resp.json()
         keys = {d["key"] for d in data}
-        assert "software" in keys
-        assert "maintenance" in keys
+        assert keys == {"maintenance"}
 
-    def test_software_is_default(self, client):
+    def test_maintenance_is_default(self, client):
         resp = client.get("/api/domains")
         data = resp.json()
-        sw = next(d for d in data if d["key"] == "software")
-        assert sw["is_default"] is True
+        assert data[0]["key"] == "maintenance"
+        assert data[0]["is_default"] is True
 
-    def test_maintenance_not_default(self, client):
-        resp = client.get("/api/domains")
-        data = resp.json()
-        mnt = next(d for d in data if d["key"] == "maintenance")
-        assert mnt["is_default"] is False
+    def test_software_adapter_is_unavailable(self, client):
+        from domains.registry import get_adapter
+        with pytest.raises(KeyError, match="not registered"):
+            get_adapter("software")
 
     def test_domain_has_required_fields(self, client):
         resp = client.get("/api/domains")
@@ -76,7 +74,7 @@ class TestHealthMaintenance:
         assert resp.status_code == 200
         data = resp.json()
         assert "domains" in data
-        assert len(data["domains"]) >= 2
+        assert [d["key"] for d in data["domains"]] == ["maintenance"]
 
     def test_health_includes_maintenance_fields(self, client):
         resp = client.get("/health")

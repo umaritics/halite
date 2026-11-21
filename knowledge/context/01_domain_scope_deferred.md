@@ -40,4 +40,9 @@ updated: 2026-10-16
 
 ## Legacy software domain
 
-Code and tests for Decisions/Components still exist for regression. Treat as **frozen infrastructure**, not Mid-I feature work. Historical docs live in `docs/obsolete/`.
+The user-authorized retirement branch removes software routers, agents, domain
+adapter and software regression suite. Production startup injects no software
+demo data. Existing data and graph compatibility methods remain for the existing
+graph endpoints and ops-protected manual reset; these are frozen infrastructure,
+not product features. Owner review/merge remains pending. Historical docs live
+in `docs/obsolete/`. See DEC-20261121-legacy-retirement.

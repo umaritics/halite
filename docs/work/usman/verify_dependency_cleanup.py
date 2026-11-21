@@ -7,8 +7,8 @@ from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[3]
-REMOVED_DIRECT = {'langchain', 'langchain-community', 'langchain-text-splitters', 'python-docx', 'python-dotenv'}
-REMOVED_ROOTS = {'langchain', 'langchain_community', 'langchain_text_splitters', 'docx', 'dotenv'}
+REMOVED_DIRECT = {'langchain', 'langchain-community', 'langchain-text-splitters', 'python-docx', 'python-dotenv', 'pypdf', 'docx2txt'}
+REMOVED_ROOTS = {'langchain', 'langchain_community', 'langchain_text_splitters', 'docx', 'dotenv', 'pypdf', 'docx2txt'}
 
 
 def canonical(name):
@@ -64,7 +64,7 @@ def audit(install_report=None, installed=None):
         assert actual['pandas'] == before['installed_transaction']['pandas'] == '2.2.2'
         assert actual['requests'] == before['installed_transaction']['requests']
         assert 'python-dotenv' in actual and 'pydantic-settings' in actual
-        assert not any(name.startswith(('langchain', 'langsmith')) or name == 'python-docx' for name in actual)
+        assert not any(name.startswith(('langchain', 'langsmith')) or name in {'python-docx', 'pypdf', 'docx2txt'} for name in actual)
         old = before['installed_transaction']
         summary.update(hosted_installed=actual, hosted_install_transaction=selected,
                        no_longer_selected_packages=sorted(set(old) - set(selected)),

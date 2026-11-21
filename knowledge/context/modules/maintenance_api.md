@@ -93,3 +93,11 @@ prior/update values and source SHA, and is idempotent on retry. Multi-record wri
 are resumable rather than atomic; use a backed-up, quiescent graph. Shahmeer review,
 merge and Umar's actual staging backup/backfill remain pending. Procedure and
 executed synthetic CLI proof: `docs/work/usman/CODED_FIELDS_INTEGRATION.md`.
+
+## Legacy retirement integration
+
+The sole/default descriptor is maintenance. MaintenanceAgent now defines its
+existing two-argument constructor directly instead of inheriting the deleted
+software BaseAgent. Its parsing/ingest methods remain unchanged. The change is
+user-authorized preparation for Shahmeer review; API/ingest behavior is verified
+by the retained maintenance suite and hosted full-stack smoke.

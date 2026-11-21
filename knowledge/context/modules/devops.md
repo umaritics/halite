@@ -70,3 +70,6 @@ package installation is needed on the developer laptop for this verification.
 Retained verification scripts import requests directly. The first hosted run
 exposed its previous accidental LangChain transitive dependency during pytest
 collection. Declare its baseline version explicitly and audit its presence.
+
+After software retirement, pypdf and docx2txt are also removed because their
+sole importer was deleted. Dependency audit now rejects both roots/packages.
