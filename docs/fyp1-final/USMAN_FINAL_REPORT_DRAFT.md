@@ -216,7 +216,8 @@ Full deliverable status: `../work/usman/ACCEPTANCE_MATRIX.md`.
 
 Before submission, Usman must review and own the explanation, incorporate the
 team's approved terminology and references, supply genuine grounding reviews,
-confirm actual panel feedback on Form 10 and rehearse the defense. Teammate
+transfer the confirmed no-comments Mid-I account into the official Form 10,
+obtain any required supervisor confirmation and rehearse the defense. Teammate
 cross-review is not inferred from the user's authorization to merge. AI helped
 implement, document and verify the contribution; no fabricated human labels,
 model timings, supervisor signatures or rehearsal outcomes are included.
