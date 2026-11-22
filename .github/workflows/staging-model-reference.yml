@@ -1,0 +1,69 @@
+name: Measure staging model reference
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type MEASURE to run 20 primary and 10 paired baseline calls on the existing model'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: staging-model-reference
+  cancel-in-progress: false
+
+jobs:
+  reference:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Require explicit intent and exact-source successful CI
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRMATION" = MEASURE
+          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$GITHUB_SHA&status=success&per_page=100" > /tmp/reference-ci.json
+          python3 - <<'PY'
+          import json, os
+          runs=json.load(open('/tmp/reference-ci.json'))['workflow_runs']
+          assert any(r['head_sha']==os.environ['GITHUB_SHA'] and r['head_branch']=='main' and r['conclusion']=='success' for r in runs), 'Exact main revision needs successful full CI.'
+          PY
+      - name: Measure through a private loopback tunnel
+        env:
+          VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
+          VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VM_SSH_HOST"
+          test -n "$VM_SSH_USER"
+          test -n "$VM_SSH_KEY"
+          reference_ssh_dir=$(mktemp -d)
+          trap 'rm -rf "$reference_ssh_dir"' EXIT
+          printf '%s\n' "$VM_SSH_KEY" > "$reference_ssh_dir/key"
+          chmod 600 "$reference_ssh_dir/key"
+          ssh-keyscan -H "$VM_SSH_HOST" > "$reference_ssh_dir/known_hosts" 2>/dev/null
+          cd backend
+          python3 -m investigation.experiments.staging_reference \
+            --revision "$GITHUB_SHA" --output ../staging-model-reference \
+            --ssh-target "$VM_SSH_USER@$VM_SSH_HOST" \
+            --ssh-key "$reference_ssh_dir/key" --known-hosts "$reference_ssh_dir/known_hosts"
+      - name: Retain real measurements or explicit failed attempts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-model-reference
+          path: staging-model-reference/
+          if-no-files-found: warn
+          retention-days: 90

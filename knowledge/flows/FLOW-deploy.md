@@ -68,3 +68,13 @@ After full legacy retirement, `/api/webhook/gitea` is unregistered and returns
 the earlier disabled-handler410. A cross-layer test compares both release
 expectations with the actual router response. Authenticated/anonymous asset,
 closed docs, PostgreSQL and exact-version checks remain unchanged.
+
+
+## Read-only research operation alongside releases
+
+The manual staging-model-reference workflow is not a deployment. Exact-source
+main CI and the currently deployed SHA must agree before any model call. It
+inspects private configuration/container metadata, temporarily forwards only a
+hosted-runner loopback socket, runs the fixed reference prompts and verifies
+unchanged release/corpus/container state afterwards. Secrets are never output
+artifacts. No existing release/auth/security/version gate is bypassed.

@@ -43,3 +43,27 @@ foreign or partial journal, and false M4 role fail explicitly. Provider failures
 are retained and count against validity. No validated threshold means no invented
 semantic-support rate. The model is not permitted to choose the server's ranking,
 question, decision or approved maintenance action through this experiment.
+
+
+## Private hosted reference path
+
+```mermaid
+flowchart TD
+  Intent[Manual MEASURE / main only] --> CI[Require exact-source successful full CI]
+  CI --> Live[Require healthy exact deployed source]
+  Live --> SSH[Read-only private configuration and Docker metadata]
+  SSH --> Guard[No published model ports / existing resource limits]
+  Guard --> Tunnel[Temporary loopback-only SSH tunnel]
+  Tunnel --> Runner[Unchanged frozen comparison runner / phi4-mini reference]
+  Runner --> Raw[Raw evidence and no-evidence calls / failures retained]
+  Raw --> After[Same revision / corpus count / model container and restarts]
+  After --> Artifact[Measurement artifact and explicit provenance]
+  Runner --> Cleanup[Close tunnel / restore token environment]
+  After --> Cleanup
+```
+
+The hosted workflow never executes model inference on the laptop. It does not
+change deployed code/settings, query a database, activate questions/grounding,
+choose an interactive model or replace actual M4 measurements. Latency includes
+the SSH/network path and shared-server contention. Full-set provider failures
+prevent successful acceptance; raw attempts remain available for inspection.
