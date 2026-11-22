@@ -35,6 +35,16 @@ def digest(value):
                                      allow_nan=False).encode()).hexdigest()
 
 
+def method_sources():
+    base = Path(__file__).resolve().parents[2]
+    names = ('investigation/experiments/grounding_judge.py',
+             'investigation/experiments/grounding_eval.py',
+             'investigation/experiments/grounding_packet.py',
+             'investigation/experiments/model_compare.py',
+             'investigation/experiments/model_prompts.py', 'investigation/grounding.py')
+    return {name: hashlib.sha256((base / name).read_bytes()).hexdigest() for name in names}
+
+
 class JudgeOllama(Ollama):
     """Larger declared context preserves the longest frozen report in full."""
     def chat(self, model, messages, *, json_mode=True, seed=1729):
@@ -117,6 +127,7 @@ def run(packet_path, output, *, client, model):
     manifest = {'version': VERSION, 'packet_sha256': digest(packet),
                 'review_sha256': packet['review_sha256'], 'model': identity,
                 'method_sha256': method_hash, 'system_prompt_sha256': digest(SYSTEM),
+                'method_files_sha256': method_sources(),
                 'seed': 1729, 'temperature': 0, 'held_out_2025_used': False,
                 'max_prompt_bytes': MAX_PROMPT_BYTES, 'num_ctx': 8192,
                 'num_predict': 700,
@@ -158,7 +169,8 @@ def evaluate(packet_path, result_path, first, second, *, adjudications=None):
     if manifest.get('version') != VERSION or manifest.get('packet_sha256') != digest(packet):
         raise ValueError('Judge results belong to a different packet or method.')
     if (manifest.get('method_sha256') != hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
-            or manifest.get('system_prompt_sha256') != digest(SYSTEM)):
+            or manifest.get('system_prompt_sha256') != digest(SYSTEM)
+            or manifest.get('method_files_sha256') != method_sources()):
         raise ValueError('Judge method changed; preserve and evaluate with exact source.')
     pairs = {p['pair_id']: p for p in packet['pairs']}
     rows = result['rows']
