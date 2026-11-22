@@ -1225,3 +1225,14 @@ error rejection and retain final safe metadata; failed runs still fail acceptanc
 The previous merge hold is released because its specific run is terminal. Merge
 only after new exact-head CI passes; verify the real public site before starting
 any next source-pinned measurement. No silent case retry or deadline pooling.
+
+Sourcec330480 passed full CI44988236394:534backend tests, zero failures/errors/
+skips,5543/6742=82.22% measured core coverage; frontend/builds and actual disposable
+Neo4j/PostgreSQL/API/Chromium proof all passed. Ordinary exact-head merge of PR54
+produced db574acadd4caf5cf60be45559708c82319711a6 at05:14:18UTC. No admin bypass or
+branch deletion. Merged-main CI44988523496 is live; wait for its success and normal
+CD before claiming deployment or dispatching the public browser. The public-site
+workflow is registered active and encrypted dedicated-account secrets already
+exist. New proof branch codex/usman-public-verification starts from merged main;
+root checkout's unrelated work remains untouched. Source/merge/XML receipts are
+retained under phase26-public-release. No new source-pinned model run has started.

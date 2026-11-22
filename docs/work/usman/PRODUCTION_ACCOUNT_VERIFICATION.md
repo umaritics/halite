@@ -34,3 +34,9 @@ tests with zero failures/errors/skips; 5,540/6,739 = 82.21% measured coverage;
 frontend tests/builds and disposable Neo4j/PostgreSQL/API/browser smoke all passed.
 Raw CI metadata/XML are retained in `evidence/phase23-report-figures/`.
 This CI does not access the production account and is not a public browser pass.
+
+PR54 now merged as `db574acadd4caf5cf60be45559708c82319711a6` after source
+`c330480` passed CI44988236394 (534 backend tests;82.22% measured core coverage;
+all jobs passed). The original model measurement is terminal, so its merge hold
+is released. Main CI44988523496 and ordinary deployment must succeed before the
+new manual browser workflow runs. Prepared/merged code is not a browser pass.
