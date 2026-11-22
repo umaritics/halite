@@ -174,3 +174,13 @@ After full legacy retirement, `/api/webhook/gitea` is unregistered and returns
 the earlier disabled-handler410. A cross-layer test compares both release
 expectations with the actual router response. Authenticated/anonymous asset,
 closed docs, PostgreSQL and exact-version checks remain unchanged.
+
+
+A separate manual `staging-model-reference.yml` workflow can measure the existing
+phi4-mini against the frozen20-prompt comparison packet after exact-main CI and
+live-version checks. It uses a temporary private loopback SSH tunnel and existing
+4GiB/two-CPU model limits, without publishing11434, deploying, pulling models or
+writing graph/auth data. Output provenance distinguishes GitHub runner hardware
+from staging inference and M4 measurements. The code checks deployment/corpus/
+container stability afterwards and retains raw failed attempts. See the
+investigation model-comparison context/flow and STAGING_REFERENCE_PROTOCOL.md.

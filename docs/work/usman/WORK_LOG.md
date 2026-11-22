@@ -1098,3 +1098,20 @@ CD44982694707. L4 actual model judgments and human metrics remain unmeasured.
 Added primary-source literature companion with calibrated claims; checked PMLR,
 NeurIPS and ACL primary publication abstracts/metadata, not secondary blogs.
 The report's original measured-results hash crosscheck remains unchanged.
+
+
+## Phase22 — actual staging-reference measurement path
+
+Revalidated prior progress: PR52mergedd3b909a; mainCI44983303394 and deployment
+44983534211 succeeded. Full objective still retains human/model/production/student
+acceptance. Actual M4 access is absent, but existing private phi4-mini can supply
+real staging-reference and paired no-evidence outputs. Added an explicit manual
+MEASURE workflow on CI-green/currently deployed main and a standard-library glue
+runner. It inspects private Docker metadata/config in memory, requires existing
+image/resource/no-public-port boundaries, opens only a temporary hosted-loopback
+SSH tunnel, calls the unchanged frozen runner and verifies unchanged deployment,
+corpus count and container/restarts. No database writes/model pulls/settings edits
+or local inference. Safe metadata/journals/failures retained; token never artifacts.
+Added synthetic tests for guards, full orchestration, secret absence, token/tunnel
+cleanup, postflight drift and safe SSH quoting. Documentation/knowledge updated;
+actual hosted verification and real measurement remain separate gates.

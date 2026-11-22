@@ -57,3 +57,25 @@ and uses its fixed packet; no app/database/dependency installation is needed.
 The user's selected delivery is this verified runner. Actual M4 execution and
 Usman's interactive-model decision remain project gates; synthetic tests are
 explicitly identified and cannot stand in for real measurements.
+
+
+## Hosted private staging-reference measurement
+
+`experiments/staging_reference.py` and `staging-model-reference.yml` provide a
+manual MEASURE operation from CI-green main. The public backend must report the
+exact source revision, live Neo4j/model/PostgreSQL and a loaded corpus. Read-only
+SSH checks verify the existing private pinned Ollama container and its unchanged
+4GiB/two-CPU limits. A temporary127.0.0.1-only SSH tunnel reaches its Docker IP;
+there is no published model port, pull, settings edit or database write. The
+private API key is captured in memory, used only as an HTTP header and restored
+out of the process environment; configuration/secrets are never artifacts.
+
+The existing comparison runner executes one installed configured phi4-mini tag,
+20primary cases plus10paired no-evidence prose calls and an excluded warmup.
+It records real Ollama transport, exact model identity, packet/source hashes,
+raw responses, honest task/arm summaries and hosted-runner hardware. A sidecar
+records actual inference placement and network/load timing scope. These are
+staging reference outputs, never M4 timings or validated human support scores.
+Postflight requires the same deployed revision, corpus count, model container ID
+and restart count. Failure preserves journals/status and closes the tunnel.
+Actual measurements remain pending until a successful workflow is inspected.
