@@ -1067,3 +1067,23 @@ public-backend-after.json and corrected-deploy.json. Workflow also verified the
 authenticated maintenance assets response; no production user-session/browser
 acceptance is inferred. Report main row cross-checked directly against committed
 157/140 test counts,7answers/5matches and source hashes under phase20-report.
+
+
+PR50report/release-proof source4c70a9b passed hosted44982164447 and was merged
+under the user's standing merge instruction. An initial exact-head merge attempt
+used an incorrectly transcribed fullSHA and was rejected without changing state;
+retrieved the authoritative fullSHA and the ordinary merge succeeded.
+
+## Phase21 — independent L4 measurement instrument
+
+Added offline grounding_judge.py with fixed single-report prompts, full-source
+preflight, exact installed model identity, strict verdict/quote validation, raw
+serial journal and explicit errors. Human scoring reuses strict two-reviewer
+import/consensus and reports fit/validation separately; no synthetic label or
+failed-call denominator drop. The real packet contains one prompt above the
+existing comparison runner's3200byte bound (max4577). Added a separate declared
+8192context/6000byte judge transport; no source truncation or change to the frozen
+portable model runner. Added tests for boundary/schema/quote/provenance/error,
+real packet fit and actual CLI/file evaluation. No local model/install/heavy
+computation or production setting change. Knowledge/context/flow/decision and
+protocol updated. Hosted tests and actual model/human measurements are separate.

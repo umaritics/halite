@@ -101,3 +101,17 @@ synthetic CSVs, checking normalization, unknown exclusion, provenance and saved
 output preservation. Selection/held-out years and empty corpora must fail
 without publishing an output. No human labels or empirical metrics are created
 by these tests.
+
+
+## Offline L4 measurement instrument
+
+`experiments/grounding_judge.py` provides an explicit, serial Ollama instrument
+for the frozen150constructed sentence/report pairs. It never joins the runtime
+checker. Exact claim/source only, single-report quotes, model digest, raw response,
+fixed context/seed/options and method/prompt/packet hashes are retained. The whole
+packet fits without truncation; before measurements the tool checks disjoint
+fit/validation sources and rejects2025. Failed judgments remain errors, never
+unsupported labels. A complete independent human reference and adjudications
+are required for separate fit/validation metrics; no automatic threshold/model
+choice or runtime activation occurs. Actual model judgments are still pending.
+Protocol: `docs/work/usman/GROUNDING_JUDGE_PROTOCOL.md`; decision below.
