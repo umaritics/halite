@@ -1207,3 +1207,21 @@ including malformed/extra-field rejection and secret exclusion. The bundled
 document Python lacks pytest; no package was installed. The tests run directly
 with python3 -S/unittest and are also collected by hosted pytest. The real
 reference job remains untouched and must not be restarted on an observation timeout.
+
+Actual run44984568357 terminatedfailure05:03:22UTC after all30attempts:24responses,
+6TimeoutError (all evidence-prose) at180seconds. Retained everyrawattempt, manifest,
+warmup and result; independent prompt/assessment/journal/summary replay passed in
+explicit failed-attempt mode with measurement_acceptedfalse. Facts10/10valid,
+evidenceprose4/10valid, no-evidenceprose10/10valid; means40.28/164.56/52.99seconds
+include failed attempts. No humansemanticaccuracy inferred. Original runner's
+postflight was skipped by provider-error rejection; independently observed same
+liveSHA/2079records and same modelcontainer/zero restarts/noOOM under4GiB/2CPU.
+Read-only observer44987794344succeeded; its sanitized31servercompletion lines
+include six~180sHTTP500entries. These do not independently identify researchcases.
+Documented actual outcome in STAGING_REFERENCE_RESULTS.md and phase25evidence.
+Prepared an explicit separate600seconddeadline study, unchanged prompts/settings/
+model/resources, workflow ceiling330minutes. Moved postflight before collected-
+error rejection and retain final safe metadata; failed runs still fail acceptance.
+The previous merge hold is released because its specific run is terminal. Merge
+only after new exact-head CI passes; verify the real public site before starting
+any next source-pinned measurement. No silent case retry or deadline pooling.

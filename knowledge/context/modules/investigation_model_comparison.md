@@ -78,4 +78,9 @@ records actual inference placement and network/load timing scope. These are
 staging reference outputs, never M4 timings or validated human support scores.
 Postflight requires the same deployed revision, corpus count, model container ID
 and restart count. Failure preserves journals/status and closes the tunnel.
-Actual measurements remain pending until a successful workflow is inspected.
+Original actual run44984568357 collected30attempts with24responses and six
+180-second evidence-prose timeouts. It failed full-run acceptance; raw output and
+independent replay are retained in STAGING_REFERENCE_RESULTS.md / phase25.
+A separately labelled600-second deadline run is prepared without changing prompts,
+generation settings, model or resource caps. Failed attempts also receive postflight
+checks before rejection. These observations are not M4 or human semantic accuracy.

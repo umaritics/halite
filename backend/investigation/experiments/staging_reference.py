@@ -154,6 +154,7 @@ def measure(output, expected_sha, *, remote):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     status = {'complete': False, 'stage': 'public_preflight', 'source_sha': expected_sha,
+              'timeout_seconds': 600,
               'measurement_role': 'staging_reference', 'm4_measurement': False}
     try:
         before = health()
@@ -184,9 +185,9 @@ def measure(output, expected_sha, *, remote):
             packet = Path(__file__).with_name('data') / 'model_prompts_2024_v1.json'
             # No injected client: manifest must accurately record real Ollama HTTP.
             result = compare(packet, names, output / 'comparison', endpoint=ENDPOINT,
-                             role='staging_reference', timeout=180)
-            if not result['complete'] or result['n_attempts'] != 30 or result['provider_errors']:
-                raise ValueError('Reference run contains incomplete/failed attempts; preserve them.')
+                             role='staging_reference', timeout=600)
+            status.update(n_attempts=result['n_attempts'], n_responses=result['n_responses'],
+                          provider_errors=result['provider_errors'])
         status['stage'] = 'after_check'
         after = health()
         write(output / 'health-after.json', after)
@@ -195,8 +196,13 @@ def measure(output, expected_sha, *, remote):
             raise ValueError('Corpus count changed during measurement; inspect before acceptance.')
         final = remote.read_json('docker', 'inspect', '--format', INSPECT, 'halite-ollama')
         private_server(final)
+        write(output / 'server-after.json', {key: final[key] for key in
+              ('id', 'image', 'restarts', 'memory_limit', 'nano_cpus')})
         if any(final[key] != initial[key] for key in ('id', 'restarts', 'image')):
             raise ValueError('Reference model container changed/restarted during measurement.')
+        if not result['complete'] or result['n_attempts'] != 30 or result['provider_errors']:
+            status['stage'] = 'attempts_failed'
+            raise ValueError('Reference run contains incomplete/failed attempts; preserve them.')
         status.update(complete=True, stage='complete', n_attempts=result['n_attempts'],
                       n_responses=result['n_responses'], provider_errors=result['provider_errors'])
         return result

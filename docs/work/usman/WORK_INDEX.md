@@ -73,4 +73,5 @@ does not imply independent teammate approval.
 - `evidence/phase21-grounding-judge/`: raw hosted reports and merge/release metadata.
 
 - [Private staging-reference protocol](STAGING_REFERENCE_PROTOCOL.md)
+- [Actual 180-second reference outcome](STAGING_REFERENCE_RESULTS.md)
 - `evidence/phase22-staging-reference/`: hosted instrument proof and actual reference evidence when executed.

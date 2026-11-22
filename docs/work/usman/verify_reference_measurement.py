@@ -17,21 +17,27 @@ def read(path):
     return json.loads(path.read_text())
 
 
-def verify(directory):
+def verify(directory, *, failed_attempt=False):
     directory = Path(directory)
     status = read(directory / 'status.json')
     provenance = read(directory / 'server-provenance.json')
-    before, after = [read(directory / ('health-' + name + '.json'))
-                     for name in ('before', 'after')]
-    assert status['complete'] is True and status['m4_measurement'] is False
+    before = read(directory / 'health-before.json')
+    after = read(directory / 'health-after.json') if (directory / 'health-after.json').exists() else None
+    assert status['complete'] is (not failed_attempt) and status['m4_measurement'] is False
+    if failed_attempt:
+        assert status['stage'] in ('measurement', 'attempts_failed') and status['error_type'] == 'ValueError'
     assert provenance['m4_measurement'] is False
     assert provenance['public_model_ports'] is False
     assert provenance['database_writes'] is False
     assert provenance['model_pulls_or_configuration_changes'] is False
-    assert status['source_sha'] == provenance['source_sha'] == before['git_sha'] == after['git_sha']
-    assert before['maintenance_record_count'] == after['maintenance_record_count']
+    assert status['source_sha'] == provenance['source_sha'] == before['git_sha']
+    if not failed_attempt:
+        assert after is not None
+    if after is not None:
+        assert before['git_sha'] == after['git_sha']
+        assert before['maintenance_record_count'] == after['maintenance_record_count']
     assert before['maintenance_record_count'] > 0
-    for value in (before, after):
+    for value in ([before, after] if after is not None else [before]):
         assert value['graph_mode'] == 'neo4j' and value['llm_mode'] == 'live'
         assert value['auth_db_mode'] == 'postgresql' and value['auth_enabled'] is True
         assert value['openapi_enabled'] is False
@@ -46,6 +52,9 @@ def verify(directory):
     assert plan['hardware']['system'] == 'Linux'
     assert plan['server_hardware_verified'] is False
     assert plan['checker'] is None and result['checker'] is None
+    assert plan['seed'] == 1729 and plan['timeout_seconds'] in (180, 600)
+    if 'timeout_seconds' in status:
+        assert plan['timeout_seconds'] == status['timeout_seconds']
     assert plan['packet_sha256'] == result['packet_sha256'] == packet['packet_sha256']
     assert plan['generation'] == {'temperature': 0, 'num_predict': 700,
                                   'num_ctx': 4096, 'keep_alive': '5m'}
@@ -71,14 +80,20 @@ def verify(directory):
                 for arm in (('evidence', 'no_evidence') if case['task'] == 'prose' else ('evidence',))}
     assert len(rows) == len(expected) == result['n_attempts'] == 30
     assert {(r['model'], r['case_id'], r['arm']) for r in rows} == expected
-    assert result['provider_errors'] == 0 and result['n_responses'] == 30
+    errors = [row for row in rows if row.get('error')]
+    assert result['provider_errors'] == len(errors) and result['n_responses'] == 30 - len(errors)
+    assert bool(errors) is failed_attempt
     for row in rows:
-        assert not row.get('error') and row['raw']['model'] == model
         assert math.isfinite(row['wall_seconds']) and row['wall_seconds'] >= 0
         case = cases[row['case_id']]
         assert row['task'] == case['task']
         assert row['prompt_sha256'] == fingerprint(messages(case, baseline=row['arm'] == 'no_evidence'))
-        assert row['assessment'] == assess(row['raw'], case, baseline=row['arm'] == 'no_evidence')
+        if row.get('error'):
+            assert row['error'] == 'TimeoutError' and 'raw' not in row and 'assessment' not in row
+            assert row['wall_seconds'] >= plan['timeout_seconds']
+        else:
+            assert row['raw']['model'] == model
+            assert row['assessment'] == assess(row['raw'], case, baseline=row['arm'] == 'no_evidence')
     warmups = [json.loads(line) for line in (comparison / 'warmups.jsonl').read_text().splitlines()]
     assert len(warmups) == 1 and warmups[0]['model'] == model
     assert warmups[0]['raw']['done'] is True
@@ -91,8 +106,9 @@ def verify(directory):
     summary = []
     for saved in result['summaries']:
         group = [r for r in rows if (r['arm'], r['task']) == (saved['arm'], saved['task'])]
-        assert saved['model'] == model and saved['n_attempted'] == saved['n_responses'] == 10
-        checks = [row['assessment'] for row in group]
+        successful = [row for row in group if not row.get('error')]
+        assert saved['model'] == model and saved['n_attempted'] == 10 and saved['n_responses'] == len(successful)
+        checks = [row['assessment'] for row in successful]
         valid = sum(row['valid_output'] for row in checks)
         citations = sum(row.get('citation_occurrences', 0) for row in checks)
         good = sum(row.get('in_evidence_citation_occurrences', 0) for row in checks)
@@ -106,13 +122,15 @@ def verify(directory):
         assert saved['unsupported_or_unapproved_uncited_sentences'] == unsupported
         assert saved['unsupported_rate'] is None  # No accepted/experimental thresholds installed.
         assert saved['seconds_per_attempt_mean'] == statistics.mean(r['wall_seconds'] for r in group)
-        assert saved['seconds_per_response_median'] == statistics.median(r['wall_seconds'] for r in group)
+        assert saved['seconds_per_response_median'] == (statistics.median(r['wall_seconds'] for r in successful) if successful else None)
         summary.append({'arm': saved['arm'], 'task': saved['task'], 'attempts': 10,
-                        'valid_outputs': valid, 'citation_occurrences': citations,
+                        'responses': len(successful), 'valid_outputs': valid, 'citation_occurrences': citations,
                         'in_evidence_citations': good, 'sentences': sentences,
                         'unrated': unrated, 'unsupported_or_uncited': unsupported,
                         'mean_wall_seconds': saved['seconds_per_attempt_mean']})
-    return {'verified': True, 'source_sha': status['source_sha'], 'model': model,
+    return {'verified': True, 'measurement_accepted': not failed_attempt,
+            'provider_errors': len(errors), 'postflight_in_original_run': after is not None,
+            'timeout_seconds': plan['timeout_seconds'], 'source_sha': status['source_sha'], 'model': model,
             'packet_sha256': packet['packet_sha256'], 'n_attempts': 30,
             'excluded_warmups': 1, 'summaries': summary,
             'human_accuracy_measured': False, 'm4_measurement': False,
@@ -120,4 +138,6 @@ def verify(directory):
 
 
 if __name__ == '__main__':
-    print(json.dumps(verify(sys.argv[1]), indent=2, allow_nan=False))
+    failed = '--failed-attempt' in sys.argv[1:]
+    args = [value for value in sys.argv[1:] if value != '--failed-attempt']
+    print(json.dumps(verify(args[0], failed_attempt=failed), indent=2, allow_nan=False))

@@ -1,6 +1,6 @@
 # Private hosted reference-model measurement
 
-Status: hosted instrument verified on eeb2b77 / CI 44984026697; actual measurement 44984568357 dispatched, outcome pending.
+Status: original run44984568357 failed acceptance with six deadline errors; raw evidence verified; separate longer-deadline instrument prepared.
 Owners: Muhammad Usman Al Haq. Date: 2026-11-22.
 
 ## Context
@@ -29,3 +29,14 @@ verified. It does not complete human support calibration, M4 candidate compariso
 interactive-model choice or L4 live integration. Shared-server/network timings are
 explicit and cannot support hardware-matched comparisons. Failure evidence is
 retained instead of silently retrying model calls or discarding errors.
+
+## Observed deadline and explicit follow-up
+
+The original180-second run returned24of30calls; all six timeouts were evidence
+prose. Preserve that negative operational result. Prepare a separate600-second
+client-deadline run (330-minute workflow ceiling); do not change generation,
+packet, model or resource parameters, silently retry cases, or pool deadlines.
+Move postflight before collected-provider-error rejection and retain safe final
+container metadata. A longer-deadline completion study does not establish
+interactive suitability or remove the first run's failures. See actual evidence
+and exact definitions in docs/work/usman/STAGING_REFERENCE_RESULTS.md.
