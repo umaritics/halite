@@ -1,0 +1,33 @@
+{
+  "source_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12",
+  "case_trace_sha256": "55b9e479b92561524cc35f6405246654520d3369b9fdb264ef846abf4f06ee64",
+  "pdf_sha256": "57db215aff1f2927495264d109550b2d645fe91ddca92f23bc0cad2e1f81bc01",
+  "pages": [
+    {
+      "page": 1,
+      "text_characters": 835,
+      "render_sha256": "04f501e72bfee5584a86d875e86948959e14718a11ce3e942a67300e34e58b65"
+    },
+    {
+      "page": 2,
+      "text_characters": 993,
+      "render_sha256": "4c851cbe90b3f5c1af39ddea524832b33df6e0335a9f46962eaf6b2326d10d4c"
+    },
+    {
+      "page": 3,
+      "text_characters": 1059,
+      "render_sha256": "4dc23f7fe7986c9648ae802fa25b1bc7340bb2dc600002657d3786908619c3e2"
+    }
+  ],
+  "descriptive_crosscheck": {
+    "cases": 157,
+    "answered": 7,
+    "correct": 5,
+    "misses": 2,
+    "initial_candidate_missing": 113,
+    "all_correct_same_part": true,
+    "both_misses_initial_candidate_absent": true
+  },
+  "visual_review": "All pages rendered and inspected; final page-three font update inspected separately.",
+  "operations": "saved-value export and descriptive recount only; no model/simulation/bootstrap"
+}

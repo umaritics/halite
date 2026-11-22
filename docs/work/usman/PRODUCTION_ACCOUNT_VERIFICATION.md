@@ -28,3 +28,9 @@ Only authentication POSTs are allowed; no new model call or maintenance write.
 The workflow expects encrypted dedicated-account secrets. Local browser execution
 is intentionally avoided following the machine incident. Syntax validation and
 actual hosted execution are separate gates; neither is inferred from preparation.
+
+Instrument source `0b8f7cb` passed full hosted CI `44986105585`: backend 531
+tests with zero failures/errors/skips; 5,540/6,739 = 82.21% measured coverage;
+frontend tests/builds and disposable Neo4j/PostgreSQL/API/browser smoke all passed.
+Raw CI metadata/XML are retained in `evidence/phase23-report-figures/`.
+This CI does not access the production account and is not a public browser pass.

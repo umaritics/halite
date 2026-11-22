@@ -1163,3 +1163,17 @@ files. No pre-existing secret was overwritten. Real hosted browser execution
 remains pending the instrument's CI/merge/deployment after measurement 44984568357
 terminates. The guard permits only login/refresh/logout POSTs and records no
 tokens or response bodies. Knowledge/context/flow/registry/decision updated.
+
+PR54 source0b8f7cb passed hosted CI44986105585: 531 backend tests, zero
+failures/errors/skips,5540/6739=82.21% measured coverage; frontend/builds and
+disposable full-stack browser job passed. Actual public browser execution remains
+pending; this source's public script was syntax-checked, not run against production.
+Prepared the three-page frozen2025 vector figure export using bundled ReportLab
+and embedded Open Sans. Rendered all pages with Poppler and visually reviewed;
+corrected first-draft font substitution/boundary crowding, then re-rendered.
+Independent retained-case recount confirmed157cases,7answers,5matches,2misses,
+113initial candidate misses, all5matches same-part and both answered misses
+missing the initial true candidate. Raw source rows, font/generator/PDF hashes,
+PNG proofs and checks retained under phase23-report-figures. Report links the PDF;
+source-crosscheck report hash updated. No fitting/model/simulation/bootstrap ran.
+Disk remains21GiB free; available RAM7.0GiB; swap effectively unused at this check.
