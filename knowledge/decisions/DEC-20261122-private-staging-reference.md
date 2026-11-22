@@ -1,6 +1,6 @@
 # Private hosted reference-model measurement
 
-Status: implemented; verification/actual measurement pending.
+Status: hosted instrument verified on eeb2b77 / CI 44984026697; actual measurement 44984568357 dispatched, outcome pending.
 Owners: Muhammad Usman Al Haq. Date: 2026-11-22.
 
 ## Context

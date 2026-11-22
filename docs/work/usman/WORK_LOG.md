@@ -1115,3 +1115,23 @@ or local inference. Safe metadata/journals/failures retained; token never artifa
 Added synthetic tests for guards, full orchestration, secret absence, token/tunnel
 cleanup, postflight drift and safe SSH quoting. Documentation/knowledge updated;
 actual hosted verification and real measurement remain separate gates.
+
+
+Phase22 instrument sourceeeb2b77 / hosted44984026697 passed all three jobs:
+531backend tests (zero failures/errors/skips),283frontend,5540/6739=82.21% core
+coverage, Ruff/builds, frozen preflight/replay and real database/browser flows.
+Python -S CLI help separately proved standard-library startup without installing
+anything. PR53ordinary exact-head merge produced326cd885. Merged-main CI
+44984283006is live; wait for terminal success and normal deployment before
+manual real-reference execution. Raw source verification reports retained under
+phase22-staging-reference. Do not merge a proof-only revision during the actual
+measurement because its pre/postflight intentionally pins the live source SHA.
+
+
+Main326cd885 passed CI44984283006 and CD44984494578. Dispatched the actual
+MEASURE operation under the standing completion/merge authorization: workflow
+44984568357, exact326cd885, initiallyqueued. This is a real research job, not a
+synthetic test. Poll the same handle until authoritative terminal state; do not
+restart merely because observation times out. No actual output or successful
+measurement is yet claimed. Proof branchcodex/usman-reference-results may be
+pushed for continuity but must not be merged during this pinned-source run.

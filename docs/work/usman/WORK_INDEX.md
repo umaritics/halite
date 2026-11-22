@@ -68,3 +68,6 @@ does not imply independent teammate approval.
 - [Grounding judge verification](GROUNDING_JUDGE_VERIFICATION.md)
 - [Research references](../../fyp1-final/USMAN_RESEARCH_REFERENCES.md)
 - `evidence/phase21-grounding-judge/`: raw hosted reports and merge/release metadata.
+
+- [Private staging-reference protocol](STAGING_REFERENCE_PROTOCOL.md)
+- `evidence/phase22-staging-reference/`: hosted instrument proof and actual reference evidence when executed.
