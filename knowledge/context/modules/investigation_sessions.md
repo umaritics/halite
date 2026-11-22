@@ -103,3 +103,14 @@ saved source boundary. Structured answers discard prior model-context metadata.
 Quick diagnosis retains its source lists/JSON schema with shorter wording and
 512tokens; malformed structured fragments degrade. See the bounded-runtime-prose
 decision and PUBLIC_SESSION_VERIFICATION.md; new live acceptance remains pending.
+
+Actual release11beed1 passed mainCI44992947098/deploy44993176097. The
+fresh public lifecycle case74c792ce-510c-4c60-addb-a7f441435246 persisted/replayed/
+closed/printed correctly but compact model prose still timed out; live success
+is not established. Hosted browser44993544541 verified this populated own-case
+workspace, exact reload, closure guard and one-click PDF along with real auth,
+phone geometry and research parity. PDF visual review found edge-clipped text
+at a zero-margin page boundary. Report print CSS now requests A4/16mm margins,
+keeps fitting evidence items together and sets paragraph widows/orphans; browser
+export honors CSS page size. The correction requires fresh deployed PDF review.
+See docs/work/usman/PUBLIC_SESSION_VERIFICATION.md and phase28 raw artifacts.

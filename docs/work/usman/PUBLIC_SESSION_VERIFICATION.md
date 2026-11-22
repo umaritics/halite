@@ -68,3 +68,35 @@ Ownership follows the recorded accepted vertical handoff
 `DEC-20261120-vertical-ownership.md` and CONTRACTS§2: Usman owns the Copilot/diagnose
 route, adapter and investigation package. No retrieval weights, maintenance
 ingestion, auth or shared app-shell behavior is changed by this fix.
+
+## Runtime release — verified source and merge
+
+PR55 source `b9bad632c25f3d26dac356489904a3b02100432c` passed
+CI44992570766: 549 backend tests, zero failures/errors/skips,
+5,629/6,815 measured lines (82.60%); frontend/build and disposable real-graph
+full-stack/browser checks also passed. The first failed attempt is retained.
+Ordinary exact-head merge produced `11beed1f2b050057942ba31321ce7f2e7b0bf80f`
+at 2026-11-22T06:15:57Z. Raw receipts and XML are retained under
+`evidence/phase28-bounded-runtime-release/`. Main CI44992947098, deployment
+and real post-release model/browser results are separate pending gates.
+
+Merged-main CI44992947098 and deployment44993176097 both passed. Public
+health independently confirmed exact SHA11beed1f2b050057942ba31321ce7f2e7b0bf80f,
+live Neo4j/model mode and2,079records. A fresh labelled lifecycle/model probe
+is now being measured separately; source health is not a successful response.
+
+## Actual post-release result
+
+Fresh case74c792ce-510c-4c60-addb-a7f441435246 on11beed1 again
+verified lifecycle/replay/closure409/report200, with unchanged corpus and logout.
+The192-token/2,042-byte prose request still timed out; total turn154.35seconds.
+`live_prose_verified=false`, overall probe failed. This disproves sufficiency
+of prompt reduction on the current service. Observer44993459031 found199.87%
+CPU of the2CPU cap,3.383GiB/4GiB, no OOM/restart. Its strict parser covers only
+/api/chat, so absence of new completions cannot describe /v1/chat/completions.
+
+Hosted browser44993544541 passed with require_saved_case=true: selected this
+exact case, exact turn replay after real reload/refresh, closed read-only guard,
+one-click authenticated print/PDF,390px layout, chart parity, both themes and
+logout. The recorded model status remains unavailable. Seven screenshots and
+PDF are retained in phase28/public-browser; visual PDF review is separate.

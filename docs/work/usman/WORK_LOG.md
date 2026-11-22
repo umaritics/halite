@@ -1287,3 +1287,24 @@ truncated prose reaches the new guard. The existing regression test is unchanged
 All other548backend cases passed, including new source-boundary, malformed-JSON,
 classifier-format and structured-answer provenance checks. New exact-head CI is
 required; no merge, deployment or successful live model fix is claimed yet.
+
+PR55 corrected source b9bad63 passed CI44992570766:549 backend tests,
+zero failures/errors/skips,5629/6815=82.60% measured coverage; frontend/build
+and real-graph/full-stack/browser passed. Exact-head ordinary merge authorized
+by the user produced11beed1f2b050057942ba31321ce7f2e7b0bf80f at06:15:57UTC.
+Retained raw receipts/XML in phase28-bounded-runtime-release. Main CI, actual
+deployment and post-release live-model/closed-case browser checks remain pending.
+
+Main CI44992947098/deploy44993176097 passed, public exact11beed1/2079.
+Actual fresh session74c792ce-510c-4c60-addb-a7f441435246 verified lifecycle
+but prose again timed out after154.35s total; compact prompt was2042bytes/192tokens.
+Never mark live prose fixed. Hosted browser44993544541 passed real saved-case
+replay/closed guard/phone layout/one-click print plus public read checks; model
+unavailable is honestly rendered. Raw API/model/browser artifacts retained.
+
+Visual review of all seven hosted screenshots passed. All three actual PDF
+pages inspected: zero-margin page boundary clips the top of a narrative line.
+Prepared own report CSS correction:A4/16mm margins, fitting evidence entries
+together, widow/orphan control; hosted export honors CSS page size. Original
+PDF retained; new deployed export/review required. No claim of print visual
+acceptance before correction. Model transport investigation remains open.

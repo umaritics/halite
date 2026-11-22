@@ -1,0 +1,31 @@
+{
+  "schema": "halite-public-session-v1",
+  "state": "failed",
+  "started_at": "2026-11-22T06:20:39.797234+00:00",
+  "stage": "live-prose-acceptance",
+  "corpus_writes": false,
+  "admin_or_other_account_writes": false,
+  "synthetic_case": true,
+  "outcome_part_recorded": false,
+  "checks": {
+    "exact_response_and_snapshot_replay": true,
+    "closed_exact_replay_no_training_part_label": true,
+    "closed_write_rejected_409": true,
+    "printable_report": true,
+    "deployed_source_and_corpus_unchanged": true
+  },
+  "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+  "asset_tail": "813SK",
+  "session_id": "74c792ce-510c-4c60-addb-a7f441435246",
+  "turn_wall_seconds": 154.34513850900112,
+  "llm_status": "unavailable",
+  "live_prose_verified": false,
+  "lifecycle_verified": true,
+  "failure": {
+    "stage": "live-prose-acceptance",
+    "type": "AssertionError"
+  },
+  "logout": "confirmed",
+  "finished_at": "2026-11-22T06:23:27.160445+00:00",
+  "client_sha256": "ff2e6819b051f36d75bf4c8670221b7b230c93a0c45badfdf71103aa42491415"
+}

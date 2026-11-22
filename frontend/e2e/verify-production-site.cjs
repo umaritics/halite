@@ -187,7 +187,7 @@ async function main() {
       assert.ok((await popup.textContent('body')).includes(snapshot.outcome_note));
       await popup.setViewportSize({ width: 794, height: 1123 });
       assert.equal(await popup.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
-      await popup.pdf({ path: path.join(directory, 'closed-investigation-report.pdf'), format: 'A4', printBackground: true });
+      await popup.pdf({ path: path.join(directory, 'closed-investigation-report.pdf'), format: 'A4', preferCSSPageSize: true, printBackground: true });
       await popup.close();
       proof.checks.push({ name: 'saved-closed-case-reload-and-one-click-print', session_id: labelledCase.id,
         turns: snapshot.turns.length, exact_replay: true, llm_status: snapshot.turns[0].response.llm_status,
