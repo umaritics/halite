@@ -1143,3 +1143,13 @@ to change or modify something”. Recorded as student-reported no comments/no
 requested modifications, not a panel transcript, signature or supervisor approval.
 Updated Form10 provenance/MID-001 and acceptance status. No corrective panel
 action is invented; internally identified engineering actions remain separate.
+
+Production account access (2026-11-22): Usman explicitly authorized the dedicated
+agent account and supplied a second candidate. Tried the newer candidate once
+(401), then the earlier candidate (200). Authenticated profile and saved-session
+listing both returned 200; explicitly logged out (200). No passwords/tokens in
+project files or reports. Recorded sanitized observations in
+PRODUCTION_ACCOUNT_VERIFICATION.md. This resolves account availability, not the
+pending signed-in browser acceptance. Actual staging model run 44984568357 remains
+in progress; keep its deployed source pinned and do not merge this proof branch
+until that measurement terminates.
