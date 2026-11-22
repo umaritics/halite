@@ -122,3 +122,11 @@ The actual frozen evaluation is verified on source 5a5060b / run 44906082558.
 The one-shot label has been removed. Ordinary backend CI now runs the saved-case
 verifier on committed held_out_2025_v1 results after policy preflight; this
 replays saved evidence only, without source downloads/fits/sweeps.
+
+The public browser workflow also accepts `require_saved_case=true`. That read-only
+mode requires an existing labelled closed session owned by the dedicated account,
+checks exact deep-link reload and hidden write controls, then exercises the real
+one-click authenticated report popup and exports an A4 PDF. It creates no case
+and invokes no model. Actual API lifecycle and live-prose checks are separate in
+`scripts/verify_public_investigation.py`; run those deliberately with typed
+VERIFY_SESSION rather than weakening disposable-test loopback guards.

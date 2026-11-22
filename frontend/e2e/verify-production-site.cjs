@@ -156,6 +156,44 @@ async function main() {
     await geometry('phone-history');
     await capture('history-phone');
     proof.checks.push({ name: 'real-history-rendered', item_count: saved.items.length });
+    const labelledCase = saved.items.find(item => item.title === 'Automated acceptance check - no maintenance finding'
+      && item.status === 'closed' && item.user_id === session.user.id && item.turn_count > 0);
+    if (process.env.HALITE_UI_REQUIRE_SAVED_CASE === 'true') assert.ok(labelledCase, 'Expected labelled own saved test case');
+    if (labelledCase) {
+      stage = 'saved-closed-workspace';
+      const detailPath = '/sessions/' + labelledCase.id;
+      const detail = responseFor(detailPath);
+      await page.locator(`a[href="/app/investigations/${encodeURIComponent(labelledCase.id)}"]`).first().click();
+      const snapshot = await checkResponse(detail);
+      assert.equal(snapshot.status, 'closed');
+      assert.ok(snapshot.turns.length && snapshot.turns[0].response.reply);
+      await page.getByRole('heading', { name: labelledCase.title, exact: true }).waitFor();
+      await page.getByText('Closed investigation — read only.', { exact: true }).waitFor();
+      assert.equal(await page.getByLabel('Symptom, observation or check result', { exact: true }).count(), 0);
+      await geometry('phone-closed-workspace');
+      await capture('closed-workspace-phone');
+      const refresh = responseFor('/auth/refresh', 'POST');
+      const reloadedCase = responseFor(detailPath);
+      await page.reload();
+      await checkResponse(refresh);
+      assert.deepEqual((await checkResponse(reloadedCase)).turns, snapshot.turns);
+      stage = 'one-click-authenticated-print';
+      const printResponse = responseFor(detailPath + '/report');
+      const popupPromise = page.waitForEvent('popup');
+      await page.getByRole('button', { name: 'Print investigation report', exact: true }).click();
+      const popup = await popupPromise;
+      assert.equal((await printResponse).status(), 200);
+      await popup.getByRole('heading', { name: 'Recorded outcome', exact: true }).waitFor();
+      assert.ok((await popup.textContent('body')).includes(snapshot.outcome_note));
+      await popup.setViewportSize({ width: 794, height: 1123 });
+      assert.equal(await popup.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      await popup.pdf({ path: path.join(directory, 'closed-investigation-report.pdf'), format: 'A4', printBackground: true });
+      await popup.close();
+      proof.checks.push({ name: 'saved-closed-case-reload-and-one-click-print', session_id: labelledCase.id,
+        turns: snapshot.turns.length, exact_replay: true, llm_status: snapshot.turns[0].response.llm_status,
+        pdf_sha256: sha256(fs.readFileSync(path.join(directory, 'closed-investigation-report.pdf'))) });
+      await page.getByRole('link', { name: 'Investigations', exact: true }).first().click();
+    }
     stage = 'quick-entry';
     await page.getByRole('link', { name: 'Quick diagnosis', exact: true }).click();
     await page.getByLabel('Symptom', { exact: true }).waitFor();

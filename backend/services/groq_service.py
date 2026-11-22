@@ -86,6 +86,8 @@ class GroqService:
         choices = body.get("choices") or []
         if not choices:
             raise RuntimeError("OpenAI-compatible LLM returned no choices")
+        if not json_mode and choices[0].get('finish_reason') == 'length':
+            raise RuntimeError('Model prose reached its token limit; incomplete content was withheld.')
         message = choices[0].get("message") or {}
         content = message.get("content")
         if content is None or not str(content).strip():
@@ -140,6 +142,8 @@ class GroqService:
                 **request_options,
             )
             content = response.choices[0].message.content
+            if not json_mode and getattr(response.choices[0], 'finish_reason', None) == 'length':
+                raise RuntimeError('Model prose reached its token limit; incomplete content was withheld.')
             if content is None or not str(content).strip():
                 finish_reason = getattr(response.choices[0], "finish_reason", "unknown")
                 raise RuntimeError(

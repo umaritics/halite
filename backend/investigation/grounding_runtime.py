@@ -49,7 +49,12 @@ def annotate(text,evidence,settings=None,*,structured_answer=False,configuration
 
 
 def annotate_response(response,settings=None,*,structured_answer=False,configuration=_UNSET):
-    response['grounding']=annotate(response.get('reply') or '',response['evidence'],settings,structured_answer=structured_answer,configuration=configuration)
+    evidence = response['evidence']
+    context = response.get('prose_context')
+    if context and context.get('accepted_as_reply'):
+        allowed = set(context['evidence_record_ids'])
+        evidence = [record for record in evidence if record['record_id'] in allowed]
+    response['grounding']=annotate(response.get('reply') or '',evidence,settings,structured_answer=structured_answer,configuration=configuration)
     return response
 
 

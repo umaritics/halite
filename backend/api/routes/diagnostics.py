@@ -35,6 +35,7 @@ from services.citation_validation import validate_citations
 from investigation.grounding_runtime import annotate_diagnose, load_configuration
 from investigation.beliefs import score_beliefs
 from investigation.policy import decide
+from investigation.prose import build_reply_prompt, MAX_REPLY_TOKENS
 from investigation.ranker_port import MID_VERSION
 from investigation.ranker_port import (
     build_diagnostic_context,
@@ -173,12 +174,13 @@ def _build_prompt(context: dict, ranked: list[dict]) -> str:
         f"CONTEXT: Answered from {n_asset} records on this asset and "
         f"{n_fleet} fleet-wide matches across {n_assets} assets.\n\n"
         f"Instructions:\n"
-        f"1. Explain in plain language WHY each component is ranked there, "
+        f"1. Explain WHY each component is ranked there in one short clause, "
         f"citing ONLY record IDs from the lists above.\n"
+        f"Keep the entire explanation at most 60 words; do not invent causes or procedures.\n"
         f"2. Highlight any fleet cases that provide rare prior evidence.\n"
         f"3. Mark clearly any superseded records — do not recommend acting on them.\n"
         f"4. Do NOT invent record IDs. Use ONLY the IDs provided above.\n"
-        f"5. Respond in JSON: "
+        f"5. Return at most two rare_cases and two short warnings. Respond in JSON: "
         f'{{"explanation": "...", "rare_cases": ["record_id", ...], '
         f'"warnings": ["..."]}}'
     )
@@ -420,22 +422,25 @@ def diagnose(
                 "Respond ONLY with valid JSON as instructed. "
                 "Never invent record IDs."
             ),
-            max_tokens=2048,
+            max_tokens=512,
             json_mode=True,
         )
     except RuntimeError as exc:
         return degraded(str(exc))
 
     # 6. Parse LLM JSON
+    cleaned = ''
     try:
         # Strip markdown fences if present
         cleaned = re.sub(r"^```[a-z]*\n?", "", raw_llm.strip(), flags=re.MULTILINE)
         cleaned = re.sub(r"```$", "", cleaned.strip())
         llm_json = json.loads(cleaned, strict=False)
-        if not isinstance(llm_json, dict):
-            raise ValueError("Model response was not a JSON object")
     except Exception:
+        if cleaned.lstrip().startswith('{'):
+            return degraded('The model returned malformed structured content; no partial JSON explanation was emitted.')
         llm_json = {"explanation": raw_llm, "rare_cases": [], "warnings": []}
+    if not isinstance(llm_json, dict):
+        return degraded('The model returned a non-object structured explanation; no substitute fields were invented.')
 
     # 7. Citation validation — mandatory
     explanation_text = llm_json.get("explanation", raw_llm)
@@ -583,56 +588,30 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
 
     reply = None
     citation_result = {"valid": [], "invalid": [], "flagged_text": ""}
+    prose_context = None
     if write_reply and llm_status != "unavailable":
         if not evidence:
             reply = "No relevant service history was found for the accumulated case."
             llm_status = "not_needed"
         else:
             report_mode = bool(selected_records)
-            evidence_payload = [
-                {
-                    "record_id": item["record_id"],
-                    "asset_id": item["asset_id"],
-                    "occurred_at": item["occurred_at"],
-                    "part_name": item["part_name"],
-                    "status": item["status"],
-                    "is_superseded": item["is_superseded"],
-                    "text": item["text"][:700],
-                }
-                for item in evidence
-            ]
-            prompt = (
-                "Write the next diagnostic-copilot reply using ONLY EVIDENCE below. "
-                "Cite record IDs exactly. Do not invent procedures, root causes, or facts. "
-                "Superseded records are historical context only: label them and NEVER recommend acting on them. "
-                "Ask at most ONE clarifying question, only when key information is missing. "
-                "Describe ranking changes from RANKING_DELTA. "
-                + (
-                    "This is a report-help request. Use headings 'Records state' and 'Interpretation'. "
-                    "Say explicitly when root cause or another requested fact is not in the data. "
-                    if report_mode else ""
-                )
-                + f"\nTECHNICIAN_MESSAGE: {req.message}"
-                + f"\nCASE_STATE: {json.dumps(case_state, ensure_ascii=False)}"
-                + f"\nRANKED_CHECKS: {json.dumps(ranked[:10], ensure_ascii=False)}"
-                + f"\nRANKING_DELTA: {json.dumps(delta, ensure_ascii=False)}"
-                + f"\nEVIDENCE: {json.dumps(evidence_payload, ensure_ascii=False)}"
-            )
             try:
+                prompt, prose_context = build_reply_prompt(message=req.message, ranked=ranked,
+                    delta=delta, evidence=evidence, report_mode=report_mode)
                 raw_reply = groq_service.chat(
                     [{"role": "user", "content": prompt}],
                     system_prompt=(
                         "You are an evidence-grounded aircraft maintenance assistant. "
                         "Never present a superseded record as a recommendation."
                     ),
-                    max_tokens=2400,
+                    max_tokens=MAX_REPLY_TOKENS,
                 )
                 if raw_reply is None or not str(raw_reply).strip():
                     raise RuntimeError("The language model returned empty content.")
                 raw_reply = _limit_to_one_question(str(raw_reply).strip())
                 citation_result = validate_citations(raw_reply, graph_repo)
 
-                allowed_ids = {item["record_id"] for item in evidence}
+                allowed_ids = set(prose_context['evidence_record_ids'])
                 out_of_context = [
                     rid for rid in citation_result["valid"] if rid not in allowed_ids
                 ]
@@ -648,6 +627,9 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
                         flagged = flagged.replace(record_id, f"[UNVERIFIED:{record_id}]")
                     citation_result["flagged_text"] = flagged
                 reply = citation_result["flagged_text"]
+                prose_context['accepted_as_reply'] = True
+                if prose_context['excerpted_record_ids'] or len(prose_context['evidence_record_ids']) < len(evidence):
+                    warnings.append(f"Model phrasing uses {len(prose_context['evidence_record_ids'])} of {len(evidence)} saved evidence records as excerpts; inspect saved evidence for complete narratives.")
             except Exception as exc:
                 logger.warning("Copilot reply unavailable: %s", exc)
                 warnings.append(f"Language model unavailable: {exc}")
@@ -668,6 +650,7 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
             "all_valid": len(citation_result["invalid"]) == 0,
         },
         "llm_status": llm_status,
+        "prose_context": prose_context,
         "warnings": _dedupe_strings(warnings),
         "beliefs": beliefs,
         **decide(beliefs),

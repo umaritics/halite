@@ -149,3 +149,22 @@ flowchart LR
   Diagnose[Existing diagnose output] --> Audit[Sentence audit against exact prompt sources]
   Audit --> UI[Original prose plus badges and saved source text]
 ```
+
+## Bounded runtime phrasing
+
+```mermaid
+flowchart LR
+  Context[Full deterministic ranking / saved evidence] --> Prose[investigation/prose.py]
+  Prose --> Budget[2048 UTF8 bytes / 192 output tokens / three excerpts]
+  Budget --> Model[Existing provider and resource limits]
+  Model --> Check[Reject provider-marked truncated prose]
+  Check --> IDs[Validate actual model-supplied IDs]
+  IDs --> Audit[Sentence audit with same source boundary]
+  Context --> Preserve[Complete ranking / case state / saved evidence unchanged]
+  Check --> Fallback[Explicit fallback on provider failure]
+```
+
+Quick diagnosis keeps its source/JSON contract but requests at most60words and
+512tokens; malformed structured fragments are withheld. Complete legacy plain
+prose remains compatible. Runtime prompt/cache versions change; published frozen
+question/abstention/model-comparison methods and generation budgets do not.

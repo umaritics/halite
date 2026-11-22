@@ -1,0 +1,5 @@
+{
+  "exit_code": 0,
+  "output": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nOK\n",
+  "note": "Five pure-function tests only; hosted API/provider/full-stack checks and new live run remain pending."
+}
