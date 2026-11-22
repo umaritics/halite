@@ -90,3 +90,31 @@ def test_copilot_fact_extraction_uses_structured_local_output(local_provider):
     assert warnings == []
     assert all(value == [] for value in additions.values())
     assert requests[0]["response_format"] == {"type": "json_object"}
+
+
+@pytest.mark.parametrize('json_mode', [False, True])
+def test_local_token_cutoff_rejects_prose_without_changing_json_extraction(monkeypatch, json_mode):
+    original = httpx.Client
+    def client(**kwargs):
+        return original(transport=httpx.MockTransport(lambda request: httpx.Response(200, json={
+            'choices': [{'message': {'content': 'unfinished'}, 'finish_reason': 'length'}]})), **kwargs)
+    monkeypatch.setattr(httpx, 'Client', client)
+    service = GroqService('synthetic', provider='openai_compatible', openai_compat_base_url='http://model.test/v1')
+    if json_mode:
+        assert service.chat([], json_mode=True) == 'unfinished'
+    else:
+        with pytest.raises(RuntimeError, match='incomplete content'):
+            service.chat([])
+
+
+@pytest.mark.parametrize('json_mode', [False, True])
+def test_groq_token_cutoff_rejects_prose_without_changing_json_extraction(json_mode):
+    response = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content='unfinished'), finish_reason='length')], usage=None)
+    service = GroqService('', demo_mode=True)
+    service.demo_mode = False
+    service.client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=lambda **kwargs: response)))
+    if json_mode:
+        assert service.chat([], json_mode=True) == 'unfinished'
+    else:
+        with pytest.raises(RuntimeError, match='incomplete content'):
+            service.chat([])

@@ -123,3 +123,11 @@ Neo4j/PostgreSQL/Chromium flows. All 150 real packet prompts pass full-source
 preflight (maximum 4,577 bytes). Tests are synthetic protocol verification, not
 actual judge accuracy. PR #51was merged under user authorization; no independent
 owner/student acceptance is inferred. See GROUNDING_JUDGE_VERIFICATION.md.
+
+Runtime prose may use a prioritized excerpt subset while the response preserves
+all saved sources. When `prose_context.accepted_as_reply` is true, sentence audits
+use exactly its supplied record IDs. Model citations outside that set are flagged
+even if they exist among the complete saved evidence. Failed model attempts and
+deterministic structured answers do not inherit that model-only boundary. Their
+full saved source text remains the audit basis. This changes no frozen experiment
+method or accepted support threshold; default valid citations remain unrated.

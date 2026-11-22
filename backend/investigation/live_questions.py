@@ -16,9 +16,10 @@ from investigation.beliefs import entropy, load_parameters, score_beliefs
 from investigation.experiments.temporal_questions import known_model
 from investigation.policy import PolicyParameters, decide
 from investigation.questions import answer_question, build_likelihoods, select_question
+from investigation.prose import build_reply_prompt, MAX_REPLY_TOKENS
 
 ROOT = Path(__file__).parent
-EXPLANATION_VERSION = 'managed-session-v1'
+EXPLANATION_VERSION = 'managed-session-v2-compact-prose'
 
 
 def visible_likelihoods(repo, names, schema, *, asset_id, message, now):
@@ -170,20 +171,18 @@ class QuestionController:
         response['explanation_version'] = EXPLANATION_VERSION
         if response['llm_status'] != 'unavailable' and response['evidence']:
             try:
-                payload = {'decision':response['decision'], 'decision_reason':response['decision_reason'],
-                           'hypotheses':response['beliefs']['hypotheses'], 'other':response['beliefs']['other'],
-                           'evidence':response['evidence']}
-                prompt = ('Explain ONLY the saved historical evidence below. Cite exact report IDs. '
-                          'The server has already selected the decision and any multiple-choice question. '
-                          'Do not ask questions, choose a decision, propose tests/procedures or approve a repair. '
-                          'Superseded records are history only. Relative support is not a fault probability.\n'
-                          + json.dumps(payload, ensure_ascii=False))
-                reply = groq_service.chat([{'role':'user','content':prompt}], max_tokens=1800,
+                prompt, response['prose_context'] = build_reply_prompt(message=message,
+                    ranked=response['ranked_checks'], delta=response['ranking_delta'],
+                    evidence=response['evidence'], decision=response)
+                reply = groq_service.chat([{'role':'user','content':prompt}], max_tokens=MAX_REPLY_TOKENS,
                                           system_prompt='Write evidence-grounded prose. Never invent a fault cause or question.')
                 if not reply or not str(reply).strip() or re.search(r'[?？؟]', str(reply)):
                     raise ValueError('Empty prose or an unrequested model-written question.')
                 response['reply'] = str(reply).strip()
                 response['explanation_source'] = 'model'
+                response['prose_context']['accepted_as_reply'] = True
+                if response['prose_context']['excerpted_record_ids'] or len(response['prose_context']['evidence_record_ids']) < len(response['evidence']):
+                    response['warnings'].append(f"Model phrasing uses {len(response['prose_context']['evidence_record_ids'])} of {len(response['evidence'])} saved evidence records as excerpts; inspect saved evidence for complete narratives.")
             except Exception as exc:
                 response['warnings'].append(f'Model explanation rejected/unavailable: {exc}')
                 response['llm_status'] = 'unavailable'
@@ -193,7 +192,11 @@ class QuestionController:
             response['reply'] = _template(response, reason=reason)
             response['fallback_explanation'] = response['reply']
             response['explanation_source'] = 'template'
-        response['reply'], response['citation_validation'] = _saved_citations(response['reply'], response['evidence'])
+        supplied = response['evidence']
+        if (response.get('prose_context') or {}).get('accepted_as_reply'):
+            ids = set(response['prose_context']['evidence_record_ids'])
+            supplied = [record for record in supplied if record['record_id'] in ids]
+        response['reply'], response['citation_validation'] = _saved_citations(response['reply'], supplied)
         return response
 
     def answer(self, previous_response, answer):
@@ -203,6 +206,7 @@ class QuestionController:
         if answer.get('question_id') != question.get('id') or answer.get('attribute') != question['attribute']:
             raise HTTPException(409, 'The question changed. Reload the saved investigation before answering.')
         response = deepcopy(previous_response)
+        response.pop('prose_context', None)
         state = response['case_state']['question_state']
         if state['version'] != 'saved-questions-v1' or state['active_question'] != question:
             raise HTTPException(409, 'Saved question state is inconsistent; no answer was applied.')

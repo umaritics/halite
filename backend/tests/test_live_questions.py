@@ -324,6 +324,11 @@ def test_healthy_model_prose_uses_saved_evidence_allow_list(configured):
     result=response.json()
     assert result['explanation_source'] == 'model' and result['llm_status'] == 'available'
     assert result['citation_validation'] == {'valid_ids':[allowed],'invalid_ids':[],'all_valid':True}
+    assert result['prose_context']['accepted_as_reply'] is True
+    answered = client.post(f"/api/sessions/{row['id']}/turns", json=answer_payload(result), headers=headers['owner'])
+    assert answered.status_code == 200, answered.text
+    assert 'prose_context' not in answered.json()
+    assert answered.json()['llm_status'] == 'not_needed'
     app.state.groq_service=FakeCopilotLlm(reply='Report SWIA2024010100001 states a crack.')
     row=create(client,headers['owner'],asset)
     invalid=client.post(f"/api/sessions/{row['id']}/turns",json={'message':'pressure loss'},headers=headers['owner']).json()

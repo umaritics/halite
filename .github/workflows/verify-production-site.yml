@@ -7,6 +7,10 @@ on:
         description: 'Type VERIFY to check the real site using the dedicated test account (no inference or maintenance writes)'
         type: string
         required: true
+      require_saved_case:
+        description: 'Require an existing labelled own closed session and verify replay plus one-click printing'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -41,6 +45,7 @@ jobs:
       - name: Verify real login, research, home, history, refresh and logout
         env:
           HALITE_UI_CONFIRMATION: ${{ inputs.confirmation }}
+          HALITE_UI_REQUIRE_SAVED_CASE: ${{ inputs.require_saved_case }}
           HALITE_PLAYWRIGHT_MODULE: ${{ runner.temp }}/halite-public-browser/node_modules/playwright
           HALITE_UI_EVIDENCE_DIR: ${{ runner.temp }}/halite-public-proof
           HALITE_UI_TEST_EMAIL: ${{ secrets.HALITE_UI_TEST_EMAIL }}

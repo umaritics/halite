@@ -1225,3 +1225,65 @@ error rejection and retain final safe metadata; failed runs still fail acceptanc
 The previous merge hold is released because its specific run is terminal. Merge
 only after new exact-head CI passes; verify the real public site before starting
 any next source-pinned measurement. No silent case retry or deadline pooling.
+
+Sourcec330480 passed full CI44988236394:534backend tests, zero failures/errors/
+skips,5543/6742=82.22% measured core coverage; frontend/builds and actual disposable
+Neo4j/PostgreSQL/API/Chromium proof all passed. Ordinary exact-head merge of PR54
+produced db574acadd4caf5cf60be45559708c82319711a6 at05:14:18UTC. No admin bypass or
+branch deletion. Merged-main CI44988523496 is live; wait for its success and normal
+CD before claiming deployment or dispatching the public browser. The public-site
+workflow is registered active and encrypted dedicated-account secrets already
+exist. New proof branch codex/usman-public-verification starts from merged main;
+root checkout's unrelated work remains untouched. Source/merge/XML receipts are
+retained under phase26-public-release. No new source-pinned model run has started.
+
+Merged-main CI44988523496 and normal deploy44988762837 succeeded; independent
+publichealth confirmed exactdb574ac/Neo4j/livephi4/PostgreSQL/2079records. Dispatched
+manualVERIFY under existing dedicated-account authorization; actual browser run
+44988921561passed05:20:32UTC. Allsix screenshots visually reviewed and hash-checked;
+real login/deep-link/research source parity/home/history/refresh/logout and326px
+phone main area verified. Zero pageerrors/prohibitedwrites. No password/token
+artifacts. Source, main, deployment, health and browser evidence retained under
+phase26-public-release and PUBLIC_BROWSER_VERIFICATION.md. The dedicated account
+had zero investigations, so this proves empty/read flow, not production creation/
+turn/closure/print. Next verify one clearly labelled account-owned test lifecycle
+and actual model reply before starting another source-pinned reference run.
+
+Phase27 actual lifecycle probe completed against db574ac using the dedicated
+authorized account and one labelled synthetic session cbc8d780-9af2-4144-8a21-
+27cf8209c063. Create201, one turn200, independent exact response/belief replay,
+closure, closed-write409 and reportHTML200 all passed. No outcome part or real
+finding was recorded; the named-outcome training filter excludes this test case.
+Corpus/source remained unchanged and logout was confirmed. The overall live-
+prose gate intentionally failed: provider timeout, llm_status unavailable, marked
+fallback, 158.71seconds. Separate actual quick baseline also timed out, returning
+ranking/fallback after131.05seconds. Raw attempts remain under phase27; neither
+is called a live model success. No local model or browser was launched.
+
+Prepared the bounded runtime fix under the accepted vertical ownership handoff
+DEC-20261120/CONTRACTS: Usman owns the Copilot route and model adapter. The old
+actual prompt reconstructed to15,259bytes/2,400output tokens. The final pure
+builder uses at most2,048bytes/192tokens and three prioritized excerpts, preserving
+all full response evidence and deterministic ranking/case state. It records and
+warns about actual supplied versus available IDs; citation and sentence checks
+use the true model boundary. Structured answers discard prior model provenance.
+A larger all20metadata prototype was unexecuted and is marked superseded; it used
+3,129bytes before any narrative, so it could not meet the intended small context.
+Quick JSON retains source lists/schema, shorter wording/512tokens and safe
+malformed-structure fallback; complete plain legacy prose is preserved. Token-
+cutoff prose is rejected in both providers; JSON classification is unchanged.
+Frozen methods/results/comparison generation remain untouched. Five pure local
+tests, AST checks, Node syntax and baseline replay passed without installs;
+hosted API/provider/coverage/full-stack and new live model outputs remain pending.
+The browser verifier additionally prepares explicit saved-case read/reload/print
+mode with A4PDF output; no browser session/model mutations are added.
+
+PR55 source8c745a9 / CI44992153774 passed frontend and disposable full-stack
+checks. Backend ran549tests with one failure: the new cutoff guard changed the
+established empty-content diagnostic for a Groq response with both contentNone
+and finish_reason length. Retained raw JUnit/coverage and fixed validation order
+in both providers: empty content retains its original diagnostic; only nonempty
+truncated prose reaches the new guard. The existing regression test is unchanged.
+All other548backend cases passed, including new source-boundary, malformed-JSON,
+classifier-format and structured-answer provenance checks. New exact-head CI is
+required; no merge, deployment or successful live model fix is claimed yet.

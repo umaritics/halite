@@ -93,6 +93,8 @@ class GroqService:
             raise RuntimeError(
                 f"OpenAI-compatible LLM returned empty content (finish_reason={finish_reason})"
             )
+        if not json_mode and choices[0].get('finish_reason') == 'length':
+            raise RuntimeError('Model prose reached its token limit; incomplete content was withheld.')
         usage_raw = body.get("usage") or {}
         usage = {
             "prompt_tokens": usage_raw.get("prompt_tokens"),
@@ -146,6 +148,8 @@ class GroqService:
                     "Groq returned an empty model response "
                     f"(model={self.model}, finish_reason={finish_reason})."
                 )
+            if not json_mode and getattr(response.choices[0], 'finish_reason', None) == 'length':
+                raise RuntimeError('Model prose reached its token limit; incomplete content was withheld.')
             response_usage = getattr(response, "usage", None)
             usage = {
                 "prompt_tokens": getattr(response_usage, "prompt_tokens", None),

@@ -1,0 +1,11 @@
+{
+  "exact_open_closed_response_replay": true,
+  "closed_without_outcome_part": true,
+  "client_source_hash_matches": true,
+  "lifecycle_verified": true,
+  "live_prose_verified": false,
+  "baseline_prompt_bytes": 15259,
+  "prepared_prompt_bytes": 2042,
+  "prepared_model_sources": 3,
+  "complete_saved_sources": 20
+}

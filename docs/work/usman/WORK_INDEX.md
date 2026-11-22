@@ -25,6 +25,8 @@ does not imply independent teammate approval.
 - [OPERATING_POINT_REVIEW.md](OPERATING_POINT_REVIEW.md)
 - [POLICY_SELECTION_VERIFICATION.md](POLICY_SELECTION_VERIFICATION.md)
 - [PRODUCTION_ACCOUNT_VERIFICATION.md](PRODUCTION_ACCOUNT_VERIFICATION.md)
+- [PUBLIC_BROWSER_VERIFICATION.md](PUBLIC_BROWSER_VERIFICATION.md)
+- [PUBLIC_SESSION_VERIFICATION.md](PUBLIC_SESSION_VERIFICATION.md)
 - [RESEARCH_PANEL_VERIFICATION.md](RESEARCH_PANEL_VERIFICATION.md)
 - [RESEARCH_TOOL_VERIFICATION.md](RESEARCH_TOOL_VERIFICATION.md)
 - [SOURCE_HIGHLIGHTING_VERIFICATION.md](SOURCE_HIGHLIGHTING_VERIFICATION.md)
@@ -75,3 +77,11 @@ does not imply independent teammate approval.
 - [Private staging-reference protocol](STAGING_REFERENCE_PROTOCOL.md)
 - [Actual 180-second reference outcome](STAGING_REFERENCE_RESULTS.md)
 - `evidence/phase22-staging-reference/`: hosted instrument proof and actual reference evidence when executed.
+
+- `evidence/phase23-report-figures/`: source-pinned charts, visual checks and retained CI reports.
+- `evidence/phase24-editable-report/`: editable Word/PDF source hashes and all eleven page renders.
+- `evidence/phase25-reference-deadline/`: original30attempts/six deadline failures, replay and safe after-job observations.
+- `evidence/phase26-public-release/`: merged source/main/deployment proof and real signed-in browser screenshots.
+- `evidence/phase27-public-session/`: actual own-session lifecycle and failed live-model baselines; prepared bounded-input checks.
+- [Editable contribution chapter](../../fyp1-final/USMAN_INVESTIGATION_CHAPTER.docx)
+- [Matching chapter PDF](../../fyp1-final/USMAN_INVESTIGATION_CHAPTER.pdf)

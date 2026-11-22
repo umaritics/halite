@@ -12,7 +12,8 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
-| [DEC-20261122-public-site-acceptance](DEC-20261122-public-site-acceptance.md) | Hosted signed-in public reads with dedicated encrypted account and mutation guard | instrument prepared / browser execution pending | Usman |
+| [DEC-20261122-bounded-runtime-prose](DEC-20261122-bounded-runtime-prose.md) | Bound CPU explanation requests while preserving complete saved evidence | prepared / hosted and live acceptance pending | Usman |
+| [DEC-20261122-public-site-acceptance](DEC-20261122-public-site-acceptance.md) | Hosted public reads plus separately labelled own-session lifecycle | public reads and API lifecycle verified / live prose timed out | Usman |
 | [DEC-20261122-private-staging-reference](DEC-20261122-private-staging-reference.md) | Private hosted phi4-mini reference and no-evidence measurement | six deadline failures retained / separate longer run prepared | Usman |
 | [DEC-20261122-offline-grounding-judge](DEC-20261122-offline-grounding-judge.md) | Exact-source offline L4 instrument and independent human comparison | implemented / hosted verified; measurements pending | Usman |
 | [DEC-20261121-final-research-publication](DEC-20261121-final-research-publication.md) | Frozen test display and exact accepted joint-selection marker | implemented / verified; owner review pending | Usman, Shahmeer |

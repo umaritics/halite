@@ -148,3 +148,11 @@ selection), so held-out figures are not mislabelled. This small shared follow-up
 is prepared for Shahmeer review in CHART_FOUNDATION_REVIEW.md. Phase18 verification passed on2af4d97/run44909092445:499backend/283frontend
 tests,81.83%coverage, actual API/Compose/browser and manually reviewed screenshots.
 See docs/work/usman/FINAL_RESEARCH_PUBLICATION_VERIFICATION.md.
+
+Current integration is merged/deployed through PR48/54; independent owner review
+remains separate. Actual signed-in public reads passed44988921561, with both phone
+themes and326px main content. The extended public verifier can require a labelled
+own closed session and check read-only workspace reload plus one-click A4 report
+printing. That additional mode is prepared, not inferred from empty-history proof.
+Bounded runtime prose warns about its actual source subset; complete saved records
+remain inspectable. No threshold or policy activation is implied by model prose.

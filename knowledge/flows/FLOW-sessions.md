@@ -15,7 +15,9 @@ updated: 2026-11-20
    latest persisted case state. The model may extract facts/write prose; the
    existing deterministic ranker supplies hypotheses and evidence.
 4. On an outage, the session bridge supplies a ranking-derived template. The
-   measured policy/grounding packages are explicitly unconfigured at this stage.
+   default live policy is unconfigured; citation/sentence audits explicitly retain
+   unrated support until human calibration is accepted. Managed questions require
+   their own explicit runtime flag and compatible policy.
 5. A conditional session update reserves the next index only if the session is
    still open and unchanged. Turn, full response and snapshot commit atomically.
 6. GET detail replays saved responses without new inference. Lists and summary
@@ -55,7 +57,7 @@ flowchart TB
 - Missing relational store: 503, never a pretend browser-only persistence success.
 - Model unavailable: session turn still returns ranking/evidence/template.
 
-## Prepared frontend feature path
+## Integrated frontend feature path
 
 The investigation/home feature manifests provide history, workspace, quick
 diagnosis and dashboard routes. Their independent preview uses the real shared
@@ -63,12 +65,14 @@ AuthProvider/HTTP client and the same sessions API. History/resume/reload issue
 GETs only; new messages and closure wait for confirmed POST responses. Old turn
 narratives are rendered from saved responses. An uncertain write requires reload
 before another send; matching saved text clears an already-committed draft.
-The user has authorized a separately reviewed shell/auth integration. Until it is
-applied and verified, preview evidence is not production-route evidence.
+The user-authorized shell/auth integration landed through PR48. Current public
+read evidence is in PUBLIC_BROWSER_VERIFICATION.md; independent owner review
+remains separate. The original preview evidence by itself is not a production
+claim.
 
 ```mermaid
 flowchart LR
-  Preview[Independent preview / proposed production registry] --> Auth[Shared AuthProvider and JWT client]
+  Preview[Production registry / independent test preview] --> Auth[Shared AuthProvider and JWT client]
   Auth --> List[InvestigationsPage]
   List --> Workspace[InvestigationWorkspace]
   Workspace --> SessionAPI[Persisted sessions API]
@@ -83,7 +87,7 @@ flowchart LR
 
 ## Shared-shell integration review
 
-On `codex/usman-ui-integration`, App routes → discovered manifests → feature
+Originally prepared on `codex/usman-ui-integration` and now merged, App routes → discovered manifests → feature
 pages → shared JWT client → session API. Sidebar consumes manifest navigation.
 AuthContext clears unowned legacy keys on restoration/login/logout. Login/invite
 and app-index defaults go to home; Diagnostics redirects to history.
@@ -98,8 +102,10 @@ flowchart LR
   Auth[AuthContext login / restore / logout] --> Clear[Discard unowned browser keys]
 ```
 
-Main-shell browser verification covers redirects, refresh, logout and another
-account's direct saved-session URL. Owner review/merge/deploy are separate gates.
+Disposable main-shell browser verification covers redirects, refresh, logout and
+another account's direct saved-session URL. Actual public read verification also
+covers redirects/refresh/logout; it does not probe other people's production
+sessions. Integration is merged/deployed; owner cross-review remains separate.
 
 ## Belief snapshot extension
 
@@ -112,15 +118,38 @@ without recomputation. See [FLOW-decision-selection.md](FLOW-decision-selection.
 
 The opt-in [managed flow](FLOW-live-questions.md) uses a strict visible graph snapshot for observations and saved matrices for structured answers. Unique question IDs reject replaced questions even for the same attribute. Prior/posterior, answer history and the budget share the existing CAS transaction and exact replay boundary. The default bridge remains unconfigured.
 
-## Responsive shared shell (separate authorized review branch)
+## Integrated responsive shared shell
 
 The same App → registry → feature → JWT client → sessions API path now has a
-responsive shell proposal: below md, Sidebar becomes a 64px accessible icon rail;
+responsive shell: below md, Sidebar becomes a 64px accessible icon rail;
 at md and above it stays 256px. Main's flex item may shrink correctly. The
 question control remains reachable at phone width; keyboard navigation and the
 same confirmed logout/auth guard were verified in the built browser. There is no
-new route, service, permission or storage flow. Owner review/merge remain pending.
+new route, service, permission or storage flow. Integrated through PR48; independent
+owner review remains pending. Actual public390px main width326px is retained in
+phase26 evidence.
 
 Sentence auditing freezes configuration before inference and commits the full
 source/score/guard audit with the existing turn transaction. GET never recomputes
 historical audits. See [FLOW-grounding.md](FLOW-grounding.md).
+
+## Explicit dedicated-account public lifecycle probe
+
+```mermaid
+flowchart LR
+  Confirm[VERIFY_SESSION / exact source / fresh output] --> Login[Dedicated authorized account login]
+  Login --> Aircraft[Read existing aircraft only]
+  Aircraft --> Case[Create labelled own test session]
+  Case --> Turn[One turn / no automatic retry]
+  Turn --> Replay[New HTTP read / exact response and snapshot]
+  Replay --> Close[Close without outcome part / no actual finding]
+  Close --> Print[Authenticated report / closed-write409]
+  Print --> State[Confirm unchanged source and corpus]
+  State --> Logout[Explicit logout / secret-free proof]
+```
+
+This additional probe writes only its newly created dedicated-account session.
+It never ingests records, administers users, changes model settings or assigns a
+real finding. A successful fallback lifecycle is not accepted as live model prose;
+those gates remain separately recorded. Uncertain writes are retained for recovery,
+not automatically retried.

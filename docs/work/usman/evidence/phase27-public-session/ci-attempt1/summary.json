@@ -1,0 +1,22 @@
+{
+  "run_id": 44992153774,
+  "source": "8c745a96edbe8e7b9089f97ddd6dc063fce8207b",
+  "testsuites": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "1",
+      "skipped": "0",
+      "tests": "549",
+      "time": "114.340",
+      "timestamp": "2026-11-22T06:06:07.740154",
+      "hostname": "runnervm0hi8g"
+    }
+  ],
+  "coverage": {
+    "covered": "5627",
+    "valid": "6815"
+  },
+  "failure": "Empty Groq content marked length must retain the established empty-response diagnostic; new truncation guard ran first.",
+  "fix": "Keep empty-content validation first in both providers, then reject nonempty truncated prose. Original regression test remains unchanged."
+}
