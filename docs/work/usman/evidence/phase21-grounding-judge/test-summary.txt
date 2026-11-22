@@ -1,0 +1,3 @@
+Frontend tests and build (Node 20)	Run frontend tests	2026-11-22T03:53:45.1943674Z ^[[2m      Tests ^[[22m ^[[1m^[[32m283 passed^[[39m^[[22m^[[90m (283)^[[39m
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-22T03:56:04.4415492Z Required test coverage of 80% reached. Total coverage: 82.09%
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-22T03:56:04.4416280Z 515 passed, 4 warnings in 106.67s (0:01:46)

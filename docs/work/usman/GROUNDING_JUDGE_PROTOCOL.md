@@ -13,10 +13,10 @@ constructed-pair evaluation as that baseline.
 ## Measurement boundary
 
 - Explicit installed model name and digest, system/method/packet/prompt hashes,
-  temperature zero, seed1729, context8192 and prediction cap700 are saved.
-- All150 original claim/report pairs are judged serially without truncation,
+  temperature zero, seed 1729, context 8192 and prediction cap 700 are saved.
+- All 150 original claim/report pairs are judged serially without truncation,
   retries, model installation, automatic model choice or test-year access.
-  The longest actual prompt is4,577bytes; a6,000byte preflight cap leaves context
+  The longest actual prompt is 4,577 bytes; a 6,000 byte preflight cap leaves context
   headroom. Oversized packets fail before network access or output creation.
 - The model sees only the exact claim and single report text/part metadata.
   It cannot see constructed arms, lexical scores, split membership or human labels.
