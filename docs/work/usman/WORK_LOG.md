@@ -1036,3 +1036,34 @@ Current release proof branch is codex/usman-release-verification. Primary root
 checkout has pre-existing user changes on feat/copilot-ranking-updates; left
 all of them untouched. Connected Vercel account lacks Umar-team access; used
 GitHub deployment provenance and the public canonical site, keeping protection.
+
+
+Release-fix source2247d17 passed hosted44911995235: 500backend/283frontend,
+5264/6433=81.83%, real Compose/databases/Chromium, frozen preflight and retained
+result replay. Downloaded raw JUnit/coverage/preflight and job metadata. Ordinary
+exact-head merge PR49 produced29f4f59; main CI44912401813also passed. Corrected
+CD44912646403is running; record its terminal outcome separately. No auth/version
+check was weakened and no production research policy was activated.
+
+## Phase20 — report and defense preparation while reviews proceed
+
+User confirmed Usman and Muhammad Umar will complete the two independent reviews.
+Provided their separate blinded HTML files and independent export instructions;
+no labels or agreement are claimed. Created AI-assisted USMAN_FINAL_REPORT_DRAFT.md
+covering contribution/design, access/replay/grounding, protocol, actual selection
+and test results/intervals, retrieval errors, verification and prospective RQ4/RQ5.
+Created USMAN_ARCHITECTURE_AND_DEFENSE.md with runtime/experimental diagrams,
+practice questions, suggested presentation allocation and empty actual rehearsal
+record. These drafts do not replace genuine student review, model measurements,
+human labels, signatures or rehearsal. Updated panel engineering-action status,
+acceptance matrix and matching knowledge context. Corrected stale security-runbook
+410/re-enable descriptions to the actual unregistered404 retirement contract.
+
+
+Corrected CD44912646403SUCCEEDED. Independent public reads confirmed29f4f59
+on health/version, liveNeo4j/phi4-mini/PostgreSQL, maintenance-only default and
+2079records. Anonymous assets/sessions/experiments401; docs/webhook404. Retained
+public-backend-after.json and corrected-deploy.json. Workflow also verified the
+authenticated maintenance assets response; no production user-session/browser
+acceptance is inferred. Report main row cross-checked directly against committed
+157/140 test counts,7answers/5matches and source hashes under phase20-report.
