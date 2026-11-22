@@ -69,6 +69,7 @@ owner review pending.
 | Module | Primary files | Owner | Knowledge |
 | --- | --- | --- | --- |
 | Decision core and offline selection | `backend/investigation/{ranker_port,beliefs,policy}.py`, `investigation/experiments/` | Usman | `context/modules/investigation_decisions.md`, `flows/FLOW-decision-selection.md` |
+| Offline L4 sentence-judge instrument | `backend/investigation/experiments/grounding_judge.py` | Usman | `context/modules/investigation_grounding.md`, `flows/FLOW-grounding.md`; exact-source model/human comparison, no runtime activation |
 
 ## Question selection (Usman)
 
