@@ -1177,3 +1177,19 @@ missing the initial true candidate. Raw source rows, font/generator/PDF hashes,
 PNG proofs and checks retained under phase23-report-figures. Report links the PDF;
 source-crosscheck report hash updated. No fitting/model/simulation/bootstrap ran.
 Disk remains21GiB free; available RAM7.0GiB; swap effectively unused at this check.
+
+Phase24: converted the retained contribution chapter/references/figures into an
+editable eleven-page Word document and matching PDF, using bundled Python and
+the bundled soffice override only. No new packages, browser, model or experiment
+ran locally. Two native OMML equations rendered correctly; the numeric table
+matches source exactly; five bibliography entries remain separate; all three
+figure pages and every body page were reviewed. Corrected first-render inherited
+Title blue rule and collapsed bibliography, then rebuilt/reviewed every final
+page. Added page fields, image alt text and repeating table header. Accessibility
+audit:0high/0medium/0low. Raw final PNGs/source/output/structural proof retained
+under phase24-editable-report. Canonical chapter DOCX/PDF live in docs/fyp1-final.
+This prepares student review/team integration and does not claim student authorship,
+human labels, M4 results, supervisor approval or a completed defense. PR54 report
+revision ab1d8ea also passed full hosted CI44986542524. Actual model run44984568357
+was still authoritatively in_progress at04:54UTC; retain the source-pinned merge
+hold. Do not restart it because an observation request times out.
