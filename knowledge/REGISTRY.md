@@ -24,6 +24,7 @@ updated: 2026-11-16
 | App wiring / health / security | Usman + Umar | `backend/main.py`, `backend/config.py`, `backend/api/security.py`, `backend/api/router.py` | [modules/devops.md](context/modules/devops.md), [modules/remote_backend.md](context/modules/remote_backend.md) | FLOW-ci, FLOW-deploy |
 | Frontend maintenance UX | Shahmeer | `frontend/src/pages/*`, `frontend/src/components/*`, `frontend/src/utils/*`, `frontend/src/api/client.js`, `frontend/.env.development`, `vercel.json` | [modules/frontend.md](context/modules/frontend.md) | FLOW-diagnose, FLOW-conflict-review |
 | CI / Compose | Usman | `.github/workflows/ci.yml`, `docker-compose.yml` | modules/devops.md | [FLOW-ci.md](flows/FLOW-ci.md) |
+| Public signed-in acceptance | Usman | `.github/workflows/verify-production-site.yml`, `frontend/e2e/verify-production-site.cjs` | [modules/devops.md](context/modules/devops.md) | [FLOW-ci.md](flows/FLOW-ci.md) |
 | Shared staging deploy / ops | Umar + Usman | `.github/workflows/deploy-staging.yml`, `fetch-staging-logs.yml`, `docker-compose.vm.yml`, `backend/api/routes/ops.py`, `scripts/vm/run_analysis_backfill.sh`, `scripts/vm/setup_swap.sh`, `docs/local-llm-staging.md` | [modules/remote_backend.md](context/modules/remote_backend.md) | [FLOW-deploy.md](flows/FLOW-deploy.md) |
 | LLM adapter (Groq + openai-compatible / Ollama) | Usman + Umar | `backend/services/groq_service.py`, `backend/config.py` (`LLM_PROVIDER`, `OPENAI_COMPAT_*`), `docker-compose.vm.yml` (`halite-ollama`) | [modules/remote_backend.md](context/modules/remote_backend.md), `docs/local-llm-staging.md` | FLOW-conflict-review, FLOW-diagnose |
 | Domain registry | Shahmeer; user-authorized retirement review | `backend/domains/{base,maintenance,registry}.py` | [03_architecture.md](context/03_architecture.md) | — |
@@ -92,3 +93,7 @@ Source-word interaction (Usman): `backend/investigation/grounding.py::source_mat
 Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/workflows/ci.yml`, `docs/work/usman/verify_dependency_cleanup.py`, `backend/tests/test_settings_env_file.py`; [decision](decisions/DEC-20261121-dependency-cleanup.md), [CI context](context/modules/devops.md). Separate legacy retirement authorization/proposal: `docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md`.
 
 Private reference measurement (Usman): `backend/investigation/experiments/staging_reference.py` and `.github/workflows/staging-model-reference.yml`; model comparison context/flow and remote backend context cover private tunnel, resource and provenance boundaries.
+
+Read-only model progress (Usman infra): `scripts/vm/model_progress.py` via the
+optional target in `.github/workflows/fetch-staging-logs.yml`; remote backend
+context and deploy flow describe sanitized resource/request activity only.

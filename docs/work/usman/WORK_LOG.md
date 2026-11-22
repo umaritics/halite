@@ -1115,3 +1115,113 @@ or local inference. Safe metadata/journals/failures retained; token never artifa
 Added synthetic tests for guards, full orchestration, secret absence, token/tunnel
 cleanup, postflight drift and safe SSH quoting. Documentation/knowledge updated;
 actual hosted verification and real measurement remain separate gates.
+
+
+Phase22 instrument sourceeeb2b77 / hosted44984026697 passed all three jobs:
+531backend tests (zero failures/errors/skips),283frontend,5540/6739=82.21% core
+coverage, Ruff/builds, frozen preflight/replay and real database/browser flows.
+Python -S CLI help separately proved standard-library startup without installing
+anything. PR53ordinary exact-head merge produced326cd885. Merged-main CI
+44984283006is live; wait for terminal success and normal deployment before
+manual real-reference execution. Raw source verification reports retained under
+phase22-staging-reference. Do not merge a proof-only revision during the actual
+measurement because its pre/postflight intentionally pins the live source SHA.
+
+
+Main326cd885 passed CI44984283006 and CD44984494578. Dispatched the actual
+MEASURE operation under the standing completion/merge authorization: workflow
+44984568357, exact326cd885, initiallyqueued. This is a real research job, not a
+synthetic test. Poll the same handle until authoritative terminal state; do not
+restart merely because observation times out. No actual output or successful
+measurement is yet claimed. Proof branchcodex/usman-reference-results may be
+pushed for continuity but must not be merged during this pinned-source run.
+
+
+Usman clarified actual Mid-I feedback in this chat: “no feedback was given like
+no comments we explained our idea and they were on board no feedback was given
+to change or modify something”. Recorded as student-reported no comments/no
+requested modifications, not a panel transcript, signature or supervisor approval.
+Updated Form10 provenance/MID-001 and acceptance status. No corrective panel
+action is invented; internally identified engineering actions remain separate.
+
+Production account access (2026-11-22): Usman explicitly authorized the dedicated
+agent account and supplied a second candidate. Tried the newer candidate once
+(401), then the earlier candidate (200). Authenticated profile and saved-session
+listing both returned 200; explicitly logged out (200). No passwords/tokens in
+project files or reports. Recorded sanitized observations in
+PRODUCTION_ACCOUNT_VERIFICATION.md. This resolves account availability, not the
+pending signed-in browser acceptance. Actual staging model run 44984568357 remains
+in progress; keep its deployed source pinned and do not merge this proof branch
+until that measurement terminates.
+
+Prepared the dedicated public-site browser acceptance instrument and main-only
+manual workflow. Local Node syntax and whitespace checks passed; no local browser
+or model was started. Encrypted GitHub repository secrets HALITE_UI_TEST_EMAIL and
+HALITE_UI_TEST_PASSWORD were newly configured under the user's explicit dedicated
+account authorization; values were piped to GitHub without writing credential
+files. No pre-existing secret was overwritten. Real hosted browser execution
+remains pending the instrument's CI/merge/deployment after measurement 44984568357
+terminates. The guard permits only login/refresh/logout POSTs and records no
+tokens or response bodies. Knowledge/context/flow/registry/decision updated.
+
+PR54 source0b8f7cb passed hosted CI44986105585: 531 backend tests, zero
+failures/errors/skips,5540/6739=82.21% measured coverage; frontend/builds and
+disposable full-stack browser job passed. Actual public browser execution remains
+pending; this source's public script was syntax-checked, not run against production.
+Prepared the three-page frozen2025 vector figure export using bundled ReportLab
+and embedded Open Sans. Rendered all pages with Poppler and visually reviewed;
+corrected first-draft font substitution/boundary crowding, then re-rendered.
+Independent retained-case recount confirmed157cases,7answers,5matches,2misses,
+113initial candidate misses, all5matches same-part and both answered misses
+missing the initial true candidate. Raw source rows, font/generator/PDF hashes,
+PNG proofs and checks retained under phase23-report-figures. Report links the PDF;
+source-crosscheck report hash updated. No fitting/model/simulation/bootstrap ran.
+Disk remains21GiB free; available RAM7.0GiB; swap effectively unused at this check.
+
+Phase24: converted the retained contribution chapter/references/figures into an
+editable eleven-page Word document and matching PDF, using bundled Python and
+the bundled soffice override only. No new packages, browser, model or experiment
+ran locally. Two native OMML equations rendered correctly; the numeric table
+matches source exactly; five bibliography entries remain separate; all three
+figure pages and every body page were reviewed. Corrected first-render inherited
+Title blue rule and collapsed bibliography, then rebuilt/reviewed every final
+page. Added page fields, image alt text and repeating table header. Accessibility
+audit:0high/0medium/0low. Raw final PNGs/source/output/structural proof retained
+under phase24-editable-report. Canonical chapter DOCX/PDF live in docs/fyp1-final.
+This prepares student review/team integration and does not claim student authorship,
+human labels, M4 results, supervisor approval or a completed defense. PR54 report
+revision ab1d8ea also passed full hosted CI44986542524. Actual model run44984568357
+was still authoritatively in_progress at04:54UTC; retain the source-pinned merge
+hold. Do not restart it because an observation request times out.
+
+Latest report head a942680 passed all jobs in CI44987162463; raw reports downloaded
+to /tmp/halite-phase24-final-ci for the next retained release-evidence change.
+The real model run remains live. Existing log workflow reads only halite-api,
+which cannot show direct reference calls to Ollama. Prepared a model-progress
+target that reads Docker metadata/stats and bounded logs over SSH stdin, emitting
+only whitelisted state/resources and strict completed-chat time/status/duration.
+No inference, deploy, restart or data writes. Unknown/raw/environment/IP fields
+are excluded; activity is not attributed to individual cases. Default API log
+behavior is preserved. Three focused standard-library observer tests passed,
+including malformed/extra-field rejection and secret exclusion. The bundled
+document Python lacks pytest; no package was installed. The tests run directly
+with python3 -S/unittest and are also collected by hosted pytest. The real
+reference job remains untouched and must not be restarted on an observation timeout.
+
+Actual run44984568357 terminatedfailure05:03:22UTC after all30attempts:24responses,
+6TimeoutError (all evidence-prose) at180seconds. Retained everyrawattempt, manifest,
+warmup and result; independent prompt/assessment/journal/summary replay passed in
+explicit failed-attempt mode with measurement_acceptedfalse. Facts10/10valid,
+evidenceprose4/10valid, no-evidenceprose10/10valid; means40.28/164.56/52.99seconds
+include failed attempts. No humansemanticaccuracy inferred. Original runner's
+postflight was skipped by provider-error rejection; independently observed same
+liveSHA/2079records and same modelcontainer/zero restarts/noOOM under4GiB/2CPU.
+Read-only observer44987794344succeeded; its sanitized31servercompletion lines
+include six~180sHTTP500entries. These do not independently identify researchcases.
+Documented actual outcome in STAGING_REFERENCE_RESULTS.md and phase25evidence.
+Prepared an explicit separate600seconddeadline study, unchanged prompts/settings/
+model/resources, workflow ceiling330minutes. Moved postflight before collected-
+error rejection and retain final safe metadata; failed runs still fail acceptance.
+The previous merge hold is released because its specific run is terminal. Merge
+only after new exact-head CI passes; verify the real public site before starting
+any next source-pinned measurement. No silent case retry or deadline pooling.

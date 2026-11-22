@@ -65,3 +65,15 @@ complete that evaluation or the two-independent-reviewer requirement.
 Runtime source: `backend/investigation/experiments/staging_reference.py`.
 Workflow: `.github/workflows/staging-model-reference.yml`.
 Tests use only explicit synthetic transports and never contact staging.
+
+## Observed deadline failure and second-run procedure
+
+The original 180-second run completed its journal but failed acceptance with six
+evidence-prose timeouts. Preserve that full attempt and its denominator; see
+STAGING_REFERENCE_RESULTS.md. A deliberately separate run uses a 600-second
+client deadline and a 330-minute workflow bound. Frozen prompts, generation
+parameters, seed, model and resource caps remain unchanged. This is an operational
+completion study, not retrospective improvement of the original deadline result.
+Postflight now precedes provider-error rejection, and safe final model metadata
+is retained even when collected attempts contain errors. The strict success gate
+remains; failed-attempt verification cannot label a failed measurement accepted.

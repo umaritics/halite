@@ -1,5 +1,5 @@
 {
-  "report_sha256": "bda2e64b06b8224085509e03e21b848dcc3b7bf2eeb3637dc990d205ff785d4c",
+  "report_sha256": "973c510bf3ef375ae0320d9d7a151cdf3464f7982df22118b4c708bc3097462b",
   "results_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12",
   "case_counts": {
     "n_pairs": 157,
@@ -180,5 +180,6 @@
       "definition": "All terminal cases; named-top support versus exact part-key top-one correctness. Empty rankings: confidence zero and incorrect."
     }
   },
-  "validation": "Report main test table cross-checked with retained exact row; source hashes retained. This does not validate human authorship or complete pending measurements."
+  "validation": "Report main test table cross-checked with retained exact row; source hashes retained. This does not validate human authorship or complete pending measurements.",
+  "report_revision_note": "Updated submission gate after Usman directly confirmed no Mid-I comments/modification requests; measured table and results source unchanged."
 }

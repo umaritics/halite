@@ -146,6 +146,15 @@ Share `OPS_TOKEN` with teammates via a password manager — **never commit it**.
 
 Actions → **Fetch staging backend logs** → Run workflow → download artifact `staging-backend-logs`.
 
+The optional `model-progress` target runs `scripts/vm/model_progress.py` over SSH
+without installing it on the VM. It reads only bounded Docker logs, selected
+container state and a one-shot resource snapshot. Only strict completed-chat
+timestamp/status/duration fields are emitted; environment, prompt, raw log, IP
+and unknown fields are excluded. Missing matches do not prove a stopped job,
+and activity cannot identify an individual research case. The default `api`
+target preserves the existing API-log operation. Neither mode performs inference,
+restarts services, deploys, changes settings or writes database records.
+
 ## What partners should / should not do
 
 | Do | Don’t |

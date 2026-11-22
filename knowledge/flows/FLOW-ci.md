@@ -101,3 +101,23 @@ flowchart LR
 This is verification of retained evidence, without downloading or reranking a
 new test archive. Actual evaluation and source receipts remain pinned to run
 44906082558 / source 5a5060b. The one-shot access label is removed.
+
+## Explicit authenticated public website acceptance
+
+```mermaid
+flowchart LR
+  Intent[Manual main-only VERIFY] --> Runner[Hosted Chromium]
+  Secrets[Encrypted dedicated account secrets] --> Runner
+  Runner --> Site[Canonical public frontend]
+  Site --> Guard[Block non-auth API mutations]
+  Guard --> Auth[Real login / refresh / logout]
+  Guard --> Reads[Research / home / session reads]
+  Reads --> Compare[Committed artifact hashes / rendered values]
+  Compare --> Proof[Sanitized JSON / authenticated screenshots]
+  Auth --> Proof
+```
+
+No inference or corpus writes occur. Health before/after must agree with the
+workflow's exact source. Do not dispatch before its normal backend deployment
+has completed. Do not merge while a separate exact-source measurement is running.
+Failure stops at its recorded stage; no failed stage is presented as acceptance.

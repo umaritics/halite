@@ -1,0 +1,17 @@
+{
+  "source_sha": "326cd885bb21e53019f25a6cfae82164bfba0a6a",
+  "model_container": {
+    "id": "73b89ac7a6079dfc89aca774a581d90dbef146475d28e794fb0f1f8092442f7d",
+    "image": "ollama/ollama:0.9.6",
+    "restarts": 0,
+    "memory_limit": 4294967296,
+    "nano_cpus": 2000000000
+  },
+  "inference_location": "Existing private halite-ollama container reached over staging SSH",
+  "runner_location": "GitHub Actions runner; see comparison manifest hardware",
+  "timing_scope": "Wall timings include SSH tunnel, network, queueing and model load.",
+  "public_model_ports": false,
+  "database_writes": false,
+  "model_pulls_or_configuration_changes": false,
+  "m4_measurement": false
+}

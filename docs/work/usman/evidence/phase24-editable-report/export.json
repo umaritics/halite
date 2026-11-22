@@ -1,0 +1,17 @@
+{
+  "schema": "halite-report-chapter-export-v1",
+  "source_revision": "ab1d8eacad8fa1c730b754e7ba6d6da7323e5135",
+  "sources": {
+    "docs/fyp1-final/USMAN_FINAL_REPORT_DRAFT.md": "973c510bf3ef375ae0320d9d7a151cdf3464f7982df22118b4c708bc3097462b",
+    "docs/fyp1-final/USMAN_RESEARCH_REFERENCES.md": "c50df4b3aa28433c85ccad18df1be5bdce952f402c422a5b4e8790d71cc3817c",
+    "docs/work/usman/evidence/phase23-report-figures/page-1.png": "04f501e72bfee5584a86d875e86948959e14718a11ce3e942a67300e34e58b65",
+    "docs/work/usman/evidence/phase23-report-figures/page-2.png": "4c851cbe90b3f5c1af39ddea524832b33df6e0335a9f46962eaf6b2326d10d4c",
+    "docs/work/usman/evidence/phase23-report-figures/page-3.png": "4dc23f7fe7986c9648ae802fa25b1bc7340bb2dc600002657d3786908619c3e2"
+  },
+  "builder_sha256": "a7f4cb8fa5214a019cc271c22928aaadfe22f10d0b49da364d9a781e054aefe0",
+  "docx_sha256": "a32c555a615d8c40571a43fd134a2b57a72f14d77c9798d8bfe3854619a75563",
+  "native_equations": 2,
+  "tables": 1,
+  "figures": 3,
+  "acceptance": "editable chapter prepared for student review; no new empirical result or approval"
+}

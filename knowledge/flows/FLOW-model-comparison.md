@@ -34,6 +34,8 @@ flowchart LR
   Journal --> Audit[Schema / citations / lexical sentence audit]
   Audit --> Table[JSON + generated comparison table]
   Table --> Decision[Usman's model decision pending]
+  Table --> Deadline[Retain original deadline failures separately]
+  Deadline --> Repeat[Explicit separate longer-deadline study if justified]
   Journal --> Resume[Validate identity and raw assessments]
   Resume --> Warm
 ```

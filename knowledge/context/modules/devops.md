@@ -93,6 +93,20 @@ numerical threads to one, verifies every stopping-table metric independently and
 uploads the selection artifact. It does not deploy or read staging/raw FAA data.
 The regular full CI still runs separately and enforces the 80% coverage gate.
 
+## Explicit public-site browser acceptance
+
+`verify-production-site.yml` is a manual, main-only, staging-environment workflow.
+It installs Chromium only on the hosted runner and requires typed `VERIFY` plus
+dedicated encrypted `HALITE_UI_TEST_EMAIL` / `HALITE_UI_TEST_PASSWORD` secrets.
+The fixed canonical site/API runner checks exact deployed SHA, actual login,
+protected research deep-link preservation, committed-artifact parity, both themes,
+390px geometry, real home/history reads, refresh, quick-entry rendering and logout.
+It blocks API mutations except login/refresh/logout; no inference, ingest, user
+administration or maintenance writes are allowed. No response/header/body/token
+traces are retained: screenshots begin after login, and proof records safe paths,
+status codes, hashes and stage/error types. A configured runner or syntax pass is
+not actual production acceptance; retain and inspect the real workflow artifact.
+
 Backend CI also runs `python -m investigation.experiments.frozen_policy` and
 uploads `frozen-policy-preflight.json`. This validates the accepted research
 choice/protocol without touching a 2025 archive or enabling the live flag.

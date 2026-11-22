@@ -71,7 +71,7 @@ def mock_transport(monkeypatch):
 def mock_compare(packet, models, output, **options):
     assert packet.name == 'model_prompts_2024_v1.json'
     assert models == ['phi4-mini:latest'] and 'client' not in options
-    assert options == {'endpoint': tool.ENDPOINT, 'role': 'staging_reference', 'timeout': 180}
+    assert options == {'endpoint': tool.ENDPOINT, 'role': 'staging_reference', 'timeout': 600}
     assert os.environ['HALITE_MODEL_API_KEY'] == TOKEN
     output.mkdir()
     result = {'complete': True, 'n_attempts': 30, 'n_responses': 30, 'provider_errors': 0}
@@ -90,6 +90,8 @@ def test_measurement_validates_boundaries_restores_token_and_never_persists_secr
     assert result['n_attempts'] == 30 and not remote.active
     assert os.environ['HALITE_MODEL_API_KEY'] == 'old_synthetic_value'
     assert json.loads((out / 'status.json').read_text())['complete'] is True
+    assert json.loads((out / 'status.json').read_text())['timeout_seconds'] == 600
+    assert (out / 'server-after.json').exists()
     provenance = json.loads((out / 'server-provenance.json').read_text())
     assert not provenance['m4_measurement'] and not provenance['database_writes']
     assert not provenance['public_model_ports']
@@ -156,6 +158,11 @@ def test_postflight_changes_and_provider_errors_preserve_results_and_close_tunne
     assert (tmp_path / 'out/comparison/results.json').exists()
     status = json.loads((tmp_path / 'out/status.json').read_text())
     assert not status['complete'] and status['error_type'] == 'ValueError'
+    assert (tmp_path / 'out/health-after.json').exists()
+    if change == 'provider':
+        assert status['stage'] == 'attempts_failed' and status['provider_errors'] == 1
+        assert (tmp_path / 'out/server-after.json').exists()
+        assert len(remote.commands) == 3
 
 
 def test_ssh_commands_quote_metadata_code_and_require_verified_host_keys(tmp_path, monkeypatch):

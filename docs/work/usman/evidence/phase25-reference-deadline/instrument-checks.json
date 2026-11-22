@@ -1,0 +1,21 @@
+{
+  "observer_focused_tests": {
+    "exit_code": 0,
+    "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n"
+  },
+  "failure_replay": {
+    "verified": true,
+    "measurement_accepted": false
+  },
+  "integrity_checks": {
+    "strict_success_mode_rejects_failed_attempt": true,
+    "corrupted_valid_output_share_rejected": true
+  },
+  "file_sha256": {
+    "scripts/vm/model_progress.py": "78375f1f5311ed9be5d9bd508bf92e1c6f893ed54959bbbf0faae852c29df7e3",
+    "backend/tests/test_model_progress_observer.py": "6dae00bb99f98238e3cec0931c414ef41e402701898b1d181343832a47035a87",
+    "docs/work/usman/verify_reference_measurement.py": "f0cec214be9ebc71c33ee4d4504dbdedf87670e13f4a19d45b73212ae87298ba",
+    "backend/investigation/experiments/staging_reference.py": "1cbc62d290ff37903bce8bffaab021ae83755014eb305cd5cc8e47ab6a9746e3"
+  },
+  "later_hosted_ci_for_600s_instrument": "pending"
+}

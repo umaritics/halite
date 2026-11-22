@@ -1,0 +1,88 @@
+{
+  "schema": "halite-report-chapter-verification-v1",
+  "docx_sha256": "a32c555a615d8c40571a43fd134a2b57a72f14d77c9798d8bfe3854619a75563",
+  "pdf_sha256": "bab225bcff3df26012e0ab115c1c5a9f5d20b893dcbaf44d3a69c4bac32dd181",
+  "native_equations": 2,
+  "embedded_figures": 3,
+  "separate_bibliography_entries": 5,
+  "results_table_matches_source": true,
+  "paragraph_borders_absent": true,
+  "visual_review": "All eleven final pages inspected after final render; equations, tables, bibliography, figures, margins and page numbers checked.",
+  "pages": [
+    {
+      "page": 1,
+      "render_sha256": "104e4267461254bb8eea69daa6189271b3f43652cec25c6b3c2fcba67038cc94",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 2,
+      "render_sha256": "aea398ff00491245740162f6fa8bd30825130539542f36923beb8239b321c4c0",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 3,
+      "render_sha256": "b18d42519547d4bbb1295187ccce1689b8bf7682c3e16e339c11398d248f1a4a",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 4,
+      "render_sha256": "107d28272612ade5650eb1990881f6ba38b90ebb0ba76585bd81c01d64bf1c08",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 5,
+      "render_sha256": "f58034a8fdf7247c85c2d4effe46aa470ec6bdd9266fcf9574137fa73cd6670c",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 6,
+      "render_sha256": "0fc0ec9ccc1b28cb404c32975c71f0614ebaf0dae007524e906c0a2f72254c7a",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 7,
+      "render_sha256": "b170b77db503177f6094470229b048c3c675ca369e10b1f243c56cf2df37e679",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 8,
+      "render_sha256": "b0c968e96f16442c18deedcb8f8eee5bb62ed83c245d3326e902657cab4c5830",
+      "width_pt": 612.0,
+      "height_pt": 792.0
+    },
+    {
+      "page": 9,
+      "render_sha256": "7872aa70107533731ddc1bc44a6e072dc77430c9a11e301c6087b34f820c0b16",
+      "width_pt": 792.0,
+      "height_pt": 612.0
+    },
+    {
+      "page": 10,
+      "render_sha256": "e40ab09707d3a4911c380267c220300f6dd37c12500df259c7990d130eded564",
+      "width_pt": 792.0,
+      "height_pt": 612.0
+    },
+    {
+      "page": 11,
+      "render_sha256": "b931f309973d1369e619cf452a33b257c574cac2472cb4b28b6af189a8b50fbc",
+      "width_pt": 792.0,
+      "height_pt": 612.0
+    }
+  ],
+  "render_runtime": "bundled primary runtime 26.1119.11507; bundled soffice override; no desktop LibreOffice or package installs",
+  "changes_from_markdown": [
+    "Opening synthesis and explicit AI/evidence status",
+    "Plain-word headings and page numbering",
+    "Two editable OMML beliefs equations replace plain-text formula paragraph",
+    "References appended with separate entries and hyperlinks",
+    "Three saved figure PNGs appended on landscape pages"
+  ],
+  "acceptance": "student review, empirical/human gates and team integration remain separate"
+}

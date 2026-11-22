@@ -1,0 +1,56 @@
+{
+  "verified": true,
+  "measurement_accepted": false,
+  "provider_errors": 6,
+  "postflight_in_original_run": false,
+  "timeout_seconds": 180,
+  "source_sha": "326cd885bb21e53019f25a6cfae82164bfba0a6a",
+  "model": "phi4-mini:latest",
+  "packet_sha256": "2e12df9469de9b8c15be818d8989f902dca5c4d3b687b733a70b0152ab42aa77",
+  "n_attempts": 30,
+  "excluded_warmups": 1,
+  "summaries": [
+    {
+      "arm": "evidence",
+      "task": "facts",
+      "attempts": 10,
+      "responses": 10,
+      "valid_outputs": 10,
+      "citation_occurrences": 0,
+      "in_evidence_citations": 0,
+      "sentences": 0,
+      "unrated": 0,
+      "unsupported_or_uncited": 0,
+      "mean_wall_seconds": 40.27944303699999
+    },
+    {
+      "arm": "evidence",
+      "task": "prose",
+      "attempts": 10,
+      "responses": 4,
+      "valid_outputs": 4,
+      "citation_occurrences": 25,
+      "in_evidence_citations": 24,
+      "sentences": 31,
+      "unrated": 11,
+      "unsupported_or_uncited": 20,
+      "mean_wall_seconds": 164.5578649724
+    },
+    {
+      "arm": "no_evidence",
+      "task": "prose",
+      "attempts": 10,
+      "responses": 10,
+      "valid_outputs": 10,
+      "citation_occurrences": 0,
+      "in_evidence_citations": 0,
+      "sentences": 47,
+      "unrated": 0,
+      "unsupported_or_uncited": 47,
+      "mean_wall_seconds": 52.989051489399955
+    }
+  ],
+  "human_accuracy_measured": false,
+  "m4_measurement": false,
+  "note": "No new model calls; raw audit replay and independent scalar summary arithmetic."
+}

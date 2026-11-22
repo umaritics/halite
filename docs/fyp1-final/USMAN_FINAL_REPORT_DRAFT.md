@@ -164,6 +164,14 @@ the same-part stratum; there were no correct answers in either changed-part
 stratum. Reweighting a fixed candidate list cannot recover a missing candidate.
 These errors identify retrieval coverage as the next development priority.
 
+The [exportable frozen-results figures](figures/frozen-2025-results.pdf) present
+these measurements as three vector pages: (1) the two fixed accuracy/coverage
+points with saved intervals, (2) the three-control question-budget curves and
+their saved intervals, and (3) descriptive part-change counts and retrieval
+failure analysis. The export reads the frozen artifact without fitting,
+simulation or bootstrap reruns. Its provenance and visual checks are recorded
+in [FIGURE_EXPORT_VERIFICATION.md](../work/usman/FIGURE_EXPORT_VERIFICATION.md).
+
 ## Engineering verification and product presentation
 
 Source 2247d17 passed hosted CI run 44911995235: backend and frontend suites,
@@ -216,7 +224,8 @@ Full deliverable status: `../work/usman/ACCEPTANCE_MATRIX.md`.
 
 Before submission, Usman must review and own the explanation, incorporate the
 team's approved terminology and references, supply genuine grounding reviews,
-confirm actual panel feedback on Form 10 and rehearse the defense. Teammate
+transfer the confirmed no-comments Mid-I account into the official Form 10,
+obtain any required supervisor confirmation and rehearse the defense. Teammate
 cross-review is not inferred from the user's authorization to merge. AI helped
 implement, document and verify the contribution; no fabricated human labels,
 model timings, supervisor signatures or rehearsal outcomes are included.
