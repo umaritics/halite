@@ -18,3 +18,13 @@ and authenticated access, not signed-in browser acceptance, refresh persistence,
 research rendering or session creation. Those product checks remain separate.
 The earlier credential is the working candidate; avoid retrying the rejected
 candidate and consuming the account's lockout allowance.
+
+## Prepared public browser instrument
+
+Added `frontend/e2e/verify-production-site.cjs` and a separate manual main-only
+workflow. Fixed origins, exact deployed SHA, real research artifact parity,
+home/history, session renewal, phone geometry, both themes and logout are checked.
+Only authentication POSTs are allowed; no new model call or maintenance write.
+The workflow expects encrypted dedicated-account secrets. Local browser execution
+is intentionally avoided following the machine incident. Syntax validation and
+actual hosted execution are separate gates; neither is inferred from preparation.

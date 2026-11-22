@@ -8,6 +8,19 @@ HTTP client and protected routes with the investigation/home feature manifests.
 It is a development integration harness, not production route registration.
 
 No credentials or tokens are embedded. Sign in through the ordinary login screen.
+
+## Dedicated public-site acceptance
+
+`verify-production-site.cjs` is separate from the disposable write-capable
+verifiers. The manual main-only `Verify signed-in public website` workflow uses
+encrypted dedicated-account secrets, fixed canonical origins and a fresh artifact
+directory. It reads actual research/home/history, checks artifact hashes and
+rendering, exercises refresh and logout, and checks desktop/390px layouts. It
+allows only authentication POSTs; it never ingests, creates sessions or invokes
+diagnosis. It records no secrets, request bodies, headers, traces or storage state.
+Syntax validation is part of CI; actual acceptance needs a successful manual run
+and reviewed screenshots. This read-only scope supplements the disposable full
+session/grounding/question lifecycle proofs rather than replacing them.
 Shared App/Sidebar/AuthContext changes require the handoff described in the plan;
 this harness allows end-to-end verification while that handoff is pending.
 

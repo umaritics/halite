@@ -1,0 +1,56 @@
+name: Verify signed-in public website
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type VERIFY to check the real site using the dedicated test account (no inference or maintenance writes)'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-website-acceptance
+  cancel-in-progress: false
+
+jobs:
+  public-site:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Validate explicit intent and runner syntax
+        env:
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          test "$CONFIRMATION" = VERIFY
+          node --check frontend/e2e/verify-production-site.cjs
+      - name: Prepare browser on hosted runner
+        run: |
+          npm install --prefix "$RUNNER_TEMP/halite-public-browser" playwright@1.65.1 --ignore-scripts --no-audit --no-fund
+          "$RUNNER_TEMP/halite-public-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Verify real login, research, home, history, refresh and logout
+        env:
+          HALITE_UI_CONFIRMATION: ${{ inputs.confirmation }}
+          HALITE_PLAYWRIGHT_MODULE: ${{ runner.temp }}/halite-public-browser/node_modules/playwright
+          HALITE_UI_EVIDENCE_DIR: ${{ runner.temp }}/halite-public-proof
+          HALITE_UI_TEST_EMAIL: ${{ secrets.HALITE_UI_TEST_EMAIL }}
+          HALITE_UI_TEST_PASSWORD: ${{ secrets.HALITE_UI_TEST_PASSWORD }}
+        run: node frontend/e2e/verify-production-site.cjs
+      - name: Retain screenshots and sanitized acceptance record
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-website-acceptance
+          path: ${{ runner.temp }}/halite-public-proof/
+          if-no-files-found: warn
+          retention-days: 90

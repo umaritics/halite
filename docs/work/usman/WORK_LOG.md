@@ -1153,3 +1153,13 @@ PRODUCTION_ACCOUNT_VERIFICATION.md. This resolves account availability, not the
 pending signed-in browser acceptance. Actual staging model run 44984568357 remains
 in progress; keep its deployed source pinned and do not merge this proof branch
 until that measurement terminates.
+
+Prepared the dedicated public-site browser acceptance instrument and main-only
+manual workflow. Local Node syntax and whitespace checks passed; no local browser
+or model was started. Encrypted GitHub repository secrets HALITE_UI_TEST_EMAIL and
+HALITE_UI_TEST_PASSWORD were newly configured under the user's explicit dedicated
+account authorization; values were piped to GitHub without writing credential
+files. No pre-existing secret was overwritten. Real hosted browser execution
+remains pending the instrument's CI/merge/deployment after measurement 44984568357
+terminates. The guard permits only login/refresh/logout POSTs and records no
+tokens or response bodies. Knowledge/context/flow/registry/decision updated.

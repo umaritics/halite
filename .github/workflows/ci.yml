@@ -106,6 +106,8 @@ jobs:
         run: npm ci
       - name: Run frontend tests
         run: npm test
+      - name: Validate public-site acceptance runner syntax
+        run: node --check e2e/verify-production-site.cjs
       - name: Build frontend
         run: npm run build
       - name: Build investigation feature preview
