@@ -93,3 +93,7 @@ Source-word interaction (Usman): `backend/investigation/grounding.py::source_mat
 Dependency resolution evidence (Usman): `backend/requirements*.txt`, `.github/workflows/ci.yml`, `docs/work/usman/verify_dependency_cleanup.py`, `backend/tests/test_settings_env_file.py`; [decision](decisions/DEC-20261121-dependency-cleanup.md), [CI context](context/modules/devops.md). Separate legacy retirement authorization/proposal: `docs/work/usman/LEGACY_RETIREMENT_HANDOFF.md`.
 
 Private reference measurement (Usman): `backend/investigation/experiments/staging_reference.py` and `.github/workflows/staging-model-reference.yml`; model comparison context/flow and remote backend context cover private tunnel, resource and provenance boundaries.
+
+Read-only model progress (Usman infra): `scripts/vm/model_progress.py` via the
+optional target in `.github/workflows/fetch-staging-logs.yml`; remote backend
+context and deploy flow describe sanitized resource/request activity only.

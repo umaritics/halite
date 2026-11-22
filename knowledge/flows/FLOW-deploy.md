@@ -28,6 +28,10 @@ flowchart LR
   Dev[Partner laptop] -->|X-Ops-Token| LogsAPI["GET /api/ops/logs"]
   Dev -->|Actions artifact| GH[fetch-staging-logs.yml]
   GH -->|SSH docker logs| VM[(halite-api container)]
+  GH -->|Optional model-progress target| Observer[Read-only model observer via stdin]
+  Observer --> Model[(halite-ollama)]
+  Model --> Sanitized[Whitelisted state / resources / completed-chat timings]
+  Sanitized --> GH
   LogsAPI --> Ring[In-process ring buffer]
   VM --> API[FastAPI]
   Ring --> API
@@ -78,3 +82,8 @@ inspects private configuration/container metadata, temporarily forwards only a
 hosted-runner loopback socket, runs the fixed reference prompts and verifies
 unchanged release/corpus/container state afterwards. Secrets are never output
 artifacts. No existing release/auth/security/version gate is bypassed.
+
+The log workflow's separate model-progress target observes the existing model
+without new calls or deployment. It cannot attribute bounded historical request
+lines to research cases; the experiment's own artifact remains authoritative.
+Strict parsing and output whitelists exclude unknown/log/environment fields.

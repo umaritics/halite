@@ -1193,3 +1193,17 @@ human labels, M4 results, supervisor approval or a completed defense. PR54 repor
 revision ab1d8ea also passed full hosted CI44986542524. Actual model run44984568357
 was still authoritatively in_progress at04:54UTC; retain the source-pinned merge
 hold. Do not restart it because an observation request times out.
+
+Latest report head a942680 passed all jobs in CI44987162463; raw reports downloaded
+to /tmp/halite-phase24-final-ci for the next retained release-evidence change.
+The real model run remains live. Existing log workflow reads only halite-api,
+which cannot show direct reference calls to Ollama. Prepared a model-progress
+target that reads Docker metadata/stats and bounded logs over SSH stdin, emitting
+only whitelisted state/resources and strict completed-chat time/status/duration.
+No inference, deploy, restart or data writes. Unknown/raw/environment/IP fields
+are excluded; activity is not attributed to individual cases. Default API log
+behavior is preserved. Three focused standard-library observer tests passed,
+including malformed/extra-field rejection and secret exclusion. The bundled
+document Python lacks pytest; no package was installed. The tests run directly
+with python3 -S/unittest and are also collected by hosted pytest. The real
+reference job remains untouched and must not be restarted on an observation timeout.
