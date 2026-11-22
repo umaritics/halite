@@ -85,3 +85,5 @@ does not imply independent teammate approval.
 - `evidence/phase27-public-session/`: actual own-session lifecycle and failed live-model baselines; prepared bounded-input checks.
 - [Editable contribution chapter](../../fyp1-final/USMAN_INVESTIGATION_CHAPTER.docx)
 - [Matching chapter PDF](../../fyp1-final/USMAN_INVESTIGATION_CHAPTER.pdf)
+
+- `evidence/phase28-bounded-runtime-release/`: PR55 exact-head/main/deploy receipts,549-test raw reports, actual second prose timeout, populated browser replay/print and original PDF layout finding.

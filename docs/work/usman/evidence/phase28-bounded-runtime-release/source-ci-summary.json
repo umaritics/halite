@@ -1,0 +1,16 @@
+{
+  "run_id": 44992570766,
+  "sha": "b9bad632c25f3d26dac356489904a3b02100432c",
+  "conclusion": "success",
+  "backend": {
+    "tests": 549,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "covered_lines": 5629,
+    "measured_lines": 6815,
+    "coverage_percent": 82.59721203228173
+  },
+  "frontend_and_build": "success",
+  "real_graph_full_stack_browser": "success"
+}

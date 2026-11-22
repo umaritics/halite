@@ -1,0 +1,323 @@
+{
+  "schema": "halite-public-read-acceptance-v1",
+  "state": "passed",
+  "started_at": "2026-11-22T06:24:31.488Z",
+  "frontend": "https://halite-mu.vercel.app",
+  "backend": "https://dev1.corp.curatech.pk/halite-api/api",
+  "network": "real public services; no fabricated responses",
+  "checks": [
+    {
+      "name": "research-source-and-render-parity",
+      "n_pairs": 157,
+      "n_answered": 7,
+      "n_matches": 5
+    },
+    {
+      "name": "desktop-research",
+      "width": 1280,
+      "scroll": 1280,
+      "main": 1024
+    },
+    {
+      "name": "phone-research-light",
+      "width": 390,
+      "scroll": 390,
+      "main": 326
+    },
+    {
+      "name": "phone-research-dark",
+      "width": 390,
+      "scroll": 390,
+      "main": 326
+    },
+    {
+      "name": "home-real-summaries",
+      "widget_count": 3,
+      "recent_count": 2
+    },
+    {
+      "name": "phone-history",
+      "width": 390,
+      "scroll": 390,
+      "main": 326
+    },
+    {
+      "name": "real-history-rendered",
+      "item_count": 2
+    },
+    {
+      "name": "phone-closed-workspace",
+      "width": 390,
+      "scroll": 390,
+      "main": 326
+    },
+    {
+      "name": "saved-closed-case-reload-and-one-click-print",
+      "session_id": "74c792ce-510c-4c60-addb-a7f441435246",
+      "turns": 1,
+      "exact_replay": true,
+      "llm_status": "unavailable",
+      "pdf_sha256": "b88fca77d2024ab43d93b6cec1a56e18a6076b8bbcf5b6a9b88bd19b22cf7a61"
+    },
+    {
+      "name": "phone-quick-entry",
+      "width": 390,
+      "scroll": 390,
+      "main": 326
+    },
+    {
+      "name": "logout-storage-and-protected-deep-link",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/experiments",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/experiments",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/experiments",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/retrieval/summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/integrity/summary",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/maintenance/review-queue",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/74c792ce-510c-4c60-addb-a7f441435246",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/74c792ce-510c-4c60-addb-a7f441435246",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/sessions/74c792ce-510c-4c60-addb-a7f441435246/report",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 401
+    }
+  ],
+  "prohibited_requests": [],
+  "page_errors": [],
+  "screenshots": [
+    {
+      "file": "research-desktop-dark.png",
+      "sha256": "7529f931a546d3197a5f98105165dd4b317c86243138d817c3f523efa9d20a9c",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      }
+    },
+    {
+      "file": "research-phone-light.png",
+      "sha256": "667892a73d65fee70a64e1b7b067f4fb6156fefbab67700006cecf15e84f5b4f",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "research-phone-dark.png",
+      "sha256": "002620df70ebd8b0a215b397eff151391f7dcbf8134413f19bcdb1167870969f",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "home-desktop.png",
+      "sha256": "8f0f2faa9ec014d97901c6f35dc1d0b1543abb408840abaa13aaa42a47788103",
+      "viewport": {
+        "width": 1280,
+        "height": 1000
+      }
+    },
+    {
+      "file": "history-phone.png",
+      "sha256": "4c43fc5ffeb2cc8b09b01b5e6eb7c6c3eb9c68e6aee0f42f9f90f1845c5a5b2b",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "closed-workspace-phone.png",
+      "sha256": "faadc2d7cac34fa30fd233ca857a87d26e535d093ccb397834e6b9932343e228",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "quick-entry-phone.png",
+      "sha256": "b6dc4b3a3522772ee1715f2fc68a8c5289b94a54c1a8bcb95d9d572f50a79e9c",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "health_before": {
+    "status": "ok",
+    "app": "Halite",
+    "demo_mode": false,
+    "neo4j_configured": true,
+    "using_memory_graph": false,
+    "groq_configured": true,
+    "llm_provider": "openai_compatible",
+    "graph_mode": "neo4j",
+    "llm_mode": "live",
+    "model": "phi4-mini",
+    "maint_threshold": 0.5,
+    "domains": [
+      {
+        "key": "maintenance",
+        "display_name": "Maintenance / Field Service",
+        "subject_label": "Asset",
+        "record_label": "ServiceRecord",
+        "is_default": true
+      }
+    ],
+    "maintenance_corpus_loaded": true,
+    "maintenance_record_count": 2079,
+    "fallback_invocations": 0,
+    "auth_enabled": true,
+    "auth_db_mode": "postgresql",
+    "openapi_enabled": false,
+    "git_sha": "11beed1f2b050057942ba31321ce7f2e7b0bf80f",
+    "deployed_at": "2026-11-22T06:19:16Z"
+  },
+  "publication_artifacts": [
+    {
+      "id": "question_selection",
+      "path": "question_selection_2024_v2/results.json",
+      "sha256": "22c5b39870c97c9f59138561d7cf0736f457dd0922faf58727c2756287e64565"
+    },
+    {
+      "id": "decision_selection",
+      "path": "decision_selection_2024_v2/selection.json",
+      "sha256": "7ed4c694974ecdfb80366dff9b8965fd22e386b949ccf6f547600fb9bf21c265"
+    },
+    {
+      "id": "stopping_selection",
+      "path": "policy_selection_2024_v1/selection.json",
+      "sha256": "6b628bec427c153d7015b7526f8c0b908ce0e8884878a0fbf6916759c299a27e"
+    },
+    {
+      "id": "held_out",
+      "path": "held_out_2025_v1/results.json",
+      "sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+    },
+    {
+      "id": "held_out_verification",
+      "path": "held_out_2025_v1/verification.json",
+      "sha256": "657bf76ed09574d35a25865c493cafb9bc234e50d4db20ed8e0283752c59f185"
+    }
+  ],
+  "health_after": {
+    "status": "ok",
+    "app": "Halite",
+    "demo_mode": false,
+    "neo4j_configured": true,
+    "using_memory_graph": false,
+    "groq_configured": true,
+    "llm_provider": "openai_compatible",
+    "graph_mode": "neo4j",
+    "llm_mode": "live",
+    "model": "phi4-mini",
+    "maint_threshold": 0.5,
+    "domains": [
+      {
+        "key": "maintenance",
+        "display_name": "Maintenance / Field Service",
+        "subject_label": "Asset",
+        "record_label": "ServiceRecord",
+        "is_default": true
+      }
+    ],
+    "maintenance_corpus_loaded": true,
+    "maintenance_record_count": 2079,
+    "fallback_invocations": 0,
+    "auth_enabled": true,
+    "auth_db_mode": "postgresql",
+    "openapi_enabled": false,
+    "git_sha": "11beed1f2b050057942ba31321ce7f2e7b0bf80f",
+    "deployed_at": "2026-11-22T06:19:16Z"
+  },
+  "finished_at": "2026-11-22T06:24:41.481Z"
+}

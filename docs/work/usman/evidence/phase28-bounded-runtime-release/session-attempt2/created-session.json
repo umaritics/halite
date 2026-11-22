@@ -1,0 +1,17 @@
+{
+  "id": "74c792ce-510c-4c60-addb-a7f441435246",
+  "organization_id": "48ca3f7e-e391-46d5-a7e3-8f5f96865844",
+  "user_id": "1a421091-25f0-4586-a195-b0aca5dae8e4",
+  "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+  "asset_tail": "813SK",
+  "title": "Automated acceptance check - no maintenance finding",
+  "status": "open",
+  "outcome_part": null,
+  "outcome_jasc": null,
+  "outcome_note": null,
+  "outcome_record_id": null,
+  "turn_count": 0,
+  "created_at": "2026-11-22T06:20:46.394049+00:00",
+  "updated_at": "2026-11-22T06:20:46.394056+00:00",
+  "closed_at": null
+}
