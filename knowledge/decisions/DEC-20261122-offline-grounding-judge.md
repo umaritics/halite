@@ -1,7 +1,7 @@
 # Offline L4 grounding-judge instrument
 
-Status: implemented; hosted verification and actual measurements pending.
-Owners: Muhammad Usman Al Haq. Date:2026-11-22.
+Status: implemented and hosted verified on 8d3abab / run 44982604273; actual measurements pending.
+Owners: Muhammad Usman Al Haq. Date: 2026-11-22.
 
 ## Context
 
@@ -17,8 +17,8 @@ model digest and raw judgments. Require verifiable source quotes for positive
 verdicts while explicitly not treating quote existence as entailment. Retain
 failures; reject incomplete full-set metrics. Compare only against complete,
 independent human labels with explicit adjudication, keeping fit and validation
-separate. The real150pair packet fits the declared8192context without truncation.
-Do not add a runtime dependency, enable a judge or tune on2025.
+separate. The real 150-pair packet fits the declared 8192-token context without truncation.
+Do not add a runtime dependency, enable a judge or tune on 2025.
 
 ## Consequences
 

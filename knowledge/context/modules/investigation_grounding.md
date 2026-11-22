@@ -3,7 +3,7 @@ id: mod-investigation-grounding
 title: Saved sentence audits and independent human calibration
 status: active
 owners: [Usman]
-updated: 2026-11-20
+updated: 2026-11-22
 ---
 
 # Sentence grounding
@@ -115,3 +115,11 @@ unsupported labels. A complete independent human reference and adjudications
 are required for separate fit/validation metrics; no automatic threshold/model
 choice or runtime activation occurs. Actual model judgments are still pending.
 Protocol: `docs/work/usman/GROUNDING_JUDGE_PROTOCOL.md`; decision below.
+
+
+L4 source 8d3abab / CI 44982604273 passed 515 backend / 283 frontend tests with
+5407/6587= 82.09% core coverage, unchanged frozen preflight/replay and real
+Neo4j/PostgreSQL/Chromium flows. All 150 real packet prompts pass full-source
+preflight (maximum 4,577 bytes). Tests are synthetic protocol verification, not
+actual judge accuracy. PR #51was merged under user authorization; no independent
+owner/student acceptance is inferred. See GROUNDING_JUDGE_VERIFICATION.md.

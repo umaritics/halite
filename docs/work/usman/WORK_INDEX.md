@@ -60,3 +60,11 @@ does not imply independent teammate approval.
 - Release proof: `evidence/phase19-integration/`.
 - Full goal remains active; human labels, actual model results and student/report
   acceptance must not be inferred from merged code.
+
+
+## Subsequent L4 and report evidence
+
+- [Grounding judge protocol](GROUNDING_JUDGE_PROTOCOL.md)
+- [Grounding judge verification](GROUNDING_JUDGE_VERIFICATION.md)
+- [Research references](../../fyp1-final/USMAN_RESEARCH_REFERENCES.md)
+- `evidence/phase21-grounding-judge/`: raw hosted reports and merge/release metadata.

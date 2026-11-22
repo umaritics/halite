@@ -12,7 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
-| [DEC-20261122-offline-grounding-judge](DEC-20261122-offline-grounding-judge.md) | Exact-source offline L4 instrument and independent human comparison | implemented / verification pending | Usman |
+| [DEC-20261122-offline-grounding-judge](DEC-20261122-offline-grounding-judge.md) | Exact-source offline L4 instrument and independent human comparison | implemented / hosted verified; measurements pending | Usman |
 | [DEC-20261121-final-research-publication](DEC-20261121-final-research-publication.md) | Frozen test display and exact accepted joint-selection marker | implemented / verified; owner review pending | Usman, Shahmeer |
 | [DEC-20261121-held-out-procedure](DEC-20261121-held-out-procedure.md) | Receipt-backed fixed 2025 evaluation and exact-head access gate | implemented / evaluation verified | Usman |
 | [DEC-20261121-frozen-research-point](DEC-20261121-frozen-research-point.md) | User-selected .80/.50 point and pre-test chronology/provenance gate | accepted / verified | Usman |
