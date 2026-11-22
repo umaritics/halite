@@ -100,3 +100,24 @@ exact case, exact turn replay after real reload/refresh, closed read-only guard,
 one-click authenticated print/PDF,390px layout, chart parity, both themes and
 logout. The recorded model status remains unavailable. Seven screenshots and
 PDF are retained in phase28/public-browser; visual PDF review is separate.
+
+The separate post-release quick-diagnose attempt also failed live explanation
+after126.42seconds. Ranked evidence and explicit fallback returned; source/corpus
+unchanged and logout confirmed. No automatic retries. Raw response/summary in
+phase28/quick-attempt2. Both runtime paths still need an operational workaround.
+
+Print correction PR56 source05043754d01056d2ae369eaf2eff2aa3a07e13e0
+passed full CI44993808561 and ordinary exact-head merge produced
+6c3cd0d6fbac7a703570894257f0cad738a4e14b. Merged-main CI44994039620,
+release and fresh PDF review remain separate gates at this point.
+
+Final print release: mainCI44994039620/deploy44994297938 passed; public health
+confirmed exact6c3cd0d6fbac7a703570894257f0cad738a4e14b and2,079records.
+Hosted browser44994441004 passed real own-case replay, closure and one-click
+print plus all public read/auth/phone checks, with zero page errors/prohibited
+requests. All4exportedPDF pages rendered and visually reviewed; all20record IDs
+and20full normalized narratives independently match the saved response. New
+PDF SHA2568ec1c3dbdc0830b1d5242de0cc62c1324f0e15a731c513f1103f199a7c0fc839.
+A close-up of the original disproved the initially suspected missing glyphs;
+the confirmed issue was zero-margin edge crowding. Correction is now visually
+accepted. Model availability remains failed on both measured runtime paths.

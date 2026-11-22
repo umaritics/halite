@@ -109,8 +109,19 @@ fresh public lifecycle case74c792ce-510c-4c60-addb-a7f441435246 persisted/replay
 closed/printed correctly but compact model prose still timed out; live success
 is not established. Hosted browser44993544541 verified this populated own-case
 workspace, exact reload, closure guard and one-click PDF along with real auth,
-phone geometry and research parity. PDF visual review found edge-clipped text
-at a zero-margin page boundary. Report print CSS now requests A4/16mm margins,
+phone geometry and research parity. PDF visual review found crowded text
+at zero-margin page boundaries. Report print CSS now requests A4/16mm margins,
 keeps fitting evidence items together and sets paragraph widows/orphans; browser
 export honors CSS page size. The correction requires fresh deployed PDF review.
 See docs/work/usman/PUBLIC_SESSION_VERIFICATION.md and phase28 raw artifacts.
+
+Final print release: mainCI44994039620/deploy44994297938 passed; public health
+confirmed exact6c3cd0d6fbac7a703570894257f0cad738a4e14b and2,079records.
+Hosted browser44994441004 passed real own-case replay, closure and one-click
+print plus all public read/auth/phone checks, with zero page errors/prohibited
+requests. All4exportedPDF pages rendered and visually reviewed; all20record IDs
+and20full normalized narratives independently match the saved response. New
+PDF SHA2568ec1c3dbdc0830b1d5242de0cc62c1324f0e15a731c513f1103f199a7c0fc839.
+A close-up of the original disproved the initially suspected missing glyphs;
+the confirmed issue was zero-margin edge crowding. Correction is now visually
+accepted. Model availability remains failed on both measured runtime paths.
