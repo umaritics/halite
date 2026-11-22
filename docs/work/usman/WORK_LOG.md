@@ -1236,3 +1236,15 @@ workflow is registered active and encrypted dedicated-account secrets already
 exist. New proof branch codex/usman-public-verification starts from merged main;
 root checkout's unrelated work remains untouched. Source/merge/XML receipts are
 retained under phase26-public-release. No new source-pinned model run has started.
+
+Merged-main CI44988523496 and normal deploy44988762837 succeeded; independent
+publichealth confirmed exactdb574ac/Neo4j/livephi4/PostgreSQL/2079records. Dispatched
+manualVERIFY under existing dedicated-account authorization; actual browser run
+44988921561passed05:20:32UTC. Allsix screenshots visually reviewed and hash-checked;
+real login/deep-link/research source parity/home/history/refresh/logout and326px
+phone main area verified. Zero pageerrors/prohibitedwrites. No password/token
+artifacts. Source, main, deployment, health and browser evidence retained under
+phase26-public-release and PUBLIC_BROWSER_VERIFICATION.md. The dedicated account
+had zero investigations, so this proves empty/read flow, not production creation/
+turn/closure/print. Next verify one clearly labelled account-owned test lifecycle
+and actual model reply before starting another source-pinned reference run.

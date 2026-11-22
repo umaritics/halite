@@ -1,0 +1,10 @@
+{
+  "state": "verified",
+  "all_six_screenshots_visually_reviewed": true,
+  "screenshots_match_recorded_sha256": true,
+  "no_console_page_errors": true,
+  "no_prohibited_api_writes": true,
+  "phone_main_width_px": 326,
+  "history_count_at_check": 0,
+  "scope": "Actual public signed-in reads/refresh/logout; no production session lifecycle or model-call claim"
+}
