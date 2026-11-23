@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react';
 import { MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
-import GraphViewer, { GraphSidePanel } from '../components/GraphViewer';
-import { useGraph } from '../hooks/useGraph';
+import { Button, EmptyState, ErrorBoundary, ErrorCard, PageHeader, Skeleton } from '../../components/ui';
+import GraphFallback from './GraphFallback';
+import GraphViewer, { GraphSidePanel } from './GraphViewer';
+import { useGraph } from './useGraph';
+import { hasWebGL } from './webgl';
 import {
   EDGE_MEANING,
   MAINT_LABELS,
@@ -9,7 +12,7 @@ import {
   countBy,
   focusAircraft,
   maintenanceGraph,
-} from '../utils/graphScope';
+} from './graphScope';
 
 // The backend default (200) returns only a slice of the maintenance graph; ask for enough to
 // hold the whole thing (about 2,200 nodes on staging) and say so if the cap is reached.
@@ -17,6 +20,9 @@ export const MAINT_GRAPH_LIMIT = 3000;
 // Above this many edges the whole-fleet view is slow to lay out and hard to read.
 const DENSE_EDGE_COUNT = 1500;
 const EDGE_SWATCH = { ABOUT: '#E8650A', PRECEDED_BY: '#E8650A', SUPERSEDES: '#E5A100' };
+const NO_WEBGL_REASON =
+  "The 3D graph needs WebGL, which this browser isn't providing. The same stored nodes and edges are listed below.";
+const VIEWER_FAILED_REASON = 'The 3D graph could not be drawn. The same stored nodes and edges are listed below.';
 
 export default function Graph() {
   const { data, loading, error, refetch } = useGraph(MAINT_GRAPH_LIMIT);
@@ -25,6 +31,7 @@ export default function Graph() {
   const [typeFilters, setTypeFilters] = useState(() => Object.fromEntries(MAINT_LABELS.map((t) => [t, true])));
   // undefined = not chosen yet (use the busiest aircraft); '' = whole fleet.
   const [chosenTail, setChosenTail] = useState(undefined);
+  const webgl = useMemo(() => hasWebGL(), []);
 
   const full = useMemo(() => maintenanceGraph(data), [data]);
   const aircraft = useMemo(() => aircraftOptions(full), [full]);
@@ -41,42 +48,98 @@ export default function Graph() {
   const selectedAssetUuid =
     selectedNode?.label === 'Asset' ? selectedNode.id : assetIdByTail.get(selectedNode?.asset_key);
 
+  const failedFallback = <GraphFallback data={scoped} tail={tail} reason={VIEWER_FAILED_REASON} />;
+
+  function renderMain() {
+    if (error) {
+      return (
+        <div className="p-6">
+          <ErrorCard message={error} onRetry={refetch} />
+        </div>
+      );
+    }
+    if (loading && !data.nodes?.length) {
+      return <Skeleton variant="card" lines={6} className="p-6" />;
+    }
+    if (!scoped.nodes.length) {
+      return (
+        <div className="p-6">
+          <EmptyState
+            title="No graph data yet"
+            body="No aircraft or service records are stored yet. Ingest service records and they will appear here."
+          />
+        </div>
+      );
+    }
+    if (!webgl) {
+      return <GraphFallback data={scoped} tail={tail} reason={NO_WEBGL_REASON} />;
+    }
+    return (
+      <>
+        {dense && (
+          <p
+            id="graph-density-warning"
+            className="absolute left-4 top-4 z-20 max-w-sm rounded-md bg-amber-500/10 px-3 py-2 text-xs text-amber-400"
+          >
+            {scoped.edges.length} edges is too dense to read. Pick one aircraft to see its records and
+            corrections clearly.
+          </p>
+        )}
+        <ErrorBoundary
+          resetKey={tail}
+          fallback={failedFallback}
+          onError={(err) => console.error('Graph render failed:', err)}
+        >
+          <GraphViewer
+            data={scoped}
+            searchQuery={search}
+            typeFilters={typeFilters}
+            onNodeSelect={setSelectedNode}
+          />
+        </ErrorBoundary>
+        <GraphSidePanel
+          node={selectedNode}
+          assetUuid={selectedAssetUuid}
+          onClose={() => setSelectedNode(null)}
+        />
+      </>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-theme px-6 py-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h2 className="font-brand text-xl text-primary">Knowledge Graph</h2>
-            {!loading && !error && (
-              <span
-                id="graph-scope-chip"
-                className="rounded-full border border-accent/20 bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent"
-              >
-                {tail ? `Aircraft ${tail}` : 'Whole fleet'}: {scoped.nodes.length} nodes · {scoped.edges.length} edges
-                {hitCap ? ' (loaded cap reached — graph may be incomplete)' : ''}
-              </span>
-            )}
-          </div>
-          <p className="font-sans text-sm text-secondary">
-            Stored aircraft, service records and the relationships between them
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search nodes…"
-              aria-label="Search nodes"
-              className="halite-input py-2 pl-9 pr-4 text-sm"
-            />
-          </div>
-          <button onClick={refetch} className="halite-btn-ghost" title="Refresh" aria-label="Refresh graph">
-            <ArrowPathIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
-      </header>
+      <div className="px-6 pt-4">
+        <PageHeader
+          title="Knowledge Graph"
+          description="Stored aircraft, service records and the relationships between them"
+          actions={
+            <div className="flex flex-wrap items-center gap-3">
+              {!loading && !error && (
+                <span
+                  id="graph-scope-chip"
+                  className="rounded-full border border-accent/20 bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent"
+                >
+                  {tail ? `Aircraft ${tail}` : 'Whole fleet'}: {scoped.nodes.length} nodes · {scoped.edges.length} edges
+                  {hitCap ? ' (loaded cap reached — graph may be incomplete)' : ''}
+                </span>
+              )}
+              <div className="relative">
+                <MagnifyingGlassIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search nodes…"
+                  aria-label="Search nodes"
+                  className="halite-input py-2 pl-9 pr-4 text-sm"
+                />
+              </div>
+              <Button variant="ghost" onClick={refetch} aria-label="Refresh graph" title="Refresh">
+                <ArrowPathIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              </Button>
+            </div>
+          }
+        />
+      </div>
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <aside className="w-64 shrink-0 overflow-y-auto border-r border-theme p-4">
@@ -140,38 +203,7 @@ export default function Graph() {
         </aside>
 
         <div className="relative min-h-0 flex-1" style={{ minHeight: 520 }}>
-          {error && (
-            <div role="alert" className="absolute left-4 top-4 z-20 rounded-md bg-red-500/10 px-3 py-2 text-sm text-red-400">
-              <p>{error}</p>
-              <button onClick={refetch} className="mt-1 underline">Try again</button>
-            </div>
-          )}
-          {dense && !error && (
-            <p
-              id="graph-density-warning"
-              className="absolute left-4 top-4 z-20 max-w-sm rounded-md bg-amber-500/10 px-3 py-2 text-xs text-amber-400"
-            >
-              {scoped.edges.length} edges is too dense to read. Pick one aircraft to see its records and
-              corrections clearly.
-            </p>
-          )}
-          {loading && !data.nodes?.length ? (
-            <div className="flex h-full items-center justify-center font-sans text-accent">Loading graph data…</div>
-          ) : (
-            <>
-              <GraphViewer
-                data={scoped}
-                searchQuery={search}
-                typeFilters={typeFilters}
-                onNodeSelect={setSelectedNode}
-              />
-              <GraphSidePanel
-                node={selectedNode}
-                assetUuid={selectedAssetUuid}
-                onClose={() => setSelectedNode(null)}
-              />
-            </>
-          )}
+          {renderMain()}
         </div>
       </div>
     </div>

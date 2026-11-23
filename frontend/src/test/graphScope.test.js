@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { aircraftOptions, countBy, focusAircraft, maintenanceGraph } from '../utils/graphScope';
+import { aircraftOptions, countBy, focusAircraft, maintenanceGraph } from '../features/graph/graphScope';
 
 const nodes = [
   { id: 'a1', label: 'Asset', tail_number: '813SK' },

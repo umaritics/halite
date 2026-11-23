@@ -20,6 +20,10 @@ export default class ErrorBoundary extends Component {
 
   render() {
     if (!this.state.error) return this.props.children;
+    const { fallback } = this.props;
+    if (fallback !== undefined) {
+      return typeof fallback === 'function' ? fallback(this.state.error) : fallback;
+    }
     return (
       <ErrorCard
         message="Something went wrong while showing this page."

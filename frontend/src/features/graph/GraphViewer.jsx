@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import { Link } from 'react-router-dom';
-import { useTheme } from '../context/ThemeContext';
-import { formatDate } from '../utils/format';
+import { useTheme } from '../../context/ThemeContext';
+import { formatDate } from '../../utils/format';
+import { getNodeLabel } from './nodeLabel';
 
 // Correction edges (SUPERSEDES, computed by the conflict engine) are drawn apart from the
 // stored ordering/ownership edges so they can be found at a glance.
@@ -10,37 +11,15 @@ const CORRECTION_EDGE = 'SUPERSEDES';
 const CORRECTION_COLOR = '#E5A100';
 
 const NODE_COLORS = {
-  Component: '#E8650A',
-  Decision: '#FF7A1A',
-  Commit: '#888888',
-  Ticket: '#C45A0A',
-  Document: '#666666',
-  Asset: '#FF9E5E', // Distinct from Decision
-  ServiceRecord: '#B34A00', // distinct
+  Asset: '#FF9E5E',
+  ServiceRecord: '#B34A00',
 };
-
-const DECISION_STATUS_COLORS = {
-  active: '#E8650A',
-  needs_review: '#FF7A1A',
-  invalidated: '#CC3300',
-};
+const SUPERSEDED_COLOR = '#555555';
+const DEFAULT_NODE_COLOR = '#E8650A';
 
 function getNodeColor(node) {
-  if (node.label === 'Decision' || node.title) {
-    return DECISION_STATUS_COLORS[node.status] || NODE_COLORS.Decision;
-  }
-  if (node.label === 'ServiceRecord') {
-    return node.status === 'superseded' ? '#555555' : NODE_COLORS.ServiceRecord;
-  }
-  return NODE_COLORS[node.label] || '#E8650A';
-}
-
-function getNodeLabel(node) {
-  // Aircraft show their tail number and service records their FAA record id; a UUID prefix
-  // means nothing to a reader.
-  return (
-    node.tail_number || node.record_id || node.name || node.title || node.filename || node.id?.slice(0, 8) || 'Node'
-  );
+  if (node.label === 'ServiceRecord' && node.status === 'superseded') return SUPERSEDED_COLOR;
+  return NODE_COLORS[node.label] || DEFAULT_NODE_COLOR;
 }
 
 export default function GraphViewer({ data, onNodeSelect, searchQuery = '', typeFilters = {} }) {
@@ -80,11 +59,11 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
 
     let nodes = (data.nodes || []).map((n) => ({
       id: n.id,
-      label: n.label || (n.title ? 'Decision' : n.name ? 'Component' : 'Node'),
+      label: n.label || 'Node',
       name: getNodeLabel(n),
       color: getNodeColor(n),
       // The aircraft is the hub; its records stay small so dozens of them remain distinguishable.
-      val: n.label === 'Asset' ? 14 : n.label === 'ServiceRecord' ? 3 : n.label === 'Decision' || n.title ? 8 : 5,
+      val: n.label === 'Asset' ? 14 : n.label === 'ServiceRecord' ? 3 : 5,
       // keep original fields for side panel
       ...n,
       displayName: getNodeLabel(n),
@@ -201,7 +180,7 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
 }
 
 // `assetUuid` (optional) is the aircraft's id, used to link into the asset history page.
-export function GraphSidePanel({ node, onClose, onChatAbout, assetUuid }) {
+export function GraphSidePanel({ node, onClose, assetUuid }) {
   if (!node) return null;
 
   const isRecord = node.label === 'ServiceRecord';
@@ -214,8 +193,13 @@ export function GraphSidePanel({ node, onClose, onChatAbout, assetUuid }) {
           <span className="font-sans text-xs uppercase text-accent">{node.label}</span>
           <h3 className="font-brand mt-1 text-primary">{node.displayName || getNodeLabel(node)}</h3>
         </div>
-        <button onClick={onClose} className="text-secondary hover:text-primary">
-          ✕
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close details"
+          className="text-secondary hover:text-primary"
+        >
+          <span aria-hidden="true">✕</span>
         </button>
       </div>
 
@@ -264,12 +248,6 @@ export function GraphSidePanel({ node, onClose, onChatAbout, assetUuid }) {
         >
           Open in asset history →
         </Link>
-      )}
-
-      {onChatAbout && (
-        <button onClick={() => onChatAbout(node)} className="halite-btn-primary mt-4 w-full text-sm">
-          Chat about this
-        </button>
       )}
     </div>
   );
