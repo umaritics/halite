@@ -1,7 +1,7 @@
 import { ClipboardDocumentListIcon, WrenchScrewdriverIcon } from '@heroicons/react/24/outline';
-import Assets from '../../pages/Assets';
-import AssetHistory from '../../pages/AssetHistory';
-import ServiceRecords from '../../pages/ServiceRecords';
+import Assets from './Assets';
+import AssetHistory from './AssetHistory';
+import ServiceRecords from './ServiceRecords';
 
 export const routes = [
   { path: '/app/assets', element: <Assets /> },

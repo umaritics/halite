@@ -1,8 +1,8 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ServiceRecords from '../pages/ServiceRecords';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import ServiceRecords from '../features/assets/ServiceRecords';
 import ConfidenceBar from '../components/ConfidenceBar';
 import StatusChip from '../components/StatusChip';
 import * as client from '../api/client';
@@ -156,5 +156,48 @@ describe('ServiceRecords fleet view', () => {
     expect(await screen.findByText('Could not load service records')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
     expect(await screen.findByText('DRAG ANGLE')).toBeInTheDocument();
+  });
+});
+
+describe('ServiceRecords text filter debounce', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    api.assets.mockResolvedValue({ data: assets });
+    api.records.mockResolvedValue(page());
+  });
+  afterEach(() => vi.useRealTimers());
+
+  it('sends one request after typing pauses, not one per keystroke', async () => {
+    renderAt();
+    await screen.findByText('R1');
+    expect(api.records).toHaveBeenCalledTimes(1);
+
+    vi.useFakeTimers();
+    const input = screen.getByLabelText('Search records');
+    ['c', 'cr', 'cra', 'crac', 'crack'].forEach((value) => {
+      fireEvent.change(input, { target: { value } });
+      act(() => { vi.advanceTimersByTime(100); });
+    });
+    expect(input).toHaveValue('crack');
+    expect(api.records).toHaveBeenCalledTimes(1);
+
+    act(() => { vi.advanceTimersByTime(300); });
+    vi.useRealTimers();
+    await waitFor(() => expect(api.records).toHaveBeenCalledTimes(2));
+    expect(api.records).toHaveBeenLastCalledWith(expect.objectContaining({ q: 'crack' }));
+  });
+
+  it('keeps the loaded rows and offers a retry when Load more fails', async () => {
+    api.records
+      .mockResolvedValueOnce(page([records[0]], { total: 2, next: 1 }))
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValueOnce(page([records[1]], { total: 2, next: null }));
+    renderAt();
+    fireEvent.click(await screen.findByRole('button', { name: 'Load more' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not load more records');
+    expect(screen.getByText('DRAG ANGLE')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(await screen.findByText('PUMP')).toBeInTheDocument();
   });
 });

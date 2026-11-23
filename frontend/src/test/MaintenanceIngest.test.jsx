@@ -2,10 +2,16 @@ import React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import MaintenanceIngest from '../pages/MaintenanceIngest';
-import { MAX_UPLOAD_MB } from '../components/CsvUploader';
+import MaintenanceIngest from '../features/intake/MaintenanceIngest';
+import { MAX_UPLOAD_MB } from '../features/intake/CsvUploader';
 import * as client from '../api/client';
 
+const auth = vi.hoisted(() => ({
+  user: { role: 'admin' },
+  hasRole: (...roles) => roles.includes(auth.user.role),
+}));
+
+vi.mock('../context/AuthContext', () => ({ useAuth: () => auth }));
 vi.mock('../api/client', () => ({
   maintenanceAPI: {
     ingest: vi.fn(),
@@ -28,8 +34,14 @@ const choose = async (file) => {
   fireEvent.change(screen.getByLabelText('CSV file'), { target: { files: [file] } });
 };
 
+const runCorpusIngest = async () => {
+  fireEvent.click(screen.getByRole('button', { name: 'Ingest Corpus' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Run ingest' }));
+};
+
 beforeEach(() => {
   vi.resetAllMocks();
+  auth.user = { role: 'admin' };
   vi.spyOn(window, 'alert').mockImplementation(() => {});
 });
 afterEach(() => vi.restoreAllMocks());
@@ -38,9 +50,7 @@ describe('Corpus ingest (server file)', () => {
   it('renders corpus ingest and processes result', async () => {
     api.ingest.mockResolvedValue({ data: counts });
     renderPage();
-    act(() => {
-      screen.getByText('Ingest Corpus').click();
-    });
+    await runCorpusIngest();
     await waitFor(() => {
       expect(screen.getByText('10')).toBeInTheDocument(); // aircraft in file
       expect(screen.getByText('20')).toBeInTheDocument(); // records
@@ -52,7 +62,7 @@ describe('Corpus ingest (server file)', () => {
     renderPage();
     fireEvent.change(screen.getByLabelText('CSV Path'), { target: { value: 'data/x.csv' } });
     fireEvent.change(screen.getByLabelText('Row Limit (Optional)'), { target: { value: '5' } });
-    fireEvent.click(screen.getByText('Ingest Corpus'));
+    await runCorpusIngest();
     await screen.findByText('New records');
     expect(api.ingest).toHaveBeenCalledWith({ csv_path: 'data/x.csv', limit: 5 });
   });
@@ -60,9 +70,36 @@ describe('Corpus ingest (server file)', () => {
   it('shows a failure inline and never as a browser alert', async () => {
     api.ingest.mockRejectedValue({ response: { status: 404, data: { detail: 'CSV file not found: data/x.csv.' } } });
     renderPage();
-    fireEvent.click(screen.getByText('Ingest Corpus'));
+    await runCorpusIngest();
     expect(await screen.findByRole('alert')).toHaveTextContent('CSV file not found: data/x.csv.');
     expect(window.alert).not.toHaveBeenCalled();
+  });
+});
+
+describe('Corpus ingest access and confirmation', () => {
+  it.each(['technician', 'supervisor'])('hides the server-file panel from a %s', (role) => {
+    auth.user = { role };
+    renderPage();
+    expect(screen.queryByLabelText('CSV Path')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Ingest Corpus' })).toBeNull();
+    expect(screen.getByLabelText('CSV file')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Submit Record' })).toBeInTheDocument();
+  });
+
+  it('asks for confirmation and sends nothing until it is given', async () => {
+    api.ingest.mockResolvedValue({ data: counts });
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: 'Ingest Corpus' }));
+    expect(await screen.findByRole('dialog')).toHaveTextContent('data/processed/sdr_poc_corpus.csv');
+    expect(api.ingest).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(api.ingest).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Ingest Corpus' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Run ingest' }));
+    await waitFor(() => expect(api.ingest).toHaveBeenCalledTimes(1));
   });
 });
 

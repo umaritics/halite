@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { CloudArrowUpIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
-import { maintenanceAPI } from '../api/client';
-import { describeLoadError } from '../utils/loadError';
+import { maintenanceAPI } from '../../api/client';
+import { describeLoadError } from '../../utils/loadError';
+import { Button } from '../../components/ui';
 import IngestResult from './IngestResult';
 
 // Mirrors the backend default MAX_UPLOAD_MB (backend/config.py); the server still enforces its own limit (HTTP 413).
@@ -93,12 +94,12 @@ export default function CsvUploader() {
           <DocumentTextIcon className="h-5 w-5 text-accent" />
           <span>{file.name}</span>
           <span className="text-secondary">{fmtSize(file.size)}</span>
-          <button type="button" onClick={submit} disabled={busy} className="halite-btn-primary">
+          <Button onClick={submit} loading={busy}>
             {busy ? 'Ingesting…' : 'Ingest this file'}
-          </button>
-          <button type="button" onClick={() => setFile(null)} disabled={busy} className="halite-btn-ghost">
+          </Button>
+          <Button variant="ghost" onClick={() => setFile(null)} disabled={busy}>
             Choose a different file
-          </button>
+          </Button>
         </div>
       )}
       <p className="mt-3 font-sans text-xs text-[#555555]">

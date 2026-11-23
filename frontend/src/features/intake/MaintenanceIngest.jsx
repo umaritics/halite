@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import CsvUploader from '../components/CsvUploader';
-import IngestResult from '../components/IngestResult';
-import { maintenanceAPI } from '../api/client';
-import StatusChip from '../components/StatusChip';
-import ConfidenceBar from '../components/ConfidenceBar';
-import { describeLoadError } from '../utils/loadError';
+import CsvUploader from './CsvUploader';
+import CorpusIngestPanel from './CorpusIngestPanel';
+import { maintenanceAPI } from '../../api/client';
+import StatusChip from '../../components/StatusChip';
+import ConfidenceBar from '../../components/ConfidenceBar';
+import { describeLoadError } from '../../utils/loadError';
+import { useAuth } from '../../context/AuthContext';
+import { Button, PageHeader } from '../../components/ui';
 
 export default function MaintenanceIngest() {
-  const [ingestUploading, setIngestUploading] = useState(false);
-  const [ingestPath, setIngestPath] = useState('data/processed/sdr_poc_corpus.csv');
-  const [ingestLimit, setIngestLimit] = useState('');
-  const [ingestResult, setIngestResult] = useState(null);
-  const [ingestError, setIngestError] = useState(null);
+  const { hasRole } = useAuth();
+  const isAdmin = hasRole('admin');
 
   const [form, setForm] = useState({
     tailNumber: '',
@@ -26,22 +25,6 @@ export default function MaintenanceIngest() {
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formResult, setFormResult] = useState(null);
   const [formError, setFormError] = useState(null);
-
-  const handleCorpusIngest = async () => {
-    setIngestUploading(true);
-    setIngestResult(null);
-    setIngestError(null);
-    try {
-      const payload = { csv_path: ingestPath };
-      if (ingestLimit) payload.limit = parseInt(ingestLimit, 10);
-      const { data } = await maintenanceAPI.ingest(payload);
-      setIngestResult(data);
-    } catch (err) {
-      setIngestError(describeLoadError(err).message);
-    } finally {
-      setIngestUploading(false);
-    }
-  };
 
   const handleSingleRecordSubmit = async (e) => {
     e.preventDefault();
@@ -71,15 +54,14 @@ export default function MaintenanceIngest() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <header className="border-b border-theme px-6 py-4">
-        <h2 className="font-brand text-xl text-primary">Maintenance Ingest</h2>
-        <p className="font-sans text-sm text-secondary">
-          Import FAA SDR records or submit a single service record to the graph
-        </p>
-      </header>
+      <div className="px-6 pt-4">
+        <PageHeader
+          title="Maintenance Ingest"
+          description="Import FAA SDR records or submit a single service record to the graph"
+        />
+      </div>
 
       <div className="mx-auto max-w-4xl space-y-8 p-6">
-        
         {/* Panel 1: CSV upload */}
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">Upload CSV</h3>
@@ -90,52 +72,8 @@ export default function MaintenanceIngest() {
           <CsvUploader />
         </section>
 
-        {/* Panel 2: Corpus Ingest (file already on the API server) */}
-        <section className="halite-card p-6">
-          <h3 className="font-brand text-primary">Corpus Ingest (server file)</h3>
-          <p className="mb-4 mt-1 font-sans text-sm text-secondary">
-            Import a CSV that is already on the API server. The path is read on the server, not on your computer.
-          </p>
-
-          <div className="mb-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="ingest-path" className="font-sans text-sm text-secondary">CSV Path</label>
-              <input
-                id="ingest-path"
-                value={ingestPath}
-                onChange={(e) => setIngestPath(e.target.value)}
-                className="halite-input mt-1 w-full"
-                placeholder="data/processed/sdr_poc_corpus.csv"
-              />
-            </div>
-            <div>
-              <label htmlFor="ingest-limit" className="font-sans text-sm text-secondary">Row Limit (Optional)</label>
-              <input
-                id="ingest-limit"
-                type="number"
-                value={ingestLimit}
-                onChange={(e) => setIngestLimit(e.target.value)}
-                className="halite-input mt-1 w-full"
-                placeholder="e.g. 150"
-              />
-            </div>
-          </div>
-
-          <button
-            onClick={handleCorpusIngest}
-            disabled={ingestUploading}
-            className="halite-btn-primary"
-          >
-            {ingestUploading ? 'Ingesting...' : 'Ingest Corpus'}
-          </button>
-
-          {ingestError && (
-            <p role="alert" className="mt-4 rounded-md bg-red-500/10 px-3 py-2 font-sans text-sm text-red-400">
-              {ingestError}
-            </p>
-          )}
-          {ingestResult && <IngestResult result={ingestResult} />}
-        </section>
+        {/* Panel 2: Corpus Ingest (file already on the API server), admins only */}
+        {isAdmin && <CorpusIngestPanel />}
 
         {/* Panel 3: Single Record Submission */}
         <section className="halite-card p-6">
@@ -181,9 +119,9 @@ export default function MaintenanceIngest() {
               <textarea id="form-text" required rows={3} className="halite-input mt-1 w-full" value={form.discrepancy} onChange={e => setForm({...form, discrepancy: e.target.value})}></textarea>
             </div>
 
-            <button type="submit" disabled={formSubmitting} className="halite-btn-primary">
+            <Button type="submit" loading={formSubmitting}>
               {formSubmitting ? 'Processing...' : 'Submit Record'}
-            </button>
+            </Button>
           </form>
 
           {formError && (

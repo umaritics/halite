@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
-import { maintenanceAPI } from '../api/client';
-import StatusChip from '../components/StatusChip';
-import ConfidenceBar from '../components/ConfidenceBar';
+import { maintenanceAPI } from '../../api/client';
+import StatusChip from '../../components/StatusChip';
+import ConfidenceBar from '../../components/ConfidenceBar';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { formatDate, dateValue } from '../utils/format';
-import { describeLoadError } from '../utils/loadError';
+import { formatDate, dateValue } from '../../utils/format';
+import { describeLoadError } from '../../utils/loadError';
+import { EmptyState, ErrorCard, Skeleton } from '../../components/ui';
 
 // A record deep link looks like /app/asset-history/<asset>#<record_id>. The page
 // scrolls to that record and marks it, so "open the cited record" lands on the
@@ -85,11 +86,10 @@ export default function AssetHistory() {
     return (
       <div className="flex h-full flex-col p-6">
         <BackLinks fromInvestigation={fromInvestigation} />
-        <div role="status" aria-label="Loading service history">
-          <div className="h-8 w-32 bg-surface-dark/10 animate-pulse rounded mb-4"></div>
-          <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
-          <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
-          <div className="h-24 w-full bg-surface-dark/10 animate-pulse rounded mb-4 halite-card"></div>
+        <div role="status" aria-label="Loading service history" className="space-y-4">
+          <Skeleton variant="card" lines={2} />
+          <Skeleton variant="card" lines={2} />
+          <Skeleton variant="card" lines={2} />
         </div>
       </div>
     );
@@ -100,20 +100,15 @@ export default function AssetHistory() {
     return (
       <div className="flex h-full flex-col p-6">
         <BackLinks fromInvestigation={fromInvestigation} />
-        <div role="alert" className="halite-card border border-red-500/30 bg-red-500/5 p-4 max-w-xl">
-          <p className="font-sans text-sm font-medium text-red-400">
-            {notFound ? 'Aircraft not found' : 'Could not load service history'}
-          </p>
-          <p className="mt-1 font-sans text-sm text-red-300">
-            {notFound
-              ? 'No aircraft with this identifier exists in the loaded corpus. Go back and pick one from the list.'
-              : error.message}
-          </p>
-          {!notFound && (
-            <button type="button" onClick={() => setAttempt(n => n + 1)} className="halite-btn mt-3 text-sm">
-              Try again
-            </button>
-          )}
+        <div className="max-w-xl">
+          <ErrorCard
+            message={
+              notFound
+                ? 'Aircraft not found. No aircraft with this identifier exists in the loaded corpus. Go back and pick one from the list.'
+                : `Could not load service history. ${error.message}`
+            }
+            onRetry={notFound ? undefined : () => setAttempt((n) => n + 1)}
+          />
         </div>
       </div>
     );
@@ -123,7 +118,7 @@ export default function AssetHistory() {
     return (
       <div className="flex h-full flex-col p-6">
         <BackLinks fromInvestigation={fromInvestigation} />
-        <p className="font-sans text-secondary">No records for this asset yet.</p>
+        <EmptyState title="No records for this asset yet." />
       </div>
     );
   }

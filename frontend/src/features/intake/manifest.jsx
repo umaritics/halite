@@ -1,5 +1,5 @@
 import { DocumentArrowUpIcon } from '@heroicons/react/24/outline';
-import MaintenanceIngest from '../../pages/MaintenanceIngest';
+import MaintenanceIngest from './MaintenanceIngest';
 
 export const routes = [{ path: '/app/maintenance-ingest', element: <MaintenanceIngest /> }];
 
