@@ -27,7 +27,7 @@ vi.mock('../api/client', async () => {
     },
   };
 });
-vi.mock('../pages/TeamAccess', () => ({ default: () => <h1>Team page</h1> }));
+vi.mock('../features/admin/TeamAccess', () => ({ default: () => <h1>Team page</h1> }));
 vi.mock('../features/home/HomePage', () => ({ default: () => <h1>Home page</h1> }));
 
 function mountApp(path) {

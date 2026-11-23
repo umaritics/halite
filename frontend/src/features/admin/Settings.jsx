@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
-import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import { authAPI, healthAPI, maintenanceAPI } from '../api/client';
-import { formatDetail } from '../utils/diagnostics';
-import HaliteLogo from '../components/HaliteLogo';
-import BrandName from '../components/BrandName';
+import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
+import { authAPI, healthAPI, maintenanceAPI } from '../../api/client';
+import { formatDetail } from '../../utils/diagnostics';
+import HaliteLogo from '../../components/HaliteLogo';
+import BrandName from '../../components/BrandName';
+import { Button, ErrorCard, PageHeader, Skeleton } from '../../components/ui';
 
 // Mid-I: the software-only tools that used to live here (agent-context export and the
 // "Reset knowledge graph" action, which runs a full-graph DETACH DELETE) are no longer
@@ -27,8 +28,11 @@ const yesNo = (v) => (typeof v === 'boolean' ? (v ? 'Yes' : 'No') : undefined);
 export default function Settings() {
   const { theme, toggleTheme, isDark } = useTheme();
   const { isAuthenticated, user } = useAuth();
+  // Each request is 'loading' until its first response, then 'ready' or 'error'.
   const [health, setHealth] = useState(null);
+  const [healthStatus, setHealthStatus] = useState('loading');
   const [analysis, setAnalysis] = useState(null);
+  const [analysisStatus, setAnalysisStatus] = useState('loading');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [pwStatus, setPwStatus] = useState(null);
@@ -53,19 +57,44 @@ export default function Settings() {
     }
   };
 
-  useEffect(() => {
-    healthAPI.check().then(({ data }) => setHealth(data)).catch(() => setHealth(null));
-    maintenanceAPI.analysisStatus().then(({ data }) => setAnalysis(data)).catch(() => setAnalysis(null));
+  const loadHealth = useCallback(() => {
+    setHealthStatus('loading');
+    healthAPI
+      .check()
+      .then(({ data }) => {
+        setHealth(data);
+        setHealthStatus(data ? 'ready' : 'error');
+      })
+      .catch(() => {
+        setHealth(null);
+        setHealthStatus('error');
+      });
   }, []);
+
+  const loadAnalysis = useCallback(() => {
+    setAnalysisStatus('loading');
+    maintenanceAPI
+      .analysisStatus()
+      .then(({ data }) => {
+        setAnalysis(data);
+        setAnalysisStatus(data ? 'ready' : 'error');
+      })
+      .catch(() => {
+        setAnalysis(null);
+        setAnalysisStatus('error');
+      });
+  }, []);
+
+  useEffect(() => {
+    loadHealth();
+    loadAnalysis();
+  }, [loadHealth, loadAnalysis]);
 
   return (
     <div className="h-full overflow-y-auto">
-      <header className="border-b border-theme px-6 py-4">
-        <h2 className="font-brand text-xl text-primary">Settings</h2>
-        <p className="font-sans text-sm text-secondary">Appearance and system status</p>
-      </header>
-
       <div className="mx-auto max-w-2xl space-y-6 p-6">
+        <PageHeader title="Settings" description="Appearance and system status" />
+
         <section className="halite-card p-6">
           <div className="flex items-center gap-6">
             <HaliteLogo className="h-16 w-16" />
@@ -94,6 +123,10 @@ export default function Settings() {
               </div>
             </div>
             <button
+              type="button"
+              role="switch"
+              aria-checked={isDark}
+              aria-label="Dark mode"
               onClick={toggleTheme}
               className={`relative h-7 w-12 rounded-full transition ${
                 isDark ? 'bg-accent' : 'bg-[#CCCCCC]'
@@ -110,18 +143,29 @@ export default function Settings() {
 
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">Conflict-analysis coverage</h3>
-          {analysis ? (
+          {analysisStatus === 'loading' ? (
+            <Skeleton className="mt-4" lines={2} />
+          ) : analysisStatus === 'ready' ? (
             <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-5">
               {['total', 'unscored', 'scored', 'needs_review', 'reviewed'].map((key) => (
                 <div key={key}><dt className="text-secondary">{key.replaceAll('_', ' ')}</dt><dd className="text-xl text-primary">{analysis[key] ?? 0}</dd></div>
               ))}
             </dl>
-          ) : <p className="mt-3 text-sm text-secondary">Analysis coverage unavailable.</p>}
+          ) : (
+            <div className="mt-4">
+              <ErrorCard
+                message="Analysis coverage unavailable."
+                onRetry={loadAnalysis}
+              />
+            </div>
+          )}
         </section>
 
         <section className="halite-card p-6">
           <h3 className="font-brand text-primary">System Status</h3>
-          {health ? (
+          {healthStatus === 'loading' ? (
+            <Skeleton className="mt-4" lines={5} />
+          ) : healthStatus === 'ready' ? (
             <dl className="mt-4 space-y-3 font-sans text-sm">
               <div className="flex justify-between items-center">
                 <dt className="text-secondary">Graph Mode</dt>
@@ -173,7 +217,12 @@ export default function Settings() {
               />
             </dl>
           ) : (
-            <p className="mt-4 font-sans text-sm text-red-400">Backend not reachable. Start the API server.</p>
+            <div className="mt-4">
+              <ErrorCard
+                message="Backend not reachable. Start the API server."
+                onRetry={loadHealth}
+              />
+            </div>
           )}
         </section>
 
@@ -212,13 +261,9 @@ export default function Settings() {
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="halite-input"
               />
-              <button
-                type="submit"
-                disabled={pwSubmitting}
-                className="halite-btn-primary px-4 py-2 text-sm disabled:opacity-60"
-              >
+              <Button type="submit" disabled={pwSubmitting}>
                 {pwSubmitting ? 'Updating…' : 'Update password'}
-              </button>
+              </Button>
             </form>
           </section>
         )}

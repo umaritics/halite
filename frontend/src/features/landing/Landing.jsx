@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
-import BackgroundGraph from '../components/landing/BackgroundGraph';
-import CrystalMount from '../components/landing/CrystalMount';
-import Footer from '../components/landing/Footer';
-import BrandName from '../components/BrandName';
-import Navbar from '../components/landing/Navbar';
-import { useTheme } from '../context/ThemeContext';
+import BackgroundGraph from './BackgroundGraph';
+import CrystalMount from './CrystalMount';
+import Footer from './Footer';
+import BrandName from '../../components/BrandName';
+import Navbar from './Navbar';
+import { useTheme } from '../../context/ThemeContext';
 
 const features = [
   {

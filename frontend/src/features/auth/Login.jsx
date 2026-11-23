@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { EyeIcon, EyeSlashIcon, MoonIcon, SunIcon } from '@heroicons/react/24/outline';
-import HaliteLogo from '../components/HaliteLogo';
-import BrandName from '../components/BrandName';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
-import { formatDetail } from '../utils/diagnostics';
+import HaliteLogo from '../../components/HaliteLogo';
+import BrandName from '../../components/BrandName';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
+import { formatDetail } from '../../utils/diagnostics';
 
 function ProvenanceSchematic({ isDark }) {
   const strokeMuted = isDark ? '#2A2A2A' : '#D4D4D4';

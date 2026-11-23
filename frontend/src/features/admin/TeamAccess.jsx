@@ -1,15 +1,42 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { adminAPI } from '../api/client';
-import { useAuth } from '../context/AuthContext';
-import { formatDate } from '../utils/format';
-import { formatDetail } from '../utils/diagnostics';
-import { describeLoadError } from '../utils/loadError';
+import { adminAPI } from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
+import { formatDate, formatDateTime } from '../../utils/format';
+import { formatDetail } from '../../utils/diagnostics';
+import { describeLoadError } from '../../utils/loadError';
+import { Button, ConfirmDialog, ErrorCard, PageHeader, Skeleton } from '../../components/ui';
 
 const ROLES = [
   { value: 'technician', label: 'Technician' },
   { value: 'supervisor', label: 'Supervisor' },
   { value: 'admin', label: 'Administrator' },
 ];
+
+const ROLE_LABELS = Object.fromEntries(ROLES.map((r) => [r.value, r.label]));
+
+function confirmTitle(pending) {
+  if (pending?.kind === 'role') return 'Change role?';
+  if (pending?.kind === 'deactivate') return 'Deactivate account?';
+  return 'Revoke invitation?';
+}
+
+function confirmLabel(pending) {
+  if (pending?.kind === 'role') return 'Change role';
+  if (pending?.kind === 'deactivate') return 'Deactivate';
+  return 'Revoke invitation';
+}
+
+function confirmBody(pending) {
+  if (!pending) return null;
+  if (pending.kind === 'role') {
+    const { member, nextRole } = pending;
+    return `Change ${member.email} from ${ROLE_LABELS[member.role] || member.role} to ${ROLE_LABELS[nextRole] || nextRole}? Their access changes immediately.`;
+  }
+  if (pending.kind === 'deactivate') {
+    return `${pending.member.email} will not be able to sign in until the account is reactivated.`;
+  }
+  return `The activation link sent to ${pending.invite.email} will stop working.`;
+}
 
 export default function TeamAccess() {
   const { user: currentUser } = useAuth();
@@ -18,6 +45,8 @@ export default function TeamAccess() {
   const [auditEvents, setAuditEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const [auditLoading, setAuditLoading] = useState(true);
+  const [auditError, setAuditError] = useState(null);
 
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
@@ -26,25 +55,54 @@ export default function TeamAccess() {
   const [createdInviteLink, setCreatedInviteLink] = useState('');
   const [copied, setCopied] = useState(false);
   const [actionError, setActionError] = useState(null);
+  // The change waiting for confirmation: { kind: 'role' | 'deactivate' | 'revoke', ... }
+  const [pending, setPending] = useState(null);
+  const [confirming, setConfirming] = useState(false);
 
-  const loadWorkspaceData = useCallback(async () => {
-    setLoading(true);
+  const loadPeople = useCallback(async () => {
     setLoadError(null);
     try {
-      const [usersRes, invitesRes, auditRes] = await Promise.all([
+      const [usersRes, invitesRes] = await Promise.all([
         adminAPI.listUsers(),
         adminAPI.listInvites(),
-        adminAPI.auditEvents({ limit: 40 }),
       ]);
       setUsers(usersRes.data || []);
       setInvites(invitesRes.data || []);
-      setAuditEvents(auditRes.data?.items || []);
     } catch (err) {
       setLoadError(describeLoadError(err).message);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // The audit log loads on its own so a failure here is reported as a failure,
+  // not shown as an empty log, and does not hide the member list.
+  const loadAudit = useCallback(async () => {
+    setAuditError(null);
+    try {
+      const res = await adminAPI.auditEvents({ limit: 40 });
+      setAuditEvents(res.data?.items || []);
+    } catch (err) {
+      setAuditError(describeLoadError(err).message);
+    } finally {
+      setAuditLoading(false);
+    }
+  }, []);
+
+  const loadWorkspaceData = useCallback(
+    () => Promise.all([loadPeople(), loadAudit()]),
+    [loadPeople, loadAudit],
+  );
+
+  const retryPeople = () => {
+    setLoading(true);
+    loadPeople();
+  };
+
+  const retryAudit = () => {
+    setAuditLoading(true);
+    loadAudit();
+  };
 
   useEffect(() => {
     loadWorkspaceData();
@@ -85,33 +143,52 @@ export default function TeamAccess() {
     }
   };
 
-  const handleRoleChange = async (userId, nextRole) => {
+  const runConfirmedAction = async () => {
+    if (!pending || confirming) return;
+    setConfirming(true);
     setActionError(null);
     try {
-      await adminAPI.updateUser(userId, { role: nextRole });
+      if (pending.kind === 'role') {
+        await adminAPI.updateUser(pending.member.id, { role: pending.nextRole });
+      } else if (pending.kind === 'deactivate') {
+        await adminAPI.updateUser(pending.member.id, { is_active: false });
+      } else {
+        await adminAPI.revokeInvite(pending.invite.id);
+      }
       await loadWorkspaceData();
     } catch (err) {
-      setActionError(formatDetail(err?.response?.data?.detail) || 'Could not update user role.');
+      setActionError(formatDetail(err?.response?.data?.detail) || pending.failureMessage);
+    } finally {
+      setConfirming(false);
+      setPending(null);
     }
   };
 
-  const handleToggleActive = async (targetUser) => {
+  const askRoleChange = (member, nextRole) => {
+    if (nextRole === member.role) return;
+    setPending({
+      kind: 'role',
+      member,
+      nextRole,
+      failureMessage: 'Could not update user role.',
+    });
+  };
+
+  const askDeactivate = (member) => {
+    setPending({ kind: 'deactivate', member, failureMessage: 'Could not update account status.' });
+  };
+
+  const askRevoke = (invite) => {
+    setPending({ kind: 'revoke', invite, failureMessage: 'Could not revoke invitation.' });
+  };
+
+  const handleReactivate = async (member) => {
     setActionError(null);
     try {
-      await adminAPI.updateUser(targetUser.id, { is_active: !targetUser.is_active });
+      await adminAPI.updateUser(member.id, { is_active: true });
       await loadWorkspaceData();
     } catch (err) {
       setActionError(formatDetail(err?.response?.data?.detail) || 'Could not update account status.');
-    }
-  };
-
-  const handleRevokeInvite = async (inviteId) => {
-    setActionError(null);
-    try {
-      await adminAPI.revokeInvite(inviteId);
-      await loadWorkspaceData();
-    } catch (err) {
-      setActionError(formatDetail(err?.response?.data?.detail) || 'Could not revoke invitation.');
     }
   };
 
@@ -119,14 +196,12 @@ export default function TeamAccess() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <header className="border-b border-theme px-6 py-4">
-        <h2 className="font-brand text-xl text-primary">Team &amp; Access</h2>
-        <p className="font-sans text-sm text-secondary">
-          Invite authorised members, manage role permissions, and inspect security and review audit events
-        </p>
-      </header>
-
       <div className="mx-auto max-w-5xl space-y-6 p-6">
+        <PageHeader
+          title="Team & Access"
+          description="Invite authorised members, manage role permissions, and inspect security and review audit events"
+        />
+
         {actionError && (
           <div
             role="alert"
@@ -174,13 +249,9 @@ export default function TeamAccess() {
                 </option>
               ))}
             </select>
-            <button
-              type="submit"
-              disabled={creatingInvite}
-              className="halite-btn-primary px-5 py-2.5 text-sm whitespace-nowrap disabled:opacity-60"
-            >
+            <Button type="submit" disabled={creatingInvite} className="whitespace-nowrap">
               {creatingInvite ? 'Issuing…' : 'Create invite'}
-            </button>
+            </Button>
           </form>
 
           {createdInviteLink && (
@@ -192,9 +263,9 @@ export default function TeamAccess() {
                 <code className="flex-1 break-all rounded bg-page px-3 py-2 font-mono text-xs text-primary border border-theme">
                   {createdInviteLink}
                 </code>
-                <button type="button" onClick={handleCopyInvite} className="halite-btn-ghost px-3 py-2 text-xs">
+                <Button variant="ghost" size="sm" onClick={handleCopyInvite}>
                   {copied ? 'Copied' : 'Copy link'}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -214,13 +285,9 @@ export default function TeamAccess() {
                         {inv.role}
                       </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => handleRevokeInvite(inv.id)}
-                      className="halite-btn-ghost px-2.5 py-1 text-xs"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => askRevoke(inv)}>
                       Revoke
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -232,9 +299,11 @@ export default function TeamAccess() {
         <section className="halite-card p-6">
           <h3 className="font-brand text-lg text-primary">Workspace members</h3>
           {loading ? (
-            <p className="mt-3 font-sans text-sm text-secondary">Loading workspace members…</p>
+            <Skeleton className="mt-4" lines={3} />
           ) : loadError ? (
-            <p role="alert" className="mt-3 font-sans text-sm text-red-400">{loadError}</p>
+            <div className="mt-4">
+              <ErrorCard message={loadError} onRetry={retryPeople} />
+            </div>
           ) : (
             <div className="mt-4 divide-y divide-border-dark/40">
               {users.map((member) => {
@@ -267,7 +336,7 @@ export default function TeamAccess() {
                         aria-label={`Role for ${member.email}`}
                         value={member.role}
                         disabled={isSelf}
-                        onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                        onChange={(e) => askRoleChange(member, e.target.value)}
                         className="halite-input w-36 py-1.5 text-xs disabled:opacity-60"
                       >
                         {ROLES.map((r) => (
@@ -277,14 +346,14 @@ export default function TeamAccess() {
                         ))}
                       </select>
 
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         disabled={isSelf}
-                        onClick={() => handleToggleActive(member)}
-                        className="halite-btn-ghost px-3 py-1.5 text-xs disabled:opacity-40"
+                        onClick={() => (member.is_active ? askDeactivate(member) : handleReactivate(member))}
                       >
                         {member.is_active ? 'Deactivate' : 'Reactivate'}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -300,8 +369,12 @@ export default function TeamAccess() {
             Append-only record of sign-ins, invitations, role changes, and conflict-queue adjudications.
           </p>
 
-          {loading ? (
-            <p className="mt-3 font-sans text-sm text-secondary">Loading audit events…</p>
+          {auditLoading ? (
+            <Skeleton className="mt-4" lines={3} />
+          ) : auditError ? (
+            <div className="mt-4">
+              <ErrorCard message={auditError} onRetry={retryAudit} />
+            </div>
           ) : auditEvents.length === 0 ? (
             <p className="mt-3 font-sans text-sm text-secondary">No audit events recorded yet.</p>
           ) : (
@@ -320,7 +393,7 @@ export default function TeamAccess() {
                   {auditEvents.map((ev) => (
                     <tr key={ev.id}>
                       <td className="py-2 pr-3 font-mono text-secondary whitespace-nowrap">
-                        {formatDate(ev.created_at)}
+                        {formatDateTime(ev.created_at)}
                       </td>
                       <td className="py-2 pr-3 font-mono text-primary">{ev.action}</td>
                       <td className="py-2 pr-3 text-primary">
@@ -341,6 +414,18 @@ export default function TeamAccess() {
           )}
         </section>
       </div>
+
+      <ConfirmDialog
+        open={Boolean(pending)}
+        title={confirmTitle(pending)}
+        confirmLabel={confirmLabel(pending)}
+        tone={pending?.kind === 'role' ? 'default' : 'danger'}
+        loading={confirming}
+        onConfirm={runConfirmedAction}
+        onCancel={() => setPending(null)}
+      >
+        {confirmBody(pending)}
+      </ConfirmDialog>
     </div>
   );
 }

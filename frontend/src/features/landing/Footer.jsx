@@ -1,4 +1,4 @@
-import BrandName from '../BrandName';
+import BrandName from '../../components/BrandName';
 
 export default function Footer() {
   return (

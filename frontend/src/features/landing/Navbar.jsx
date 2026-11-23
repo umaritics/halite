@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import BrandName from '../BrandName';
-import HaliteLogo from '../HaliteLogo';
+import BrandName from '../../components/BrandName';
+import HaliteLogo from '../../components/HaliteLogo';
 
 const navLinks = [
   { label: 'About', href: '#about' },

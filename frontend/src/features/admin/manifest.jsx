@@ -1,6 +1,6 @@
 import { Cog6ToothIcon, UsersIcon } from '@heroicons/react/24/outline';
-import TeamAccess from '../../pages/TeamAccess';
-import Settings from '../../pages/Settings';
+import TeamAccess from './TeamAccess';
+import Settings from './Settings';
 
 export const routes = [
   { path: '/app/team', element: <TeamAccess />, roles: ['admin'] },

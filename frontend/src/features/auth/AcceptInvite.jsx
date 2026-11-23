@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import HaliteLogo from '../components/HaliteLogo';
-import BrandName from '../components/BrandName';
-import { authAPI } from '../api/client';
-import { useAuth } from '../context/AuthContext';
-import { formatDetail } from '../utils/diagnostics';
+import HaliteLogo from '../../components/HaliteLogo';
+import BrandName from '../../components/BrandName';
+import { authAPI } from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
+import { formatDetail } from '../../utils/diagnostics';
 
 export default function AcceptInvite() {
   const [searchParams] = useSearchParams();

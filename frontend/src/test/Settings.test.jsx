@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import Settings from '../pages/Settings';
+import Settings from '../features/admin/Settings';
 import * as client from '../api/client';
 
 vi.mock('../context/ThemeContext', () => ({
@@ -92,6 +92,33 @@ describe('Settings system status mirrors /api/health', () => {
     render(<Settings />);
     await waitFor(() => screen.getByText('Graph Mode'));
     expect(screen.queryByText(/reset knowledge graph/i)).toBeNull();
+  });
+
+  it('shows placeholders, not errors, until the first responses arrive', async () => {
+    client.healthAPI.check.mockReturnValue(new Promise(() => {}));
+    client.maintenanceAPI.analysisStatus.mockReturnValue(new Promise(() => {}));
+    render(<Settings />);
+
+    expect(screen.getAllByRole('status').length).toBeGreaterThanOrEqual(2);
+    expect(screen.queryByText(/Backend not reachable/)).toBeNull();
+    expect(screen.queryByText(/Analysis coverage unavailable/)).toBeNull();
+  });
+
+  it('shows the error state with retry only after a real failure', async () => {
+    client.healthAPI.check.mockRejectedValueOnce(new Error('Network Error'));
+    client.maintenanceAPI.analysisStatus.mockRejectedValueOnce(new Error('Network Error'));
+    render(<Settings />);
+
+    await waitFor(() => screen.getByText(/Analysis coverage unavailable/));
+    client.healthAPI.check.mockResolvedValue({ data: baseHealth });
+    fireEvent.click(screen.getAllByRole('button', { name: 'Try again' })[1]);
+    await waitFor(() => screen.getByText('Graph Mode'));
+  });
+
+  it('labels the theme switch', async () => {
+    client.healthAPI.check.mockResolvedValue({ data: baseHealth });
+    render(<Settings />);
+    expect(screen.getByRole('switch', { name: 'Dark mode' })).toHaveAttribute('aria-checked', 'true');
   });
 
   it('says plainly when the backend is unreachable', async () => {

@@ -1,9 +1,9 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import ProtectedRoute from './components/ProtectedRoute';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import AcceptInvite from './pages/AcceptInvite';
+import Landing from './features/landing/Landing';
+import Login from './features/auth/Login';
+import AcceptInvite from './features/auth/AcceptInvite';
 import { ErrorBoundary } from './components/ui';
 import { featureRoutes } from './app/registry';
 import { useTheme } from './context/ThemeContext';
