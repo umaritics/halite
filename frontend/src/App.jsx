@@ -16,7 +16,6 @@ import MaintenanceIngest from './pages/MaintenanceIngest';
 import { featureRoutes } from './app/registry';
 import { maintenanceAPI } from './api/client';
 import { useTheme } from './context/ThemeContext';
-import { DomainProvider } from './context/DomainContext';
 
 const HOME = '/app/home';
 
@@ -86,9 +85,7 @@ export default function App() {
         path="/app/*"
         element={
           <ProtectedRoute>
-            <DomainProvider>
-              <AppShell />
-            </DomainProvider>
+            <AppShell />
           </ProtectedRoute>
         }
       />

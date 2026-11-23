@@ -118,47 +118,13 @@ export const adminAPI = {
   auditEvents: (params) => api.get('/admin/audit-events', { params }),
 };
 
-export const chatAPI = {
-  send: (message, history) => api.post('/chat', { message, conversation_history: history }),
-};
-
-export const decisionsAPI = {
-  list: (params) => api.get('/decisions', { params }),
-  create: (data) => api.post('/decisions', data),
-  get: (id) => api.get(`/decisions/${id}`),
-  update: (id, data) => api.patch(`/decisions/${id}`, data),
-  delete: (id) => api.delete(`/decisions/${id}`),
-  invalidate: (id, note) => api.post(`/decisions/${id}/invalidate`, { note }),
-};
-
 export const graphAPI = {
   // `limit` is the maximum number of nodes returned; the backend default is only 200.
   overview: (limit) => api.get('/graph/overview', limit ? { params: { limit } } : undefined),
-  component: (id) => api.get(`/graph/component/${id}`),
-  decision: (id) => api.get(`/graph/decision/${id}`),
-  exportContext: () => api.get('/graph/export/context', { responseType: 'text' }),
-};
-
-export const ingestAPI = {
-  document: (formData) =>
-    api.post('/ingest/document', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-  gitea: (owner, repo) => api.post('/ingest/gitea', { owner, repo }),
-  code: (owner, repo) => api.post('/ingest/code', { owner, repo }),
-};
-
-export const alertsAPI = {
-  list: () => api.get('/alerts'),
-  acknowledge: (id) => api.post(`/alerts/${id}/acknowledge`),
 };
 
 export const healthAPI = {
   check: () => api.get('/health'),
-};
-
-export const domainsAPI = {
-  list: () => api.get('/domains'),
 };
 
 export const maintenanceAPI = {
@@ -177,9 +143,6 @@ export const maintenanceAPI = {
   corrections: (params) => api.get('/maintenance/corrections', { params }),
   accept: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/accept`, { note }),
   reject: (recordId, note) => api.post(`/maintenance/review-queue/${recordId}/reject`, { note }),
-  diagnose: (assetId, symptomText) => api.post('/maintenance/diagnose', { asset_id: assetId, symptom_text: symptomText }),
-  copilotTurn: (payload) => api.post('/maintenance/copilot/turn', payload),
-  chat: (message, assetId, history) => api.post('/maintenance/chat', { message, asset_id: assetId, history }),
 };
 
 export default api;
