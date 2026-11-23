@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { TIMEOUT_MESSAGE, describeLoadError } from '../lib/errors';
 import { formatDetail, describeDiagnosticError, extractExplanation, splitUnverified } from '../utils/diagnostics';
 
 describe('formatDetail', () => {
@@ -23,6 +24,14 @@ describe('formatDetail', () => {
 });
 
 describe('describeDiagnosticError', () => {
+  it('keeps the network kind and title for a timeout but uses the timeout message', () => {
+    const d = describeDiagnosticError({ code: 'ECONNABORTED', message: 'timeout of 15000ms exceeded' });
+    expect(d.kind).toBe('network');
+    expect(d.title).toBe('Cannot reach the Halite API');
+    expect(d.message).toBe(TIMEOUT_MESSAGE);
+    expect(d.retryable).toBe(true);
+  });
+
   const http = (status, detail) => ({ response: { status, data: { detail } }, message: 'x' });
 
   it.each([
@@ -129,5 +138,14 @@ describe('splitUnverified', () => {
   it('handles empty and non-string input', () => {
     expect(splitUnverified('')).toEqual([]);
     expect(splitUnverified(undefined)).toEqual([]);
+  });
+});
+
+describe('describeLoadError timeout', () => {
+  it('maps ECONNABORTED to the timeout kind and message', () => {
+    expect(describeLoadError({ code: 'ECONNABORTED' })).toEqual({
+      kind: 'timeout',
+      message: TIMEOUT_MESSAGE,
+    });
   });
 });

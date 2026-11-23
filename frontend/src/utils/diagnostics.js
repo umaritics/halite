@@ -9,25 +9,18 @@ export function describeDiagnosticError(err) {
   const status = err?.response?.status;
   const detail = formatDetail(err?.response?.data?.detail);
 
-  if (err?.code === 'ECONNABORTED') {
-    return {
-      kind: 'timeout',
-      title: 'Request timed out',
-      message: TIMEOUT_MESSAGE,
-      detail: null,
-      retryable: true,
-    };
-  }
-
+  const isTimeout = err?.code === 'ECONNABORTED';
   const isNetwork =
     !err?.response &&
-    (err?.code === 'ERR_NETWORK' || Boolean(err?.request) || /network/i.test(err?.message || ''));
+    (isTimeout || err?.code === 'ERR_NETWORK' || Boolean(err?.request) || /network/i.test(err?.message || ''));
 
   if (isNetwork) {
     return {
       kind: 'network',
       title: 'Cannot reach the Halite API',
-      message: 'The backend did not respond. Check that the API server is running, then try again.',
+      message: isTimeout
+        ? TIMEOUT_MESSAGE
+        : 'The backend did not respond. Check that the API server is running, then try again.',
       detail: null,
       retryable: true,
     };

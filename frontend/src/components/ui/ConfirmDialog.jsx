@@ -33,7 +33,7 @@ export default function ConfirmDialog({
   const onKeyDown = (event) => {
     if (event.key === 'Escape') {
       event.stopPropagation();
-      onCancel?.();
+      if (!loading) onCancel?.();
       return;
     }
     if (event.key !== 'Tab') return;
@@ -54,7 +54,7 @@ export default function ConfirmDialog({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onMouseDown={event => {
-        if (event.target === event.currentTarget) onCancel?.();
+        if (event.target === event.currentTarget && !loading) onCancel?.();
       }}
     >
       <div

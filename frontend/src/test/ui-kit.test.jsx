@@ -71,6 +71,14 @@ describe('ConfirmDialog', () => {
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
+  it('ignores Escape and backdrop clicks while loading', () => {
+    const { onCancel } = setup({ loading: true });
+    const dialog = screen.getByRole('dialog');
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    fireEvent.mouseDown(dialog.parentElement);
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
   it('cancels on backdrop click but not on dialog click', () => {
     const { onCancel } = setup();
     fireEvent.mouseDown(screen.getByRole('dialog'));
