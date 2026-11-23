@@ -43,7 +43,7 @@
   }
 
   .halite-input {
-    @apply w-full rounded-md border px-4 py-2.5 font-sans text-sm outline-none transition;
+    @apply w-full rounded-md border px-4 py-2.5 font-sans text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent;
   }
 
   html.dark .halite-input {
