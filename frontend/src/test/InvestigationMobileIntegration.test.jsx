@@ -3,14 +3,25 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Sidebar from '../components/Sidebar';
 
-const state = vi.hoisted(() => ({ user: null, logout: vi.fn() }));
+const state = vi.hoisted(() => ({ user: null, logout: vi.fn(), reviewCount: 0 }));
+vi.mock('../api/client', async () => {
+  const actual = await vi.importActual('../api/client');
+  return {
+    ...actual,
+    maintenanceAPI: {
+      ...actual.maintenanceAPI,
+      reviewQueue: () => Promise.resolve({ data: Array.from({ length: state.reviewCount }, (_, i) => ({ id: i })) }),
+    },
+  };
+});
 vi.mock('../context/ThemeContext', () => ({ useTheme: () => ({ isDark: true }) }));
 vi.mock('../context/AuthContext', () => ({ useAuth: () => ({ isAuthenticated: true, user: state.user, logout: state.logout }) }));
 
 function mount(reviewCount = 0) {
+  state.reviewCount = reviewCount;
   return render(<MemoryRouter initialEntries={['/app/investigations']}>
     <Routes>
-      <Route path="/app/*" element={<Sidebar reviewCount={reviewCount} />} />
+      <Route path="/app/*" element={<Sidebar />} />
       <Route path="/login" element={<h1>Signed out</h1>} />
     </Routes>
   </MemoryRouter>);
@@ -22,14 +33,14 @@ beforeEach(() => {
 });
 
 describe('Responsive investigation shell integration', () => {
-  it('keeps icon navigation accessible by destination name and preserves the active route', () => {
+  it('keeps icon navigation accessible by destination name and preserves the active route', async () => {
     mount(9);
     for (const label of ['Home', 'Assets', 'Service Records', 'Investigations', 'Review Queue', 'Ingest', 'Knowledge Graph', 'Settings']) {
       expect(screen.getByRole('link', { name: label, exact: true })).toBeInTheDocument();
     }
     expect(screen.getByRole('link', { name: 'Review Queue', exact: true })).toHaveAttribute('href', '/app/review-queue');
     expect(screen.getByRole('link', { name: 'Investigations', exact: true })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByLabelText('9 records awaiting review')).toBeInTheDocument();
+    expect(await screen.findByLabelText('9 records awaiting review')).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: 'Team & Access', exact: true })).not.toBeInTheDocument();
   });
 

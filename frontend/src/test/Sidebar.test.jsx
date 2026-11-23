@@ -5,14 +5,26 @@ import Sidebar from '../components/Sidebar';
 import { describe, it, expect, vi } from 'vitest';
 
 // Mock theme context
+const queue = vi.hoisted(() => ({ count: 0 }));
+vi.mock('../api/client', async () => {
+  const actual = await vi.importActual('../api/client');
+  return {
+    ...actual,
+    maintenanceAPI: {
+      ...actual.maintenanceAPI,
+      reviewQueue: () => Promise.resolve({ data: Array.from({ length: queue.count }, (_, i) => ({ id: i })) }),
+    },
+  };
+});
+
 vi.mock('../context/ThemeContext', () => ({
   useTheme: () => ({ isDark: true })
 }));
 
-const renderSidebar = (props = {}) =>
+const renderSidebar = () =>
   render(
     <MemoryRouter>
-      <Sidebar {...props} />
+      <Sidebar />
     </MemoryRouter>
   );
 
@@ -32,12 +44,15 @@ describe('Sidebar', () => {
     expect(screen.queryByRole('link', { name: /decisions|chat|alerts/i })).not.toBeInTheDocument();
   });
 
-  it('shows the review count badge only when records await review', () => {
-    const { unmount } = renderSidebar({ reviewCount: 0 });
+  it('shows the review count badge only when records await review', async () => {
+    queue.count = 0;
+    const { unmount } = renderSidebar();
+    await screen.findByText('Review Queue');
     expect(screen.queryByLabelText(/awaiting review/i)).not.toBeInTheDocument();
     unmount();
 
-    renderSidebar({ reviewCount: 9 });
-    expect(screen.getByLabelText('9 records awaiting review')).toBeInTheDocument();
+    queue.count = 9;
+    renderSidebar();
+    expect(await screen.findByLabelText('9 records awaiting review')).toBeInTheDocument();
   });
 });
