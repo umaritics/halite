@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-11-23T17:47:16.737603+00:00",
+  "config": {
+    "raw_dir": "data/raw",
+    "pairs": "data/processed/correction_pairs.csv",
+    "split": "test",
+    "max_pairs": null
+  },
+  "runs": [
+    {
+      "suite": "B",
+      "ranker": "b5",
+      "split": "test",
+      "pairs_evaluated": 141,
+      "pairs_skipped": 0,
+      "top1_accuracy": 0.2057,
+      "top3_accuracy": 0.3617,
+      "top5_accuracy": 0.4043,
+      "top1_ci_95": [
+        0.1418,
+        0.2766
+      ],
+      "embedding_backend": "fastembed",
+      "embedding_model": "BAAI/bge-small-en-v1.5"
+    }
+  ]
+}

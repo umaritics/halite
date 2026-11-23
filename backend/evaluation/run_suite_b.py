@@ -36,9 +36,9 @@ def main() -> None:
     )
     parser.add_argument(
         "--ranker",
-        choices=("b0", "b1", "b2", "b3", "all", "both", "lexical"),
+        choices=("b0", "b1", "b2", "b3", "b5", "all", "both", "lexical", "hybrid"),
         default="both",
-        help="both=b0+b1, all=b0–b3, lexical=b2+b3, or single ranker",
+        help="all=b0–b3+b5, hybrid=b5 only, lexical=b2+b3, both=b0+b1",
     )
     parser.add_argument(
         "--embedding-backend",
@@ -83,7 +83,9 @@ def main() -> None:
     if args.ranker == "both":
         rankers = ("b0", "b1")
     elif args.ranker == "all":
-        rankers = ("b0", "b1", "b2", "b3")
+        rankers = ("b0", "b1", "b2", "b3", "b5")
+    elif args.ranker == "hybrid":
+        rankers = ("b5",)
     elif args.ranker == "lexical":
         rankers = ("b2", "b3")
     else:

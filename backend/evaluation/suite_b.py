@@ -20,9 +20,10 @@ from evaluation.embeddings import (
 )
 from evaluation.rank_b2 import rank_parts_bm25
 from evaluation.rank_b3 import rank_parts_embed
+from evaluation.rank_b5 import rank_parts_hybrid
 from services.diagnostic_retrieval import build_diagnostic_context, rank_diagnostic_checks
 
-RankerId = Literal["b0", "b1", "b2", "b3"]
+RankerId = Literal["b0", "b1", "b2", "b3", "b5"]
 
 _BUILDERS: dict[RankerId, tuple[Callable, Callable]] = {
     "b0": (build_diagnostic_context_b0, rank_diagnostic_checks_b0),
@@ -66,7 +67,7 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
 
     embed_backend: EmbeddingBackend | None = None
     corpus_vectors = None
-    if ranker == "b3":
+    if ranker in ("b3", "b5"):
         embed_backend = EmbeddingBackend(kind=config.embedding_backend)
         cache_dir = config.embedding_cache_dir or Path("data/evaluation")
         corpus_vectors = load_or_build_corpus_matrix(
@@ -132,6 +133,17 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
                 query_time,
                 exclude_record_ids={new_id},
             )
+        elif ranker == "b5":
+            assert corpus_vectors is not None and embed_backend is not None
+            ranked = rank_parts_hybrid(
+                corpus,
+                corpus_vectors,
+                embed_backend,
+                tail,
+                symptom,
+                query_time,
+                exclude_record_ids={new_id},
+            )
         else:
             repo, asset_id = build_eval_repository(
                 corpus,
@@ -161,7 +173,7 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
         "top5_accuracy": round(sum(hits5) / n, 4) if n else 0.0,
         "top1_ci_95": list(ci),
     }
-    if ranker == "b3" and embed_backend is not None:
+    if ranker in ("b3", "b5") and embed_backend is not None:
         out["embedding_backend"] = embed_backend.kind
         out["embedding_model"] = embed_backend.model_name
     return out
