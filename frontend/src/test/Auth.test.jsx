@@ -8,7 +8,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import Login from '../pages/Login';
 import AcceptInvite from '../pages/AcceptInvite';
 import TeamAccess from '../pages/TeamAccess';
-import ReviewQueue from '../pages/ReviewQueue';
+import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
 
 vi.mock('../api/client', async () => {
