@@ -32,7 +32,8 @@ updated: 2026-10-16
 | --- | --- | --- |
 | `ABOUT` | Record → Asset | From ingest |
 | `PRECEDED_BY` | Chronological prior on same asset | From ingest ordering |
-| `SUPERSEDES` | Newer record supersedes older | Computed by conflict engine when auto-accepted |
+| `SUPERSEDES` | Newer record supersedes older; properties `scope`, `confidence`, `rationale`, `created_at`, `method`, `model_version`, `decided_by`, `decided_at`; one per ordered pair | Written only by `integrity/apply.py` (rule R1, model, or a reviewer's accept) |
+| `NOT_SUPERSEDES` | A reviewer rejected this pair; properties `decided_by`, `decided_at` | Written by reject; the pair is not proposed again |
 
 Do **not** invent causal “causes/fixes” edges without data justification (Mid-I deferred).
 
