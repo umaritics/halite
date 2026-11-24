@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261124-integrity-masked-benchmark](DEC-20261124-integrity-masked-benchmark.md) | Citation-masked benchmark (M1 and M2 built, 2025 locked); stage 1 on 2023 and 2024; no model run yet | partly accepted / proposals pending | Shahmeer |
 | [DEC-20261124-integrity-foundation](DEC-20261124-integrity-foundation.md) | Record Integrity foundation: rule-linked citations, link-based validity, one writer | accepted | Shahmeer |
 | [DEC-20261124-frontend-shell](DEC-20261124-frontend-shell.md) | Frontend shell renders from feature manifests on a shared UI kit | accepted | Shahmeer |
 | [DEC-20261122-bounded-runtime-prose](DEC-20261122-bounded-runtime-prose.md) | Bound CPU explanation requests while preserving complete saved evidence | prepared / hosted and live acceptance pending | Usman |

@@ -3,7 +3,7 @@ id: mod-conflict
 title: Conflict engine module
 status: active
 owners: [Usman, Umar]
-updated: 2026-11-24
+updated: 2026-11-25
 ---
 
 # Module: Conflict engine
@@ -19,7 +19,8 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 | `backend/services/conflict_engine.py` | Usman |
 | `backend/api/routes/maintenance.py` (process/review) | Usman |
 | `backend/tests/test_conflict_engine.py` | Usman |
-| `backend/integrity/` (`apply.py`, `citations.py`, `timeutil.py`, `validity.py`, `proposal.py`, `backfill.py`) | Shahmeer |
+| `backend/integrity/` (`apply.py`, `citations.py`, `timeutil.py`, `validity.py`, `proposal.py`, `backfill.py`, `candidates.py`, `prompts.py`, `classify.py`) | Shahmeer |
+| `backend/integrity/bench/` (citation-masked benchmark; see its [README](../../../backend/integrity/bench/README.md)) | Shahmeer |
 
 ## Pipeline
 
@@ -28,6 +29,23 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 2. **Classify** — LLM JSON label (`supersedes`, `partial_supersedes`, `contradicts`, `no_conflict`, `scope_disjoint`) with cache.
 3. **Adjudicate + confidence** — evidence signals (citation language, recency, authority, part/JASC agreement).
 4. **Route** — high-risk labels → `needs_review`; else confidence vs `MAINT_CONFIDENCE_THRESHOLD`.
+
+## Candidates, prompt and votes live in `integrity/`
+
+The engine no longer holds its own candidate ranking, prompt text or vote logic. It calls:
+
+- `backend/integrity/candidates.py` — `PAIR_WEIGHTS`, `pair_score` and `rank_candidates`. These are pure functions over plain
+  record dicts. The engine still reads the asset history from the graph (`list_asset_history`, limit 200, so the oldest 200
+  reports of an aircraft) and hands it to `rank_candidates`. Three orderings exist: `legacy` (score, date, id; the one staging uses),
+  `containment` and `submission_gap` (both for the benchmark).
+- `backend/integrity/prompts.py` — the system prompts. `v1` is the staging prompt, byte for byte, and is pinned by a SHA-256
+  test (`test_prompt_v1_is_pinned_to_the_staging_bytes`). `v2-unannounced` is a draft for the benchmark only. Staging does not use it.
+  Changing the staging prompt needs Shahmeer's decision.
+- `backend/integrity/classify.py` — `parse_classification`, the user prompt and `classify_pair`, the majority vote, without the
+  engine's file cache.
+
+This was a refactor with no behaviour change. The point is that the benchmark calls the same code staging runs.
+`conflict_engine.py` imports these names, so existing callers still work.
 
 ## Integrity writes and links
 
