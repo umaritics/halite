@@ -1,7 +1,18 @@
+from ._helpers import _now
 
 
 class IntegrityMixin:
     """Integrity graph operations; preserved from the pre-split implementation."""
+
+    def _link_edge(self, rel_type: str, new_record_id: str, old_record_id: str) -> dict | None:
+        new_id = self._service_record_ids.get(new_record_id)
+        old_id = self._service_record_ids.get(old_record_id)
+        if not new_id or not old_id:
+            return None
+        for edge in self.edges:
+            if edge["type"] == rel_type and edge["source"] == new_id and edge["target"] == old_id:
+                return edge
+        return None
 
     def link_record_supersedes(
         self,
@@ -10,18 +21,90 @@ class IntegrityMixin:
         scope: str,
         confidence: float,
         rationale: str,
+        *,
+        method: str = "model",
+        model_version: str = "",
+        decided_by: str = "",
+        decided_at: str = "",
     ) -> None:
-        """SUPERSEDES edge: new ServiceRecord → old ServiceRecord."""
+        """SUPERSEDES edge: new -> old. One per ordered pair; a repeat keeps the first created_at."""
         new_id = self._service_record_ids.get(new_record_id)
         old_id = self._service_record_ids.get(old_record_id)
         if not new_id or not old_id:
             return
-        self._add_edge(
-            new_id,
-            old_id,
-            "SUPERSEDES",
-            {"scope": scope, "confidence": confidence, "rationale": rationale},
-        )
+        edge = self._link_edge("SUPERSEDES", new_record_id, old_record_id)
+        if edge is None:
+            self._add_edge(new_id, old_id, "SUPERSEDES", {"created_at": _now()})
+            edge = self.edges[-1]
+        edge["properties"].update({
+            "scope": scope, "confidence": confidence, "rationale": rationale,
+            "method": method, "model_version": model_version,
+            "decided_by": decided_by, "decided_at": decided_at,
+        })
+
+    def unlink_record_supersedes(self, new_record_id: str, old_record_id: str) -> int:
+        edge = self._link_edge("SUPERSEDES", new_record_id, old_record_id)
+        if edge is None:
+            return 0
+        self.edges.remove(edge)
+        return 1
+
+    @staticmethod
+    def _supersedes_view(props: dict) -> dict:
+        return {
+            "scope": props.get("scope"),
+            "confidence": props.get("confidence"),
+            "rationale": props.get("rationale"),
+            "created_at": props.get("created_at"),
+            "method": props.get("method") or "model",
+            "model_version": props.get("model_version") or "",
+            "decided_by": props.get("decided_by") or "",
+            "decided_at": props.get("decided_at") or "",
+        }
+
+    def get_supersedes_link(self, new_record_id: str, old_record_id: str) -> dict | None:
+        edge = self._link_edge("SUPERSEDES", new_record_id, old_record_id)
+        return self._supersedes_view(edge["properties"]) if edge else None
+
+    def list_supersedes_links(self, old_record_ids: list[str]) -> list[dict]:
+        wanted = set(old_record_ids)
+        links = []
+        for edge in self.edges:
+            if edge["type"] != "SUPERSEDES":
+                continue
+            new = self._get_node(edge["source"])
+            old = self._get_node(edge["target"])
+            if new and old and old.get("record_id") in wanted:
+                links.append({
+                    "old_record_id": old["record_id"],
+                    "new_record_id": new["record_id"],
+                    **self._supersedes_view(edge["properties"]),
+                })
+        return links
+
+    def link_record_not_supersedes(
+        self, new_record_id: str, old_record_id: str, *, by: str, at: str
+    ) -> None:
+        """NOT_SUPERSEDES edge: a human rejected this pair. One per ordered pair."""
+        new_id = self._service_record_ids.get(new_record_id)
+        old_id = self._service_record_ids.get(old_record_id)
+        if not new_id or not old_id:
+            return
+        edge = self._link_edge("NOT_SUPERSEDES", new_record_id, old_record_id)
+        if edge is None:
+            self._add_edge(new_id, old_id, "NOT_SUPERSEDES")
+            edge = self.edges[-1]
+        edge["properties"].update({"decided_by": by, "decided_at": at})
+
+    def rejected_prior_ids(self, new_record_id: str) -> set[str]:
+        new_id = self._service_record_ids.get(new_record_id)
+        rejected = set()
+        for edge in self.edges:
+            if edge["type"] == "NOT_SUPERSEDES" and edge["source"] == new_id:
+                old = self._get_node(edge["target"])
+                if old:
+                    rejected.add(old["record_id"])
+        return rejected
 
     def analysis_status(self) -> dict:
         records = self._find_nodes("ServiceRecord")
