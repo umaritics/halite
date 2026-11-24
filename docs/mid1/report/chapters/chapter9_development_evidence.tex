@@ -105,10 +105,8 @@ Usman & Cursor, OpenAI Codex & Recorded: a Cursor trailer on his commit of 15 Oc
 
 \textbf{Checks applied to tool output.} Code produced with a tool was accepted only after (1) the automated tests and the build passed, (2) for new tests, a mutation check showed that the test fails when the protected code is broken, (3) the behaviour was checked live where a running system was available, (4) another member could review it through a pull request with CI, and (5) numbers in documents were traced to a test, a measurement or a CI log. Where something could not be verified, the documents say so. The members remain responsible for being able to explain every change.
 
-\textbf{Not a development tool.} The Groq-hosted language model is an external component of the product, not a development assistant; it is described in Section~\ref{sec:external}.
-
 \section{External Components and Dependencies}
-The runtime and development dependencies are in Table~\ref{tab:tools}. The data source is the FAA Service Difficulty Report collection \citep{faa-sdr}, public domain, downloaded by script and excluded from version control. The language model is called over the network, is rate limited, and can be replaced without changing the ranking, the graph or the citation check.
+The runtime and development dependencies are in Table~\ref{tab:tools}. The Groq-hosted language model is an external component of the product, not a development assistant. The data source is the FAA Service Difficulty Report collection \citep{faa-sdr}, public domain, downloaded by script and excluded from version control. The language model is called over the network, is rate limited, and can be replaced without changing the ranking, the graph or the citation check.
 
 \section{Risks and Mitigation}\label{sec:risks}
 \begin{longtable}{p{0.06\textwidth}p{0.28\textwidth}p{0.5\textwidth}p{0.08\textwidth}}
@@ -133,16 +131,12 @@ R14 & Unauthenticated destructive endpoint (\pth{DELETE /api/graph/reset}) & Ope
 \end{longtable}
 
 \section{Security and Privacy Considerations}
-No personal data about users is stored; the corpus holds public FAA reports. Secrets (model key, database password, operations token, deployment keys) are read from environment files that are not committed. The batch analysis endpoint and the log endpoint require an operations token. Authentication and authorisation for ordinary users do not exist yet. The graph-reset route, formerly the known gap, now requires the operations token (Table~\ref{tab:risks}). Staging is shared, so the team avoids writing to it for demonstrations.
+No personal data about users is stored; the corpus holds public FAA reports. Secrets (model key, database password, operations token, deployment keys) are read from environment files that are not committed. The batch analysis endpoint and the log endpoint require an operations token. The graph-reset route, formerly the known gap, now requires the operations token (Table~\ref{tab:risks}).
 
 \section{Current Limitations}
 \begin{itemize}
-\item The ranking is a heuristic with unevaluated weights; semantic retrieval is not built.
-\item The full corpus has not been analysed; on staging every record is unanalysed.
-\item No authentication, organisations or reviewer identity; the audit trail records status and a note, not who acted.
-\item Copilot sessions live in the browser only.
-\item No usability study, load test or coverage measurement.
-\item The staging model (\code{gpt-oss-20b}) differs from the model used for the evaluation (\code{gpt-oss-120b}); a single staging diagnosis was re-tested on 18 October and succeeded.
-\item Continuous integration never calls a live model, so a defect that only a live model exposes needs a live check.
-\item The graph side panel was verified by unit tests, not by a live click.
+\item The ranking is a heuristic with unevaluated weights; semantic retrieval is not built. The full corpus has not been analysed, so on staging every record is unanalysed.
+\item No authentication, organisations or reviewer identity; the audit trail records status and a note, not who acted. Copilot sessions live in the browser only.
+\item No usability study, load test or coverage measurement; the graph side panel was verified by unit tests, not by a live click.
+\item Staging uses \code{gpt-oss-20b} and the evaluation used \code{gpt-oss-120b}; CI never calls a live model.
 \end{itemize}

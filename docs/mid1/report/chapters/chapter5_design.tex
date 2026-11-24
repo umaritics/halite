@@ -3,7 +3,7 @@
 \section{System Architecture}
 Halite is a client--server web application (Figure~\ref{fig:arch}). A React single-page application, hosted on Vercel, calls a FastAPI backend over JSON. The backend runs in Docker on a shared virtual machine and reads and writes a Neo4j graph database. A language model on the Groq API is called by the backend for three jobs only: phrasing an explanation, extracting structured facts from a technician's message in the multi-turn Copilot, and proposing a classification for a pair of records. The model never determines the diagnostic ranking.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_arch}
 \caption{System architecture and deployment path. Grey boxes are external services.}\label{fig:arch}
@@ -60,7 +60,7 @@ DELETE & \code{/api/graph/reset} & Wipes the graph. Needs the operations token (
 \subsection{Component dependencies}
 Figure~\ref{fig:components} shows which module calls which. Routes call services; services call one repository; the repository is the only code that talks to the database. This keeps the graph queries in one place and lets the same service code run against an in-memory store in tests.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_components}
 \caption{Backend component dependencies.}\label{fig:components}
@@ -107,7 +107,7 @@ Corpus & About 60 airframes & 118 aircraft, because every aircraft with a ground
 \section{Domain Model}
 Figure~\ref{fig:erd} is the graph schema. There are two node types and three relationship types. Each relationship records its provenance: \code{ABOUT} and \code{PRECEDED_BY} are created at ingest; \code{SUPERSEDES} is created only by the conflict engine when a supersession is confirmed. No relationship is invented to make the graph look richer; a causal ``component causes failure'' edge is deliberately absent because the data does not justify one.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_erd}
 \caption{Graph schema (entity--relationship view).}\label{fig:erd}
@@ -128,7 +128,7 @@ Figure~\ref{fig:erd} is the graph schema. There are two node types and three rel
 \subsection{Diagnosis}
 Figure~\ref{fig:seq} shows the one-shot diagnosis. The retrieval and ranking happen before the model is called, so the ranking is identical with or without a model. If the model is unavailable, or returns empty text, the route returns HTTP 503 with a reason and the interface shows no diagnosis. After the model answers, every identifier in its text is looked up in the graph.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_seq_diagnose}
 \caption{Sequence diagram: one-shot diagnosis. Dashed arrows are returns.}\label{fig:seq}
@@ -137,7 +137,7 @@ Figure~\ref{fig:seq} shows the one-shot diagnosis. The retrieval and ranking hap
 \subsection{Conflict analysis}
 Figure~\ref{fig:flow} is the conflict pipeline. Only the leftmost path calls the model. Records with no comparable earlier record, and (in cascade mode) pairs the deterministic screen rules out, never reach it.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_conflict_flow}
 \caption{Activity diagram: analysis of one record.}\label{fig:flow}
@@ -146,7 +146,7 @@ Figure~\ref{fig:flow} is the conflict pipeline. Only the leftmost path calls the
 \subsection{Record state}
 Figure~\ref{fig:states} shows how the two state fields change. A record's \code{status} becomes \code{superseded} only when a later record's supersession is confirmed.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_states}
 \caption{State diagrams for \texttt{analysis\_state} and \texttt{status}.}\label{fig:states}
@@ -155,7 +155,7 @@ Figure~\ref{fig:states} shows how the two state fields change. A record's \code{
 \subsection{Build and release}
 Figure~\ref{fig:cicd} shows how a change reaches users. The frontend is built by Vercel on every push. The backend is deployed to staging only from a \code{main} commit that passed all three CI jobs; a manual deploy or rollback needs an exact commit and a typed confirmation.
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \input{figures/fig_cicd}
 \caption{CI/CD pipeline.}\label{fig:cicd}
