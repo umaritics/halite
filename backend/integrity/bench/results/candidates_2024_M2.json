@@ -213,9 +213,9 @@
   "meta": {
     "bench_file": "bench_2024_M2.jsonl",
     "bench_sha256": "312d290fb97da3f589e2aac7b857d1ce31ca7541e74416a7de32afb001d510ca",
-    "created_at_utc": "2026-11-24T19:11:48.206564+00:00",
-    "git_commit": "c3cd531f70b70cb8af5b3327b8a22f793956e835",
-    "git_dirty": true,
+    "created_at_utc": "2026-11-24T19:20:35.536062+00:00",
+    "git_commit": "3160c6d8a1a6cace1750b274815d36ac01d26e80",
+    "git_dirty": false,
     "manifest_counts": {
       "hard_negative": 499,
       "positive": 396,
@@ -228,8 +228,10 @@
     "n_resamples": 1000,
     "positives_hidden_by_history_cap": 0,
     "prompt_version": null,
+    "run": null,
     "seed": 20261124,
-    "split": "select"
+    "split": "select",
+    "year": 2024
   },
   "n_candidates": {
     "max": 53,

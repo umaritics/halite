@@ -213,9 +213,9 @@
   "meta": {
     "bench_file": "bench_2023_M2.jsonl",
     "bench_sha256": "c9d05b1db18118eb3800b0a190d726c279edb3d2cc403c7fd9e0309f634376b8",
-    "created_at_utc": "2026-11-24T19:11:42.748863+00:00",
-    "git_commit": "c3cd531f70b70cb8af5b3327b8a22f793956e835",
-    "git_dirty": true,
+    "created_at_utc": "2026-11-24T19:20:29.374442+00:00",
+    "git_commit": "3160c6d8a1a6cace1750b274815d36ac01d26e80",
+    "git_dirty": false,
     "manifest_counts": {
       "hard_negative": 444,
       "positive": 428,
@@ -228,8 +228,10 @@
     "n_resamples": 1000,
     "positives_hidden_by_history_cap": 0,
     "prompt_version": null,
+    "run": null,
     "seed": 20261124,
-    "split": "fit"
+    "split": "fit",
+    "year": 2023
   },
   "n_candidates": {
     "max": 48,
