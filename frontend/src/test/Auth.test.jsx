@@ -10,6 +10,7 @@ import AcceptInvite from '../features/auth/AcceptInvite';
 import TeamAccess from '../features/admin/TeamAccess';
 import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
+import { integrityAPI } from '../features/integrity/api';
 
 vi.mock('../api/client', async () => {
   const actual = await vi.importActual('../api/client');
@@ -36,7 +37,6 @@ vi.mock('../api/client', async () => {
       ...actual.maintenanceAPI,
       assets: vi.fn(),
       reviewQueue: vi.fn(),
-      getRecord: vi.fn(),
       assetHistory: vi.fn(),
       accept: vi.fn(),
       reject: vi.fn(),
@@ -195,13 +195,16 @@ describe('Website authentication, invite activation & RBAC', () => {
         },
       ],
     });
-    client.maintenanceAPI.getRecord.mockResolvedValue({
+    vi.spyOn(integrityAPI, 'proposal').mockResolvedValue({
       data: {
-        record_id: 'REC-1',
-        candidates_considered: 2,
+        record: { record_id: 'REC-1', candidates_considered: 2 },
         confidence: 0.4,
-        classification: { label: 'supersedes', rationale: 'Updated report' },
-        best_prior: null,
+        label: 'supersedes',
+        rationale: 'Updated report',
+        method: 'llm',
+        proposed_prior: null,
+        proposal_source: 'none',
+        changed_fields: [],
       },
     });
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { maintenanceAPI } from '../../api/client';
 import { describeLoadError } from '../../lib/errors';
+import { integrityAPI } from './api';
 
 // Only called when neither the record nor the queue row carries history_size.
 // The history endpoint wants the aircraft UUID, so the tail is resolved first. If it
@@ -18,7 +19,7 @@ async function lookUpHistoryCount(record, whenLoaded) {
   }
 }
 
-// Loads the finding for the active record. Never leaves the previous record's
+// Loads the stored proposal for the active record. Never leaves the previous record's
 // finding on screen while (or after) loading the next one.
 export default function useRecordDetails(record, whenLoaded) {
   const [details, setDetails] = useState(null);
@@ -40,9 +41,9 @@ export default function useRecordDetails(record, whenLoaded) {
     let cancelled = false;
     setLoading(true);
 
-    maintenanceAPI.getRecord(record.record_id)
+    integrityAPI.proposal(record.record_id)
       .then(async (res) => {
-        let count = res.data?.history_size ?? record.history_size;
+        let count = res.data?.record?.history_size ?? record.history_size;
         if (count === undefined || count === null) {
           count = await lookUpHistoryCount(record, whenLoaded);
         }

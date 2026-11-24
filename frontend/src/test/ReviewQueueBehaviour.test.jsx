@@ -4,12 +4,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
+import { integrityAPI } from '../features/integrity/api';
+
+vi.mock('../features/integrity/api', () => ({ integrityAPI: { proposal: vi.fn() } }));
 
 vi.mock('../api/client', () => ({
   maintenanceAPI: {
     assets: vi.fn(),
     reviewQueue: vi.fn(),
-    getRecord: vi.fn(),
     assetHistory: vi.fn(),
     accept: vi.fn(),
     reject: vi.fn(),
@@ -36,11 +38,15 @@ const queueItem = (record_id, extra = {}) => ({
 
 const detail = {
   data: {
-    record_id: 'R1',
-    candidates_considered: 5,
+    record: { record_id: 'R1', candidates_considered: 5 },
     confidence: 0.4,
-    classification: { label: 'partial_supersedes', rationale: 'Partly resolved.' },
-    best_prior: { record_id: 'R0', occurred_at: '2024-01-01T00:00:00Z', part_name: 'Engine', text: 'Old' },
+    label: 'partial_supersedes',
+    rationale: 'Partly resolved.',
+    method: 'llm',
+    link: null,
+    changed_fields: [],
+    proposal_source: 'stored',
+    proposed_prior: { record_id: 'R0', occurred_at: '2024-01-01T00:00:00Z', part_name: 'Engine', text: 'Old' },
   },
 };
 
@@ -74,7 +80,7 @@ beforeEach(() => {
   api.analysisStatus.mockResolvedValue({ data: { unscored: 0, scored: 1, reviewed: 0 } });
   api.assetHistory.mockResolvedValue({ data: { count: 10 } });
   api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-  api.getRecord.mockResolvedValue(detail);
+  integrityAPI.proposal.mockResolvedValue(detail);
 });
 
 describe('review changed event', () => {

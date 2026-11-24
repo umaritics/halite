@@ -15,7 +15,7 @@ function emptyMessage(analysisStatus) {
   return `${analysed} analysed, none need review.`;
 }
 
-function Toast({ message }) {
+function Toast({ message, detail }) {
   if (!message) return null;
   return (
     <div
@@ -23,6 +23,7 @@ function Toast({ message }) {
       className="mb-4 rounded bg-accent px-4 py-2 text-center font-sans text-sm font-medium text-black"
     >
       {message}
+      {detail && <span className="block text-xs font-normal">{detail}</span>}
     </div>
   );
 }
@@ -88,7 +89,7 @@ export default function QueueView({ review, analysisStatus, assets }) {
   if (queue.length === 0) {
     return (
       <>
-        <Toast message={decision.toast} />
+        <Toast message={decision.toast} detail={decision.confirmation} />
         <EmptyState title="Nothing to review" body={emptyMessage(analysisStatus)} />
       </>
     );
@@ -103,7 +104,7 @@ export default function QueueView({ review, analysisStatus, assets }) {
         Keyboard: <kbd className="rounded bg-black/10 px-1 dark:bg-white/10">←/→</kbd>{' '}
         navigate between records
       </div>
-      <Toast message={decision.toast} />
+      <Toast message={decision.toast} detail={decision.confirmation} />
       {decision.error && (
         <div
           role="alert"
