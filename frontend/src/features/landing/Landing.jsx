@@ -87,11 +87,11 @@ export default function Landing() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative z-10 flex min-h-screen items-center px-6 pt-14">
+      <section className="relative z-10 flex min-h-screen items-center px-6 pb-10 pt-24 lg:pb-0 lg:pt-14">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-2">
-          <div id="about">
+          <div id="about" className="min-w-0">
             <p className="eyebrow">MAINTENANCE DIAGNOSTICS AND ASSET INTELLIGENCE</p>
-            <h1 className="font-brand mt-4 text-[56px] leading-[1.1] text-primary">
+            <h1 className="font-brand mt-4 text-[40px] leading-[1.1] text-primary sm:text-[56px]">
               Years of service records. One traceable place to start.
             </h1>
             <p className="mt-6 font-sans text-base text-secondary">
@@ -119,7 +119,7 @@ export default function Landing() {
               ✦ Built on FAA Service Difficulty Reports · ✦ Cited record IDs verified against the graph · ✦ Decision support, not a repair authority
             </p>
           </div>
-          <div className="flex justify-center">
+          <div className="flex min-w-0 justify-center">
             <CrystalMount />
           </div>
         </div>

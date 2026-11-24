@@ -27,7 +27,7 @@ export default function CrystalMount() {
   return (
     <div
       id="crystal-mount"
-      className="flex h-[480px] w-[480px] items-center justify-center"
+      className="flex aspect-square w-full max-w-[480px] items-center justify-center"
     >
       <video
         ref={videoRef}
