@@ -69,3 +69,18 @@ def is_eligible_prior(new: dict, prior: dict) -> bool:
         return gap > 0
     occurrence_gap = occurrence_gap_days(new, prior)
     return occurrence_gap is not None and occurrence_gap > 0
+
+
+def is_known_not_later(new: dict, prior: dict) -> bool:
+    """True when prior is known to be no later than new. Used for announced corrections only.
+
+    A citation already says which report came first, so the clock only has to not contradict it:
+    equal submission times pass, and without submission times an equal occurrence date passes,
+    because a real correction carries the same occurrence date as the report it corrects.
+    Candidate search keeps the stricter is_eligible_prior, where nothing else orders the pair.
+    """
+    gap = submission_gap_days(new, prior)
+    if gap is not None:
+        return gap >= 0
+    occurrence_gap = occurrence_gap_days(new, prior)
+    return occurrence_gap is not None and occurrence_gap >= 0

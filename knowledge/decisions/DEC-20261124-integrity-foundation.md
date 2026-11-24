@@ -17,8 +17,11 @@ reviewed records. The review screen re-ran the engine, with model calls, on ever
 ## Decision
 
 1. **Announced corrections are linked by rule R1, not by the model.** `integrity/citations.py` parses the cited ID.
-   If the cited report exists, is on the same aircraft and was submitted earlier, `process_record` links to it with
-   method `explicit_citation` and confidence 1.0 and makes no model call.
+   If the cited report exists, is on the same aircraft and is not known to be later, `process_record` links to it with
+   method `explicit_citation` and confidence 1.0 and makes no model call. "Not known to be later" means submitted at
+   the same time or earlier; without submission times, the same occurrence date or earlier
+   (`timeutil.is_known_not_later`). Candidate search keeps the stricter rule, submitted strictly earlier
+   (`timeutil.is_eligible_prior`), because there nothing else orders the pair.
    - Not taken: keep classifying the top candidate and use the citation as a score signal. The top candidate is not
      always the cited report (guide D1), and a stated ID needs no guess.
 2. **Validity is read from links.** `integrity/validity.py` (`superseded_by`, `is_current`) reads `SUPERSEDES` links.
@@ -54,9 +57,20 @@ reviewed records. The review screen re-ran the engine, with model calls, on ever
 - `SUPERSEDES` links carry `method`, `model_version`, `decided_by`, `decided_at`. A pair has one link; a repeat write
   updates it. The new `NOT_SUPERSEDES` edge carries `decided_by` and `decided_at`.
 - The `review_decisions` table (PostgreSQL) keeps each accept or reject with the model's probability and version.
+- Audit: the reviewed record gets one `maintenance.review.accepted` or `.rejected` event, as before. The link a
+  decision creates or removes, and the earlier report's status change, get `integrity.link.*` and
+  `integrity.status.changed` events with the reviewer as actor.
+- A link's `model_version` names what decided it: `rule-R1` for a citation link, `handweighted-v0` for a model link.
 - Known limits: the analysis mode of a stored record is inferred, not stored (`proposal._stored_mode`), so a
   cascade record with two agreeing votes and a non-default pass count could be read as legacy when its prior is
   recomputed. Records with `proposed_prior_id` absent are recomputed; an empty string means no prior was found.
+- The `status` string of a superseded report is still overwritten if that report itself is re-processed. Its link
+  stays, so `validity.superseded_by` is still right; anything that reads the string is not. Readers must move to
+  `validity.py`.
+- The Cypher for the new link methods is tested with a fake store that checks the query and its parameters. It has
+  not been run against a live Neo4j outside the CI smoke test.
+- A citation token must contain a digit, so a word after "SUPPLEMENTAL REPORT FOR" is not read as an ID. The regex
+  itself is the one the other verticals use.
 - `GET /maintenance/records/{id}` still re-runs the engine in dry-run mode. The review screen no longer calls it.
 - The proposal route needs a signed-in user only, so a technician can read it.
 

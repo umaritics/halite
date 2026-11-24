@@ -572,7 +572,11 @@ def _decide(
         )
     sr = pin_recomputed_prior(graph_repo, sr)
     decide = apply.accept_proposal if decision == "accepted" else apply.reject_proposal
-    outcome = decide(graph_repo, record_id, reviewer=_reviewer(principal), note=note)
+    # The reviewer is the actor on the link and prior-status events their decision causes.
+    def audit(action: str, target_id: str, metadata: dict) -> None:
+        _write_audit(rel_store, request, principal, action, target_id, metadata)
+
+    outcome = decide(graph_repo, record_id, reviewer=_reviewer(principal), note=note, audit=audit)
     _record_review_decision(rel_store, record_id, outcome["prior_record_id"], decision, note, principal, sr)
     _write_audit(
         rel_store, request, principal, f"maintenance.review.{decision}", record_id,

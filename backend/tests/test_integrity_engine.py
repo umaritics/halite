@@ -186,7 +186,7 @@ def test_proposed_prior_id_is_stored_and_returned_on_the_normal_path():
     assert stored["integrity_p"] == result["confidence"]
     assert stored["integrity_model_version"] == "handweighted-v0"
     link = repo.get_supersedes_link("NEWREP001", "PRIOR0001")
-    assert link["method"] == "model" and link["model_version"] == "stub-model"
+    assert link["method"] == "model" and link["model_version"] == "handweighted-v0"
 
 
 def test_a_record_without_candidates_stores_an_empty_proposed_prior():

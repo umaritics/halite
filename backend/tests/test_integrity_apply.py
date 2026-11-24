@@ -104,6 +104,7 @@ def test_citations_link_the_cited_report_and_store_the_ids():
                       "missing": ["GONE00001"], "ineligible": []}
     link = repo.get_supersedes_link("NEWREP001", "OLDREP001")
     assert (link["method"], link["confidence"], link["scope"]) == ("explicit_citation", 1.0, "supersedes")
+    assert link["model_version"] == "rule-R1"
     assert "OLDREP001" in link["rationale"]
     assert repo.get_service_record("NEWREP001")["cited_record_ids"] == ["OLDREP001", "GONE00001"]
 
@@ -120,7 +121,7 @@ def test_citations_name_why_a_cited_report_is_ineligible():
     assert result["linked"] == [] and result["missing"] == []
     reasons = {item["record_id"]: item["reason"] for item in result["ineligible"]}
     assert "different aircraft" in reasons["OTHERAC01"]
-    assert "not submitted before" in reasons["LATER0001"]
+    assert "submitted after" in reasons["LATER0001"]
     assert "itself" in reasons["NEWREP001"]
     assert repo.list_supersedes_links(["OTHERAC01", "LATER0001", "NEWREP001"]) == []
 
@@ -162,3 +163,26 @@ def test_record_analysis_refuses_a_human_decision_unless_forced():
     assert apply.record_analysis(repo, "REC1", {"status": "auto_accepted"}, force=True, audit=audit)
     assert repo.get_service_record("REC1")["status"] == "auto_accepted"
     assert len(audit.calls) == 1
+
+
+def test_a_citation_links_when_the_clock_does_not_contradict_it():
+    """A real correction shares its occurrence date with the report it corrects, so a citation
+    must still link when the two reports are dated the same, or carry no submission time at all."""
+    repo = _repo({
+        "NEWREP001": {"text": "SUPPLEMENTAL REPORT FOR (SAMETIME1) SUPPLEMENTAL REPORT FOR (NOSTAMP01)"},
+        "SAMETIME1": {},
+        "NOSTAMP01": {"submitted_at": ""},
+    })
+    result = apply.apply_explicit_citations(repo, repo.get_service_record("NEWREP001"))
+    assert result["linked"] == ["SAMETIME1", "NOSTAMP01"] and result["ineligible"] == []
+
+
+def test_a_citation_of_a_later_or_undated_report_is_not_linked_by_rule():
+    repo = _repo({
+        "NEWREP001": {"submitted_at": "", "text": "SUPPLEMENTAL REPORT FOR (OCCLATER1) SUPPLEMENTAL REPORT FOR (UNDATED01)"},
+        "OCCLATER1": {"submitted_at": "", "occurred_at": "2025-02-01"},
+        "UNDATED01": {"submitted_at": "", "occurred_at": ""},
+    })
+    result = apply.apply_explicit_citations(repo, repo.get_service_record("NEWREP001"))
+    assert result["linked"] == []
+    assert [item["record_id"] for item in result["ineligible"]] == ["OCCLATER1", "UNDATED01"]

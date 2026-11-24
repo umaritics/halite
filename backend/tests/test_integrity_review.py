@@ -193,3 +193,12 @@ def test_an_audit_failure_does_not_fail_the_decision(env, monkeypatch):
     resp = env["tc"].post("/api/maintenance/review-queue/NEW1/accept", json={}, headers=env["sup"])
     assert resp.status_code == 200
     assert len(_rows(env["app"], ReviewDecision)) == 1
+
+
+def test_the_link_a_reviewer_creates_or_removes_is_audited_in_their_name(env):
+    """The review event covers the reviewed record; the link and the prior's status change need their own."""
+    env["tc"].post("/api/maintenance/review-queue/NEW1/accept", json={"note": "agreed"}, headers=env["sup"])
+    created = _review_audit(env["app"], "integrity.link.created")
+    assert [(e.target_id, e.actor_user_id) for e in created] == [("NEW1", env["sup_id"])]
+    prior_changes = [e for e in _review_audit(env["app"], "integrity.status.changed") if e.target_id == "PRIOR1"]
+    assert len(prior_changes) == 1 and prior_changes[0].actor_user_id == env["sup_id"]

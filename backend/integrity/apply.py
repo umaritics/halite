@@ -9,9 +9,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from .citations import parse_citations
-from .timeutil import is_eligible_prior
+from .timeutil import is_known_not_later
 
 HUMAN_STATUSES = ("accepted", "rejected")
+# Stored on a citation link the way a model version is stored on a model link: it names what decided.
+CITATION_RULE_VERSION = "rule-R1"
 
 
 def _emit(audit, action: str, record_id: str, metadata: dict) -> None:
@@ -104,7 +106,7 @@ def apply_explicit_citations(graph_repo, record: dict, *, dry_run: bool = False,
             link_supersedes(
                 graph_repo, new_id, cited_id, scope="supersedes", confidence=1.0,
                 rationale=f"The report cites {cited_id} as the report it supplements.",
-                method="explicit_citation", audit=audit,
+                method="explicit_citation", model_version=CITATION_RULE_VERSION, audit=audit,
             )
         if reason is None:
             result["linked"].append(cited_id)
@@ -122,8 +124,8 @@ def _citation_problem(record: dict, prior: dict) -> str | None:
     asset_key = record.get("asset_key")
     if not asset_key or asset_key != prior.get("asset_key"):
         return "the cited report is on a different aircraft"
-    if not is_eligible_prior(record, prior):
-        return "the cited report was not submitted before this one"
+    if not is_known_not_later(record, prior):
+        return "the cited report was submitted after this one, or neither report is dated"
     return None
 
 

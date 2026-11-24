@@ -2,6 +2,7 @@ from datetime import date, timedelta
 
 from integrity.timeutil import (
     is_eligible_prior,
+    is_known_not_later,
     occurrence_gap_days,
     parse_occurred,
     parse_submitted,
@@ -63,3 +64,12 @@ def test_missing_submission_falls_back_to_occurrence():
 
 def test_unknown_on_both_counts_is_not_eligible():
     assert is_eligible_prior({}, {}) is False
+
+
+def test_a_cited_report_only_has_to_be_no_later():
+    stamped = {"submitted_at": "2025-01-02T10:00:00+00:00", "occurred_at": "2025-01-01"}
+    undated = {"submitted_at": "", "occurred_at": "2025-01-01"}
+    assert is_known_not_later(stamped, dict(stamped)) is True          # same instant
+    assert is_known_not_later(undated, dict(undated)) is True          # same occurrence date
+    assert is_known_not_later(stamped, {**stamped, "submitted_at": "2025-01-03T10:00:00+00:00"}) is False
+    assert is_known_not_later({}, {}) is False                          # nothing known

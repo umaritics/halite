@@ -870,7 +870,7 @@ def process_record(
                 confidence=confidence,
                 rationale=classification.get("rationale", ""),
                 method="model",
-                model_version=classification.get("model", analysis_model),
+                model_version=INTEGRITY_MODEL_VERSION,
                 audit=audit,
             )
         status_applied = "auto_accepted"
