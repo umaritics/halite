@@ -19,27 +19,16 @@ recorded T7 evaluation. Runtime callers pass settings.MAINT_CONFIDENCE_THRESHOLD
 import json
 import logging
 import os
-from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
 from integrity import apply
+from integrity.candidates import PAIR_WEIGHTS, rank_candidates
 from integrity.citations import parse_citations
-from integrity.timeutil import is_eligible_prior
-from services.conflict_screen import text_overlap_features
+from integrity.classify import VALID_LABELS, classify_pair, parse_classification
+from integrity.prompts import PROMPT_VERSION, system_prompt
 
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Candidate pairing weights — ONE dict, ONE comment per weight.
-# Change here; nowhere else.
-# ---------------------------------------------------------------------------
-PAIR_WEIGHTS: dict[str, int] = {
-    "same_part_name": 3,   # Same PartName → strong match signal
-    "same_jasc_code": 2,   # Same JASCCode (ATA chapter) → probable same system
-    "same_part_location": 1,  # Same PartLocation → moderate signal
-    "within_30_days": 1,   # DifficultyDate within 30 days → temporal proximity
-}
 
 # ---------------------------------------------------------------------------
 # Confidence scoring weights — one weight per signal, one comment per line.
@@ -79,29 +68,9 @@ MAINT_MAX_CANDIDATES: int = int(
 # Pre-registered on the 141-pair development set before held-out evaluation.
 CASCADE_SCREEN_THRESHOLD: float = 0.79
 
-# Classification labels returned by the LLM
-_VALID_LABELS = frozenset(
-    ["no_conflict", "scope_disjoint", "supersedes", "partial_supersedes", "contradicts"]
-)
-
-# System prompt for conflict classification
-_CLASSIFICATION_SYSTEM_PROMPT = """You are a technical conflict classifier for aviation maintenance records.
-
-Given a NEW service record and a PRIOR service record for the same aircraft, classify the relationship.
-
-Respond with a JSON object (no markdown, no explanation) with exactly these keys:
-  "label": one of ["no_conflict", "scope_disjoint", "supersedes", "partial_supersedes", "contradicts"]
-  "rationale": a single sentence explaining your reasoning (max 60 words)
-
-Definitions:
-  no_conflict          — records describe unrelated or compatible maintenance events
-  scope_disjoint       — records address different parts/systems despite same aircraft
-  supersedes           — new record explicitly updates or closes the prior record
-  partial_supersedes   — new record addresses the same issue but only partially resolves it
-  contradicts          — records make mutually exclusive claims about the same part/event
-
-Return ONLY the JSON object.
-"""
+# Classification labels and the staging prompt live in integrity; the names stay for importers.
+_VALID_LABELS = VALID_LABELS
+_CLASSIFICATION_SYSTEM_PROMPT = system_prompt(PROMPT_VERSION)
 
 
 # ---------------------------------------------------------------------------
@@ -157,75 +126,13 @@ def find_candidate_pairs(
     # Get the full asset history (ascending by occurred_at)
     history = graph_repo.list_asset_history(asset_id, limit=200)
 
-    # Score each prior record (exclude the target record itself)
-    candidates = []
-    target_occurred = target.get("occurred_at", "")
     rejected = graph_repo.rejected_prior_ids(record_id)
-
-    for prior in history:
-        prior_id = prior.get("record_id") or prior.get("id")
-        if prior_id == record_id or prior_id in rejected:
-            continue
-
-        # Prevent leakage: only reports known before the target are comparable
-        if not is_eligible_prior(target, prior):
-            continue
-
-        score = 0
-        # same_part_name
-        if (
-            target.get("part_name", "").strip().lower()
-            and target.get("part_name", "").strip().lower()
-            == prior.get("part_name", "").strip().lower()
-        ):
-            score += PAIR_WEIGHTS["same_part_name"]
-
-        # same_jasc_code
-        if (
-            target.get("jasc_code", "").strip()
-            and target.get("jasc_code", "").strip() == prior.get("jasc_code", "").strip()
-        ):
-            score += PAIR_WEIGHTS["same_jasc_code"]
-
-        # same_part_location
-        if (
-            target.get("part_location", "").strip().lower()
-            and target.get("part_location", "").strip().lower()
-            == prior.get("part_location", "").strip().lower()
-        ):
-            score += PAIR_WEIGHTS["same_part_location"]
-
-        # within_30_days
-        try:
-            d1 = datetime.strptime(prior["occurred_at"], "%Y-%m-%d")
-            d2 = datetime.strptime(target_occurred, "%Y-%m-%d")
-            if abs((d2 - d1).days) <= 30:
-                score += PAIR_WEIGHTS["within_30_days"]
-        except (ValueError, KeyError):
-            pass
-
-        # A same-aircraft record is only comparable when at least one graph-
-        # pruning signal matches. Sending score-zero pairs to the model turns
-        # unrelated history into fake candidates and defeats the documented
-        # no-candidate fast path.
-        if score > 0:
-            candidates.append({"record": prior, "score": score})
-
-    # Stable deterministic ordering: score DESC, date DESC, record_id ASC.
-    candidates.sort(key=lambda c: str(c["record"].get("record_id", "")))
-    candidates.sort(key=lambda c: c["record"].get("occurred_at", ""), reverse=True)
-    candidates.sort(key=lambda c: c["score"], reverse=True)
-
-    if analysis_mode == "cascade":
-        for candidate in candidates:
-            candidate["screen_features"] = text_overlap_features(target, candidate["record"])
-        # Python's stable sort preserves the legacy score/date/id ordering for ties.
-        candidates.sort(
-            key=lambda candidate: candidate["screen_features"]["containment"],
-            reverse=True,
-        )
-
-    result = candidates[:max_candidates]
+    result = rank_candidates(
+        target, history,
+        ordering="containment" if analysis_mode == "cascade" else "legacy",
+        rejected=rejected,
+        max_candidates=max_candidates,
+    )
     logger.info(
         "find_candidate_pairs: record=%r asset=%r history=%d candidates=%d",
         record_id, asset_id, len(history), len(result),
@@ -305,114 +212,22 @@ def classify_conflict(
         logger.info("classify_conflict: CACHE HIT for %s", cache_key)
         return _normalise_cached_classification(cache[cache_key])
 
-    prompt = (
-        f"NEW RECORD (occurred_at={new_record.get('occurred_at', '?')}):\n"
-        f"{new_record.get('text', '')[:800]}\n\n"
-        f"PRIOR RECORD (occurred_at={prior_record.get('occurred_at', '?')}):\n"
-        f"{prior_record.get('text', '')[:800]}"
+    # Legacy preserves the existing configurable pass count.
+    passes = max(1, int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5")))
+    final_result = classify_pair(
+        groq_service, new_record, prior_record,
+        analysis_mode=analysis_mode, passes=passes, budget_manager=budget_manager,
     )
-    
-    # Legacy preserves the existing configurable pass count. Cascade starts
-    # with two votes and buys three more only if the first two do not agree.
-    requested_passes = max(1, int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5")))
-    requested_passes = 2 if analysis_mode == "cascade" else requested_passes
-    results = []
-    totals = {key: 0 for key in (
-        "prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens"
-    )}
+    # Staging's stored and returned shape predates prompt versions; keep it byte for byte.
+    final_result.pop("prompt_version")
 
-    def run_vote() -> None:
-        if budget_manager is not None:
-            budget_manager.before_request(model)
-        usage = {}
-        try:
-            if hasattr(groq_service, "extract_json_with_usage"):
-                response = groq_service.extract_json_with_usage(
-                    prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT
-                )
-                raw = response["content"]
-                usage = response.get("usage") or {}
-            else:
-                raw = groq_service.extract_json(
-                    prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT
-                )
-        except Exception:
-            if budget_manager is not None:
-                budget_manager.record_request(model, usage)
-            raise
-        if budget_manager is not None:
-            budget_manager.record_request(model, usage)
-        parsed = _parse_classification(raw)
-        parsed["usage"] = usage
-        results.append(parsed)
-        for key in totals:
-            totals[key] += int(usage.get(key) or 0)
-
-    for _ in range(requested_passes):
-        run_vote()
-    if analysis_mode == "cascade":
-        first_labels = [r["label"] for r in results if not r.get("parse_failed")]
-        if len(first_labels) != 2 or first_labels[0] != first_labels[1]:
-            for _ in range(3):
-                run_vote()
-
-    # Majority vote
-    labels = [r["label"] for r in results if not r.get("parse_failed")]
-    if not labels:
-        final_result = {"label": "no_conflict", "rationale": "", "parse_failed": True}
-        top_count = 0
-    else:
-        best_label, top_count = Counter(labels).most_common(1)[0]
-        # Find the first result with this label to get its rationale
-        final_result = {
-            key: value for key, value in next(
-                r for r in results if r["label"] == best_label
-            ).items() if key != "usage"
-        }
-
-    final_result.update({
-        "method": "llm-escalated" if analysis_mode == "cascade" and len(results) == 5 else "llm",
-        "model": model,
-        "passes": len(results),
-        "votes": results,
-        **totals,
-        "vote_agreement": (top_count / len(labels)) if labels else 0.0,
-        "vote_split": bool(labels and top_count <= len(labels) / 2),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "cache_hit": False,
-    })
-        
     # 3. Save to cache
     _save_classification_cache(cache_key, final_result)
         
     return final_result
 
 
-def _parse_classification(raw: str) -> dict:
-    """Parse LLM JSON response.  On failure return no_conflict with parse_failed=True."""
-    text = (raw or "").strip()
-    if text.startswith("```"):
-        text = text.split("\n", 1)[-1]
-        if text.endswith("```"):
-            text = text[:-3]
-    try:
-        data = json.loads(text)
-        label = data.get("label", "no_conflict")
-        if label not in _VALID_LABELS:
-            logger.warning("Invalid label %r from LLM, defaulting to no_conflict", label)
-            label = "no_conflict"
-        return {
-            "label": label,
-            "rationale": data.get("rationale", ""),
-            "parse_failed": False,
-        }
-    except json.JSONDecodeError as exc:
-        logger.warning("classify_conflict parse failure: %s | raw=%r", exc, text[:200])
-        return {
-            "label": "no_conflict",
-            "rationale": "",
-            "parse_failed": True,
-        }
+_parse_classification = parse_classification
 
 
 def adjudicate(new_record: dict, prior_record: dict, classification: dict, adapter) -> dict:
