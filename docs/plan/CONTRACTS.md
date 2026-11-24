@@ -130,8 +130,8 @@ Code against the interface so nobody waits.
 
 ### 4.1 Validity of a report (owner: Shahmeer)
 
-Today a consumer checks `record.get("status") == "superseded"`. That string is unreliable: it is overwritten
-when the record is re-processed (`services/conflict_engine.py` lines 724 to 725). The target is link-based.
+A consumer must not check `record.get("status") == "superseded"`. That string is kept for compatibility only: it
+can be overwritten when a record is re-processed. Validity is read from `SUPERSEDES` links.
 
 ```python
 # backend/integrity/validity.py
@@ -142,7 +142,17 @@ def is_current(record: dict, superseded: dict[str, str]) -> bool:
     """True when no link supersedes this record."""
 ```
 
-Until `validity.py` lands, consumers wrap the status check in one local function so the swap is one line.
+`validity.py` has landed. Call it with the IDs you are about to show or rank:
+
+```python
+from integrity.validity import superseded_by, is_current
+
+superseded = superseded_by(graph_repo, [r["record_id"] for r in records])   # one query
+current = [r for r in records if is_current(r, superseded)]
+```
+
+When several links supersede one record, the answer prefers a `human` link, then `explicit_citation`, then `model`;
+ties go to the latest decision, then the smallest ID.
 
 Link contract:
 
@@ -152,7 +162,17 @@ Link contract:
 ```
 
 `scope`, `confidence`, `rationale`, `created_at` keep their current meaning. `method` is one of
-`explicit_citation`, `model`, `human`.
+`explicit_citation`, `model`, `human`; a link written before provenance existed reads as `model`.
+`model_version` is the model or rule that proposed it (for example `handweighted-v0`, `rule-R1`; empty for older links).
+`decided_by` and `decided_at` are set when a reviewer accepts and are empty otherwise. There is one link per ordered
+pair; writing it again updates the properties and keeps the first `created_at`.
+
+```
+(new:ServiceRecord)-[:NOT_SUPERSEDES {decided_by, decided_at}]->(old:ServiceRecord)
+```
+
+`NOT_SUPERSEDES` is written when a reviewer rejects a pair. The engine and rule R1 never propose that pair again.
+Only `backend/integrity/apply.py` writes either edge.
 
 ### 4.2 Ranked parts with evidence (owner: Umar)
 

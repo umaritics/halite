@@ -27,6 +27,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | diagnostic evidence, provenance, same aircraft, fleet evidence, evidence grouping | context/modules/frontend.md, context/modules/diagnostics.md, flows/FLOW-diagnose.md, decisions/DEC-20261025-evidence-provenance.md |
 | mid1 umar audit, U1–U5 | docs/mid1/08_umar_progress.md (+ 09–13 handoffs) |
 | U1 audit, Jaccard, part_name ranker | context/modules/diagnostics_u1_audit.md |
+| integrity, SUPERSEDES link, NOT_SUPERSEDES, rule R1, citation, proposed_prior_id, review decision, validity | decisions/DEC-20261124-integrity-foundation.md, context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, docs/plan/CONTRACTS.md |
 | conflict, analysis_state, unscored, needs_review, confidence gate, cascade, daily budget, migration | context/modules/conflict_engine.md, flows/FLOW-conflict-review.md, decisions/DEC-20261017-conflict-analysis-state.md, decisions/DEC-20261017-analysis-cost-cascade.md, docs/mid1/19_confidence_and_corrections_evidence.md, docs/mid1/21_analysis_cascade_evidence.md |
 | review queue empty, all confidence 1, legacy placeholder | decisions/DEC-20261017-conflict-analysis-state.md, docs/mid1/19_confidence_and_corrections_evidence.md |
 | ingest, SDR, FAA corpus | flows/FLOW-ingest.md, decisions/DEC-20261017-ingest-csv-upload-ui.md |
@@ -53,6 +54,7 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | --- | --- |
 | `backend/services/diagnostic_retrieval.py` | modules/diagnostics.md, FLOW-diagnose.md |
 | `backend/api/routes/diagnostics.py` | modules/diagnostics.md, FLOW-diagnose.md |
+| `backend/integrity/*` | modules/conflict_engine.md, FLOW-conflict-review.md, DEC-20261124-integrity-foundation.md |
 | `backend/services/conflict_engine.py` | modules/conflict_engine.md, FLOW-conflict-review.md |
 | `backend/api/routes/maintenance.py` | modules/maintenance_api.md, FLOW-ingest.md, FLOW-conflict-review.md |
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |

@@ -5,6 +5,14 @@ import { REVIEW_CHANGED_EVENT } from './useReviewBadge';
 
 const TOAST_MS = 3000;
 
+// What the decision did to the SUPERSEDES link, in words. "none" says nothing.
+function linkConfirmation(data) {
+  if (data?.link === 'created') return `Link created to ${data.prior_record_id}`;
+  if (data?.link === 'confirmed') return 'Link confirmed';
+  if (data?.link === 'removed') return 'Link removed';
+  return null;
+}
+
 // Accept/Reject change the record's status in the graph. The UI only reflects a
 // change after the server confirms it; on failure the record stays in the queue.
 export default function useReviewDecision(record, onResolved) {
@@ -12,6 +20,7 @@ export default function useReviewDecision(record, onResolved) {
   const [error, setError] = useState(null);
   const [pending, setPending] = useState(null);
   const [toast, setToast] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
   const recordId = record?.record_id;
 
   useEffect(() => {
@@ -21,7 +30,10 @@ export default function useReviewDecision(record, onResolved) {
 
   useEffect(() => {
     if (!toast) return undefined;
-    const timer = setTimeout(() => setToast(null), TOAST_MS);
+    const timer = setTimeout(() => {
+      setToast(null);
+      setConfirmation(null);
+    }, TOAST_MS);
     return () => clearTimeout(timer);
   }, [toast]);
 
@@ -36,8 +48,9 @@ export default function useReviewDecision(record, onResolved) {
     setError(null);
     try {
       const send = action === 'accept' ? maintenanceAPI.accept : maintenanceAPI.reject;
-      await send(record.record_id, note);
+      const res = await send(record.record_id, note);
       onResolved(record.record_id);
+      setConfirmation(linkConfirmation(res?.data));
       setToast(`${action === 'accept' ? 'Accepted' : 'Rejected'} record ${record.record_id}`);
       window.dispatchEvent(new Event(REVIEW_CHANGED_EVENT));
     } catch (err) {
@@ -51,5 +64,5 @@ export default function useReviewDecision(record, onResolved) {
     }
   };
 
-  return { note, setNote, error, pending, toast, submit };
+  return { note, setNote, error, pending, toast, confirmation, submit };
 }

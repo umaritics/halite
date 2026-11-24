@@ -1,5 +1,6 @@
 import { Button, ErrorCard, Skeleton } from '../../components/ui';
 import Finding from './Finding';
+import ProposalSummary from './ProposalSummary';
 import RecordCard from './RecordCard';
 
 // Left side: the record waiting for a decision, with Prev/Next.
@@ -28,21 +29,22 @@ export function IncomingRecordPanel({ record, tail, assetUuid, position, total, 
 function LoadedFinding({ details, historyCount, assetUuid }) {
   return (
     <div className="min-h-0 flex-1 space-y-6 overflow-y-auto pr-1">
-      {details.best_prior ? (
+      {details.proposed_prior ? (
         <div>
-          <span className="eyebrow mb-4 block">RETRIEVED PRIOR RECORD</span>
-          <RecordCard record={details.best_prior} assetUuid={assetUuid} />
+          <span className="eyebrow mb-4 block">PROPOSED PRIOR RECORD</span>
+          <RecordCard record={details.proposed_prior} assetUuid={assetUuid} />
         </div>
       ) : (
         <div className="mb-6 font-sans text-sm text-secondary">
-          No relevant prior record retrieved.
+          No earlier record was proposed for this report, so there is nothing to compare it with.
         </div>
       )}
+      <ProposalSummary proposal={details} />
       <Finding
-        label={details.classification?.label}
-        rationale={details.classification?.rationale}
+        label={details.label}
+        rationale={details.rationale}
         confidence={details.confidence}
-        considered={details.candidates_considered}
+        considered={details.record?.candidates_considered}
         historyCount={historyCount}
       />
     </div>

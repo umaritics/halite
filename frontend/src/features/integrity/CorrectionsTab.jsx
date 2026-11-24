@@ -80,7 +80,7 @@ export default function CorrectionsTab() {
         </Button>
       )}
       <p className="text-xs text-secondary">
-        Model-assisted detection. Results are not exhaustive.
+        Linked by citation or proposed by the model. Results are not exhaustive.
       </p>
     </div>
   );

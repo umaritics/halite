@@ -23,6 +23,9 @@ from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
+from integrity import apply
+from integrity.citations import parse_citations
+from integrity.timeutil import is_eligible_prior
 from services.conflict_screen import text_overlap_features
 
 logger = logging.getLogger(__name__)
@@ -61,6 +64,9 @@ WEIGHTS_NO_CITATION: dict[str, float] = {
 
 # Fallback aligned with config.py and .env.example. The evaluation in
 # docs/evaluation_results.md selected 0.50; do not change without rerunning it.
+# Stored beside every proposal so a later, calibrated model can be told apart from this one.
+INTEGRITY_MODEL_VERSION = "handweighted-v0"
+
 MAINT_CONFIDENCE_THRESHOLD: float = float(
     os.environ.get("MAINT_CONFIDENCE_THRESHOLD", "0.50")
 )
@@ -154,20 +160,16 @@ def find_candidate_pairs(
     # Score each prior record (exclude the target record itself)
     candidates = []
     target_occurred = target.get("occurred_at", "")
-    target_submitted = target.get("submitted_at", "")
+    rejected = graph_repo.rejected_prior_ids(record_id)
 
     for prior in history:
         prior_id = prior.get("record_id") or prior.get("id")
-        if prior_id == record_id:
+        if prior_id == record_id or prior_id in rejected:
             continue
-            
-        # Prevent leakage: do not score against records from the future
-        prior_occurred = prior.get("occurred_at", "")
-        if prior_occurred and target_occurred and prior_occurred > target_occurred:
+
+        # Prevent leakage: only reports known before the target are comparable
+        if not is_eligible_prior(target, prior):
             continue
-        if prior_occurred == target_occurred:
-            if prior.get("submitted_at", "") >= target_submitted:
-                continue
 
         score = 0
         # same_part_name
@@ -526,6 +528,125 @@ def route(record: dict, confidence: float, threshold: float, classification: dic
     return "auto_accepted" if confidence >= threshold else "needs_review"
 
 
+def _history_size(graph_repo, target: dict) -> int:
+    asset = graph_repo.find_or_create_asset(target.get("asset_key", ""))
+    return len(graph_repo.list_asset_history(asset["id"]))
+
+
+def _stored_result(graph_repo, target: dict) -> dict:
+    """What a reviewed record already says, returned instead of re-processing it."""
+    prior_id = target.get("proposed_prior_id") or ""
+    label = target.get("classification_label")
+    status = target.get("status")
+    return {
+        "record_id": target["record_id"],
+        "proposed_prior_id": prior_id,
+        "candidates_considered": target.get("candidates_considered") or 0,
+        "history_size": target.get("history_size") or 0,
+        "best_prior": graph_repo.get_service_record(prior_id) if prior_id else None,
+        "classification": (
+            {"label": label, "rationale": target.get("classification_rationale") or "", "parse_failed": False}
+            if label else None
+        ),
+        "adjudication": None,
+        "signals": {},
+        "confidence": target.get("confidence"),
+        "route": status,
+        "parse_failures": 0,
+        "status_applied": status,
+        "analysis_method": target.get("analysis_method"),
+        "skipped": "reviewed",
+    }
+
+
+def _rule_classification(label: str, rationale: str, method: str, model: str, timestamp: str) -> dict:
+    return {
+        "label": label,
+        "rationale": rationale,
+        "parse_failed": False,
+        "method": method,
+        "model": model,
+        "passes": 0,
+        "votes": [],
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "reasoning_tokens": 0,
+        "total_tokens": 0,
+        "timestamp": timestamp,
+    }
+
+
+def _rule_result(
+    graph_repo, target: dict, classification: dict, *, status: str, confidence: float,
+    prior_id: str, dry_run: bool, force: bool, audit,
+) -> dict:
+    """Persist and describe an outcome decided by a rule rather than by the model."""
+    scored_at = classification["timestamp"]
+    history_size = _history_size(graph_repo, target)
+    if not dry_run:
+        apply.drop_stale_model_links(graph_repo, target["record_id"], {prior_id} - {""}, audit=audit)
+        apply.record_analysis(graph_repo, target["record_id"], {
+            "status": status,
+            "analysis_state": "scored",
+            "confidence": confidence,
+            "scored_at": scored_at,
+            "history_size": history_size,
+            "candidate_count": 0,
+            "candidates_considered": 0,
+            "classification_label": classification["label"],
+            "classification_rationale": classification["rationale"],
+            "analysis_model": classification["model"],
+            "analysis_method": classification["method"],
+            "analysis_passes": 0,
+            "analysis_votes_json": "[]",
+            "analysis_prompt_tokens": 0,
+            "analysis_completion_tokens": 0,
+            "analysis_reasoning_tokens": 0,
+            "analysis_total_tokens": 0,
+            "analysed_at": scored_at,
+            "proposed_prior_id": prior_id,
+            "integrity_p": confidence,
+            "integrity_model_version": classification["model"],
+        }, force=force, audit=audit)
+    return {
+        "record_id": target["record_id"],
+        "proposed_prior_id": prior_id,
+        "candidates_considered": 0,
+        "history_size": history_size,
+        "best_prior": graph_repo.get_service_record(prior_id) if prior_id else None,
+        "classification": classification,
+        "adjudication": None,
+        "signals": {},
+        "confidence": confidence,
+        "route": status,
+        "parse_failures": 0,
+        "status_applied": status,
+        "analysis_method": classification["method"],
+    }
+
+
+def _explicit_citation_result(graph_repo, target: dict, linked: list[str], **kwargs) -> dict:
+    cited = ", ".join(linked)
+    classification = _rule_classification(
+        "supersedes", f"The report names {cited} as the report it supplements.",
+        "explicit_citation", "rule-R1", datetime.now(timezone.utc).isoformat(),
+    )
+    return _rule_result(
+        graph_repo, target, classification, status="auto_accepted", confidence=1.0,
+        prior_id=linked[0], **kwargs,
+    )
+
+
+def _cited_prior_missing_result(graph_repo, target: dict, **kwargs) -> dict:
+    classification = _rule_classification(
+        "cited_prior_missing", "The cited report is not in the corpus, so there is nothing to supersede.",
+        "explicit_citation", "rule-R1", datetime.now(timezone.utc).isoformat(),
+    )
+    return _rule_result(
+        graph_repo, target, classification, status="no_action", confidence=0.0, prior_id="", **kwargs,
+    )
+
+
 def process_record(
     graph_repo,
     groq_service,
@@ -536,6 +657,9 @@ def process_record(
     dry_run: bool = False,
     analysis_mode: str | None = None,
     budget_manager=None,
+    *,
+    force: bool = False,
+    audit=None,
 ) -> dict:
     """
     Full conflict-detection pipeline for a single ServiceRecord.
@@ -543,8 +667,12 @@ def process_record(
     §7 guard: raises RuntimeError if groq_service.is_live is False
     and allow_stub is False.  Unit tests MUST pass allow_stub=True.
 
+    A reviewed record is returned untouched (skipped="reviewed") unless force is set; a report that
+    cites an earlier report is linked to it by rule R1 before any candidate search. `audit` is
+    forwarded to integrity.apply, which is the only writer of links and statuses.
+
     Returns:
-      record_id, candidates_considered (int), best_prior (dict|None),
+      record_id, proposed_prior_id (str), candidates_considered (int), best_prior (dict|None),
       classification (dict|None), adjudication (dict|None),
       signals (dict), confidence (float), route (str),
       parse_failures (int), status_applied (str)
@@ -555,6 +683,26 @@ def process_record(
         analysis_mode = settings.MAINT_ANALYSIS_MODE
     if analysis_mode not in ("legacy", "cascade"):
         raise ValueError(f"Unknown maintenance analysis mode: {analysis_mode!r}")
+
+    target = graph_repo.get_service_record(record_id)
+    if target is None:
+        raise ValueError(f"process_record: record {record_id!r} not found in graph")
+
+    # 0. A reviewer's decision is never overwritten by re-processing
+    if apply.is_human_decided(target) and not force and not dry_run:
+        return _stored_result(graph_repo, target)
+
+    # 1. Rule R1: a report that names its prior is linked to it without a model
+    citation_ineligible = None
+    if parse_citations(target.get("text")):
+        citations = apply.apply_explicit_citations(graph_repo, target, dry_run=dry_run, audit=audit)
+        if citations["linked"]:
+            return _explicit_citation_result(
+                graph_repo, target, citations["linked"], dry_run=dry_run, force=force, audit=audit,
+            )
+        if citations["missing"] and not citations["ineligible"]:
+            return _cited_prior_missing_result(graph_repo, target, dry_run=dry_run, force=force, audit=audit)
+        citation_ineligible = citations["ineligible"]
 
     if analysis_mode == "legacy" and not allow_stub and not groq_service.is_live:
         raise RuntimeError(
@@ -572,16 +720,12 @@ def process_record(
         graph_repo, record_id, max_candidates=MAINT_MAX_CANDIDATES,
         analysis_mode=analysis_mode,
     )
-    target = graph_repo.get_service_record(record_id)
-    if target is None:
-        raise ValueError(f"process_record: record {record_id!r} not found in graph")
-        
-    asset = graph_repo.find_or_create_asset(target.get("asset_key", ""))
-    history_size = len(graph_repo.list_asset_history(asset["id"]))
+    history_size = _history_size(graph_repo, target)
 
     if not candidates:
         if not dry_run:
-            graph_repo.update_service_record(record_id, {
+            apply.drop_stale_model_links(graph_repo, record_id, set(), audit=audit)
+            apply.record_analysis(graph_repo, record_id, {
                 "status": "no_action",
                 "analysis_state": "scored",
                 "confidence": 0.0,
@@ -600,9 +744,13 @@ def process_record(
                 "analysis_reasoning_tokens": 0,
                 "analysis_total_tokens": 0,
                 "analysed_at": scored_at,
-            })
-        return {
+                "proposed_prior_id": "",
+                "integrity_p": 0.0,
+                "integrity_model_version": INTEGRITY_MODEL_VERSION,
+            }, force=force, audit=audit)
+        result = {
             "record_id": record_id,
+            "proposed_prior_id": "",
             "candidates_considered": 0,
             "history_size": history_size,
             "best_prior": None,
@@ -619,6 +767,9 @@ def process_record(
             "status_applied": "no_action",
             "analysis_method": "screen",
         }
+        if citation_ineligible is not None:
+            result["citation_ineligible"] = citation_ineligible
+        return result
 
     # 2. Classify against the top candidate
     best = candidates[0]["record"]
@@ -706,22 +857,28 @@ def process_record(
 
     # 7. Apply to graph on confirmed supersession
     action = adjudication_result.get("action")
-    if routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes"):
+    links_best = routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes")
+    if not dry_run:
+        apply.drop_stale_model_links(
+            graph_repo, record_id, {best["record_id"]} if links_best else set(), audit=audit,
+        )
+    if links_best:
         if not dry_run:
-            graph_repo.link_record_supersedes(
-                new_record_id=record_id,
-                old_record_id=best["record_id"],
+            apply.link_supersedes(
+                graph_repo, record_id, best["record_id"],
                 scope=action,
                 confidence=confidence,
                 rationale=classification.get("rationale", ""),
+                method="model",
+                model_version=INTEGRITY_MODEL_VERSION,
+                audit=audit,
             )
-            graph_repo.update_service_record(best["record_id"], {"status": "superseded"})
         status_applied = "auto_accepted"
     else:
         status_applied = routing_decision
 
     if not dry_run:
-        graph_repo.update_service_record(record_id, {
+        apply.record_analysis(graph_repo, record_id, {
             "status": status_applied, 
             "analysis_state": "needs_review" if status_applied == "needs_review" else "scored",
             "confidence": confidence,
@@ -741,10 +898,14 @@ def process_record(
             "analysis_reasoning_tokens": classification.get("reasoning_tokens"),
             "analysis_total_tokens": classification.get("total_tokens"),
             "analysed_at": classification.get("timestamp") or scored_at,
-        })
+            "proposed_prior_id": best["record_id"],
+            "integrity_p": confidence,
+            "integrity_model_version": INTEGRITY_MODEL_VERSION,
+        }, force=force, audit=audit)
 
-    return {
+    result = {
         "record_id": record_id,
+        "proposed_prior_id": best["record_id"],
         "candidates_considered": len(candidates),
         "history_size": history_size,
         "best_prior": best,
@@ -757,3 +918,6 @@ def process_record(
         "status_applied": status_applied,
         "analysis_method": classification.get("method", "llm"),
     }
+    if citation_ineligible is not None:
+        result["citation_ineligible"] = citation_ineligible
+    return result

@@ -4,13 +4,15 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
+import { integrityAPI } from '../features/integrity/api';
+
+vi.mock('../features/integrity/api', () => ({ integrityAPI: { proposal: vi.fn() } }));
 
 vi.mock('../api/client', () => ({
   maintenanceAPI: {
     assets: vi.fn(),
     reviewQueue: vi.fn(),
     submitRecord: vi.fn(),
-    getRecord: vi.fn(),
     assetHistory: vi.fn(),
     accept: vi.fn(),
     reject: vi.fn(),
@@ -21,13 +23,17 @@ vi.mock('../api/client', () => ({
 
 const api = client.maintenanceAPI;
 
-const conflictDetail = (overrides = {}) => ({
+const conflictDetail = ({ classification, ...overrides } = {}) => ({
   data: {
-    record_id: 'R1',
-    candidates_considered: 5,
+    record: { record_id: 'R1', candidates_considered: 5 },
     confidence: 0.4,
-    classification: { label: 'supersedes', rationale: 'LLM said so' },
-    best_prior: {
+    label: classification?.label ?? 'supersedes',
+    rationale: classification?.rationale ?? 'LLM said so',
+    method: 'llm',
+    link: null,
+    changed_fields: [],
+    proposal_source: 'stored',
+    proposed_prior: {
       record_id: 'R0',
       occurred_at: '2024-01-01T00:00:00Z',
       part_name: 'Engine',
@@ -66,7 +72,7 @@ describe('Detected corrections tab', () => {
     expect(screen.getByLabelText('Corrections aircraft')).toHaveValue('');
     expect(screen.getByText('100%')).toBeInTheDocument();
     expect(screen.getByText('PUMP → PRESSURE SWITCH')).toBeInTheDocument();
-    expect(screen.getByText(/Model-assisted detection. Results are not exhaustive/)).toBeInTheDocument();
+    expect(screen.getByText(/Linked by citation or proposed by the model. Results are not exhaustive/)).toBeInTheDocument();
   });
 
   it('filters corrections by aircraft', async () => {
@@ -114,11 +120,10 @@ describe('ReviewQueue', () => {
       }]
     });
 
-    // Same conflict payload shape for the dry-run detail fetch
-    // (GET /maintenance/records/{id}) and the submit call.
+    // The stored proposal (GET /maintenance/review-queue/{id}/proposal) and the submit call.
     const detail = conflictDetail();
     api.submitRecord.mockResolvedValue(detail);
-    api.getRecord.mockResolvedValue(detail);
+    integrityAPI.proposal.mockResolvedValue(detail);
 
     render(
       <MemoryRouter>
@@ -146,7 +151,7 @@ describe('ReviewQueue', () => {
       expect(screen.queryByText(/nothing is awaiting review/i)).toBeNull();
 
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-      api.getRecord.mockResolvedValue(conflictDetail());
+      integrityAPI.proposal.mockResolvedValue(conflictDetail());
       fireEvent.click(screen.getByRole('button', { name: /try again/i }));
       await screen.findByText('INCOMING RECORD');
     });
@@ -167,7 +172,7 @@ describe('ReviewQueue', () => {
 
     it('uses the backend history_size and skips the extra history request', async () => {
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1', { history_size: 153 })] });
-      api.getRecord.mockResolvedValue(conflictDetail());
+      integrityAPI.proposal.mockResolvedValue(conflictDetail());
       renderPage();
 
       await screen.findByText('Examined 5 of 153 records on this asset.');
@@ -176,7 +181,7 @@ describe('ReviewQueue', () => {
 
     it('explains what the conflict label means', async () => {
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-      api.getRecord.mockResolvedValue(conflictDetail({ classification: { label: 'contradicts', rationale: 'They disagree.' } }));
+      integrityAPI.proposal.mockResolvedValue(conflictDetail({ classification: { label: 'contradicts', rationale: 'They disagree.' } }));
       renderPage();
 
       await screen.findByText(/mutually exclusive claims about the same part or event/i);
@@ -184,7 +189,7 @@ describe('ReviewQueue', () => {
 
     it('links the incoming and prior record to the asset history by asset UUID', async () => {
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-      api.getRecord.mockResolvedValue(conflictDetail());
+      integrityAPI.proposal.mockResolvedValue(conflictDetail());
       renderPage();
 
       await waitFor(() => expect(screen.getAllByRole('link', { name: /open in asset history/i })).toHaveLength(2));
@@ -198,7 +203,7 @@ describe('ReviewQueue', () => {
     it('shows no history link rather than a broken one when the asset cannot be resolved', async () => {
       api.assets.mockRejectedValue({ code: 'ERR_NETWORK', message: 'Network Error', request: {} });
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-      api.getRecord.mockResolvedValue(conflictDetail());
+      integrityAPI.proposal.mockResolvedValue(conflictDetail());
       renderPage();
 
       await screen.findByText('LLM said so');
@@ -221,7 +226,7 @@ describe('ReviewQueue', () => {
           }),
         ],
       });
-      api.getRecord.mockImplementation((id) =>
+      integrityAPI.proposal.mockImplementation((id) =>
         id === 'R1'
           ? Promise.resolve(conflictDetail({ classification: { label: 'contradicts', rationale: 'FINDING FOR R1' } }))
           : Promise.reject({ response: { status: 503, data: { detail: 'model unavailable' } } })
@@ -242,22 +247,22 @@ describe('ReviewQueue', () => {
 
     it('Retry re-requests the finding', async () => {
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-      api.getRecord.mockRejectedValueOnce({ response: { status: 503, data: { detail: 'model unavailable' } } });
+      integrityAPI.proposal.mockRejectedValueOnce({ response: { status: 503, data: { detail: 'model unavailable' } } });
       renderPage();
 
       await screen.findByText('Finding details unavailable');
-      api.getRecord.mockResolvedValue(conflictDetail({ classification: { label: 'supersedes', rationale: 'Recovered.' } }));
+      integrityAPI.proposal.mockResolvedValue(conflictDetail({ classification: { label: 'supersedes', rationale: 'Recovered.' } }));
       fireEvent.click(screen.getByRole('button', { name: /retry/i }));
 
       await screen.findByText('Recovered.');
-      expect(api.getRecord).toHaveBeenCalledTimes(2);
+      expect(integrityAPI.proposal).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('accept and reject change real data, so the UI waits for the server', () => {
     beforeEach(() => {
       api.reviewQueue.mockResolvedValue({ data: [queueItem('R1')] });
-      api.getRecord.mockResolvedValue(conflictDetail());
+      integrityAPI.proposal.mockResolvedValue(conflictDetail());
     });
 
     it('does not remove the record or announce success until the server confirms', async () => {

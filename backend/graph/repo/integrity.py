@@ -3,6 +3,22 @@ from ._helpers import _now
 
 logger = logging.getLogger(__name__)
 
+SUPERSEDES_METHODS = ("explicit_citation", "model", "human")
+
+
+def _link_dict(row) -> dict:
+    """Link properties with the provenance defaults; links written before provenance existed were model decisions."""
+    return {
+        "scope": row.get("scope"),
+        "confidence": row.get("confidence"),
+        "rationale": row.get("rationale"),
+        "created_at": row.get("created_at"),
+        "method": row.get("method") or "model",
+        "model_version": row.get("model_version") or "",
+        "decided_by": row.get("decided_by") or "",
+        "decided_at": row.get("decided_at") or "",
+    }
+
 
 class IntegrityMixin:
     """Integrity graph operations; preserved from the pre-split implementation."""
@@ -14,15 +30,25 @@ class IntegrityMixin:
         scope: str,
         confidence: float,
         rationale: str,
+        *,
+        method: str = "model",
+        model_version: str = "",
+        decided_by: str = "",
+        decided_at: str = "",
     ) -> None:
         """
-        Create SUPERSEDES edge: new ServiceRecord → old ServiceRecord.
+        One SUPERSEDES edge per ordered pair: new ServiceRecord -> old ServiceRecord.
 
-        Properties: scope, confidence, rationale, created_at.
+        Writing the pair again updates the properties and keeps the first created_at,
+        so provenance (method, model_version, decided_by, decided_at) is never duplicated.
         """
+        if method not in SUPERSEDES_METHODS:
+            raise ValueError(f"method must be one of {SUPERSEDES_METHODS}, got {method!r}")
         if self.is_memory:
             self.store.link_record_supersedes(
-                new_record_id, old_record_id, scope, confidence, rationale
+                new_record_id, old_record_id, scope, confidence, rationale,
+                method=method, model_version=model_version,
+                decided_by=decided_by, decided_at=decided_at,
             )
             return
         self.store.run_query(
@@ -30,10 +56,14 @@ class IntegrityMixin:
             MATCH (new:ServiceRecord {record_id: $nid}),
                   (old:ServiceRecord {record_id: $oid})
             MERGE (new)-[r:SUPERSEDES]->(old)
+            ON CREATE SET r.created_at = $now
             SET r.scope = $scope,
                 r.confidence = $confidence,
                 r.rationale = $rationale,
-                r.created_at = $now
+                r.method = $method,
+                r.model_version = $model_version,
+                r.decided_by = $decided_by,
+                r.decided_at = $decided_at
             """,
             {
                 "nid": new_record_id,
@@ -41,9 +71,114 @@ class IntegrityMixin:
                 "scope": scope,
                 "confidence": confidence,
                 "rationale": rationale,
+                "method": method,
+                "model_version": model_version,
+                "decided_by": decided_by,
+                "decided_at": decided_at,
                 "now": _now(),
             },
         )
+
+    def unlink_record_supersedes(self, new_record_id: str, old_record_id: str) -> int:
+        """Delete the SUPERSEDES edge of one ordered pair; returns 0 or 1."""
+        if self.is_memory:
+            return self.store.unlink_record_supersedes(new_record_id, old_record_id)
+        rows = self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid})-[r:SUPERSEDES]->
+                  (old:ServiceRecord {record_id: $oid})
+            DELETE r
+            RETURN count(*) AS deleted
+            """,
+            {"nid": new_record_id, "oid": old_record_id},
+        )
+        return int(rows[0]["deleted"]) if rows else 0
+
+    def get_supersedes_link(self, new_record_id: str, old_record_id: str) -> dict | None:
+        """The SUPERSEDES link of one ordered pair with its provenance, or None."""
+        if self.is_memory:
+            return self.store.get_supersedes_link(new_record_id, old_record_id)
+        rows = self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid})-[r:SUPERSEDES]->
+                  (old:ServiceRecord {record_id: $oid})
+            RETURN r.scope AS scope, r.confidence AS confidence, r.rationale AS rationale,
+                   r.created_at AS created_at, r.method AS method,
+                   r.model_version AS model_version, r.decided_by AS decided_by,
+                   r.decided_at AS decided_at
+            """,
+            {"nid": new_record_id, "oid": old_record_id},
+        )
+        return _link_dict(rows[0]) if rows else None
+
+    def list_supersedes_links(self, old_record_ids: list[str]) -> list[dict]:
+        """Every SUPERSEDES link whose old end is in the list, in one query."""
+        if not old_record_ids:
+            return []
+        if self.is_memory:
+            return self.store.list_supersedes_links(old_record_ids)
+        rows = self.store.run_query(
+            """
+            MATCH (new:ServiceRecord)-[r:SUPERSEDES]->(old:ServiceRecord)
+            WHERE old.record_id IN $oids
+            RETURN old.record_id AS old_record_id, new.record_id AS new_record_id,
+                   r.scope AS scope, r.confidence AS confidence, r.rationale AS rationale,
+                   r.created_at AS created_at, r.method AS method,
+                   r.model_version AS model_version, r.decided_by AS decided_by,
+                   r.decided_at AS decided_at
+            """,
+            {"oids": list(old_record_ids)},
+        )
+        return [
+            {"old_record_id": row["old_record_id"], "new_record_id": row["new_record_id"],
+             **_link_dict(row)}
+            for row in rows
+        ]
+
+    def superseded_prior_ids(self, new_record_id: str) -> list[str]:
+        """Record IDs this record currently supersedes, sorted so every backend answers alike."""
+        if self.is_memory:
+            return self.store.superseded_prior_ids(new_record_id)
+        rows = self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid})-[:SUPERSEDES]->(old:ServiceRecord)
+            RETURN old.record_id AS record_id
+            ORDER BY record_id
+            """,
+            {"nid": new_record_id},
+        )
+        return [row["record_id"] for row in rows]
+
+    def link_record_not_supersedes(
+        self, new_record_id: str, old_record_id: str, *, by: str, at: str
+    ) -> None:
+        """Record that a human rejected this pair; at most one edge per ordered pair."""
+        if self.is_memory:
+            self.store.link_record_not_supersedes(new_record_id, old_record_id, by=by, at=at)
+            return
+        self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid}),
+                  (old:ServiceRecord {record_id: $oid})
+            MERGE (new)-[r:NOT_SUPERSEDES]->(old)
+            SET r.decided_by = $by,
+                r.decided_at = $at
+            """,
+            {"nid": new_record_id, "oid": old_record_id, "by": by, "at": at},
+        )
+
+    def rejected_prior_ids(self, new_record_id: str) -> set[str]:
+        """Record IDs a human has said the new record does not supersede."""
+        if self.is_memory:
+            return self.store.rejected_prior_ids(new_record_id)
+        rows = self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid})-[:NOT_SUPERSEDES]->(old:ServiceRecord)
+            RETURN old.record_id AS record_id
+            """,
+            {"nid": new_record_id},
+        )
+        return {row["record_id"] for row in rows}
 
     def analysis_status(self) -> dict:
         if self.is_memory:

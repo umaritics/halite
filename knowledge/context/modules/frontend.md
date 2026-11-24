@@ -49,7 +49,7 @@ not capture `/api/*` or `/assets/*`.
   one-shot UI under **Quick diagnose**.
 - Review queue rows carry `classification_label`, `classification_rationale`, `confidence`, `candidates_considered`, `history_size`; coverage comes from `/maintenance/analysis/status`.
 - Service Records consumes paginated `/maintenance/records`; Corrections consumes `/maintenance/corrections`.
-- `GET /maintenance/records/{id}` re-runs the conflict engine (a model call) each time it is viewed.
+- `GET /maintenance/records/{id}` still re-runs the conflict engine in dry-run mode (a model call) each time it is called, but the review screen no longer uses it: it reads `GET /maintenance/review-queue/{id}/proposal`, which returns the stored proposal.
 
 ## Behaviour rules (do not weaken)
 
