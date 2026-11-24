@@ -133,7 +133,8 @@ def test_a_reviewed_record_is_returned_untouched_and_reprocessed_when_forced():
         forced = _run(repo, model, "NEWREP001", force=True, audit=audit)
         assert "skipped" not in forced and model.calls > 0
         assert repo.get_service_record("NEWREP001")["status"] == "auto_accepted"
-        assert len(audit.of("integrity.status.changed")) == 1
+        changed = audit.of("integrity.status.changed")
+        assert [c[1] for c in changed if c[1] == "NEWREP001"] == ["NEWREP001"]
 
 
 def test_a_dry_run_on_a_reviewed_record_still_computes_and_writes_nothing():
@@ -163,8 +164,10 @@ def test_exactly_one_audit_call_per_status_change_and_none_when_nothing_changes_
     assert repo.get_service_record("NEWREP001")["status"] == "unscored"
 
     _run(repo, model, "NEWREP001", audit=audit)
-    assert len(audit.of("integrity.status.changed")) == 1
-    assert audit.of("integrity.status.changed")[0][2]["to"] == "auto_accepted"
+    changes = {c[1]: c[2] for c in audit.of("integrity.status.changed")}
+    assert changes["NEWREP001"]["to"] == "auto_accepted"
+    assert (changes["CITED0001"]["from"], changes["CITED0001"]["to"]) == ("unscored", "superseded")
+    assert len(changes) == 2
     assert len(audit.of("integrity.link.created")) == 1
     count = len(audit.calls)
 

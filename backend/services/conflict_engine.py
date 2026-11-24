@@ -584,6 +584,7 @@ def _rule_result(
     scored_at = classification["timestamp"]
     history_size = _history_size(graph_repo, target)
     if not dry_run:
+        apply.drop_stale_model_links(graph_repo, target["record_id"], {prior_id} - {""}, audit=audit)
         apply.record_analysis(graph_repo, target["record_id"], {
             "status": status,
             "analysis_state": "scored",
@@ -723,6 +724,7 @@ def process_record(
 
     if not candidates:
         if not dry_run:
+            apply.drop_stale_model_links(graph_repo, record_id, set(), audit=audit)
             apply.record_analysis(graph_repo, record_id, {
                 "status": "no_action",
                 "analysis_state": "scored",
@@ -855,7 +857,12 @@ def process_record(
 
     # 7. Apply to graph on confirmed supersession
     action = adjudication_result.get("action")
-    if routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes"):
+    links_best = routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes")
+    if not dry_run:
+        apply.drop_stale_model_links(
+            graph_repo, record_id, {best["record_id"]} if links_best else set(), audit=audit,
+        )
+    if links_best:
         if not dry_run:
             apply.link_supersedes(
                 graph_repo, record_id, best["record_id"],

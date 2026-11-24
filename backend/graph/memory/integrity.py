@@ -82,6 +82,16 @@ class IntegrityMixin:
                 })
         return links
 
+    def superseded_prior_ids(self, new_record_id: str) -> list[str]:
+        new_id = self._service_record_ids.get(new_record_id)
+        priors = []
+        for edge in self.edges:
+            if edge["type"] == "SUPERSEDES" and edge["source"] == new_id:
+                old = self._get_node(edge["target"])
+                if old:
+                    priors.append(old["record_id"])
+        return sorted(priors)
+
     def link_record_not_supersedes(
         self, new_record_id: str, old_record_id: str, *, by: str, at: str
     ) -> None:

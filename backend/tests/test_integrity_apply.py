@@ -40,11 +40,17 @@ def test_superseding_then_unlinking_restores_the_old_status():
                                  rationale="r", method="model", model_version="m", audit=audit)
     old = repo.get_service_record("OLD1")
     assert old["status"] == "superseded" and old["status_before_superseded"] == "needs_review"
-    assert audit.calls == [("integrity.link.created", "NEW1", {"prior_record_id": "OLD1", "method": "model"})]
+    assert audit.calls == [
+        ("integrity.status.changed", "OLD1", {"from": "needs_review", "to": "superseded", "method": "model"}),
+        ("integrity.link.created", "NEW1", {"prior_record_id": "OLD1", "method": "model"}),
+    ]
 
     assert apply.unlink_supersedes(repo, "NEW1", "OLD1", audit=audit)
     assert repo.get_service_record("OLD1")["status"] == "needs_review"
-    assert audit.calls[-1][0] == "integrity.link.removed"
+    assert audit.calls[-2:] == [
+        ("integrity.status.changed", "OLD1", {"from": "superseded", "to": "needs_review", "method": "unlink"}),
+        ("integrity.link.removed", "NEW1", {"prior_record_id": "OLD1"}),
+    ]
     assert apply.unlink_supersedes(repo, "NEW1", "OLD1", audit=audit) is False
 
 

@@ -42,15 +42,21 @@ def link_supersedes(
         new_id, old_id, scope, confidence, rationale, method=method, model_version=model_version,
         decided_by=decided_by, decided_at=decided_at,
     )
+    if graph_repo.get_supersedes_link(new_id, old_id) is None:
+        return False  # the graph ignores a link whose end does not exist; do not mark the prior
     old = graph_repo.get_service_record(old_id)
-    if old is not None and not is_human_decided(old):
-        updates = {"status": "superseded"}
-        if old.get("status") != "superseded":
-            updates["status_before_superseded"] = old.get("status") or "unscored"
-        graph_repo.update_service_record(old_id, updates)
+    if old is not None and not is_human_decided(old) and old.get("status") != "superseded":
+        graph_repo.update_service_record(
+            old_id, {"status": "superseded", "status_before_superseded": old.get("status") or "unscored"},
+        )
+        _emit_status_change(audit, old_id, old.get("status"), "superseded", method)
     if not existed:
         _emit(audit, "integrity.link.created", new_id, {"prior_record_id": old_id, "method": method})
     return True
+
+
+def _emit_status_change(audit, record_id: str, before, after: str, method: str) -> None:
+    _emit(audit, "integrity.status.changed", record_id, {"from": before, "to": after, "method": method})
 
 
 def unlink_supersedes(graph_repo, new_id: str, old_id: str, *, audit=None) -> bool:
@@ -60,11 +66,22 @@ def unlink_supersedes(graph_repo, new_id: str, old_id: str, *, audit=None) -> bo
     old = graph_repo.get_service_record(old_id)
     still_superseded = bool(graph_repo.list_supersedes_links([old_id]))
     if old is not None and old.get("status") == "superseded" and not still_superseded:
-        graph_repo.update_service_record(
-            old_id, {"status": old.get("status_before_superseded") or "unscored"}
-        )
+        restored = old.get("status_before_superseded") or "unscored"
+        graph_repo.update_service_record(old_id, {"status": restored})
+        _emit_status_change(audit, old_id, "superseded", restored, "unlink")
     _emit(audit, "integrity.link.removed", new_id, {"prior_record_id": old_id})
     return True
+
+
+def drop_stale_model_links(graph_repo, new_id: str, keep: set[str], *, audit=None) -> None:
+    """Remove model links an earlier run wrote to priors the latest run no longer proposes.
+
+    Citation and human links are decisions of their own and stay; only a superseded analysis is retired.
+    """
+    for old_id in graph_repo.superseded_prior_ids(new_id):
+        link = graph_repo.get_supersedes_link(new_id, old_id)
+        if old_id not in keep and link and link["method"] == "model":
+            unlink_supersedes(graph_repo, new_id, old_id, audit=audit)
 
 
 def apply_explicit_citations(graph_repo, record: dict, *, dry_run: bool = False, audit=None) -> dict:
@@ -144,46 +161,48 @@ def _review_fields(status: str, reviewer: dict, note: str) -> dict:
 def accept_proposal(graph_repo, record_id: str, *, reviewer: dict, note: str, audit=None) -> dict:
     """A reviewer confirms the stored proposal; a supersession becomes a link that carries their name.
 
-    An existing automatic link is confirmed in place, so the record of how it was first found
-    (method, model version) survives next to the person who agreed with it.
+    Every existing automatic link of the record is confirmed in place, so the record of how it
+    was first found (method, model version) survives next to the person who agreed with it.
     """
     record = graph_repo.get_service_record(record_id)
     prior_id = record.get("proposed_prior_id") or None
     label = record.get("classification_label")
-    link = "none"
-    if prior_id and label in ("supersedes", "partial_supersedes"):
-        now = datetime.now(timezone.utc).isoformat()
-        existing = graph_repo.get_supersedes_link(record_id, prior_id)
-        if existing is None:
-            link_supersedes(
-                graph_repo, record_id, prior_id, scope=label, confidence=record.get("confidence") or 0.0,
-                rationale=record.get("classification_rationale") or "", method="human",
-                model_version=record.get("integrity_model_version") or "",
-                decided_by=reviewer.get("id", ""), decided_at=now, audit=audit,
-            )
-            link = "created"
-        else:
-            link_supersedes(
-                graph_repo, record_id, prior_id, scope=existing["scope"], confidence=existing["confidence"],
-                rationale=existing["rationale"], method=existing["method"],
-                model_version=existing["model_version"],
-                decided_by=reviewer.get("id", ""), decided_at=now, audit=audit,
-            )
-            link = "confirmed"
+    now = datetime.now(timezone.utc).isoformat()
+    decided = {"decided_by": reviewer.get("id", ""), "decided_at": now}
+    for linked_id in graph_repo.superseded_prior_ids(record_id):
+        existing = graph_repo.get_supersedes_link(record_id, linked_id)
+        link_supersedes(
+            graph_repo, record_id, linked_id, scope=existing["scope"], confidence=existing["confidence"],
+            rationale=existing["rationale"], method=existing["method"],
+            model_version=existing["model_version"], audit=audit, **decided,
+        )
+    link = "confirmed" if graph_repo.superseded_prior_ids(record_id) else "none"
+    if prior_id and label in ("supersedes", "partial_supersedes") and graph_repo.get_supersedes_link(record_id, prior_id) is None:
+        link_supersedes(
+            graph_repo, record_id, prior_id, scope=label, confidence=record.get("confidence") or 0.0,
+            rationale=record.get("classification_rationale") or "", method="human",
+            model_version=record.get("integrity_model_version") or "", audit=audit, **decided,
+        )
+        link = "created"
     updated = graph_repo.update_service_record(record_id, _review_fields("accepted", reviewer, note))
     return {"record": updated, "prior_record_id": prior_id, "link": link}
 
 
 def reject_proposal(graph_repo, record_id: str, *, reviewer: dict, note: str, audit=None) -> dict:
-    """A reviewer turns the proposal down: any link goes, and the pair is never proposed again."""
+    """A reviewer turns the proposal down: every link of the record goes, and no pair is proposed again.
+
+    A report can supersede several priors (it may cite more than one), so the proposed prior
+    alone is not the whole decision.
+    """
     record = graph_repo.get_service_record(record_id)
     prior_id = record.get("proposed_prior_id") or None
     link = "none"
-    if prior_id:
-        if unlink_supersedes(graph_repo, record_id, prior_id, audit=audit):
+    rejected = list(dict.fromkeys(([prior_id] if prior_id else []) + graph_repo.superseded_prior_ids(record_id)))
+    for old_id in rejected:
+        if unlink_supersedes(graph_repo, record_id, old_id, audit=audit):
             link = "removed"
         graph_repo.link_record_not_supersedes(
-            record_id, prior_id, by=reviewer.get("id", ""), at=datetime.now(timezone.utc).isoformat(),
+            record_id, old_id, by=reviewer.get("id", ""), at=datetime.now(timezone.utc).isoformat(),
         )
     updated = graph_repo.update_service_record(record_id, _review_fields("rejected", reviewer, note))
     return {"record": updated, "prior_record_id": prior_id, "link": link}

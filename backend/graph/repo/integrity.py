@@ -135,6 +135,20 @@ class IntegrityMixin:
             for row in rows
         ]
 
+    def superseded_prior_ids(self, new_record_id: str) -> list[str]:
+        """Record IDs this record currently supersedes, sorted so every backend answers alike."""
+        if self.is_memory:
+            return self.store.superseded_prior_ids(new_record_id)
+        rows = self.store.run_query(
+            """
+            MATCH (new:ServiceRecord {record_id: $nid})-[:SUPERSEDES]->(old:ServiceRecord)
+            RETURN old.record_id AS record_id
+            ORDER BY record_id
+            """,
+            {"nid": new_record_id},
+        )
+        return [row["record_id"] for row in rows]
+
     def link_record_not_supersedes(
         self, new_record_id: str, old_record_id: str, *, by: str, at: str
     ) -> None:

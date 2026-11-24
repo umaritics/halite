@@ -23,12 +23,16 @@ def resolve_prior(graph_repo, record: dict) -> tuple[str, str]:
     """(prior record id, source) where source is "stored", "recomputed" or "none".
 
     Only a record analysed before proposed_prior_id existed (field absent) is recomputed; an
-    empty value means the engine found no prior, and a later search must not invent one.
+    empty value means the engine found no prior, and a later search must not invent one. A record
+    that already supersedes a report keeps that report: a fresh search could rank another first.
     """
     stored = record.get("proposed_prior_id")
     if stored:
         return stored, "stored"
     if stored is None:
+        linked = graph_repo.superseded_prior_ids(record["record_id"])
+        if linked:
+            return linked[0], "stored"
         pairs = conflict_engine.find_candidate_pairs(
             graph_repo, record["record_id"], analysis_mode=_stored_mode(record),
         )

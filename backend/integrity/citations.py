@@ -15,13 +15,16 @@ def parse_citations(text: str | None) -> list[str]:
     """Return each cited report ID once, upper-cased, in order of first appearance.
 
     The engine used to test only for the phrase and then guess the target; reading the
-    ID is what lets a citation link to the report it actually names.
+    ID is what lets a citation link to the report it actually names. A token without a digit
+    is an ordinary word ("...FOR ENGINE FAILURE"), not a record ID, so it is not a citation.
     """
     if not text:
         return []
     seen: dict[str, None] = {}
     for match in CITATION_RE.finditer(text):
-        seen.setdefault(match.group(1).upper())
+        token = match.group(1).upper()
+        if any(ch.isdigit() for ch in token):
+            seen.setdefault(token)
     return list(seen)
 
 
