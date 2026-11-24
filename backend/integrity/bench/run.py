@@ -31,6 +31,7 @@ from integrity.prompts import CLASSIFICATION_PROMPTS
 from services.conflict_engine import CASCADE_SCREEN_THRESHOLD
 
 RESULTS_DIR = Path(__file__).resolve().parent / "results"
+TEST_LOG_PATH = RESULTS_DIR / "test_split_log.jsonl"
 N_RESAMPLES = 1000
 REQUEST_TIMEOUT_S = 120.0
 RANK_KEYS = ("ranks", "ranks_ignoring_chain", "ranks_capped")
@@ -43,6 +44,10 @@ class TestSplitLockedError(RuntimeError):
     """The bench file is the held-out test year and no reason for opening it was given."""
 
     __test__ = False  # not a pytest class, despite the name
+
+
+class PredictionsMismatchError(RuntimeError):
+    """A predictions file was made with another bench, model, endpoint, prompt, mode or vote count."""
 
 
 class LeakageError(ValueError):
@@ -76,6 +81,7 @@ def make_meta(bench_path, manifest_path, manifest, *, seed, model=None, prompt=N
     commit, dirty = git_state()
     return {
         "bench_file": Path(bench_path).name,
+        "bench_sha256": hashlib.sha256(Path(bench_path).read_bytes()).hexdigest(),
         "manifest_sha256": hashlib.sha256(Path(manifest_path).read_bytes()).hexdigest(),
         "manifest_counts": manifest["counts"],
         "positives_hidden_by_history_cap": manifest["positives_hidden_by_history_cap"],
@@ -163,8 +169,12 @@ def candidate_summary(report: dict) -> str:
     return "\n".join(lines)
 
 
-def run_candidates(bench_path, out_path, *, seed: int) -> dict:
+def run_candidates(bench_path, out_path, *, seed: int, unlock_test=None, test_log_path=None) -> dict:
     rows, manifest, manifest_path = load_bench(bench_path)
+    refuse_test_split(
+        manifest, bench_name=Path(bench_path).name, model=None, prompt=None, reason=unlock_test,
+        log_path=test_log_path or TEST_LOG_PATH, details={"stage": "candidates", "seed": seed},
+    )
     report = {"meta": make_meta(bench_path, manifest_path, manifest, seed=seed), **candidate_report(rows, seed=seed)}
     write_json(out_path, report)
     return report
@@ -204,9 +214,16 @@ def check_no_leaks(rows: list[dict], masking: str) -> None:
 
 
 def read_predictions(path: Path) -> dict[str, dict]:
+    """Stored predictions by pair id. A last line cut short by a crash is dropped (and the file trimmed),
+    so an interrupted run can always resume; its pair is simply classified again."""
     if not path.exists():
         return {}
-    records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    text = path.read_text(encoding="utf-8")
+    if text and not text.endswith("\n"):
+        text = text[: text.rfind("\n") + 1]
+        path.write_text(text, encoding="utf-8", newline="\n")
+        print(f"warning: dropped an unfinished last line of {path.name}", file=sys.stderr)
+    records = [json.loads(line) for line in text.splitlines() if line.strip()]
     return {record["pair_id"]: record for record in records}
 
 
@@ -280,6 +297,9 @@ def system_report(records: list[dict], *, cascaded: bool, seed: int) -> dict:
     report["false_link_rate_hard_negatives"] = _interval(of_kind("hard_negative"), metrics.false_link_rate, seed)
     report["false_link_rate_presumed_negatives"] = _interval(of_kind("presumed_negative"), metrics.false_link_rate, seed)
     report.update({
+        # Staging classifies only its top candidate; here every pair is treated as having reached the model,
+        # so stage 1 misses are not counted against recall. Read this with the stage 1 hit rates.
+        "assumes_every_pair_reaches_the_model": True,
         "n_pairs": len(pairs),
         "confusion": metrics.confusion(pairs),
         "parse_failure_rate": parse_failures / len(pairs) if pairs else None,
@@ -304,7 +324,8 @@ def classify_report(selected, records, errors, *, seed) -> dict:
 
 
 def classify_summary(report: dict) -> str:
-    lines = [f"pairs scored {report['n_pairs_scored']} of {report['n_pairs_selected']}, errors {len(report['errors'])}"]
+    lines = [f"pairs scored {report['n_pairs_scored']} of {report['n_pairs_selected']}, errors {len(report['errors'])}",
+             "every pair is assumed to reach the model; stage 1 misses are not counted"]
     for name, system in report["systems"].items():
         parts = []
         for metric in ("precision", "recall", "f1", "false_link_rate"):
@@ -320,7 +341,7 @@ def classify_summary(report: dict) -> str:
     return "\n".join(lines)
 
 
-def refuse_test_split(manifest: dict, *, bench_name, model, prompt, reason, log_path) -> None:
+def refuse_test_split(manifest: dict, *, bench_name, model, prompt, reason, log_path, details=None) -> None:
     """The test year is opened once per method version, so opening it needs a reason and leaves a line."""
     if manifest["split"] != "test":
         return
@@ -328,7 +349,10 @@ def refuse_test_split(manifest: dict, *, bench_name, model, prompt, reason, log_
     if not reason:
         raise TestSplitLockedError(f"{bench_name} is the held-out test split; pass --unlock-test with the reason")
     commit, _ = git_state()
-    line = {"file": bench_name, "model": model, "prompt": prompt, "reason": reason, "commit": commit}
+    line = {
+        "file": bench_name, "model": model, "prompt": prompt, "reason": reason, "commit": commit,
+        "at_utc": datetime.now(timezone.utc).isoformat(), **(details or {}),
+    }
     Path(log_path).parent.mkdir(parents=True, exist_ok=True)
     with open(log_path, "a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(line, sort_keys=True) + "\n")
@@ -339,13 +363,29 @@ def predictions_file(directory, bench_path, model, prompt, mode) -> Path:
     return Path(directory) / f"{Path(bench_path).stem}__{safe_model}__{prompt}__{mode}.jsonl"
 
 
+def claim_predictions(path: Path, config: dict) -> None:
+    """Tie a predictions file to the configuration that made it, or refuse to resume it.
+
+    The file name is lossy (a/b and a_b look alike), so the exact configuration sits beside it.
+    """
+    config_path = path.with_name(path.name + ".config.json")
+    if config_path.exists():
+        if json.loads(config_path.read_text(encoding="utf-8")) != config:
+            raise PredictionsMismatchError(f"{path.name} was made with another configuration; use a new --predictions directory")
+    elif path.exists():
+        raise PredictionsMismatchError(f"{path.name} has no configuration file; use a new --predictions directory")
+    else:
+        write_json(config_path, config)
+
+
 def run_classify(bench_path, llm, *, model, prompt, mode, passes, predictions_dir, out_path, seed, limit=None,
-                 time_first=None, unlock_test=None, test_log_path=None) -> dict | None:
+                 time_first=None, unlock_test=None, test_log_path=None, base_url=None) -> dict | None:
     """Stage 2 end to end. With time_first the pairs are timed and nothing is written."""
     rows, manifest, manifest_path = load_bench(bench_path)
     refuse_test_split(
         manifest, bench_name=Path(bench_path).name, model=model, prompt=prompt, reason=unlock_test,
-        log_path=test_log_path or RESULTS_DIR / "test_split_log.jsonl",
+        log_path=test_log_path or TEST_LOG_PATH,
+        details={"stage": "classify", "mode": mode, "passes": passes, "limit": limit, "seed": seed},
     )
     masking = manifest["masking"]
     if time_first is not None:
@@ -357,6 +397,10 @@ def run_classify(bench_path, llm, *, model, prompt, mode, passes, predictions_di
         print(f"timed {len(per_pair)} pairs: {mean:.2f} s per pair; projected for {total} pairs: {mean * total / 3600:.2f} h")
         return None
     path = predictions_file(predictions_dir, bench_path, model, prompt, mode)
+    claim_predictions(path, {
+        "bench_sha256": hashlib.sha256(Path(bench_path).read_bytes()).hexdigest(), "model": model,
+        "base_url": base_url, "prompt": prompt, "mode": mode, "passes": passes if mode == "legacy" else None,
+    })
     selected, records, errors = classify_pairs(
         rows, llm, masking=masking, mode=mode, prompt=prompt, passes=passes,
         predictions_path=path, seed=seed, limit=limit,
@@ -380,6 +424,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     candidates = commands.add_parser("candidates", parents=[shared], help="stage 1, no model")
     candidates.add_argument("--out", required=True)
+    candidates.add_argument("--unlock-test", metavar="REASON", help="required to run on the held-out test split")
 
     classify = commands.add_parser("classify", parents=[shared], help="stage 2, the model")
     classify.add_argument("--model", required=True)
@@ -400,7 +445,12 @@ def main(argv=None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command == "candidates":
-        print(candidate_summary(run_candidates(args.bench, args.out, seed=args.seed)))
+        try:
+            report = run_candidates(args.bench, args.out, seed=args.seed, unlock_test=args.unlock_test)
+        except TestSplitLockedError as error:
+            print(f"refused: {error}", file=sys.stderr)
+            return 2
+        print(candidate_summary(report))
         return 0
     if args.out is None and args.time_first is None:
         parser.error("--out is required unless --time-first is given")
@@ -410,9 +460,9 @@ def main(argv=None) -> int:
         report = run_classify(
             args.bench, llm, model=args.model, prompt=args.prompt, mode=args.mode, passes=args.passes,
             predictions_dir=args.predictions, out_path=args.out, seed=args.seed, limit=args.limit,
-            time_first=args.time_first, unlock_test=args.unlock_test,
+            time_first=args.time_first, unlock_test=args.unlock_test, base_url=args.base_url,
         )
-    except TestSplitLockedError as error:
+    except (TestSplitLockedError, PredictionsMismatchError) as error:
         print(f"refused: {error}", file=sys.stderr)
         return 2
     if report is not None:

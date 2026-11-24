@@ -15,6 +15,7 @@ import json
 import random
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 from integrity.bench.corpus import Corpus, file_sha256, load_year, split_of
@@ -83,18 +84,61 @@ def _rank_of(candidates: list[dict], prior_id: str, skip=frozenset()) -> int | N
     return None
 
 
+# Corrections the citation parser cannot read ("FOR SDR <id>", "SUPPLEMENATAL", "ORIGINAL REPORT WAS <id>")
+# would sit in the presumed-negative pool with the answer written in them.
+_UNPARSED_CORRECTION = re.compile(r"SU\w*PLE\w*\W+REP|ORIGINAL\s+REPORT", re.IGNORECASE)
+_TOKEN = re.compile(r"[A-Za-z0-9]+")
+
+
+def _tokens(text: str) -> set[str]:
+    return {t.upper() for t in _TOKEN.findall(text or "")}
+
+
+def operator_of(record_id: str) -> str:
+    """The airline code the FAA ids start with; the benchmark's positives all come from one of them."""
+    return record_id[:4].upper()
+
+
+def operator_quotas(mix: Counter, wanted: int) -> dict[str, int]:
+    """Split `wanted` across operators in proportion to mix, largest remainder first, ties by name."""
+    total = sum(mix.values())
+    if not total:
+        return {}
+    quotas = {op: wanted * n // total for op, n in mix.items()}
+    by_remainder = sorted(mix, key=lambda op: (-(wanted * mix[op] % total), op))
+    for op in by_remainder[: wanted - sum(quotas.values())]:
+        quotas[op] += 1
+    return quotas
+
+
 class _Builder:
     def __init__(self, corpus: Corpus, year: int, masking: str, history_limit: int):
         self.corpus, self.year, self.masking = corpus, year, masking
         self.split = split_of(year)
         self.history_limit = history_limit
         self._masked: dict[tuple, dict] = {}
+        self.dropped_related_hard_negatives = 0
+        self.skipped_related_presumed = 0
 
     def masked(self, record: dict, extra_ids: tuple) -> dict:
-        key = (record["record_id"], extra_ids)
+        """Masked copy of a record. Its own id goes too: AA copies work-order ids into texts, for every kind alike."""
+        ids = tuple(sorted({*extra_ids, record["record_id"]}))
+        key = (record["record_id"], ids)
         if key not in self._masked:
-            self._masked[key] = {**record, "text": mask_text(record["text"], self.masking, extra_ids)}
+            self._masked[key] = {**record, "text": mask_text(record["text"], self.masking, ids)}
         return self._masked[key]
+
+    def related(self, new: dict, other: dict, cited: tuple) -> bool:
+        """True when the raw texts name each other, or name the id the new report cites.
+
+        Such a report (a resubmission of the same original, a duplicate) is a near-copy that a correct
+        'supersedes' would be scored against, so it is neither a fair negative nor a fair prior.
+        """
+        return (
+            other["record_id"] in _tokens(new["text"])
+            or new["record_id"] in _tokens(other["text"])
+            or not _tokens(other["text"]).isdisjoint(cited)
+        )
 
     def masked_history(self, tail: str, extra_ids: tuple) -> list[dict]:
         return [self.masked(r, extra_ids) for r in self.corpus.history(tail)]
@@ -119,7 +163,7 @@ class _Builder:
             **fields,
         }
         for side in ("new", "prior"):
-            found = leaks(row[side]["text"], self.masking, extra_ids)
+            found = leaks(row[side]["text"], self.masking, (*extra_ids, row[side]["record_id"]))
             if found:
                 raise ValueError(f"{row['pair_id']}: masked {side} text still leaks {found}")
         return row
@@ -158,6 +202,9 @@ class _Builder:
                     break
                 if candidate["record"]["record_id"] in chain:
                     continue
+                if self.related(new, self.corpus.by_id[candidate["record"]["record_id"]], cited):
+                    self.dropped_related_hard_negatives += 1
+                    continue
                 taken += 1
                 rows.append(self.row(
                     "hard_negative", new_m, candidate["record"], cited,
@@ -165,9 +212,12 @@ class _Builder:
                 ))
         return rows, hidden
 
-    def presumed_pool(self) -> list[str]:
-        """Ids of reports that cite nothing, are cited by nothing and have at least one candidate."""
-        pool = []
+    def presumed_pool(self) -> tuple[list[str], int]:
+        """Ids of reports that cite nothing, are cited by nothing and have at least one candidate.
+
+        Also returns how many were left out because they carry a correction announcement the parser misses.
+        """
+        pool, unparsed = [], 0
         for rid in sorted(self.corpus.by_id):
             record = self.corpus.by_id[rid]
             if record["year"] != self.year or parse_citations(record["text"]):
@@ -175,8 +225,44 @@ class _Builder:
             if len(self.corpus.chain_of(rid)) > 1:
                 continue
             if rank_candidates(record, self.corpus.history(record["asset_key"])):
-                pool.append(rid)
-        return pool
+                if _UNPARSED_CORRECTION.search(record["text"]):
+                    unparsed += 1
+                else:
+                    pool.append(rid)
+        return pool, unparsed
+
+    def draw_presumed(self, pool: list[str], wanted: int, positive_operators: Counter, seed: int) -> tuple[list[tuple], int]:
+        """Draw presumed negatives with the operator mix of the positives, so template style cannot predict the label.
+
+        Where an operator has too few reports the rest comes from the whole pool; the second number says how many.
+        A drawn pair whose texts name each other is skipped, as for hard negatives.
+        """
+        shuffled = random.Random(seed).sample(pool, len(pool))
+        by_operator: dict[str, list[str]] = {}
+        for rid in shuffled:
+            by_operator.setdefault(operator_of(rid), []).append(rid)
+        drawn, tried = [], set()
+
+        def take(ids: list[str], count: int) -> None:
+            got = 0
+            for rid in ids:
+                if got == count:
+                    return
+                if rid in tried:
+                    continue
+                tried.add(rid)
+                new_m, top_m, ranked = self.top_candidate(rid)
+                if self.related(self.corpus.by_id[rid], self.corpus.by_id[top_m["record_id"]], ()):
+                    self.skipped_related_presumed += 1
+                    continue
+                drawn.append((rid, new_m, top_m, ranked))
+                got += 1
+
+        for operator, quota in sorted(operator_quotas(positive_operators, wanted).items()):
+            take(by_operator.get(operator, []), quota)
+        matched = len(drawn)
+        take(shuffled, wanted - matched)
+        return drawn, len(drawn) - matched
 
     def top_candidate(self, rid: str) -> tuple[dict, dict, dict]:
         """(masked new, masked top containment candidate, its ranking entry) for a presumed negative."""
@@ -264,10 +350,11 @@ def build(raw_dir, year: int, masking: str, out_dir, *, negatives: int | None = 
     rows = unique_rows
     n_positive = sum(r["kind"] == "positive" for r in rows)
 
-    pool = builder.presumed_pool()
+    pool, pool_unparsed = builder.presumed_pool()
     wanted = n_positive if negatives is None else negatives
-    for rid in random.Random(seed).sample(pool, min(wanted, len(pool))):
-        new_m, top_m, ranked = builder.top_candidate(rid)
+    positive_operators = Counter(operator_of(r["new"]["record_id"]) for r in rows if r["kind"] == "positive")
+    drawn, from_other_operators = builder.draw_presumed(pool, wanted, positive_operators, seed)
+    for rid, new_m, top_m, ranked in drawn:
         rows.append(builder.row(
             "presumed_negative", new_m, top_m, (),
             rank=1, pair_score=ranked[0]["score"], n_candidates=len(ranked),
@@ -290,6 +377,14 @@ def build(raw_dir, year: int, masking: str, out_dir, *, negatives: int | None = 
         "rejected_citations": rejected,
         "counts": {k: sum(r["kind"] == k for r in rows) for k in ("positive", "hard_negative", "presumed_negative")},
         "presumed_negative_pool": len(pool),
+        "presumed_pool_left_out_unparsed_correction": pool_unparsed,
+        "presumed_negatives_from_other_operators": from_other_operators,
+        "presumed_negatives_skipped_as_related": builder.skipped_related_presumed,
+        "hard_negatives_dropped_as_related": builder.dropped_related_hard_negatives,
+        "operator_mix": {
+            kind: dict(sorted(Counter(operator_of(r["new"]["record_id"]) for r in rows if r["kind"] == kind).items()))
+            for kind in ("positive", "hard_negative", "presumed_negative")
+        },
         "positives_hidden_by_history_cap": hidden_by_cap,
         "unlock_test_reason": reason or None,
     }
