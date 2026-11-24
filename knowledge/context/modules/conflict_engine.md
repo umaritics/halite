@@ -36,8 +36,8 @@ The engine no longer holds its own candidate ranking, prompt text or vote logic.
 
 - `backend/integrity/candidates.py` — `PAIR_WEIGHTS`, `pair_score` and `rank_candidates`. These are pure functions over plain
   record dicts. The engine still reads the asset history from the graph (`list_asset_history`, limit 200, so the oldest 200
-  reports of an aircraft) and hands it to `rank_candidates`. Three orderings exist: `legacy` (score, date, id; the one staging uses),
-  `containment` and `submission_gap` (both for the benchmark).
+  reports of an aircraft) and hands it to `rank_candidates`. Three orderings exist: `legacy` (score, date, id; legacy mode),
+  `containment` (text overlap first; cascade mode, which staging runs) and `submission_gap` (benchmark only).
 - `backend/integrity/prompts.py` — the system prompts. `v1` is the staging prompt, byte for byte, and is pinned by a SHA-256
   test (`test_prompt_v1_is_pinned_to_the_staging_bytes`). `v2-unannounced` is a draft for the benchmark only. Staging does not use it.
   Changing the staging prompt needs Shahmeer's decision.
