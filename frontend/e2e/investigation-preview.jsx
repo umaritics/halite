@@ -6,7 +6,7 @@ import { HashRouter, Link, Navigate, Route, Routes, useNavigate } from 'react-ro
 import { AuthProvider, useAuth } from '../src/context/AuthContext';
 import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
 import ProtectedRoute from '../src/components/ProtectedRoute';
-import Login from '../src/pages/Login';
+import Login from '../src/features/auth/Login';
 import { routes as investigationRoutes } from '../src/features/investigation/manifest';
 import { routes as homeRoutes } from '../src/features/home/manifest';
 import '../src/index.css';
