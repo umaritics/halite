@@ -52,7 +52,7 @@ def test_compatibility_imports_keep_the_same_classes():
     assert User is IdentityUser
     assert set(Base.metadata.tables) == {
         "organizations", "users", "user_sessions", "user_invites", "audit_events",
-        "diagnostic_sessions", "session_turns", "session_snapshots",
+        "diagnostic_sessions", "session_turns", "session_snapshots", "review_decisions",
     }
 
 

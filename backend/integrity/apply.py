@@ -6,6 +6,8 @@ never imports the database.
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from .citations import parse_citations
 from .timeutil import is_eligible_prior
 
@@ -123,3 +125,65 @@ def record_analysis(graph_repo, record_id: str, updates: dict, *, force: bool = 
             "from": before, "to": after, "method": updates.get("analysis_method", ""),
         })
     return written
+
+
+def _review_fields(status: str, reviewer: dict, note: str) -> dict:
+    """The fields that mark a record as decided by a person."""
+    return {
+        "status": status,
+        "analysis_state": "reviewed",
+        "review_note": note,
+        "reviewed_by_id": reviewer.get("id", ""),
+        "reviewed_by_name": reviewer.get("name", ""),
+        "reviewed_by_email": reviewer.get("email", ""),
+        "reviewed_by_role": reviewer.get("role", ""),
+        "reviewed_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def accept_proposal(graph_repo, record_id: str, *, reviewer: dict, note: str, audit=None) -> dict:
+    """A reviewer confirms the stored proposal; a supersession becomes a link that carries their name.
+
+    An existing automatic link is confirmed in place, so the record of how it was first found
+    (method, model version) survives next to the person who agreed with it.
+    """
+    record = graph_repo.get_service_record(record_id)
+    prior_id = record.get("proposed_prior_id") or None
+    label = record.get("classification_label")
+    link = "none"
+    if prior_id and label in ("supersedes", "partial_supersedes"):
+        now = datetime.now(timezone.utc).isoformat()
+        existing = graph_repo.get_supersedes_link(record_id, prior_id)
+        if existing is None:
+            link_supersedes(
+                graph_repo, record_id, prior_id, scope=label, confidence=record.get("confidence") or 0.0,
+                rationale=record.get("classification_rationale") or "", method="human",
+                model_version=record.get("integrity_model_version") or "",
+                decided_by=reviewer.get("id", ""), decided_at=now, audit=audit,
+            )
+            link = "created"
+        else:
+            link_supersedes(
+                graph_repo, record_id, prior_id, scope=existing["scope"], confidence=existing["confidence"],
+                rationale=existing["rationale"], method=existing["method"],
+                model_version=existing["model_version"],
+                decided_by=reviewer.get("id", ""), decided_at=now, audit=audit,
+            )
+            link = "confirmed"
+    updated = graph_repo.update_service_record(record_id, _review_fields("accepted", reviewer, note))
+    return {"record": updated, "prior_record_id": prior_id, "link": link}
+
+
+def reject_proposal(graph_repo, record_id: str, *, reviewer: dict, note: str, audit=None) -> dict:
+    """A reviewer turns the proposal down: any link goes, and the pair is never proposed again."""
+    record = graph_repo.get_service_record(record_id)
+    prior_id = record.get("proposed_prior_id") or None
+    link = "none"
+    if prior_id:
+        if unlink_supersedes(graph_repo, record_id, prior_id, audit=audit):
+            link = "removed"
+        graph_repo.link_record_not_supersedes(
+            record_id, prior_id, by=reviewer.get("id", ""), at=datetime.now(timezone.utc).isoformat(),
+        )
+    updated = graph_repo.update_service_record(record_id, _review_fields("rejected", reviewer, note))
+    return {"record": updated, "prior_record_id": prior_id, "link": link}
