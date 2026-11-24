@@ -47,14 +47,14 @@ Also documented in `frontend/.env.example` (still not auto-loaded).
 
 ## Optional local backend override
 
-Create **gitignored** `frontend/.env.local` (overrides development):
+Create **gitignored** `frontend/.env.development.local` (overrides development; plain `.env.local` does not, because Vite lets `.env.development` win over it):
 
 ```env
 VITE_API_URL=/api
 VITE_PROXY_TARGET=http://localhost:8000
 ```
 
-Only use when running `uvicorn` locally. Do not commit `.env.local`.
+Only use when running `uvicorn` locally. Do not commit `.env.development.local`.
 
 ## Proof checklist (agents)
 
