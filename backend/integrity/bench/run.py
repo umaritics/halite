@@ -77,9 +77,12 @@ def git_state() -> tuple[str, bool | str]:
         return "unknown", "unknown"
 
 
-def make_meta(bench_path, manifest_path, manifest, *, seed, model=None, prompt=None, mode=None) -> dict:
+def make_meta(bench_path, manifest_path, manifest, *, seed, model=None, prompt=None, mode=None, run=None) -> dict:
+    """Everything needed to say which data and which settings a result came from. `run` holds stage 2 settings."""
     commit, dirty = git_state()
     return {
+        "year": manifest["year"],
+        "run": run,
         "bench_file": Path(bench_path).name,
         "bench_sha256": hashlib.sha256(Path(bench_path).read_bytes()).hexdigest(),
         "manifest_sha256": hashlib.sha256(Path(manifest_path).read_bytes()).hexdigest(),
@@ -104,8 +107,13 @@ def write_json(path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def _new_report(item: dict) -> str:
+    """The new report a pair was built from; its positive and its hard negatives share that report's text."""
+    return item["pair_id"].split("|", 1)[0]
+
+
 def _interval(items, statistic, seed: int) -> dict:
-    low, high = metrics.bootstrap_interval(items, statistic, n_resamples=N_RESAMPLES, seed=seed)
+    low, high = metrics.bootstrap_interval(items, statistic, n_resamples=N_RESAMPLES, seed=seed, cluster=_new_report)
     return {"value": statistic(items), "low": low, "high": high}
 
 
@@ -240,10 +248,13 @@ def classify_one(llm, row: dict, *, mode: str, prompt: str, passes: int) -> dict
         "passes": result["passes"],
         "vote_agreement": result["vote_agreement"],
         "vote_split": result["vote_split"],
+        "vote_labels": [None if vote["parse_failed"] else vote["label"] for vote in result["votes"]],
         "seconds": time.perf_counter() - started,
         "tokens": {key: result[key] for key in TOKEN_KEYS},
         "screen": row["screen"],
         "ranks": row["ranks"],
+        # Place of this prior in the order staging uses; staging sends only place 1 to the model.
+        "containment_rank": row["ranks"]["containment"] if row["ranks"] else row["rank"],
     }
 
 
@@ -273,18 +284,25 @@ def classify_pairs(rows, llm, *, masking, mode, prompt, passes, predictions_path
     return selected, records, errors
 
 
-def system_report(records: list[dict], *, cascaded: bool, seed: int) -> dict:
-    """Score one system. The cascade answers 'no' without a model call below the screen threshold, as staging does."""
+def system_report(records: list[dict], *, cascaded: bool, seed: int, top_candidate_only: bool = False) -> dict:
+    """Score one system from the stored model answers.
+
+    cascaded: below the screen threshold the answer is 'no' without a model call, as staging does.
+    top_candidate_only: a prior that is not first in staging's candidate order never reaches the model,
+    as staging does today (defect D8), so it is a 'no' as well. A true prior lost that way is a miss.
+    """
     pairs, seconds, calls, labels = [], [], [], Counter()
     parse_failures = 0
     for record in records:
+        not_first = top_candidate_only and record["containment_rank"] != 1
         screened = cascaded and record["screen"]["screen_score"] < CASCADE_SCREEN_THRESHOLD
-        predicted = not screened and record["predicted_label"] in POSITIVE_LABELS
-        pairs.append({"label": record["label"], "predicted": predicted, "kind": record["kind"]})
-        seconds.append(0.0 if screened else record["seconds"])
-        calls.append(0 if screened else record["passes"])
-        labels["screened_out" if screened else record["predicted_label"]] += 1
-        parse_failures += (not screened) and record["parse_failed"]
+        skipped = not_first or screened
+        predicted = not skipped and record["predicted_label"] in POSITIVE_LABELS
+        pairs.append({"pair_id": record["pair_id"], "label": record["label"], "predicted": predicted, "kind": record["kind"]})
+        seconds.append(0.0 if skipped else record["seconds"])
+        calls.append(0 if skipped else record["passes"])
+        labels["not_top_candidate" if not_first else "screened_out" if screened else record["predicted_label"]] += 1
+        parse_failures += (not skipped) and record["parse_failed"]
 
     def of_kind(*kinds):
         return [p for p in pairs if p["kind"] in kinds]
@@ -297,9 +315,9 @@ def system_report(records: list[dict], *, cascaded: bool, seed: int) -> dict:
     report["false_link_rate_hard_negatives"] = _interval(of_kind("hard_negative"), metrics.false_link_rate, seed)
     report["false_link_rate_presumed_negatives"] = _interval(of_kind("presumed_negative"), metrics.false_link_rate, seed)
     report.update({
-        # Staging classifies only its top candidate; here every pair is treated as having reached the model,
-        # so stage 1 misses are not counted against recall. Read this with the stage 1 hit rates.
-        "assumes_every_pair_reaches_the_model": True,
+        # Unless top_candidate_only, every pair is treated as having reached the model, so a true prior
+        # that staging would never have classified is not counted against recall.
+        "assumes_every_pair_reaches_the_model": not top_candidate_only,
         "n_pairs": len(pairs),
         "confusion": metrics.confusion(pairs),
         "parse_failure_rate": parse_failures / len(pairs) if pairs else None,
@@ -319,13 +337,17 @@ def classify_report(selected, records, errors, *, seed) -> dict:
         "systems": {
             "model": system_report(scored, cascaded=False, seed=seed),
             "cascade_as_deployed": system_report(scored, cascaded=True, seed=seed),
+            # What staging would really have done with each new report: top candidate only, then the screen.
+            # A top candidate that is a sibling in the same citation chain is not in the benchmark, so its
+            # outcome is unknown and the true prior behind it counts as missed.
+            "deployed_end_to_end": system_report(scored, cascaded=True, seed=seed, top_candidate_only=True),
         },
     }
 
 
 def classify_summary(report: dict) -> str:
     lines = [f"pairs scored {report['n_pairs_scored']} of {report['n_pairs_selected']}, errors {len(report['errors'])}",
-             "every pair is assumed to reach the model; stage 1 misses are not counted"]
+             "model and cascade_as_deployed assume every pair reaches the model; deployed_end_to_end does not"]
     for name, system in report["systems"].items():
         parts = []
         for metric in ("precision", "recall", "f1", "false_link_rate"):
@@ -406,7 +428,11 @@ def run_classify(bench_path, llm, *, model, prompt, mode, passes, predictions_di
         predictions_path=path, seed=seed, limit=limit,
     )
     report = {
-        "meta": make_meta(bench_path, manifest_path, manifest, seed=seed, model=model, prompt=prompt, mode=mode),
+        "meta": make_meta(
+            bench_path, manifest_path, manifest, seed=seed, model=model, prompt=prompt, mode=mode,
+            run={"base_url": base_url, "passes": passes if mode == "legacy" else None, "limit": limit,
+                 "unlock_test_reason": (unlock_test or "").strip() or None},
+        ),
         **classify_report(selected, records, errors, seed=seed),
     }
     write_json(out_path, report)

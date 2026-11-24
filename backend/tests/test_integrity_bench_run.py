@@ -108,7 +108,7 @@ def test_candidate_report_on_hand_built_rows():
     def positive(legacy, capped, n, reason=None):
         ranks = {"legacy": legacy, "containment": 1, "submission_gap": legacy}
         return {
-            "kind": "positive", "ranks": ranks, "ranks_ignoring_chain": ranks,
+            "pair_id": f"new{legacy}{capped}{n}|prior", "kind": "positive", "ranks": ranks, "ranks_ignoring_chain": ranks,
             "ranks_capped": {**ranks, "legacy": capped}, "n_candidates": n, "not_candidate_reason": reason,
         }
 
@@ -147,12 +147,43 @@ def test_candidates_command_writes_sorted_json_without_report_text(benches, tmp_
 
 # ---- stage 2 -------------------------------------------------------------------------------
 
-def record(label, kind, screen_score, predicted="supersedes", passes=2, seconds=3.0, parse_failed=False):
+def record(label, kind, screen_score, predicted="supersedes", passes=2, seconds=3.0, parse_failed=False, rank=1):
     return {
-        "pair_id": f"{kind}-{label}-{screen_score}-{predicted}", "kind": kind, "label": label,
+        "pair_id": f"{kind}-{label}-{screen_score}-{predicted}-{rank}", "kind": kind, "label": label,
         "predicted_label": predicted, "parse_failed": parse_failed, "passes": passes, "seconds": seconds,
-        "screen": {"screen_score": screen_score},
+        "screen": {"screen_score": screen_score}, "containment_rank": rank,
     }
+
+
+def test_deployed_end_to_end_counts_a_prior_staging_never_classifies_as_a_no():
+    records = [
+        record(1, "positive", 0.95, rank=1),                    # found and linked
+        record(1, "positive", 0.95, rank=2),                    # true prior, but not the top candidate: missed
+        record(1, "positive", 0.95, rank=None),                 # true prior was never a candidate: missed
+        record(0, "hard_negative", 0.95, rank=1),               # wrong prior on top and the model says yes: false link
+        record(0, "hard_negative", 0.95, rank=2, passes=5),     # never reaches the model
+        record(0, "presumed_negative", 0.5, rank=1),            # top candidate, stopped by the screen
+    ]
+    every_pair = system_report(records, cascaded=True, seed=1)
+    deployed = system_report(records, cascaded=True, seed=1, top_candidate_only=True)
+    assert every_pair["confusion"] == {"tp": 3, "fp": 2, "fn": 0, "tn": 1}
+    assert deployed["confusion"] == {"tp": 1, "fp": 1, "fn": 2, "tn": 2}
+    assert deployed["label_counts"] == {"not_top_candidate": 3, "screened_out": 1, "supersedes": 2}
+    assert deployed["model_calls_per_pair"]["mean"] == (2 + 0 + 0 + 2 + 0 + 0) / 6
+    assert deployed["assumes_every_pair_reaches_the_model"] is False
+    assert every_pair["assumes_every_pair_reaches_the_model"] is True
+
+
+def test_intervals_resample_all_pairs_of_one_new_report_together():
+    # Two new reports: one whose three pairs are all right, one whose three are all wrong. Resampling
+    # pairs one by one would almost never give 0.0 or 1.0; resampling reports gives only 0, 0.5 and 1.
+    def pair(new, n, right):
+        return {"pair_id": f"{new}|p{n}", "kind": "positive", "label": 1, "parse_failed": False, "passes": 2,
+                "predicted_label": "supersedes" if right else "no_conflict", "seconds": 1.0,
+                "screen": {"screen_score": 1.0}, "containment_rank": 1}
+    records = [pair("A", n, True) for n in range(3)] + [pair("B", n, False) for n in range(3)]
+    recall = system_report(records, cascaded=False, seed=1)["recall"]
+    assert (recall["value"], recall["low"], recall["high"]) == (0.5, 0.0, 1.0)
 
 
 def test_cascade_as_deployed_predicts_negative_below_the_threshold_with_zero_calls():
@@ -184,14 +215,19 @@ def test_classify_writes_predictions_without_text_and_a_full_report(benches, tmp
     assert len(stored) == report["n_pairs_scored"] == len(rows_of(bench_file(benches)))
     assert set(stored[0]) == {
         "pair_id", "kind", "label", "predicted_label", "parse_failed", "passes", "vote_agreement", "vote_split",
-        "seconds", "tokens", "screen", "ranks",
+        "seconds", "tokens", "screen", "ranks", "vote_labels", "containment_rank",
     }
+    assert stored[0]["vote_labels"] == ["supersedes"] * 3
+    by_kind = {r["kind"]: r for r in stored}
+    assert by_kind["positive"]["containment_rank"] == by_kind["positive"]["ranks"]["containment"]
+    assert by_kind["presumed_negative"]["containment_rank"] == 1
     assert stored[0]["passes"] == 3 and stored[0]["tokens"]["total_tokens"] == 36
     blob = path.read_text()
     for row in ROWS:
         assert row["Discrepancy"] not in blob
     assert report["meta"]["model"] == "fake-model" and report["meta"]["mode"] == "legacy"
-    assert set(report["systems"]) == {"model", "cascade_as_deployed"}
+    assert set(report["systems"]) == {"model", "cascade_as_deployed", "deployed_end_to_end"}
+    assert report["meta"]["year"] == 2024 and report["meta"]["run"]["passes"] == 3
     assert report["systems"]["model"]["recall"]["value"] == 1.0  # the fake always says supersedes
     assert json.loads((tmp_path / "out.json").read_text())["n_pairs_selected"] == report["n_pairs_selected"]
 

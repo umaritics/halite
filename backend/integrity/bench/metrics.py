@@ -10,19 +10,25 @@ import math
 import random
 
 
-def bootstrap_interval(items, statistic, *, n_resamples: int = 1000, seed: int, level: float = 0.95):
-    """Percentile bootstrap of statistic(items): resample items with replacement, take the middle level.
+def bootstrap_interval(items, statistic, *, n_resamples: int = 1000, seed: int, level: float = 0.95, cluster=None):
+    """Percentile bootstrap of statistic(items): resample with replacement, take the middle level.
 
+    cluster(item) names the group an item is drawn with. Pairs built from one new report share its
+    text, so they are not independent: they are resampled together, or the interval comes out too narrow.
     Resamples where the statistic is undefined (None) are skipped; if fewer than half are
     defined the interval would describe a different population, so it is (None, None).
     """
     items = list(items)
     if not items:
         return None, None
+    grouped: dict = {}
+    for index, item in enumerate(items):
+        grouped.setdefault(cluster(item) if cluster else index, []).append(item)
+    groups = list(grouped.values())
     rng = random.Random(seed)
     values = []
     for _ in range(n_resamples):
-        value = statistic([items[rng.randrange(len(items))] for _ in items])
+        value = statistic([item for _ in groups for item in groups[rng.randrange(len(groups))]])
         if value is not None:
             values.append(value)
     if len(values) * 2 < n_resamples:

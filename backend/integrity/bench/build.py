@@ -279,14 +279,18 @@ def _json_line(row: dict) -> str:
     return json.dumps(row, sort_keys=True, ensure_ascii=True) + "\n"
 
 
-def _write_check_csv(path: Path, builder: _Builder, pool: list[str], seed: int) -> None:
-    """Fifty presumed negatives, unmasked, for a human to mark as correction or not."""
+def _write_check_csv(path: Path, builder: _Builder, drawn: list[tuple], seed: int) -> None:
+    """Fifty of the presumed negatives that are in this benchmark, unmasked, for a human to mark.
+
+    They are a sample of the pairs the benchmark scores, so the share marked as real corrections
+    estimates the label noise of exactly those pairs.
+    """
+    pairs = sorted((rid, top_m["record_id"]) for rid, _, top_m, _ in drawn)
     with open(path, "w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(_CHECK_COLUMNS)
-        for rid in random.Random(seed).sample(pool, min(CHECK_SAMPLE_SIZE, len(pool))):
-            _, top_m, _ = builder.top_candidate(rid)
-            new, prior = builder.corpus.by_id[rid], builder.corpus.by_id[top_m["record_id"]]
+        for rid, prior_id in sorted(random.Random(seed).sample(pairs, min(CHECK_SAMPLE_SIZE, len(pairs)))):
+            new, prior = builder.corpus.by_id[rid], builder.corpus.by_id[prior_id]
             writer.writerow([
                 new["record_id"], prior["record_id"], new["asset_key"],
                 new["occurred_at"], prior["occurred_at"], new["submitted_at"], prior["submitted_at"],
@@ -363,7 +367,7 @@ def build(raw_dir, year: int, masking: str, out_dir, *, negatives: int | None = 
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = f"bench_{year}_{masking}"
     _write(out_dir / f"{stem}.jsonl", "".join(_json_line(r) for r in rows))
-    _write_check_csv(out_dir / f"presumed_negatives_check_{year}.csv", builder, pool, seed)
+    _write_check_csv(out_dir / f"presumed_negatives_check_{year}_{masking}.csv", builder, drawn, seed)
     manifest = {
         "builder_version": BUILDER_VERSION,
         "year": year,

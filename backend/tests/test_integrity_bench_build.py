@@ -301,19 +301,22 @@ def test_a_later_year_in_the_raw_dir_is_never_read(raw, tmp_path):
 def test_same_seed_gives_identical_bytes_and_another_seed_changes_presumed_negatives(raw, tmp_path):
     _, rows_a, out_a = run(raw, tmp_path, name="a", negatives=5, seed=1)
     _, _, out_b = run(raw, tmp_path, name="b", negatives=5, seed=1)
-    for name in ("bench_2024_M1.jsonl", "bench_2024_M1.manifest.json", "presumed_negatives_check_2024.csv"):
+    for name in ("bench_2024_M1.jsonl", "bench_2024_M1.manifest.json", "presumed_negatives_check_2024_M1.csv"):
         assert (out_a / name).read_bytes() == (out_b / name).read_bytes()
     _, rows_c, _ = run(raw, tmp_path, name="c", negatives=5, seed=2)
     pick = lambda rows: sorted(r["pair_id"] for r in rows if r["kind"] == "presumed_negative")
     assert pick(rows_a) != pick(rows_c)
 
 
-def test_check_sheet_is_unmasked_identical_across_maskings_and_has_an_empty_answer_column(raw, tmp_path):
-    _, _, out1 = run(raw, tmp_path, "M1", name="a")
-    _, _, out2 = run(raw, tmp_path, "M2", name="b")
-    sheet = out1 / "presumed_negatives_check_2024.csv"
-    assert sheet.read_bytes() == (out2 / sheet.name).read_bytes()
+def test_check_sheet_is_unmasked_holds_pairs_of_this_benchmark_and_has_an_empty_answer_column(raw, tmp_path):
+    _, bench_rows, out1 = run(raw, tmp_path, "M2", name="a")
+    sheet = out1 / "presumed_negatives_check_2024_M2.csv"
     rows = list(csv.DictReader(sheet.open(encoding="utf-8")))
     assert 0 < len(rows) <= 50
+    # The sheet estimates the label noise of the pairs the benchmark scores, so it must be drawn from them.
+    presumed = {r["pair_id"] for r in bench_rows if r["kind"] == "presumed_negative"}
+    assert {f"{r['new_record_id']}|{r['prior_record_id']}" for r in rows} <= presumed
+    raw_texts = {r["Discrepancy"] for r in MANY + CHAIN + SIBLINGS + SAME_MOMENT}
+    assert all(r["new_text"] in raw_texts for r in rows)  # unmasked, as the reviewer must read it
     assert all(r["is_really_a_correction"] == "" and r["new_text"] and r["prior_text"] for r in rows)
     assert rows[0].keys() >= {"new_record_id", "prior_record_id", "tail", "new_part_name", "prior_jasc_code"}
