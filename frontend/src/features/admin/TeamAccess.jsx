@@ -196,11 +196,14 @@ export default function TeamAccess() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-5xl space-y-6 p-6">
+      <div className="px-6 pt-4">
         <PageHeader
           title="Team & Access"
           description="Invite authorised members, manage role permissions, and inspect security and review audit events"
         />
+      </div>
+
+      <div className="mx-auto max-w-5xl space-y-6 p-6">
 
         {actionError && (
           <div

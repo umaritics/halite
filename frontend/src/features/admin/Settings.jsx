@@ -92,8 +92,11 @@ export default function Settings() {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="mx-auto max-w-2xl space-y-6 p-6">
+      <div className="px-6 pt-4">
         <PageHeader title="Settings" description="Appearance and system status" />
+      </div>
+
+      <div className="mx-auto max-w-2xl space-y-6 p-6">
 
         <section className="halite-card p-6">
           <div className="flex items-center gap-6">

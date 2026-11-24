@@ -11,7 +11,9 @@ const VARIANTS = {
 
 const SIZES = {
   sm: '!px-3 !py-1.5 !text-xs',
-  md: '',
+  // Every variant gets the same box, so buttons in one row line up. Without
+  // this the ghost variant has no padding and primary is taller than outline.
+  md: '!px-4 !py-2',
 };
 
 const FOCUS_RING =

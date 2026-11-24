@@ -42,7 +42,7 @@ export default function Tabs({
       <div
         role="tablist"
         aria-label={label}
-        className="flex flex-wrap gap-1 border-b border-theme"
+        className="flex gap-1 overflow-x-auto overflow-y-hidden border-b border-theme [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {tabs.map((tab, index) => {
           const isSelected = tab.id === selected?.id;
@@ -59,7 +59,7 @@ export default function Tabs({
               onClick={() => select(tab.id)}
               onKeyDown={event => onKeyDown(event, index)}
               className={[
-                '-mb-px border-b-2 px-4 py-2 text-sm font-medium transition',
+                '-mb-px shrink-0 whitespace-nowrap border-b-2 px-4 py-2 text-sm font-medium transition',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
                 isSelected
                   ? 'border-accent bg-accent/10 text-accent'

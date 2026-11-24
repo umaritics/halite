@@ -172,7 +172,7 @@ export default function GraphViewer({ data, onNodeSelect, searchQuery = '', type
         />
       )}
 
-      <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/50 px-2 py-1 font-sans text-[11px] text-[#888888]">
+      <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-white/80 px-2 py-1 font-sans text-[11px] text-[#555555] dark:bg-black/50 dark:text-[#888888]">
         {graphData.nodes.length} nodes · {graphData.links.length} links · drag to rotate
       </div>
     </div>

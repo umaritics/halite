@@ -141,8 +141,8 @@ export default function Graph() {
         />
       </div>
 
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="w-64 shrink-0 overflow-y-auto border-r border-theme p-4">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
+        <aside className="max-h-[40%] w-full shrink-0 overflow-y-auto border-b border-theme p-4 md:max-h-none md:w-64 md:border-b-0 md:border-r">
           <label htmlFor="graph-aircraft" className="font-sans text-xs font-semibold uppercase tracking-wider text-secondary">
             Aircraft
           </label>
@@ -202,7 +202,7 @@ export default function Graph() {
           </p>
         </aside>
 
-        <div className="relative min-h-0 flex-1" style={{ minHeight: 520 }}>
+        <div className="relative min-h-[320px] flex-1 md:min-h-[520px]">
           {renderMain()}
         </div>
       </div>
