@@ -5,6 +5,9 @@ You are the coding agent for Muhammad Usman Al Haq on the Halite final-year proj
 `docs/plan/CONTRACTS.md` first. This guide tells you how the current code works, what is wrong with it,
 what to build and how each piece is accepted. Work on one work package at a time, the one Usman names.
 
+**Frontend paths changed on 24 November.** Pages now live in `frontend/src/features/<name>/` and register through
+a manifest; see `docs/plan/CONTRACTS.md` section 2 and `frontend/src/app/README.md`. Frontend file names below predate that.
+
 Facts and line numbers refer to `origin/main` at `ac5aa66`. If the code has moved, re-locate the function by
 name and tell Usman what changed.
 

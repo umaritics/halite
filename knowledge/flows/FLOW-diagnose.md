@@ -105,7 +105,7 @@ flowchart TB
 ## File dependencies
 
 - `Diagnostics.jsx` → `client.js` → `diagnostics.py`
-- `Diagnostics.jsx` → `DiagnosticEvidenceInspector.jsx` → `utils/diagnosticEvidence.js`
+- `Diagnostics.jsx` → `DiagnosticEvidenceInspector.jsx` → `utils/diagnosticEvidence.js (removed 2026-11-24)`
 - `diagnostics.py` → additive copilot helpers in `diagnostic_retrieval.py`
 - `diagnostic_retrieval.py` → `queries.py` → Neo4j/memory store
 - `diagnostics.py` → `groq_service.py` + `citation_validation.py`

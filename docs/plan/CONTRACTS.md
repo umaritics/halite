@@ -56,15 +56,25 @@ An agent edits only files owned by its human. Anything else needs a pull request
 | `api/router.py`, `config.py`, `.env.example`, `main.py`, `requirements.txt`, `tests/conftest.py`, `graph/schema.py` | Shared; Usman is steward | Additive edits only, in your own clearly marked block |
 | Legacy software domain: `api/routes/{chat,decisions,ingest,alerts,webhooks}.py`, `agents/{code,document,decision,gitea,base}_agent.py`, `services/context_builder.py`, `domains/software.py`, `graph/invalidation.py`, root-level `check_*.py`, `find_demo_record.py`, `top_assets.py`, `demo_candidate_pairs.py`, `verify_t6.py` | Usman deletes them in the backend preparation pull request | Nobody adds to them |
 
-### Frontend (paths after the frontend preparation pull request)
+### Frontend (as of the frontend preparation, 24 November)
 
 | Path | Owner |
 | --- | --- |
+| `src/app/` (registry and shell), `src/components/ui/` (the UI kit), `src/api/http.js`, `src/api/client.js` (barrel), `src/lib/`, `src/index.css`, `tailwind.config.js`, `App.jsx`, `components/Sidebar.jsx` | Shahmeer |
+| `src/features/auth/` (Login, AcceptInvite), `features/landing/`, `features/admin/` (TeamAccess, Settings), `features/kit/` (development-only gallery at `/app/_kit`), `context/AuthContext.jsx`, `components/ProtectedRoute.jsx` | Shahmeer |
+| `src/features/integrity/` (review queue and corrections), `features/intake/` (ingest pages), `features/assets/` (Assets, AssetHistory, ServiceRecords) | Shahmeer |
+| `src/features/investigation/`, `features/home/`, `components/CopilotMarkdown.jsx` | Usman |
+| `src/features/graph/` today; `features/retrieval/` and `features/evaluation/` when built | Umar |
+
+Each feature folder holds its pages, an `api.js` and a `manifest.jsx`. The manifest contract is in
+`frontend/src/app/README.md`. Adding a page means adding it to your own manifest; nobody edits `App.jsx` or the sidebar.
+
+--- | --- |
 | `src/app/` (registry and shell), `src/components/ui/`, `src/api/http.js`, `src/index.css`, `tailwind.config.js`, `App.jsx`, `Sidebar.jsx` | Shahmeer |
 | `src/features/auth/` (Login, AcceptInvite, AuthContext, ProtectedRoute), `features/admin/` (TeamAccess, Settings) | Shahmeer |
-| `src/features/investigation/` (today: `pages/Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx`, `components/CopilotMarkdown.jsx`, `utils/diagnostic*.js`), `features/home/` | Usman |
-| `src/features/integrity/` (today: `pages/ReviewQueue.jsx`), `features/intake/` (today: `pages/MaintenanceIngest.jsx`, `components/CsvUploader.jsx`, `components/IngestResult.jsx`), `features/assets/` (today: `pages/Assets.jsx`, `pages/AssetHistory.jsx`, `pages/ServiceRecords.jsx`) | Shahmeer |
-| `src/features/retrieval/`, `features/evaluation/`, `features/graph/` (today: `pages/Graph.jsx`, `components/GraphViewer.jsx`, `utils/graphScope.js`) | Umar |
+| `src/features/investigation/` (today: `pages/Diagnostics.jsx (removed 2026-11-24)`, `components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)`, `components/CopilotMarkdown.jsx`, `utils/diagnostic*.js`), `features/home/` | Usman |
+| `src/features/integrity/` (today: `features/integrity/ReviewQueue.jsx`), `features/intake/` (today: `features/intake/MaintenanceIngest.jsx`, `features/intake/CsvUploader.jsx`, `features/intake/IngestResult.jsx`), `features/assets/` (today: `features/assets/Assets.jsx`, `features/assets/AssetHistory.jsx`, `features/assets/ServiceRecords.jsx`) | Shahmeer |
+| `src/features/retrieval/`, `features/evaluation/`, `features/graph/` (today: `features/graph/Graph.jsx`, `features/graph/GraphViewer.jsx`, `features/graph/graphScope.js`) | Umar |
 
 ---
 
@@ -92,27 +102,19 @@ No behaviour change in any maintenance route. CI must stay green.
    `# --- SESSION_ ---`.
 6. If this runs past 24 November, cut step 1 and ship steps 2 to 5. Parallel work depends on those.
 
-### 3.2 Frontend preparation (Shahmeer)
+### 3.2 Frontend preparation (Shahmeer): done on 24 November
 
-No behaviour change. All existing tests stay green.
+Recorded in `knowledge/decisions/DEC-20261124-frontend-shell.md`. What it delivered:
 
-1. Delete dead code (866 lines, no live or test imports): pages `Chat`, `Decisions`, `Ingest`, `Alerts`;
-   components `AlertBanner`, `ChatMessage`, `DecisionCard`, `FileUploader`, `DomainSwitcher`, `icons/OctahedronIcon`;
-   `hooks/useChat.js`; `DomainContext`; the legacy groups in `api/client.js`
-   (`chatAPI`, `decisionsAPI`, `ingestAPI`, `alertsAPI`, `domainsAPI`).
-2. Move the axios instance and interceptors (`api/client.js` lines 1 to 89) to `src/api/http.js` and add a
-   request timeout. Each feature owns `src/features/<name>/api.js`. `api/client.js` stays as a re-export barrel
-   so existing `vi.mock('../api/client')` factories keep working.
-3. Each feature exports `manifest.jsx`: `routes: [{path, element, roles}]` and
-   `nav: [{to, label, icon, order, roles, useBadge}]`. `src/app/registry.js` collects them with
-   `import.meta.glob('../features/*/manifest.jsx', {eager: true})`. `App.jsx` and `Sidebar.jsx` render from the
-   registry and are not edited again.
-4. Split `pages/Diagnostics.jsx` (1,581 lines, eight components) and `pages/ReviewQueue.jsx` (550 lines) into one
-   file per component inside their feature folders.
-5. Add `src/components/ui/` primitives: `Button`, `Tabs`, `PageHeader`, `ErrorCard`, `EmptyState`,
-   and one `ErrorBoundary` around the routed outlet.
-6. Add one chart library (Recharts). Nobody adds a second one.
-7. All new pages stay under `/app/*`, so `vercel.json` and `VercelRouting.test.js` are untouched.
+1. Removed 3,202 unreachable lines (15 files, including the old Diagnostics page and evidence inspector) and the legacy API groups.
+2. `src/api/http.js` holds the axios instance with a 30 second default timeout. Each feature owns `features/<name>/api.js`.
+   `src/api/client.js` is a barrel with the same exports as before, so existing `vi.mock('../api/client')` factories still work.
+   Pages still import from the barrel; move a page to its feature `api.js` only together with its test mocks.
+3. Every signed-in route and sidebar entry comes from `features/*/manifest.jsx` through `src/app/registry.js`.
+4. `src/components/ui/` is the kit: Button, Tabs, PageHeader, Card, ErrorCard, EmptyState, Skeleton, Badge, ConfirmDialog, ErrorBoundary.
+   `ResearchChart.jsx` (Usman's) stays the one chart wrapper.
+5. The graph page is loaded on demand, which took the main bundle from 2,447 kB to 1,050 kB.
+6. All pages stay under `/app/*`, so `vercel.json` and `VercelRouting.test.js` are untouched.
 
 ### 3.3 Data foundation (Umar)
 
@@ -349,7 +351,7 @@ These were read in the code on 20 November. Line numbers refer to `ac5aa66`.
 | 13 | The OpenAI-compatible path forces JSON output on every call. | `services/groq_service.py:70` | Usman |
 | 14 | `/maintenance/diagnose` returns 503 when no model is live, although ranking and evidence need no model. Its cache is never invalidated. | `api/routes/diagnostics.py:386-520, 93-123` | Usman |
 | 15 | Diagnose citation validation checks that an ID exists in the graph, not that it was in the evidence shown. | `services/citation_validation.py:30` | Usman |
-| 16 | Copilot sessions live only in `localStorage` (`halite-diagnostic-active-workspace`, `halite-diagnostic-copilot-sessions`), are not user-scoped and are not cleared at logout. | `frontend/src/utils/diagnosticWorkspace.js`, `frontend/src/context/AuthContext.jsx:62-67` | Usman |
+| 16 | Copilot sessions live only in `localStorage` (`halite-diagnostic-active-workspace`, `halite-diagnostic-copilot-sessions`), are not user-scoped and are not cleared at logout. | `frontend/src/utils/diagnosticWorkspace.js (removed 2026-11-24)`, `frontend/src/context/AuthContext.jsx:62-67` | Usman |
 | 17 | `PRECEDED_BY` is written at ingest and never read by any query. | `agents/maintenance_agent.py:194, 255` | Nobody; do not build on it |
 | 18 | `langchain*`, `python-dotenv`, `python-docx` are in `requirements.txt` and never imported. `pypdf` and `pytest-cov` are available. | `requirements.txt` | Usman |
 | 19 | Staging: 2,079 reports; after the 16 November backfill 1,585 scored, 494 needs review, 0 reviewed; methods 1,043 screen, 801 model, 235 escalated; model `phi4-mini`; the run took about 12 hours 50 minutes. | `docs/mid1/25_local_llm_staging_evidence.md` | Context |

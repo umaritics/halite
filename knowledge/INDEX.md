@@ -57,11 +57,11 @@ Use Ctrl/Cmd+F. Prefer exact code paths when searching.
 | `backend/api/routes/maintenance.py` | modules/maintenance_api.md, FLOW-ingest.md, FLOW-conflict-review.md |
 | `backend/graph/schema.py`, `backend/graph/queries.py` | context/04_data_and_graph.md |
 | `backend/agents/maintenance_agent.py` | FLOW-ingest.md |
-| `frontend/src/pages/Diagnostics.jsx` | modules/frontend.md, FLOW-diagnose.md |
-| `frontend/src/components/DiagnosticEvidenceInspector.jsx`, `frontend/src/utils/diagnosticEvidence.js` | modules/frontend.md, FLOW-diagnose.md, decisions/DEC-20261025-evidence-provenance.md |
-| `frontend/src/pages/MaintenanceIngest.jsx`, `frontend/src/components/CsvUploader.jsx`, `frontend/src/components/IngestResult.jsx` | modules/frontend.md, flows/FLOW-ingest.md, decisions/DEC-20261017-ingest-csv-upload-ui.md |
-| `frontend/src/pages/Graph.jsx`, `frontend/src/utils/graphScope.js`, `frontend/src/components/GraphViewer.jsx` | modules/frontend.md, decisions/DEC-20261017-graph-aircraft-focus.md |
-| `frontend/src/pages/ReviewQueue.jsx`, `frontend/src/pages/ServiceRecords.jsx` | modules/frontend.md, FLOW-conflict-review.md, decisions/DEC-20261017-fleet-service-records.md |
+| `frontend/src/pages/Diagnostics.jsx (removed 2026-11-24)` | modules/frontend.md, FLOW-diagnose.md |
+| `frontend/src/components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)`, `frontend/src/utils/diagnosticEvidence.js (removed 2026-11-24)` | modules/frontend.md, FLOW-diagnose.md, decisions/DEC-20261025-evidence-provenance.md |
+| `frontend/src/features/intake/MaintenanceIngest.jsx`, `frontend/src/features/intake/CsvUploader.jsx`, `frontend/src/features/intake/IngestResult.jsx` | modules/frontend.md, flows/FLOW-ingest.md, decisions/DEC-20261017-ingest-csv-upload-ui.md |
+| `frontend/src/features/graph/Graph.jsx`, `frontend/src/features/graph/graphScope.js`, `frontend/src/features/graph/GraphViewer.jsx` | modules/frontend.md, decisions/DEC-20261017-graph-aircraft-focus.md |
+| `frontend/src/features/integrity/ReviewQueue.jsx`, `frontend/src/features/assets/ServiceRecords.jsx` | modules/frontend.md, FLOW-conflict-review.md, decisions/DEC-20261017-fleet-service-records.md |
 | `.github/workflows/ci.yml` | FLOW-ci.md, modules/devops.md |
 | `docker-compose.yml` | modules/devops.md, FLOW-ingest.md |
 

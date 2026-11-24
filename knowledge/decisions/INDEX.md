@@ -12,6 +12,7 @@ Newest first. Status: `accepted` | `proposed` | `superseded`.
 
 | ID | Title | Status | Owners |
 | --- | --- | --- | --- |
+| [DEC-20261124-frontend-shell](DEC-20261124-frontend-shell.md) | Frontend shell renders from feature manifests on a shared UI kit | accepted | Shahmeer |
 | [DEC-20261122-bounded-runtime-prose](DEC-20261122-bounded-runtime-prose.md) | Bound CPU explanation requests while preserving complete saved evidence | prepared / hosted and live acceptance pending | Usman |
 | [DEC-20261122-public-site-acceptance](DEC-20261122-public-site-acceptance.md) | Hosted public reads plus separately labelled own-session lifecycle | public reads and API lifecycle verified / live prose timed out | Usman |
 | [DEC-20261122-private-staging-reference](DEC-20261122-private-staging-reference.md) | Private hosted phi4-mini reference and no-evidence measurement | six deadline failures retained / separate longer run prepared | Usman |

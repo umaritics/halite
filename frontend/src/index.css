@@ -43,7 +43,7 @@
   }
 
   .halite-input {
-    @apply w-full rounded-md border px-4 py-2.5 font-sans text-sm outline-none transition;
+    @apply w-full rounded-md border px-4 py-2.5 font-sans text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent;
   }
 
   html.dark .halite-input {
@@ -76,22 +76,6 @@
 
   .halite-btn-outline {
     @apply halite-btn rounded-md border border-accent px-[18px] py-2 text-accent hover:bg-accent hover:text-black;
-  }
-
-  .status-badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
-  }
-
-  .status-active {
-    @apply status-badge bg-accent/15 text-accent ring-1 ring-accent/30;
-  }
-
-  .status-needs_review {
-    @apply status-badge bg-[#E8650A]/20 text-[#FF7A1A] ring-1 ring-[#E8650A]/40;
-  }
-
-  .status-invalidated {
-    @apply status-badge bg-red-500/15 text-red-400 ring-1 ring-red-500/30;
   }
 
   .text-primary {

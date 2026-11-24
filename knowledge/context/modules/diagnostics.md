@@ -20,7 +20,7 @@ Given `asset_id` + `symptom_text`, retrieve graph-backed historical context, pro
 | `backend/api/routes/diagnostics.py` | One-shot diagnose, legacy chat, stateless copilot turn; cache; citation validation; LLM gate |
 | `backend/services/diagnostic_retrieval.py` | History context, similar-symptom search, `build_diagnostic_context` |
 | `backend/tests/test_diagnostic_retrieval.py` | Unit/integration tests Umar extends |
-| `frontend/src/pages/Diagnostics.jsx` | Shahmeer UI consumer |
+| `frontend/src/pages/Diagnostics.jsx (removed 2026-11-24)` | Shahmeer UI consumer |
 
 ## Key functions (`diagnostic_retrieval.py`)
 

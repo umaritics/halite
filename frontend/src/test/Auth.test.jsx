@@ -5,10 +5,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider } from '../context/ThemeContext';
 import ProtectedRoute from '../components/ProtectedRoute';
-import Login from '../pages/Login';
-import AcceptInvite from '../pages/AcceptInvite';
-import TeamAccess from '../pages/TeamAccess';
-import ReviewQueue from '../pages/ReviewQueue';
+import Login from '../features/auth/Login';
+import AcceptInvite from '../features/auth/AcceptInvite';
+import TeamAccess from '../features/admin/TeamAccess';
+import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
 
 vi.mock('../api/client', async () => {

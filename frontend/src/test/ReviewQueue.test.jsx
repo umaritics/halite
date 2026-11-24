@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import ReviewQueue from '../pages/ReviewQueue';
+import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
 
 vi.mock('../api/client', () => ({
@@ -61,17 +61,17 @@ describe('Detected corrections tab', () => {
 
   it('defaults the corrections aircraft filter to All aircraft and renders live summary', async () => {
     renderPage();
-    fireEvent.click(screen.getByRole('button', { name: 'Detected corrections' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Detected corrections' }));
     expect(await screen.findByText('OLD1')).toBeInTheDocument();
     expect(screen.getByLabelText('Corrections aircraft')).toHaveValue('');
     expect(screen.getByText('100%')).toBeInTheDocument();
     expect(screen.getByText('PUMP → PRESSURE SWITCH')).toBeInTheDocument();
-    expect(screen.getByText(/recall on the ground-truth set was 0.66/)).toBeInTheDocument();
+    expect(screen.getByText(/Model-assisted detection. Results are not exhaustive/)).toBeInTheDocument();
   });
 
   it('filters corrections by aircraft', async () => {
     renderPage();
-    fireEvent.click(screen.getByRole('button', { name: 'Detected corrections' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Detected corrections' }));
     await screen.findByText('OLD1');
     fireEvent.change(screen.getByLabelText('Corrections aircraft'), { target: { value: 'asset-1' } });
     await waitFor(() => expect(api.corrections).toHaveBeenLastCalledWith(expect.objectContaining({ asset_id: 'asset-1' })));

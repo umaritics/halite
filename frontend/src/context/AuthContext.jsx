@@ -8,6 +8,21 @@ import { clearLegacyInvestigations } from '../features/investigation/privacy';
 
 const REFRESH_STORAGE_KEY = 'halite.session.refresh.v1';
 
+// Refresh tokens rotate: the server retires a token as soon as it is used.
+// Two refresh calls sent with the same token therefore race, and the loser
+// gets a 401 and signs the user out. React StrictMode runs the restore effect
+// twice in development, so every caller shares one in-flight request.
+let inflightRefresh = null;
+function refreshOnce() {
+  if (!inflightRefresh) {
+    const stored = readStoredRefreshToken();
+    inflightRefresh = authAPI.refresh(stored || undefined).finally(() => {
+      inflightRefresh = null;
+    });
+  }
+  return inflightRefresh;
+}
+
 function readStoredRefreshToken() {
   try {
     return window.sessionStorage.getItem(REFRESH_STORAGE_KEY) || '';
@@ -70,9 +85,8 @@ export function AuthProvider({ children }) {
   }, []);
 
   const refreshSession = useCallback(async () => {
-    const storedRefresh = readStoredRefreshToken();
     try {
-      const { data } = await authAPI.refresh(storedRefresh || undefined);
+      const { data } = await refreshOnce();
       return applySessionPayload(data);
     } catch {
       clearLocalSession();
@@ -91,9 +105,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     let active = true;
-    const storedRefresh = readStoredRefreshToken();
-    authAPI
-      .refresh(storedRefresh || undefined)
+    refreshOnce()
       .then(({ data }) => {
         if (active) applySessionPayload(data);
       })
