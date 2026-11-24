@@ -160,7 +160,7 @@ describe('corrections tab', () => {
     await screen.findByText('OLD1');
     expect(screen.getAllByText('Supersedes').length).toBeGreaterThan(0);
     expect(screen.getByText('Needs Review')).toBeInTheDocument();
-    expect(screen.getByText('Model-assisted detection. Results are not exhaustive.')).toBeInTheDocument();
+    expect(screen.getByText('Linked by citation or proposed by the model. Results are not exhaustive.')).toBeInTheDocument();
     expect(screen.queryByText(/0\.66/)).toBeNull();
   });
 

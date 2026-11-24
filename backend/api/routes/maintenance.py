@@ -36,6 +36,7 @@ from api.security import (
 from domains.registry import list_domains
 from integrity import apply
 from integrity.proposal import pin_recomputed_prior, stored_proposal
+from integrity.timeutil import parse_occurred
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
 from services.analysis_state import normalize_analysis_for_api
 from services.analysis_budget import BudgetExhausted, DailyBudgetManager
@@ -291,15 +292,21 @@ def process_single_record(
 
     record_id = body.record_id
     if body.tail_number:
-        import datetime
         if not record_id:
             record_id = f"DEMO{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
-        # Inline ingestion
+
+        # The form sends an ISO date and the importer reads MM/DD/YYYY; without this the record was
+        # skipped as a bad date and the request failed with "not found".
+        occurred = parse_occurred(body.date)
+        if occurred is None:
+            raise HTTPException(status_code=422, detail="date must be YYYY-MM-DD or MM/DD/YYYY")
+
+        # Inline ingestion. A report typed in now is known from now: that is its submission time.
         raw = {
             "OperatorControlNumber": record_id,
             "RegistryNNumber": body.tail_number,
-            "DifficultyDate": body.date,
+            "DifficultyDate": occurred.strftime("%m/%d/%Y"),
+            "SubmissionDate": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "PartName": body.part_name,
             "PartCondition": body.condition,
             "PartLocation": body.location,

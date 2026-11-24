@@ -202,3 +202,27 @@ def test_the_link_a_reviewer_creates_or_removes_is_audited_in_their_name(env):
     assert [(e.target_id, e.actor_user_id) for e in created] == [("NEW1", env["sup_id"])]
     prior_changes = [e for e in _review_audit(env["app"], "integrity.status.changed") if e.target_id == "PRIOR1"]
     assert len(prior_changes) == 1 and prior_changes[0].actor_user_id == env["sup_id"]
+
+
+def test_a_typed_in_report_that_cites_an_earlier_one_is_linked_at_once_without_the_model(env):
+    """The form sends an ISO date; the route used to hand it to an importer that reads MM/DD/YYYY,
+    so the record was skipped and the request failed. The test app's model is not live, so a 200
+    here also proves rule R1 asked no model."""
+    resp = env["tc"].post("/api/maintenance/records", headers=env["tech"], json={
+        "tail_number": "N900RV", "date": "2025-03-01", "part_name": "Fuel pump", "condition": "Replaced",
+        "location": "Left", "jasc_code": "2910",
+        "discrepancy": "SUPPLEMENTAL REPORT FOR (PRIOR1): found pump failed, removed and replaced.",
+    })
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["status_applied"] == "auto_accepted" and body["proposed_prior_id"] == "PRIOR1"
+    link = env["repo"].get_supersedes_link(body["record_id"], "PRIOR1")
+    assert link["method"] == "explicit_citation"
+    assert env["repo"].get_service_record(body["record_id"])["submitted_at"]  # stamped at entry
+
+
+def test_a_typed_in_report_with_an_unreadable_date_is_refused_clearly(env):
+    resp = env["tc"].post("/api/maintenance/records", headers=env["tech"], json={
+        "tail_number": "N900RV", "date": "yesterday", "discrepancy": "pump leaking",
+    })
+    assert resp.status_code == 422 and "date" in resp.json()["detail"]

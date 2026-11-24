@@ -72,7 +72,7 @@ describe('Detected corrections tab', () => {
     expect(screen.getByLabelText('Corrections aircraft')).toHaveValue('');
     expect(screen.getByText('100%')).toBeInTheDocument();
     expect(screen.getByText('PUMP → PRESSURE SWITCH')).toBeInTheDocument();
-    expect(screen.getByText(/Model-assisted detection. Results are not exhaustive/)).toBeInTheDocument();
+    expect(screen.getByText(/Linked by citation or proposed by the model. Results are not exhaustive/)).toBeInTheDocument();
   });
 
   it('filters corrections by aircraft', async () => {
