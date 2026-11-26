@@ -30,7 +30,9 @@ Committed snapshots (VM 2026-11-20):
 - [`logs/suite_b_test_2025.json`](logs/suite_b_test_2025.json) — B0 vs B1  
 - [`logs/suite_b_test_2025_with_b2.json`](logs/suite_b_test_2025_with_b2.json) — B0, B1, B2  
 - [`logs/suite_b_test_2025_b3.json`](logs/suite_b_test_2025_b3.json) — B3 (VM finished 2026-11-21; 288 MB embedding cache on VM)  
-- [`logs/suite_b_test_2025_b5.json`](logs/suite_b_test_2025_b5.json) — B5 (2026-11-23)
+- [`logs/suite_b_test_2025_b5.json`](logs/suite_b_test_2025_b5.json) — B5 (2026-11-23)  
+- [`logs/suite_b_test_2025_all_rankers.json`](logs/suite_b_test_2025_all_rankers.json) — one-shot B0–B5 (2026-11-26 VM)  
+- [`logs/suite_b_tune_2024_b5.json`](logs/suite_b_tune_2024_b5.json) — B5 on **2024 tune** split (n=345; for threshold work, not 2025)
 
 | Ranker | Top-1 | Top-3 | Top-5 | Top-1 95% CI |
 | --- | ---: | ---: | ---: | --- |
