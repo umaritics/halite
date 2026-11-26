@@ -80,6 +80,7 @@ Never use a branch name or arbitrary ref for rollback.
 | Deploy path | `/home/umar/halite` |
 | Container | `halite-api` on `127.0.0.1:8002` (Caddy public `/halite-api`) |
 | API writable data | Docker volume `halite_api_data` → `/app/data` (replaces 64 MB tmpfs; diag cache + uploads survive deploy) |
+| Offline eval (Umar) | Ephemeral `docker run` only — `corpus_data/` + `scripts/vm/run_suite_b_offline.sh`; **do not** rebuild `halite-api` while teammates deploy integrity/copilot work |
 | Dedicated CD key (local) | `%USERPROFILE%\.ssh\halite_github_deploy` (**not** your personal key) |
 | Ops token (local copy) | `%USERPROFILE%\.ssh\halite_ops_token.txt` (share via password manager only) |
 
