@@ -1,4 +1,4 @@
-"""B5 — reciprocal rank fusion of BM25 (B2) and dense (B3) part rankings."""
+"""B5 — reciprocal rank fusion of BM25 (B2), dense (B3), and graph (B4) part rankings."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -9,6 +9,7 @@ import pandas as pd
 from evaluation.embeddings import EmbeddingBackend
 from evaluation.rank_b2 import rank_parts_bm25
 from evaluation.rank_b3 import rank_parts_embed
+from evaluation.rank_b4 import rank_parts_graph
 from evaluation.rrf import DEFAULT_RRF_K, reciprocal_rank_fusion
 
 
@@ -42,4 +43,11 @@ def rank_parts_hybrid(
         exclude_record_ids=exclude_record_ids,
         fleet_cap=fleet_cap,
     )
-    return reciprocal_rank_fusion([ranked_b2, ranked_b3], k=rrf_k)
+    ranked_b4 = rank_parts_graph(
+        corpus,
+        tail_number,
+        query_time,
+        exclude_record_ids=exclude_record_ids,
+        fleet_cap=fleet_cap,
+    )
+    return reciprocal_rank_fusion([ranked_b2, ranked_b3, ranked_b4], k=rrf_k)

@@ -12,6 +12,8 @@ _COLUMNS = [
     "DifficultyDate",
     "SubmissionDate",
     "RegistryNNumber",
+    "AircraftMake",
+    "AircraftModel",
     "PartName",
     "JASCCode",
     "Discrepancy",

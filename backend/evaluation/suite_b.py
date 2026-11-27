@@ -20,10 +20,11 @@ from evaluation.embeddings import (
 )
 from evaluation.rank_b2 import rank_parts_bm25
 from evaluation.rank_b3 import rank_parts_embed
+from evaluation.rank_b4 import rank_parts_graph
 from evaluation.rank_b5 import rank_parts_hybrid
 from services.diagnostic_retrieval import build_diagnostic_context, rank_diagnostic_checks
 
-RankerId = Literal["b0", "b1", "b2", "b3", "b5"]
+RankerId = Literal["b0", "b1", "b2", "b3", "b4", "b5"]
 
 _BUILDERS: dict[RankerId, tuple[Callable, Callable]] = {
     "b0": (build_diagnostic_context_b0, rank_diagnostic_checks_b0),
@@ -46,6 +47,14 @@ def _load_pairs(path: Path) -> pd.DataFrame:
     df = pd.read_csv(path, dtype=str).fillna("")
     df["_part_target"] = df["superseding_part"].map(_normalise_part)
     return df
+
+
+def _model_key_from_row(row: pd.Series) -> str:
+    make = str(row.get("AircraftMake", "") or "").strip().upper()
+    model = str(row.get("AircraftModel", "") or "").strip().upper()
+    if not make and not model:
+        return ""
+    return f"{make}|{model}"
 
 
 def _split_years(splits_path: Path | None, split: str) -> set[str]:
@@ -131,6 +140,14 @@ def run_suite_b(config: SuiteBConfig, ranker: RankerId = "b1") -> dict:
                 tail,
                 symptom,
                 query_time,
+                exclude_record_ids={new_id},
+            )
+        elif ranker == "b4":
+            ranked = rank_parts_graph(
+                corpus,
+                tail,
+                query_time,
+                query_model_key=_model_key_from_row(old_row),
                 exclude_record_ids={new_id},
             )
         elif ranker == "b5":
