@@ -36,14 +36,13 @@ from investigation.grounding_runtime import annotate_diagnose, load_configuratio
 from investigation.beliefs import score_beliefs
 from investigation.policy import decide
 from investigation.prose import build_reply_prompt, MAX_REPLY_TOKENS
-from investigation.ranker_port import MID_VERSION
 from investigation.ranker_port import (
     build_diagnostic_context,
     build_copilot_context,
-    rank_diagnostic_checks,
-    rank_copilot_checks,
+    rank as rank_via_port,
     ranking_delta,
 )
+from retrieval.service import normalize_mode, rank_checks_from_context, ranker_version
 
 logger = logging.getLogger(__name__)
 
@@ -386,7 +385,8 @@ def diagnose(
     t0 = time.time()
     grounding_configuration=load_configuration(settings)
     context = build_diagnostic_context(graph_repo, req.asset_id, req.symptom_text)
-    ranked = rank_diagnostic_checks(context)
+    mode = normalize_mode(settings.RETRIEVAL_MODE)
+    ranked = rank_checks_from_context(context, mode)
     cache = _load_cache()
     ck = _cache_key(req.asset_id, req.symptom_text, groq_service.model,
                     record_count=graph_repo.count_service_records(),
@@ -409,6 +409,7 @@ def diagnose(
             'context_size': {**context['context_size'], 'wall_clock_s': round(time.time() - t0, 2)},
             'citation_validation': {'valid_ids': [], 'invalid_ids': [], 'all_valid': True},
             'llm_status': 'unavailable',
+            'ranker_mode': mode, 'ranker_version': ranker_version(mode),
             'warnings': ['Language model unavailable; showing historical ranking and a deterministic explanation.'],
         }
         return annotate_diagnose(degraded_result,context,ranked,settings,configuration=grounding_configuration)
@@ -510,6 +511,8 @@ def diagnose(
             "invalid_ids": citation_result["invalid"],
             "all_valid":   len(citation_result["invalid"]) == 0,
         },
+        "ranker_mode": mode,
+        "ranker_version": ranker_version(mode),
         "warnings": llm_json.get("warnings", []),
     }
 
@@ -532,12 +535,13 @@ def copilot_turn(
     req: CopilotTurnRequest,
     graph_repo=Depends(get_graph_repo),
     groq_service=Depends(get_groq_service),
+    settings=Depends(get_settings),
 ):
     """Advance a stateless, evidence-grounded diagnostic case by one turn."""
-    return _run_copilot_turn(req, graph_repo, groq_service)
+    return _run_copilot_turn(req, graph_repo, groq_service, settings=settings)
 
 
-def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
+def _run_copilot_turn(req, graph_repo, groq_service, *, settings=None, write_reply=True):
     """Shared extraction/ranking; managed sessions own their final explanation."""
     if req.asset_id and not _asset_exists(graph_repo, req.asset_id):
         raise HTTPException(status_code=404, detail=f"Unknown asset_id={req.asset_id}")
@@ -545,12 +549,20 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
     previous_state = _normalise_case_state(
         req.case_state.model_dump() if req.case_state else None
     )
+    rank_mode = normalize_mode(getattr(settings, "RETRIEVAL_MODE", None) if settings else None)
     previous_context = build_copilot_context(graph_repo, req.asset_id, previous_state)
-    previous_ranked = (
-        rank_copilot_checks(previous_context, previous_state["ruled_out"])
-        if any(previous_state[field] for field in _CASE_FIELDS)
-        else []
-    )
+    previous_ranked = []
+    if any(previous_state[field] for field in _CASE_FIELDS):
+        prev = rank_via_port(
+            graph_repo,
+            asset_id=req.asset_id,
+            symptoms=previous_state["symptoms"],
+            observations=previous_state["observations"],
+            ruled_out=previous_state["ruled_out"],
+            mode=rank_mode,
+            k=10,
+        )
+        previous_ranked = prev["hypotheses"]
 
     warnings: list[str] = []
     llm_status = "available"
@@ -583,8 +595,20 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
             llm_status = "unavailable"
 
     case_state = _merge_case_state(previous_state, additions)
-    context = build_copilot_context(graph_repo, req.asset_id, case_state)
-    ranked = rank_copilot_checks(context, case_state["ruled_out"])
+    rank_result = rank_via_port(
+        graph_repo,
+        asset_id=req.asset_id,
+        symptoms=case_state["symptoms"],
+        observations=case_state["observations"],
+        ruled_out=case_state["ruled_out"],
+        mode=rank_mode,
+        k=10,
+    )
+    ranked = rank_result["hypotheses"]
+    context = rank_result.get("context") or build_copilot_context(
+        graph_repo, req.asset_id, case_state
+    )
+    warnings.extend(rank_result.get("warnings") or [])
     delta = ranking_delta(previous_ranked, ranked)
     selected_records = _select_report_records(graph_repo, req.asset_id, req.message)
     evidence = _collect_evidence(context, ranked, selected_records)
@@ -642,7 +666,8 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
                 llm_status = "unavailable"
                 reply = None
 
-    beliefs = score_beliefs(ranked[:10], ranker_version=MID_VERSION)
+    rv = rank_result.get("ranker_version") or ranker_version(rank_mode)
+    beliefs = score_beliefs(ranked[:10], ranker_version=rv)
     result = {
         "session_id": req.session_id or str(uuid.uuid4()),
         "reply": reply,
@@ -660,7 +685,8 @@ def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
         "warnings": _dedupe_strings(warnings),
         "beliefs": beliefs,
         **decide(beliefs),
-        "ranker_mode": "mid_heuristic", "ranker_version": MID_VERSION,
+        "ranker_mode": rank_result.get("mode", rank_mode),
+        "ranker_version": rv,
     }
     if not write_reply:
         result['report_mode'] = bool(selected_records)

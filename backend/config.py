@@ -83,6 +83,8 @@ class Settings(BaseSettings):
 
     # --- RETRIEVAL_ ---
     RETRIEVAL_MODE: str = "mid_heuristic"
+    RETRIEVAL_RAW_DIR: str = ""  # default: MAINT_DATA_DIR/raw (SDR-*.csv for bm25/dense/hybrid)
+    RETRIEVAL_EMBEDDING_CACHE: str = ""  # default: MAINT_DATA_DIR/evaluation
 
     # --- INTEGRITY_ ---
     # Reserved for the integrity owner's additive settings.
