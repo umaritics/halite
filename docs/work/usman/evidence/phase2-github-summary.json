@@ -1,0 +1,10 @@
+{
+  "tests": 293,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "statement_coverage_percent": 75.47,
+  "run_url": "https://github.com/umaritics/halite/actions/runs/44702502396",
+  "commit": "4764581",
+  "source": "downloaded GitHub Actions backend-test-and-coverage-reports artifact"
+}

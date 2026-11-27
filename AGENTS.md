@@ -7,10 +7,13 @@ This file is the **universal entrypoint** for any AI coding agent or human contr
 1. Read [`knowledge/README.md`](knowledge/README.md) (router).
 2. Open the linked **context** + **flow** for the area you will touch.
 3. Check [`knowledge/decisions/INDEX.md`](knowledge/decisions/INDEX.md) for constraints.
-4. Respect Mid-I ownership (do not edit another owner’s files without a handoff decision):
-   - **Umar** — graph schema/queries, diagnose/chat internals, ranking, citations, diagnostic tests
-   - **Usman** — ingest, conflict engine, maintenance APIs, Compose, CI, `main.py` wiring
-   - **Shahmeer** — React UX, `frontend/src/api/client.js`, Vitest
+4. Read [`docs/plan/CONTRACTS.md`](docs/plan/CONTRACTS.md), then your owner's guide `docs/plan/AGENT_GUIDE_<NAME>.md`.
+5. Respect vertical ownership (do not edit another owner’s files without their review). Each owner holds one
+   sub-problem end to end: database, backend, pages, tests and experiment
+   ([DEC-20261120](knowledge/decisions/DEC-20261120-vertical-ownership.md)):
+   - **Umar** — Retrieval and Ranking: `backend/retrieval/`, `backend/evaluation/`, graph page, corpus builder, staging
+   - **Shahmeer** — Record Integrity: `backend/integrity/`, conflict engine, review/ingest/asset routes and pages, app shell and design system
+   - **Usman** — Investigation Sessions: `backend/investigation/`, diagnose and Copilot routes, model adapter, investigation pages, CI
 
 ## After you change behavior or contracts
 
@@ -29,8 +32,9 @@ Do not leave the bank stale. Code + knowledge bank ship together.
 ## Source-of-truth order
 
 1. Working code + executed tests  
-2. Mid-I assessment / university rubric  
-3. `docs/Halite_FYP_Report.pdf`, `docs/halite_timeline.pdf`, `docs/halite_work_division_mid1.pdf`  
+2. University rubric (FYP Handbook 2026)  
+3. `docs/plan/CONTRACTS.md` and the owner guides in `docs/plan/` (ownership, interfaces, evaluation rules)  
+3a. `docs/Halite_FYP_Report.pdf`, `docs/halite_timeline.pdf`; `docs/halite_work_division_mid1.pdf` is historical  
 4. `knowledge/**` (durable engineering memory)  
 5. `docs/mid1/**` (dated audit evidence)  
 6. `docs/obsolete/**` — **historical only; never current requirements**

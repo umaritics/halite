@@ -1,0 +1,63 @@
+{
+  "version": "question-conditioned-selection-v1",
+  "year": 2024,
+  "fit_years": [
+    2023
+  ],
+  "held_out_evaluated": false,
+  "n_pairs": 389,
+  "n_originals": 340,
+  "tau_answer_grid": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85,
+    0.9,
+    0.95,
+    1.0
+  ],
+  "g_min_grid": [
+    0,
+    0.01,
+    0.05,
+    0.1,
+    0.25,
+    0.5
+  ],
+  "n_min": 2,
+  "max_questions": 3,
+  "bootstrap_resamples": 1000,
+  "seed": 1729,
+  "input_sha256": {
+    "experiments/results/decision_selection_2024_v2/selection.json": "7ed4c694974ecdfb80366dff9b8965fd22e386b949ccf6f547600fb9bf21c265",
+    "experiments/results/decision_selection_2024_v2/selection_cases.json": "6799744217714c50cf3a67367d12c12c825a8cb783e957b681810b9d10715310",
+    "experiments/results/question_selection_2024_v2/results.json": "22c5b39870c97c9f59138561d7cf0736f457dd0922faf58727c2756287e64565",
+    "experiments/results/question_selection_2024_v2/all_attributes_cases.json": "1339cf25280dd4808c3084201007e2cb421c749c5dd6ec10023482675dfc61cb",
+    "experiments/results/question_selection_2024_v2/structured_fields_only_cases.json": "5a8a531950055a992577c0b00cc98e1d64e07e1e5f7f8080bc240d389b50b012",
+    "experiments/results/question_selection_2024_v2/coded_fields_only_cases.json": "06d6e70c11bfd4c097d78b70e7a858a740b2b73301b2da753d68a8377af3f608",
+    "params/mid_heuristic-v1.json": "d265c3dd794afacbb8ba5b3f55396d441298b6ff5aed6217e20c05054f60519b"
+  },
+  "selected_operating_point": null,
+  "notes": [
+    "Grid fixed before computing the stopping-policy comparison.",
+    "Exact prefix replay: thresholds stop a saved trajectory; they do not alter the next question if continuation is permitted.",
+    "Information gain matches managed runtime; random uses the selected random question gain as a declared control, not a runtime policy.",
+    "Original-report simulated answers only. Outcome part is used only downstream for scoring.",
+    "All-attribute questions can reuse narrative information; structured-only and coded-only controls retained.",
+    "No production activation or held-out access."
+  ]
+}

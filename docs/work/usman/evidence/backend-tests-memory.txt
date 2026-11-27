@@ -1,0 +1,72 @@
+.....................................F.................................. [ 27%]
+........................................................................ [ 55%]
+...................................s.s.s.s.s.s.s.s.s.s.s..s.s.s.s.s.s.s. [ 83%]
+s.s.s.s.s.................................                               [100%]
+=================================== FAILURES ===================================
+____ TestConflictAnalysisApi.test_analysis_run_requires_token_and_live_llm _____
+
+self = <tests.test_api_maintenance.TestConflictAnalysisApi object at 0x756fda7bf1a0>
+client = <starlette.testclient.TestClient object at 0x756fc09ac0e0>
+
+    def test_analysis_run_requires_token_and_live_llm(self, client):
+        client.app.state.settings.OPS_TOKEN = "analysis-token"
+        assert client.post("/api/maintenance/analysis/run", json={"batch_size": 1}).status_code == 401
+        response = client.post(
+            "/api/maintenance/analysis/run",
+            json={"batch_size": 1},
+            headers={"X-Ops-Token": "analysis-token"},
+        )
+        assert response.status_code == 503
+>       assert "live Groq" in response.json()["detail"]
+E       AssertionError: assert 'live Groq' in 'A live LLM is required for conflict analysis.'
+
+tests/test_api_maintenance.py:359: AssertionError
+------------------------------ Captured log call -------------------------------
+WARNING  api.security:security.py:495 Rejected ops request method=POST path=/api/maintenance/analysis/run client_ip=testclient
+=============================== warnings summary ===============================
+../../halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41
+  /tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform linux, python 3.12.3-final-0 -----------
+Name                        Stmts   Miss  Cover   Missing
+---------------------------------------------------------
+api/routes/evaluation.py        5      0   100%
+api/routes/integrity.py         5      0   100%
+api/routes/retrieval.py         5      0   100%
+api/routes/sessions.py          5      0   100%
+db/__init__.py                  0      0   100%
+db/models/__init__.py           3      0   100%
+db/models/evaluation.py         0      0   100%
+db/models/identity.py          75      0   100%
+db/models/integrity.py          0      0   100%
+db/models/sessions.py           0      0   100%
+db/session.py                  73     15    79%   31, 33, 58-65, 70, 84-85, 104-112
+graph/__init__.py               0      0   100%
+graph/invalidation.py           2      1    50%   3
+graph/memory/__init__.py        2      0   100%
+graph/memory/_helpers.py        3      0   100%
+graph/memory/core.py          202     29    86%   21, 25, 61, 68-77, 106, 163, 178, 255-261, 285-287, 300, 303, 314, 320, 322, 324
+graph/memory/integrity.py      55      5    91%   18, 65, 69, 72, 74
+graph/memory/legacy.py        133     41    69%   9, 20, 27, 48-51, 70, 75-78, 98, 114, 121, 129, 137-152, 159-166, 181
+graph/memory/retrieval.py      37      4    89%   7-10
+graph/memory_store.py           2      0   100%
+graph/neo4j_client.py          16      9    44%   8-16, 19, 22-24, 27-28
+graph/queries.py                2      0   100%
+graph/repo/__init__.py          2      0   100%
+graph/repo/_helpers.py         22     16    27%   12-27
+graph/repo/core.py            130     41    68%   22, 28-30, 47-67, 82-121, 128-132, 140, 163-171, 181-203, 229-230, 238-239, 241-242, 280
+graph/repo/integrity.py        57     14    75%   28, 52-82, 100-101, 103-104, 162-170
+graph/repo/legacy.py          274    207    24%   13-60, 67-80, 86-96, 103-120, 124-135, 139-142, 149, 160-163, 176, 190-217, 223-227, 231-246, 252-260, 264-274, 280-282, 288-289, 293-296, 302-337, 343-374, 379-477, 481-484, 498, 510-528, 533-615
+graph/repo/retrieval.py        69     52    25%   12-35, 39-62, 69-78, 84, 87-95, 110-150
+graph/schema.py                 3      0   100%
+services/groq_service.py      123     19    85%   32-33, 39-41, 48-50, 88, 92-93, 116-118, 121, 172-173, 214, 224
+---------------------------------------------------------
+TOTAL                        1305    453    65%
+Coverage XML written to file ../docs/work/usman/evidence/coverage.xml
+
+=========================== short test summary info ============================
+FAILED tests/test_api_maintenance.py::TestConflictAnalysisApi::test_analysis_run_requires_token_and_live_llm
+1 failed, 234 passed, 23 skipped, 1 warning in 49.90s

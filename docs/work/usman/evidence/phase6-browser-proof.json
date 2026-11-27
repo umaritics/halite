@@ -1,0 +1,331 @@
+{
+  "source": "Synthetic verification, not research accuracy or a selected operating point",
+  "health": {
+    "status": "ok",
+    "app": "Halite",
+    "demo_mode": false,
+    "neo4j_configured": true,
+    "using_memory_graph": false,
+    "groq_configured": false,
+    "llm_provider": "groq",
+    "graph_mode": "neo4j",
+    "llm_mode": "fallback",
+    "model": "openai/gpt-oss-20b",
+    "maint_threshold": 0.5,
+    "domains": [
+      {
+        "key": "software",
+        "display_name": "Software Engineering",
+        "subject_label": "Component",
+        "record_label": "Decision",
+        "is_default": true
+      },
+      {
+        "key": "maintenance",
+        "display_name": "Maintenance / Field Service",
+        "subject_label": "Asset",
+        "record_label": "ServiceRecord",
+        "is_default": false
+      }
+    ],
+    "maintenance_corpus_loaded": true,
+    "maintenance_record_count": 40,
+    "fallback_invocations": 0,
+    "auth_enabled": true,
+    "auth_db_mode": "postgresql",
+    "openapi_enabled": false,
+    "git_sha": "unknown",
+    "deployed_at": ""
+  },
+  "session_id": "06d8e147-662c-4778-8be3-a25f85c89fa7",
+  "turn_posts": 4,
+  "browser_errors": [],
+  "initial": {
+    "decision": "ask",
+    "question": {
+      "attribute": "how_discovered",
+      "text": "How was the difficulty discovered?",
+      "reason": "Expected to remove 0.217 of 0.797 bits of uncertainty.",
+      "options": [
+        {
+          "value": "C",
+          "label": "Functional Check (C)"
+        },
+        {
+          "value": "V",
+          "label": "Visual (V)"
+        }
+      ]
+    },
+    "beliefs": {
+      "hypotheses": [
+        {
+          "part_name": "PUMP",
+          "score": 2.5589,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100000",
+            "QBRW2023010100001",
+            "QBRW2023010100002",
+            "QBRW2023010100003",
+            "QBRW2023010100004",
+            "QBRW2023010100005",
+            "QBRW2023010100006",
+            "QBRW2023010100007",
+            "QBRW2023010100008",
+            "QBRW2023010100009",
+            "QBRW2023010100010",
+            "QBRW2023010100011",
+            "QBRW2023010100012",
+            "QBRW2023010100013",
+            "QBRW2023010100014",
+            "QBRW2023010100015",
+            "QBRW2023010100016",
+            "QBRW2023010100017",
+            "QBRW2023010100018",
+            "QBRW2023010100019"
+          ],
+          "sources": [
+            "asset_history",
+            "fleet_match"
+          ],
+          "rank": 1,
+          "belief": 0.8386131208080657
+        },
+        {
+          "part_name": "SENSOR",
+          "score": 1.4391,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100020",
+            "QBRW2023010100021",
+            "QBRW2023010100022",
+            "QBRW2023010100023",
+            "QBRW2023010100024",
+            "QBRW2023010100025",
+            "QBRW2023010100026",
+            "QBRW2023010100027",
+            "QBRW2023010100028",
+            "QBRW2023010100029",
+            "QBRW2023010100030",
+            "QBRW2023010100031",
+            "QBRW2023010100032",
+            "QBRW2023010100033",
+            "QBRW2023010100034",
+            "QBRW2023010100035",
+            "QBRW2023010100036",
+            "QBRW2023010100037",
+            "QBRW2023010100038",
+            "QBRW2023010100039"
+          ],
+          "sources": [
+            "asset_history"
+          ],
+          "rank": 2,
+          "belief": 0.0903326370948451
+        }
+      ],
+      "other": 0.07105424209708916,
+      "entropy": 0.7973388310650259,
+      "calibrated": true,
+      "label": "relative support",
+      "ranker_version": "mid_heuristic-v1",
+      "temperature": 0.5025466937513824,
+      "other_score": 1.3184610196616369,
+      "parameters": {
+        "ranker_version": "mid_heuristic-v1",
+        "temperature": 0.5025466937513824,
+        "other_score": 1.3184610196616369,
+        "fit_years": [
+          2023
+        ],
+        "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+      }
+    },
+    "response_sha256": "05e0f33473e7be7ea327ba486ef4eee63cf89aa809138039885418a7de4a6454"
+  },
+  "answer": {
+    "beliefs": {
+      "hypotheses": [
+        {
+          "part_name": "PUMP",
+          "score": 2.5589,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100000",
+            "QBRW2023010100001",
+            "QBRW2023010100002",
+            "QBRW2023010100003",
+            "QBRW2023010100004",
+            "QBRW2023010100005",
+            "QBRW2023010100006",
+            "QBRW2023010100007",
+            "QBRW2023010100008",
+            "QBRW2023010100009",
+            "QBRW2023010100010",
+            "QBRW2023010100011",
+            "QBRW2023010100012",
+            "QBRW2023010100013",
+            "QBRW2023010100014",
+            "QBRW2023010100015",
+            "QBRW2023010100016",
+            "QBRW2023010100017",
+            "QBRW2023010100018",
+            "QBRW2023010100019"
+          ],
+          "sources": [
+            "asset_history",
+            "fleet_match"
+          ],
+          "rank": 1,
+          "belief": 0.41786949360403214
+        },
+        {
+          "part_name": "SENSOR",
+          "score": 1.4391,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100020",
+            "QBRW2023010100021",
+            "QBRW2023010100022",
+            "QBRW2023010100023",
+            "QBRW2023010100024",
+            "QBRW2023010100025",
+            "QBRW2023010100026",
+            "QBRW2023010100027",
+            "QBRW2023010100028",
+            "QBRW2023010100029",
+            "QBRW2023010100030",
+            "QBRW2023010100031",
+            "QBRW2023010100032",
+            "QBRW2023010100033",
+            "QBRW2023010100034",
+            "QBRW2023010100035",
+            "QBRW2023010100036",
+            "QBRW2023010100037",
+            "QBRW2023010100038",
+            "QBRW2023010100039"
+          ],
+          "sources": [
+            "asset_history"
+          ],
+          "rank": 2,
+          "belief": 0.4051037020996131
+        }
+      ],
+      "other": 0.17702680429635473,
+      "entropy": 1.4963597615855635,
+      "calibrated": true,
+      "label": "relative support",
+      "ranker_version": "mid_heuristic-v1",
+      "temperature": 0.5025466937513824,
+      "other_score": 1.3184610196616369,
+      "parameters": {
+        "ranker_version": "mid_heuristic-v1",
+        "temperature": 0.5025466937513824,
+        "other_score": 1.3184610196616369,
+        "fit_years": [
+          2023
+        ],
+        "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+      }
+    },
+    "llm_status": "not_needed",
+    "prior": {
+      "hypotheses": [
+        {
+          "part_name": "PUMP",
+          "score": 2.5589,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100000",
+            "QBRW2023010100001",
+            "QBRW2023010100002",
+            "QBRW2023010100003",
+            "QBRW2023010100004",
+            "QBRW2023010100005",
+            "QBRW2023010100006",
+            "QBRW2023010100007",
+            "QBRW2023010100008",
+            "QBRW2023010100009",
+            "QBRW2023010100010",
+            "QBRW2023010100011",
+            "QBRW2023010100012",
+            "QBRW2023010100013",
+            "QBRW2023010100014",
+            "QBRW2023010100015",
+            "QBRW2023010100016",
+            "QBRW2023010100017",
+            "QBRW2023010100018",
+            "QBRW2023010100019"
+          ],
+          "sources": [
+            "asset_history",
+            "fleet_match"
+          ],
+          "rank": 1,
+          "belief": 0.8386131208080657
+        },
+        {
+          "part_name": "SENSOR",
+          "score": 1.4391,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100020",
+            "QBRW2023010100021",
+            "QBRW2023010100022",
+            "QBRW2023010100023",
+            "QBRW2023010100024",
+            "QBRW2023010100025",
+            "QBRW2023010100026",
+            "QBRW2023010100027",
+            "QBRW2023010100028",
+            "QBRW2023010100029",
+            "QBRW2023010100030",
+            "QBRW2023010100031",
+            "QBRW2023010100032",
+            "QBRW2023010100033",
+            "QBRW2023010100034",
+            "QBRW2023010100035",
+            "QBRW2023010100036",
+            "QBRW2023010100037",
+            "QBRW2023010100038",
+            "QBRW2023010100039"
+          ],
+          "sources": [
+            "asset_history"
+          ],
+          "rank": 2,
+          "belief": 0.0903326370948451
+        }
+      ],
+      "other": 0.07105424209708916,
+      "entropy": 0.7973388310650259,
+      "calibrated": true,
+      "label": "relative support",
+      "ranker_version": "mid_heuristic-v1",
+      "temperature": 0.5025466937513824,
+      "other_score": 1.3184610196616369,
+      "parameters": {
+        "ranker_version": "mid_heuristic-v1",
+        "temperature": 0.5025466937513824,
+        "other_score": 1.3184610196616369,
+        "fit_years": [
+          2023
+        ],
+        "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+      }
+    },
+    "response_sha256": "62a0f27d2c928f0e2d7b6fe3aecfb62bcafcdd0c542816d7d4e44064b82b46eb"
+  },
+  "final": {
+    "decision": "abstain",
+    "questions_asked": 3,
+    "response_sha256": "3613af989d6d2585e71a1de3c8078a129df8a936d797c2932d9fbf472954ebc1"
+  },
+  "exact_reload_replay": true,
+  "second_and_third_not_sure_preserve_beliefs": true,
+  "mobile_and_desktop_no_horizontal_overflow": true,
+  "shared_staging_accessed": false,
+  "mobile_usability": "Failed visual inspection: fixed sidebar leaves insufficient workspace width. Separate layout patch authorized for preparation/testing; no mobile usability pass claimed for this initial run."
+}

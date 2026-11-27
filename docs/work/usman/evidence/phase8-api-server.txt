@@ -1,0 +1,47 @@
+INFO:     Started server process [118180]
+INFO:     Waiting for application startup.
+INFO:api.routes.ops:Ops ring-buffer logging installed
+INFO:main:Halite connecting to Neo4j AuraDB
+INFO:main:Neo4j connected and seeded
+INFO:main:LLM provider=groq configured=False model=openai/gpt-oss-20b
+INFO:main:Relational auth store mode: postgresql
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:18000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:47776 - "OPTIONS /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47780 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:47776 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47780 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47776 - "OPTIONS /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47794 - "OPTIONS /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47806 - "OPTIONS /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47820 - "OPTIONS /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47836 - "OPTIONS /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47896 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47836 - "OPTIONS /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47906 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47896 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47836 - "OPTIONS /api/maintenance/diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47896 - "POST /api/maintenance/diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40658 - "OPTIONS /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40672 - "POST /api/auth/refresh HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:40658 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40672 - "POST /api/auth/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40658 - "OPTIONS /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40688 - "OPTIONS /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40698 - "OPTIONS /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40658 - "OPTIONS /api/sessions/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40694 - "OPTIONS /api/sessions?mine=true&limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40672 - "GET /api/retrieval/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40710 - "GET /api/integrity/summary HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40672 - "POST /api/auth/refresh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40694 - "OPTIONS /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40672 - "GET /api/maintenance/review-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59996 - "GET /api/maintenance/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40694 - "OPTIONS /api/maintenance/diagnose HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59996 - "POST /api/maintenance/diagnose HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [118180]
+
+Aborted!

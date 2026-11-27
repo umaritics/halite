@@ -1,0 +1,27 @@
+{
+  "authorization": "User explicitly authorized emptying Trash and deleting no-longer-needed downloaded app installers; other large items require a decision.",
+  "trash_entries_removed": 12,
+  "installer_files_removed": [
+    {
+      "name": "Antigravity IDE.tar.gz",
+      "bytes": 232330396
+    },
+    {
+      "name": "Antigravity.tar.gz",
+      "bytes": 164501405
+    },
+    {
+      "name": "google-chrome-stable_current_amd64.deb",
+      "bytes": 133840516
+    },
+    {
+      "name": "code.deb",
+      "bytes": 12353536
+    }
+  ],
+  "errors": [],
+  "free_bytes_before": 2872475648,
+  "free_bytes_after": 22410170368,
+  "freed_bytes": 19537694720,
+  "retained": "Project/research/test-report archives, documents, applications and other large directories were not deleted."
+}

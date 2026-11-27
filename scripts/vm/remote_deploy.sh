@@ -95,8 +95,8 @@ if docs_code != 404:
     raise SystemExit(f"FATAL: /docs returned {docs_code}, expected 404")
 
 webhook_code = status_of("/api/webhook/gitea", method="POST")
-if webhook_code != 410:
-    raise SystemExit(f"FATAL: /api/webhook/gitea returned {webhook_code}, expected 410")
+if webhook_code != 404:
+    raise SystemExit(f"FATAL: /api/webhook/gitea returned {webhook_code}, expected 404")
 
 auth_ok = status_of(
     "/api/maintenance/assets",
@@ -105,5 +105,5 @@ auth_ok = status_of(
 if auth_ok != 200:
     raise SystemExit(f"FATAL: authenticated /api/maintenance/assets returned {auth_ok}, expected 200")
 
-print("VM security & authenticated smoke checks PASSED (unauth=401, docs=404, gitea=410, auth=200)")
+print("VM security & authenticated smoke checks PASSED (unauth=401, docs=404, gitea=404, auth=200)")
 PY

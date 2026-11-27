@@ -1,0 +1,4 @@
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T02:39:34.5819548Z TOTAL                                                    6472   1447    78%
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T02:39:34.5820213Z 445 passed, 1 warning in 90.11s (0:01:30)
+Frontend tests and build (Node 20)	Run frontend tests	2026-11-21T02:37:33.0147675Z  Test Files  29 passed (29)
+Frontend tests and build (Node 20)	Run frontend tests	2026-11-21T02:37:33.0148826Z       Tests  275 passed (275)

@@ -3,7 +3,7 @@ id: mod-conflict
 title: Conflict engine module
 status: active
 owners: [Usman, Umar]
-updated: 2026-11-16
+updated: 2026-11-25
 ---
 
 # Module: Conflict engine
@@ -19,13 +19,60 @@ Detect whether a new/updated `ServiceRecord` conflicts with or supersedes prior 
 | `backend/services/conflict_engine.py` | Usman |
 | `backend/api/routes/maintenance.py` (process/review) | Usman |
 | `backend/tests/test_conflict_engine.py` | Usman |
+| `backend/integrity/` (`apply.py`, `citations.py`, `timeutil.py`, `validity.py`, `proposal.py`, `backfill.py`, `candidates.py`, `prompts.py`, `classify.py`) | Shahmeer |
+| `backend/integrity/bench/` (citation-masked benchmark; see its [README](../../../backend/integrity/bench/README.md)) | Shahmeer |
 
 ## Pipeline
 
-1. **Candidate pairing** — same-asset history, positive heuristic score, cap (`MAINT_MAX_CANDIDATES`, often 25). Score-zero records are not candidates.
+0. **Guards and rule R1** — a reviewed record is returned untouched (`skipped="reviewed"`) unless `force` is set. If the text cites a report ID (`integrity/citations.py`), `apply_explicit_citations` links to each cited report that exists, is on the same aircraft and is not known to be later (same submission time or earlier; without submission times, same occurrence date or earlier). Linked: status `auto_accepted`, confidence 1.0, method `explicit_citation`, model `rule-R1`, no model call. Cited report not in the corpus: `no_action`, label `cited_prior_missing`. Cited report present but ineligible: the normal path runs and the result carries `citation_ineligible` with reasons.
+1. **Candidate pairing** — same-asset history, positive heuristic score, cap (`MAINT_MAX_CANDIDATES`, often 25). Score-zero records are not candidates. A prior is eligible only if it was submitted before the target (`integrity/timeutil.py`, timezone-aware; occurrence date decides only when a submission time is missing). Pairs a reviewer rejected are skipped.
 2. **Classify** — LLM JSON label (`supersedes`, `partial_supersedes`, `contradicts`, `no_conflict`, `scope_disjoint`) with cache.
 3. **Adjudicate + confidence** — evidence signals (citation language, recency, authority, part/JASC agreement).
 4. **Route** — high-risk labels → `needs_review`; else confidence vs `MAINT_CONFIDENCE_THRESHOLD`.
+
+## Candidates, prompt and votes live in `integrity/`
+
+The engine no longer holds its own candidate ranking, prompt text or vote logic. It calls:
+
+- `backend/integrity/candidates.py` — `PAIR_WEIGHTS`, `pair_score` and `rank_candidates`. These are pure functions over plain
+  record dicts. The engine still reads the asset history from the graph (`list_asset_history`, limit 200, so the oldest 200
+  reports of an aircraft) and hands it to `rank_candidates`. Three orderings exist: `legacy` (score, date, id; legacy mode),
+  `containment` (text overlap first; cascade mode, which staging runs) and `submission_gap` (benchmark only).
+- `backend/integrity/prompts.py` — the system prompts. `v1` is the staging prompt, byte for byte, and is pinned by a SHA-256
+  test (`test_prompt_v1_is_pinned_to_the_staging_bytes`). `v2-unannounced` is a draft for the benchmark only. Staging does not use it.
+  Changing the staging prompt needs Shahmeer's decision.
+- `backend/integrity/classify.py` — `parse_classification`, the user prompt and `classify_pair`, the majority vote, without the
+  engine's file cache.
+
+This was a refactor with no behaviour change. The point is that the benchmark calls the same code staging runs.
+`conflict_engine.py` imports these names, so existing callers still work.
+
+## Integrity writes and links
+
+All `SUPERSEDES` / `NOT_SUPERSEDES` links, status changes and review fields are written by
+`backend/integrity/apply.py`; the engine and the review routes call it. It takes an `audit(action, record_id, metadata)`
+callable from the route and emits `integrity.link.created`, `integrity.link.removed` and `integrity.status.changed`.
+A human-decided record (`analysis_state=reviewed` or status `accepted`/`rejected`) is not overwritten.
+
+A `SUPERSEDES` link is one edge per ordered pair with `scope`, `confidence`, `rationale`, `created_at`, `method`
+(`explicit_citation`, `model` or `human`), `model_version`, `decided_by`, `decided_at`. Validity is read from these links
+by `integrity/validity.py`; the `superseded` status string is still written for older readers. When a re-run no longer
+proposes a prior, the earlier `model` link to it is removed; citation and human links stay.
+
+The engine stores `proposed_prior_id`, `integrity_p` (equal to the confidence) and `integrity_model_version`
+(`handweighted-v0` on the model path, `rule-R1` on the rule path) on the record. The confidence is still hand-weighted;
+WP-A3 replaces it.
+
+## Review decisions
+
+- **Accept** confirms existing links in place (adds `decided_by`, `decided_at`) and creates a `human` link to the proposed
+  prior when the label is `supersedes` or `partial_supersedes`.
+- **Reject** removes the record's links and writes a `NOT_SUPERSEDES` edge to each, so the pair is not proposed again.
+- Both set `analysis_state=reviewed`, add reviewer fields, add a `review_decisions` row and one
+  `maintenance.review.accepted|rejected` audit event.
+- `GET /maintenance/review-queue/{id}/proposal` returns the stored proposal and calls no model. A record with
+  `proposed_prior_id` absent gets its prior recomputed from candidates; the mode it was scored in is inferred from
+  `analysis_method` and `analysis_passes`. `python -m integrity.backfill [--dry-run]` stores the missing priors.
 
 ## Design constraints
 

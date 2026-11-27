@@ -13,3 +13,10 @@ export function dateValue(value) {
   const t = value ? Date.parse(value) : NaN;
   return Number.isNaN(t) ? Number.POSITIVE_INFINITY : t;
 }
+
+// Date and time, for audit trails where the time of day matters.
+export function formatDateTime(value) {
+  if (!value) return 'Date not recorded';
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? 'Date not recorded' : d.toLocaleString();
+}

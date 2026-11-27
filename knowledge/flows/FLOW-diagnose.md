@@ -87,7 +87,7 @@ flowchart TB
     V[services/citation_validation.py]
     G[services/groq_service.py]
     CACHE[data/diag_cache/cache.json]
-    QR[graph/queries.py]
+    QR[graph/queries.py facade to graph/repo]
   end
   subgraph data
     N[(Neo4j Asset/ServiceRecord)]
@@ -105,9 +105,66 @@ flowchart TB
 ## File dependencies
 
 - `Diagnostics.jsx` → `client.js` → `diagnostics.py`
-- `Diagnostics.jsx` → `DiagnosticEvidenceInspector.jsx` → `utils/diagnosticEvidence.js`
+- `Diagnostics.jsx` → `DiagnosticEvidenceInspector.jsx` → `utils/diagnosticEvidence.js (removed 2026-11-24)`
 - `diagnostics.py` → additive copilot helpers in `diagnostic_retrieval.py`
 - `diagnostic_retrieval.py` → `queries.py` → Neo4j/memory store
 - `diagnostics.py` → `groq_service.py` + `citation_validation.py`
-- One-shot `/diagnose` retains its diagnostic cache path
+- One-shot `/diagnose` retains its diagnostic cache path; the key now fingerprints count, mode, prompt version and retrieved context
 - Evidence click → `/app/asset-history/<asset uuid>#<record_id>`
+
+## Model format boundary
+
+`GroqService.chat` uses prose mode by default. JSON extraction methods, Copilot fact extraction and quick-diagnose explanation
+calls request JSON explicitly, including usage-aware calls. Both providers preserve the format
+through retries. The repository facade delegates to vertical mixins; ranking,
+diagnostic response fields and failure semantics remain unchanged by this split.
+
+## Persisted session wrapper and opt-in outage handling
+
+`POST /api/sessions/{id}/turns` loads server-owned case state and delegates the
+stateless Copilot workflow, then atomically stores its response/evidence/snapshot.
+Unlike the compatibility endpoint, it supplies template text on outages. See
+[FLOW-sessions.md](FLOW-sessions.md). Quick diagnosis retains 503 by default;
+`allow_degraded=true` adds ranking/evidence, a null explanation and
+`fallback_explanation` on outages. Diagnose citations are restricted to IDs in the
+bounded prompt, including the bounded ranked-evidence IDs. Empty cache explanations
+are ignored. Model wording failures never create a blank successful explanation.
+
+## Decision-core extension
+
+Copilot ranking imports now pass through `investigation/ranker_port.py`; the
+compatibility aliases preserve the existing scores/context. Additive uncalibrated
+beliefs, version metadata and unconfigured policy inputs are returned. A session
+snapshot stores those beliefs/entropy. See [FLOW-decision-selection.md](FLOW-decision-selection.md).
+
+## Additive sentence audit
+
+After ordinary/cached/degraded explanation selection, attach the saved-context
+L2/L3 audit without rewriting explanation, ranking or metadata-only evidence.
+Configuration is frozen before inference. See [FLOW-grounding.md](FLOW-grounding.md)
+for sentence scoring, source narratives and independent human calibration.
+
+```mermaid
+flowchart LR
+  Diagnose[Existing diagnose output] --> Audit[Sentence audit against exact prompt sources]
+  Audit --> UI[Original prose plus badges and saved source text]
+```
+
+## Bounded runtime phrasing
+
+```mermaid
+flowchart LR
+  Context[Full deterministic ranking / saved evidence] --> Prose[investigation/prose.py]
+  Prose --> Budget[2048 UTF8 bytes / 192 output tokens / three excerpts]
+  Budget --> Model[Existing provider and resource limits]
+  Model --> Check[Reject provider-marked truncated prose]
+  Check --> IDs[Validate actual model-supplied IDs]
+  IDs --> Audit[Sentence audit with same source boundary]
+  Context --> Preserve[Complete ranking / case state / saved evidence unchanged]
+  Check --> Fallback[Explicit fallback on provider failure]
+```
+
+Quick diagnosis keeps its source/JSON contract but requests at most60words and
+512tokens; malformed structured fragments are withheld. Complete legacy plain
+prose remains compatible. Runtime prompt/cache versions change; published frozen
+question/abstention/model-comparison methods and generation budgets do not.

@@ -1,0 +1,7 @@
+{
+  "status": "experimental",
+  "selection_year": 2024,
+  "ranker_version": "mid_heuristic-v1",
+  "purpose": "Synthetic integration fixture only. Forces questions for verification; not a selected operating point or research result.",
+  "parameters": {"tau_answer": 1.0, "g_min": 0.000001, "n_min": 2, "max_questions": 3}
+}

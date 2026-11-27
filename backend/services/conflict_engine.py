@@ -19,24 +19,16 @@ recorded T7 evaluation. Runtime callers pass settings.MAINT_CONFIDENCE_THRESHOLD
 import json
 import logging
 import os
-from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
-from services.conflict_screen import text_overlap_features
+from integrity import apply
+from integrity.candidates import PAIR_WEIGHTS, rank_candidates
+from integrity.citations import parse_citations
+from integrity.classify import VALID_LABELS, classify_pair, parse_classification
+from integrity.prompts import PROMPT_VERSION, system_prompt
 
 logger = logging.getLogger(__name__)
-
-# ---------------------------------------------------------------------------
-# Candidate pairing weights — ONE dict, ONE comment per weight.
-# Change here; nowhere else.
-# ---------------------------------------------------------------------------
-PAIR_WEIGHTS: dict[str, int] = {
-    "same_part_name": 3,   # Same PartName → strong match signal
-    "same_jasc_code": 2,   # Same JASCCode (ATA chapter) → probable same system
-    "same_part_location": 1,  # Same PartLocation → moderate signal
-    "within_30_days": 1,   # DifficultyDate within 30 days → temporal proximity
-}
 
 # ---------------------------------------------------------------------------
 # Confidence scoring weights — one weight per signal, one comment per line.
@@ -61,6 +53,9 @@ WEIGHTS_NO_CITATION: dict[str, float] = {
 
 # Fallback aligned with config.py and .env.example. The evaluation in
 # docs/evaluation_results.md selected 0.50; do not change without rerunning it.
+# Stored beside every proposal so a later, calibrated model can be told apart from this one.
+INTEGRITY_MODEL_VERSION = "handweighted-v0"
+
 MAINT_CONFIDENCE_THRESHOLD: float = float(
     os.environ.get("MAINT_CONFIDENCE_THRESHOLD", "0.50")
 )
@@ -73,29 +68,9 @@ MAINT_MAX_CANDIDATES: int = int(
 # Pre-registered on the 141-pair development set before held-out evaluation.
 CASCADE_SCREEN_THRESHOLD: float = 0.79
 
-# Classification labels returned by the LLM
-_VALID_LABELS = frozenset(
-    ["no_conflict", "scope_disjoint", "supersedes", "partial_supersedes", "contradicts"]
-)
-
-# System prompt for conflict classification
-_CLASSIFICATION_SYSTEM_PROMPT = """You are a technical conflict classifier for aviation maintenance records.
-
-Given a NEW service record and a PRIOR service record for the same aircraft, classify the relationship.
-
-Respond with a JSON object (no markdown, no explanation) with exactly these keys:
-  "label": one of ["no_conflict", "scope_disjoint", "supersedes", "partial_supersedes", "contradicts"]
-  "rationale": a single sentence explaining your reasoning (max 60 words)
-
-Definitions:
-  no_conflict          — records describe unrelated or compatible maintenance events
-  scope_disjoint       — records address different parts/systems despite same aircraft
-  supersedes           — new record explicitly updates or closes the prior record
-  partial_supersedes   — new record addresses the same issue but only partially resolves it
-  contradicts          — records make mutually exclusive claims about the same part/event
-
-Return ONLY the JSON object.
-"""
+# Classification labels and the staging prompt live in integrity; the names stay for importers.
+_VALID_LABELS = VALID_LABELS
+_CLASSIFICATION_SYSTEM_PROMPT = system_prompt(PROMPT_VERSION)
 
 
 # ---------------------------------------------------------------------------
@@ -151,79 +126,13 @@ def find_candidate_pairs(
     # Get the full asset history (ascending by occurred_at)
     history = graph_repo.list_asset_history(asset_id, limit=200)
 
-    # Score each prior record (exclude the target record itself)
-    candidates = []
-    target_occurred = target.get("occurred_at", "")
-    target_submitted = target.get("submitted_at", "")
-
-    for prior in history:
-        prior_id = prior.get("record_id") or prior.get("id")
-        if prior_id == record_id:
-            continue
-            
-        # Prevent leakage: do not score against records from the future
-        prior_occurred = prior.get("occurred_at", "")
-        if prior_occurred and target_occurred and prior_occurred > target_occurred:
-            continue
-        if prior_occurred == target_occurred:
-            if prior.get("submitted_at", "") >= target_submitted:
-                continue
-
-        score = 0
-        # same_part_name
-        if (
-            target.get("part_name", "").strip().lower()
-            and target.get("part_name", "").strip().lower()
-            == prior.get("part_name", "").strip().lower()
-        ):
-            score += PAIR_WEIGHTS["same_part_name"]
-
-        # same_jasc_code
-        if (
-            target.get("jasc_code", "").strip()
-            and target.get("jasc_code", "").strip() == prior.get("jasc_code", "").strip()
-        ):
-            score += PAIR_WEIGHTS["same_jasc_code"]
-
-        # same_part_location
-        if (
-            target.get("part_location", "").strip().lower()
-            and target.get("part_location", "").strip().lower()
-            == prior.get("part_location", "").strip().lower()
-        ):
-            score += PAIR_WEIGHTS["same_part_location"]
-
-        # within_30_days
-        try:
-            d1 = datetime.strptime(prior["occurred_at"], "%Y-%m-%d")
-            d2 = datetime.strptime(target_occurred, "%Y-%m-%d")
-            if abs((d2 - d1).days) <= 30:
-                score += PAIR_WEIGHTS["within_30_days"]
-        except (ValueError, KeyError):
-            pass
-
-        # A same-aircraft record is only comparable when at least one graph-
-        # pruning signal matches. Sending score-zero pairs to the model turns
-        # unrelated history into fake candidates and defeats the documented
-        # no-candidate fast path.
-        if score > 0:
-            candidates.append({"record": prior, "score": score})
-
-    # Stable deterministic ordering: score DESC, date DESC, record_id ASC.
-    candidates.sort(key=lambda c: str(c["record"].get("record_id", "")))
-    candidates.sort(key=lambda c: c["record"].get("occurred_at", ""), reverse=True)
-    candidates.sort(key=lambda c: c["score"], reverse=True)
-
-    if analysis_mode == "cascade":
-        for candidate in candidates:
-            candidate["screen_features"] = text_overlap_features(target, candidate["record"])
-        # Python's stable sort preserves the legacy score/date/id ordering for ties.
-        candidates.sort(
-            key=lambda candidate: candidate["screen_features"]["containment"],
-            reverse=True,
-        )
-
-    result = candidates[:max_candidates]
+    rejected = graph_repo.rejected_prior_ids(record_id)
+    result = rank_candidates(
+        target, history,
+        ordering="containment" if analysis_mode == "cascade" else "legacy",
+        rejected=rejected,
+        max_candidates=max_candidates,
+    )
     logger.info(
         "find_candidate_pairs: record=%r asset=%r history=%d candidates=%d",
         record_id, asset_id, len(history), len(result),
@@ -303,114 +212,22 @@ def classify_conflict(
         logger.info("classify_conflict: CACHE HIT for %s", cache_key)
         return _normalise_cached_classification(cache[cache_key])
 
-    prompt = (
-        f"NEW RECORD (occurred_at={new_record.get('occurred_at', '?')}):\n"
-        f"{new_record.get('text', '')[:800]}\n\n"
-        f"PRIOR RECORD (occurred_at={prior_record.get('occurred_at', '?')}):\n"
-        f"{prior_record.get('text', '')[:800]}"
+    # Legacy preserves the existing configurable pass count.
+    passes = max(1, int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5")))
+    final_result = classify_pair(
+        groq_service, new_record, prior_record,
+        analysis_mode=analysis_mode, passes=passes, budget_manager=budget_manager,
     )
-    
-    # Legacy preserves the existing configurable pass count. Cascade starts
-    # with two votes and buys three more only if the first two do not agree.
-    requested_passes = max(1, int(os.environ.get("MAINT_SELF_CONSISTENCY_PASSES", "5")))
-    requested_passes = 2 if analysis_mode == "cascade" else requested_passes
-    results = []
-    totals = {key: 0 for key in (
-        "prompt_tokens", "completion_tokens", "reasoning_tokens", "total_tokens"
-    )}
+    # Staging's stored and returned shape predates prompt versions; keep it byte for byte.
+    final_result.pop("prompt_version")
 
-    def run_vote() -> None:
-        if budget_manager is not None:
-            budget_manager.before_request(model)
-        usage = {}
-        try:
-            if hasattr(groq_service, "extract_json_with_usage"):
-                response = groq_service.extract_json_with_usage(
-                    prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT
-                )
-                raw = response["content"]
-                usage = response.get("usage") or {}
-            else:
-                raw = groq_service.extract_json(
-                    prompt=prompt, system_prompt=_CLASSIFICATION_SYSTEM_PROMPT
-                )
-        except Exception:
-            if budget_manager is not None:
-                budget_manager.record_request(model, usage)
-            raise
-        if budget_manager is not None:
-            budget_manager.record_request(model, usage)
-        parsed = _parse_classification(raw)
-        parsed["usage"] = usage
-        results.append(parsed)
-        for key in totals:
-            totals[key] += int(usage.get(key) or 0)
-
-    for _ in range(requested_passes):
-        run_vote()
-    if analysis_mode == "cascade":
-        first_labels = [r["label"] for r in results if not r.get("parse_failed")]
-        if len(first_labels) != 2 or first_labels[0] != first_labels[1]:
-            for _ in range(3):
-                run_vote()
-
-    # Majority vote
-    labels = [r["label"] for r in results if not r.get("parse_failed")]
-    if not labels:
-        final_result = {"label": "no_conflict", "rationale": "", "parse_failed": True}
-        top_count = 0
-    else:
-        best_label, top_count = Counter(labels).most_common(1)[0]
-        # Find the first result with this label to get its rationale
-        final_result = {
-            key: value for key, value in next(
-                r for r in results if r["label"] == best_label
-            ).items() if key != "usage"
-        }
-
-    final_result.update({
-        "method": "llm-escalated" if analysis_mode == "cascade" and len(results) == 5 else "llm",
-        "model": model,
-        "passes": len(results),
-        "votes": results,
-        **totals,
-        "vote_agreement": (top_count / len(labels)) if labels else 0.0,
-        "vote_split": bool(labels and top_count <= len(labels) / 2),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "cache_hit": False,
-    })
-        
     # 3. Save to cache
     _save_classification_cache(cache_key, final_result)
         
     return final_result
 
 
-def _parse_classification(raw: str) -> dict:
-    """Parse LLM JSON response.  On failure return no_conflict with parse_failed=True."""
-    text = (raw or "").strip()
-    if text.startswith("```"):
-        text = text.split("\n", 1)[-1]
-        if text.endswith("```"):
-            text = text[:-3]
-    try:
-        data = json.loads(text)
-        label = data.get("label", "no_conflict")
-        if label not in _VALID_LABELS:
-            logger.warning("Invalid label %r from LLM, defaulting to no_conflict", label)
-            label = "no_conflict"
-        return {
-            "label": label,
-            "rationale": data.get("rationale", ""),
-            "parse_failed": False,
-        }
-    except json.JSONDecodeError as exc:
-        logger.warning("classify_conflict parse failure: %s | raw=%r", exc, text[:200])
-        return {
-            "label": "no_conflict",
-            "rationale": "",
-            "parse_failed": True,
-        }
+_parse_classification = parse_classification
 
 
 def adjudicate(new_record: dict, prior_record: dict, classification: dict, adapter) -> dict:
@@ -526,6 +343,125 @@ def route(record: dict, confidence: float, threshold: float, classification: dic
     return "auto_accepted" if confidence >= threshold else "needs_review"
 
 
+def _history_size(graph_repo, target: dict) -> int:
+    asset = graph_repo.find_or_create_asset(target.get("asset_key", ""))
+    return len(graph_repo.list_asset_history(asset["id"]))
+
+
+def _stored_result(graph_repo, target: dict) -> dict:
+    """What a reviewed record already says, returned instead of re-processing it."""
+    prior_id = target.get("proposed_prior_id") or ""
+    label = target.get("classification_label")
+    status = target.get("status")
+    return {
+        "record_id": target["record_id"],
+        "proposed_prior_id": prior_id,
+        "candidates_considered": target.get("candidates_considered") or 0,
+        "history_size": target.get("history_size") or 0,
+        "best_prior": graph_repo.get_service_record(prior_id) if prior_id else None,
+        "classification": (
+            {"label": label, "rationale": target.get("classification_rationale") or "", "parse_failed": False}
+            if label else None
+        ),
+        "adjudication": None,
+        "signals": {},
+        "confidence": target.get("confidence"),
+        "route": status,
+        "parse_failures": 0,
+        "status_applied": status,
+        "analysis_method": target.get("analysis_method"),
+        "skipped": "reviewed",
+    }
+
+
+def _rule_classification(label: str, rationale: str, method: str, model: str, timestamp: str) -> dict:
+    return {
+        "label": label,
+        "rationale": rationale,
+        "parse_failed": False,
+        "method": method,
+        "model": model,
+        "passes": 0,
+        "votes": [],
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "reasoning_tokens": 0,
+        "total_tokens": 0,
+        "timestamp": timestamp,
+    }
+
+
+def _rule_result(
+    graph_repo, target: dict, classification: dict, *, status: str, confidence: float,
+    prior_id: str, dry_run: bool, force: bool, audit,
+) -> dict:
+    """Persist and describe an outcome decided by a rule rather than by the model."""
+    scored_at = classification["timestamp"]
+    history_size = _history_size(graph_repo, target)
+    if not dry_run:
+        apply.drop_stale_model_links(graph_repo, target["record_id"], {prior_id} - {""}, audit=audit)
+        apply.record_analysis(graph_repo, target["record_id"], {
+            "status": status,
+            "analysis_state": "scored",
+            "confidence": confidence,
+            "scored_at": scored_at,
+            "history_size": history_size,
+            "candidate_count": 0,
+            "candidates_considered": 0,
+            "classification_label": classification["label"],
+            "classification_rationale": classification["rationale"],
+            "analysis_model": classification["model"],
+            "analysis_method": classification["method"],
+            "analysis_passes": 0,
+            "analysis_votes_json": "[]",
+            "analysis_prompt_tokens": 0,
+            "analysis_completion_tokens": 0,
+            "analysis_reasoning_tokens": 0,
+            "analysis_total_tokens": 0,
+            "analysed_at": scored_at,
+            "proposed_prior_id": prior_id,
+            "integrity_p": confidence,
+            "integrity_model_version": classification["model"],
+        }, force=force, audit=audit)
+    return {
+        "record_id": target["record_id"],
+        "proposed_prior_id": prior_id,
+        "candidates_considered": 0,
+        "history_size": history_size,
+        "best_prior": graph_repo.get_service_record(prior_id) if prior_id else None,
+        "classification": classification,
+        "adjudication": None,
+        "signals": {},
+        "confidence": confidence,
+        "route": status,
+        "parse_failures": 0,
+        "status_applied": status,
+        "analysis_method": classification["method"],
+    }
+
+
+def _explicit_citation_result(graph_repo, target: dict, linked: list[str], **kwargs) -> dict:
+    cited = ", ".join(linked)
+    classification = _rule_classification(
+        "supersedes", f"The report names {cited} as the report it supplements.",
+        "explicit_citation", "rule-R1", datetime.now(timezone.utc).isoformat(),
+    )
+    return _rule_result(
+        graph_repo, target, classification, status="auto_accepted", confidence=1.0,
+        prior_id=linked[0], **kwargs,
+    )
+
+
+def _cited_prior_missing_result(graph_repo, target: dict, **kwargs) -> dict:
+    classification = _rule_classification(
+        "cited_prior_missing", "The cited report is not in the corpus, so there is nothing to supersede.",
+        "explicit_citation", "rule-R1", datetime.now(timezone.utc).isoformat(),
+    )
+    return _rule_result(
+        graph_repo, target, classification, status="no_action", confidence=0.0, prior_id="", **kwargs,
+    )
+
+
 def process_record(
     graph_repo,
     groq_service,
@@ -536,6 +472,9 @@ def process_record(
     dry_run: bool = False,
     analysis_mode: str | None = None,
     budget_manager=None,
+    *,
+    force: bool = False,
+    audit=None,
 ) -> dict:
     """
     Full conflict-detection pipeline for a single ServiceRecord.
@@ -543,8 +482,12 @@ def process_record(
     §7 guard: raises RuntimeError if groq_service.is_live is False
     and allow_stub is False.  Unit tests MUST pass allow_stub=True.
 
+    A reviewed record is returned untouched (skipped="reviewed") unless force is set; a report that
+    cites an earlier report is linked to it by rule R1 before any candidate search. `audit` is
+    forwarded to integrity.apply, which is the only writer of links and statuses.
+
     Returns:
-      record_id, candidates_considered (int), best_prior (dict|None),
+      record_id, proposed_prior_id (str), candidates_considered (int), best_prior (dict|None),
       classification (dict|None), adjudication (dict|None),
       signals (dict), confidence (float), route (str),
       parse_failures (int), status_applied (str)
@@ -555,6 +498,26 @@ def process_record(
         analysis_mode = settings.MAINT_ANALYSIS_MODE
     if analysis_mode not in ("legacy", "cascade"):
         raise ValueError(f"Unknown maintenance analysis mode: {analysis_mode!r}")
+
+    target = graph_repo.get_service_record(record_id)
+    if target is None:
+        raise ValueError(f"process_record: record {record_id!r} not found in graph")
+
+    # 0. A reviewer's decision is never overwritten by re-processing
+    if apply.is_human_decided(target) and not force and not dry_run:
+        return _stored_result(graph_repo, target)
+
+    # 1. Rule R1: a report that names its prior is linked to it without a model
+    citation_ineligible = None
+    if parse_citations(target.get("text")):
+        citations = apply.apply_explicit_citations(graph_repo, target, dry_run=dry_run, audit=audit)
+        if citations["linked"]:
+            return _explicit_citation_result(
+                graph_repo, target, citations["linked"], dry_run=dry_run, force=force, audit=audit,
+            )
+        if citations["missing"] and not citations["ineligible"]:
+            return _cited_prior_missing_result(graph_repo, target, dry_run=dry_run, force=force, audit=audit)
+        citation_ineligible = citations["ineligible"]
 
     if analysis_mode == "legacy" and not allow_stub and not groq_service.is_live:
         raise RuntimeError(
@@ -572,16 +535,12 @@ def process_record(
         graph_repo, record_id, max_candidates=MAINT_MAX_CANDIDATES,
         analysis_mode=analysis_mode,
     )
-    target = graph_repo.get_service_record(record_id)
-    if target is None:
-        raise ValueError(f"process_record: record {record_id!r} not found in graph")
-        
-    asset = graph_repo.find_or_create_asset(target.get("asset_key", ""))
-    history_size = len(graph_repo.list_asset_history(asset["id"]))
+    history_size = _history_size(graph_repo, target)
 
     if not candidates:
         if not dry_run:
-            graph_repo.update_service_record(record_id, {
+            apply.drop_stale_model_links(graph_repo, record_id, set(), audit=audit)
+            apply.record_analysis(graph_repo, record_id, {
                 "status": "no_action",
                 "analysis_state": "scored",
                 "confidence": 0.0,
@@ -600,9 +559,13 @@ def process_record(
                 "analysis_reasoning_tokens": 0,
                 "analysis_total_tokens": 0,
                 "analysed_at": scored_at,
-            })
-        return {
+                "proposed_prior_id": "",
+                "integrity_p": 0.0,
+                "integrity_model_version": INTEGRITY_MODEL_VERSION,
+            }, force=force, audit=audit)
+        result = {
             "record_id": record_id,
+            "proposed_prior_id": "",
             "candidates_considered": 0,
             "history_size": history_size,
             "best_prior": None,
@@ -619,6 +582,9 @@ def process_record(
             "status_applied": "no_action",
             "analysis_method": "screen",
         }
+        if citation_ineligible is not None:
+            result["citation_ineligible"] = citation_ineligible
+        return result
 
     # 2. Classify against the top candidate
     best = candidates[0]["record"]
@@ -706,22 +672,28 @@ def process_record(
 
     # 7. Apply to graph on confirmed supersession
     action = adjudication_result.get("action")
-    if routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes"):
+    links_best = routing_decision == "auto_accepted" and action in ("supersedes", "partial_supersedes")
+    if not dry_run:
+        apply.drop_stale_model_links(
+            graph_repo, record_id, {best["record_id"]} if links_best else set(), audit=audit,
+        )
+    if links_best:
         if not dry_run:
-            graph_repo.link_record_supersedes(
-                new_record_id=record_id,
-                old_record_id=best["record_id"],
+            apply.link_supersedes(
+                graph_repo, record_id, best["record_id"],
                 scope=action,
                 confidence=confidence,
                 rationale=classification.get("rationale", ""),
+                method="model",
+                model_version=INTEGRITY_MODEL_VERSION,
+                audit=audit,
             )
-            graph_repo.update_service_record(best["record_id"], {"status": "superseded"})
         status_applied = "auto_accepted"
     else:
         status_applied = routing_decision
 
     if not dry_run:
-        graph_repo.update_service_record(record_id, {
+        apply.record_analysis(graph_repo, record_id, {
             "status": status_applied, 
             "analysis_state": "needs_review" if status_applied == "needs_review" else "scored",
             "confidence": confidence,
@@ -741,10 +713,14 @@ def process_record(
             "analysis_reasoning_tokens": classification.get("reasoning_tokens"),
             "analysis_total_tokens": classification.get("total_tokens"),
             "analysed_at": classification.get("timestamp") or scored_at,
-        })
+            "proposed_prior_id": best["record_id"],
+            "integrity_p": confidence,
+            "integrity_model_version": INTEGRITY_MODEL_VERSION,
+        }, force=force, audit=audit)
 
-    return {
+    result = {
         "record_id": record_id,
+        "proposed_prior_id": best["record_id"],
         "candidates_considered": len(candidates),
         "history_size": history_size,
         "best_prior": best,
@@ -757,3 +733,6 @@ def process_record(
         "status_applied": status_applied,
         "analysis_method": classification.get("method", "llm"),
     }
+    if citation_ineligible is not None:
+        result["citation_ineligible"] = citation_ineligible
+    return result

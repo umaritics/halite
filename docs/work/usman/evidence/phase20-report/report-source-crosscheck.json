@@ -1,0 +1,185 @@
+{
+  "report_sha256": "973c510bf3ef375ae0320d9d7a151cdf3464f7982df22118b4c708bc3097462b",
+  "results_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12",
+  "case_counts": {
+    "n_pairs": 157,
+    "n_originals": 140,
+    "before_or_at_selection_label_time_pairs": 0,
+    "unknown_outcome_pairs_excluded": 0,
+    "pair_discards": {
+      "missing_id": 12,
+      "tail_mismatch_or_empty": 2,
+      "nonforward_submission": 1
+    },
+    "true_part_missing_top10": 113
+  },
+  "accepted_stopping_row": {
+    "cohort": "all_attributes",
+    "availability": "primary_all",
+    "stratum": "all",
+    "strategy": "information_gain",
+    "chosen": {
+      "n_pairs": 157,
+      "n_originals": 140,
+      "n_answered": 7,
+      "n_correct_top1": 5,
+      "n_correct_top3": 5,
+      "coverage": 0.044585987261146494,
+      "accuracy_top1": 0.7142857142857143,
+      "accuracy_top3": 0.7142857142857143,
+      "unsupported_suggestion_rate": 0.012738853503184714,
+      "mean_questions": 1.4585987261146496,
+      "abstention_rate": 0.9554140127388535,
+      "ci95": {
+        "coverage": {
+          "low": 0.013157894736842105,
+          "high": 0.08127354452054793,
+          "valid_resamples": 1000
+        },
+        "accuracy_top1": {
+          "low": 0.3333333333333333,
+          "high": 1.0,
+          "valid_resamples": 999
+        },
+        "accuracy_top3": {
+          "low": 0.3333333333333333,
+          "high": 1.0,
+          "valid_resamples": 999
+        },
+        "unsupported_suggestion_rate": {
+          "low": 0.0,
+          "high": 0.03333892617449664,
+          "valid_resamples": 1000
+        },
+        "mean_questions": {
+          "low": 1.3506493506493507,
+          "high": 1.5652378999179657,
+          "valid_resamples": 1000
+        },
+        "abstention_rate": {
+          "low": 0.918726455479452,
+          "high": 0.9868421052631579,
+          "valid_resamples": 1000
+        }
+      }
+    },
+    "abstention_off": {
+      "n_pairs": 157,
+      "n_originals": 140,
+      "n_answered": 157,
+      "n_correct_top1": 31,
+      "n_correct_top3": 40,
+      "coverage": 1.0,
+      "accuracy_top1": 0.19745222929936307,
+      "accuracy_top3": 0.25477707006369427,
+      "unsupported_suggestion_rate": 0.7452229299363057,
+      "mean_questions": 1.4585987261146496,
+      "abstention_rate": 0.0,
+      "ci95": {
+        "coverage": {
+          "low": 1.0,
+          "high": 1.0,
+          "valid_resamples": 1000
+        },
+        "accuracy_top1": {
+          "low": 0.13660404679343063,
+          "high": 0.261771855102392,
+          "valid_resamples": 1000
+        },
+        "accuracy_top3": {
+          "low": 0.1840364603556729,
+          "high": 0.3268511351909184,
+          "valid_resamples": 1000
+        },
+        "unsupported_suggestion_rate": {
+          "low": 0.6731488648090815,
+          "high": 0.815963539644327,
+          "valid_resamples": 1000
+        },
+        "mean_questions": {
+          "low": 1.3506493506493507,
+          "high": 1.5652378999179657,
+          "valid_resamples": 1000
+        },
+        "abstention_rate": {
+          "low": 0.0,
+          "high": 0.0,
+          "valid_resamples": 1000
+        }
+      }
+    },
+    "named_top_ece": {
+      "value": 0.1836441235786424,
+      "ci95": {
+        "low": 0.1311440756304371,
+        "high": 0.2461637233406746,
+        "valid_resamples": 1000
+      },
+      "bins": [
+        {
+          "bin": 0,
+          "n": 18,
+          "support_sum": 0.6144177064548191,
+          "correct_top1": 0
+        },
+        {
+          "bin": 1,
+          "n": 26,
+          "support_sum": 3.8777620954291554,
+          "correct_top1": 0
+        },
+        {
+          "bin": 2,
+          "n": 22,
+          "support_sum": 5.587823127893318,
+          "correct_top1": 3
+        },
+        {
+          "bin": 3,
+          "n": 25,
+          "support_sum": 8.551169386623304,
+          "correct_top1": 4
+        },
+        {
+          "bin": 4,
+          "n": 23,
+          "support_sum": 10.324548029780493,
+          "correct_top1": 8
+        },
+        {
+          "bin": 5,
+          "n": 8,
+          "support_sum": 4.287788726833147,
+          "correct_top1": 2
+        },
+        {
+          "bin": 6,
+          "n": 17,
+          "support_sum": 11.038241163500553,
+          "correct_top1": 4
+        },
+        {
+          "bin": 7,
+          "n": 5,
+          "support_sum": 3.8220244066018125,
+          "correct_top1": 1
+        },
+        {
+          "bin": 8,
+          "n": 6,
+          "support_sum": 5.1320230489241165,
+          "correct_top1": 4
+        },
+        {
+          "bin": 9,
+          "n": 7,
+          "support_sum": 6.596329709806139,
+          "correct_top1": 5
+        }
+      ],
+      "definition": "All terminal cases; named-top support versus exact part-key top-one correctness. Empty rankings: confidence zero and incorrect."
+    }
+  },
+  "validation": "Report main test table cross-checked with retained exact row; source hashes retained. This does not validate human authorship or complete pending measurements.",
+  "report_revision_note": "Updated submission gate after Usman directly confirmed no Mid-I comments/modification requests; measured table and results source unchanged."
+}

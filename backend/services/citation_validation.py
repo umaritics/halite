@@ -27,7 +27,7 @@ def extract_record_id_candidates(text: str) -> list[str]:
     return ordered
 
 
-def validate_citations(text: str, graph_repo) -> dict:
+def validate_citations(text: str, graph_repo, *, allowed_ids: set[str] | None = None) -> dict:
     """
     Verify every extracted ID against the graph.
 
@@ -55,7 +55,7 @@ def validate_citations(text: str, graph_repo) -> dict:
     valid: list[str] = []
     invalid: list[str] = []
     for rid in found:
-        if rid in by_id:
+        if rid in by_id and (allowed_ids is None or rid in allowed_ids):
             valid.append(rid)
         else:
             invalid.append(rid)

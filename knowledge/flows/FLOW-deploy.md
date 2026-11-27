@@ -18,7 +18,7 @@ updated: 2026-10-16
 3. The workflow records the currently deployed SHA for rollback evidence.
 4. GitHub Actions SSHes to the VM, which checks out the approved SHA and
    rebuilds `halite-api` via `docker-compose.vm.yml` (non-root `10001:10001`, read-only rootfs, `noexec` tmpfs).
-5. `scripts/vm/remote_deploy.sh` and the workflow verify that public `/api/health` and `/api/ops/version` show the exact new SHA (`auth_enabled=true`, `openapi_enabled=false`), anonymous `/api/maintenance/assets` returns `401`, `/docs` returns `404`, `/api/webhook/gitea` returns `410`, and authenticated `Bearer <HALITE_API_KEY>` returns `200`.
+5. `scripts/vm/remote_deploy.sh` and the workflow verify that public `/api/health` and `/api/ops/version` show the exact new SHA (`auth_enabled=true`, `openapi_enabled=false`), anonymous `/api/maintenance/assets` returns `401`, `/docs` returns `404`, `/api/webhook/gitea` returns `404`, and authenticated `Bearer <HALITE_API_KEY>` returns `200`.
 6. Frontends using `VITE_API_URL=…/halite-api/api` + `VITE_HALITE_API_KEY` see the new behavior.
 
 ## Log visibility path
@@ -28,6 +28,10 @@ flowchart LR
   Dev[Partner laptop] -->|X-Ops-Token| LogsAPI["GET /api/ops/logs"]
   Dev -->|Actions artifact| GH[fetch-staging-logs.yml]
   GH -->|SSH docker logs| VM[(halite-api container)]
+  GH -->|Optional model-progress target| Observer[Read-only model observer via stdin]
+  Observer --> Model[(halite-ollama)]
+  Model --> Sanitized[Whitelisted state / resources / completed-chat timings]
+  Sanitized --> GH
   LogsAPI --> Ring[In-process ring buffer]
   VM --> API[FastAPI]
   Ring --> API
@@ -62,3 +66,24 @@ flowchart TB
 | Frontend CI is red | Deployment remains blocked; fix on Shahmeer's branch, never bypass the gate |
 | Manual SHA is not a `main` ancestor | Dispatch fails before SSH |
 | Rollback needed | Use the recorded prior SHA, `rollback` + `ROLLBACK`, successful CI, and environment approval |
+
+After full legacy retirement, `/api/webhook/gitea` is unregistered and returns
+404. Both VM-local and public release probes require404; they no longer expect
+the earlier disabled-handler410. A cross-layer test compares both release
+expectations with the actual router response. Authenticated/anonymous asset,
+closed docs, PostgreSQL and exact-version checks remain unchanged.
+
+
+## Read-only research operation alongside releases
+
+The manual staging-model-reference workflow is not a deployment. Exact-source
+main CI and the currently deployed SHA must agree before any model call. It
+inspects private configuration/container metadata, temporarily forwards only a
+hosted-runner loopback socket, runs the fixed reference prompts and verifies
+unchanged release/corpus/container state afterwards. Secrets are never output
+artifacts. No existing release/auth/security/version gate is bypassed.
+
+The log workflow's separate model-progress target observes the existing model
+without new calls or deployment. It cannot attribute bounded historical request
+lines to research cases; the experiment's own artifact remains authoritative.
+Strict parsing and output whitelists exclude unknown/log/environment fields.

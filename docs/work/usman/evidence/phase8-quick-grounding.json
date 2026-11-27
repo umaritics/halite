@@ -1,0 +1,11 @@
+{
+  "source": "Synthetic fixture, real local API/databases, fallback model",
+  "llm_status": "unavailable",
+  "status": "thresholds_pending",
+  "checked_with": "lexical",
+  "focused_citation": "QBRW2023010100000",
+  "saved_narrative_exact": true,
+  "sentence_count": 4,
+  "unsupported_count": 0,
+  "browser_errors": []
+}

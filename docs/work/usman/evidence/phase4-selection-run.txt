@@ -1,0 +1,7 @@
+Ranked 406 fit cases
+Ranked 389 selection cases
+{
+  "n_fit": 406,
+  "n_select": 389,
+  "elapsed_seconds": 148.104680079
+}

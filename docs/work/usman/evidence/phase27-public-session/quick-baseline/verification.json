@@ -1,0 +1,12 @@
+{
+  "state": "failed_live_model_gate",
+  "source_sha": "db574acadd4caf5cf60be45559708c82319711a6",
+  "model_calls": "one quick-diagnose request; no retries",
+  "corpus_writes": false,
+  "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+  "symptom_text": "Synthetic acceptance scenario 27: hydraulic pressure drops during taxi.",
+  "wall_seconds": 131.04524156499974,
+  "live_explanation_verified": false,
+  "ranked_checks_count": 10,
+  "logout": "confirmed"
+}

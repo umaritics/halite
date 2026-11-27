@@ -21,6 +21,7 @@ import logging
 import os
 import re
 import time
+import tempfile
 import uuid
 from pathlib import Path
 from typing import Optional
@@ -31,7 +32,12 @@ from pydantic import BaseModel, Field, field_validator
 from api.deps import get_graph_repo, get_groq_service, get_settings
 from api.security import require_llm_rate_limit
 from services.citation_validation import validate_citations
-from services.diagnostic_retrieval import (
+from investigation.grounding_runtime import annotate_diagnose, load_configuration
+from investigation.beliefs import score_beliefs
+from investigation.policy import decide
+from investigation.prose import build_reply_prompt, MAX_REPLY_TOKENS
+from investigation.ranker_port import MID_VERSION
+from investigation.ranker_port import (
     build_diagnostic_context,
     build_copilot_context,
     rank_diagnostic_checks,
@@ -55,6 +61,7 @@ router = APIRouter(
 class DiagnoseRequest(BaseModel):
     asset_id: str
     symptom_text: str
+    allow_degraded: bool = False
 
 
 class ChatRequest(BaseModel):
@@ -95,9 +102,12 @@ def _cache_path() -> Path:
     return Path(settings.MAINT_DATA_DIR) / "diag_cache" / "cache.json"
 
 
-def _cache_key(asset_id: str, symptom: str, model: str) -> str:
+def _cache_key(asset_id: str, symptom: str, model: str, *, record_count: int = 0,
+               ranker_mode: str = "mid_heuristic", context: dict | None = None) -> str:
     normalised = re.sub(r"\s+", " ", symptom.strip().lower())
-    raw = f"{asset_id}|{normalised}|{model}"
+    from investigation.prompts import PROMPT_VERSION
+    fingerprint = json.dumps(context or {}, sort_keys=True, default=str)
+    raw = f"{asset_id}|{normalised}|{model}|{record_count}|{ranker_mode}|{PROMPT_VERSION}|{fingerprint}"
     return hashlib.sha256(raw.encode()).hexdigest()[:16]
 
 
@@ -106,7 +116,8 @@ def _load_cache() -> dict:
     if p.exists():
         try:
             with open(p, encoding="utf-8") as f:
-                return json.load(f)
+                payload = json.load(f)
+                return payload if isinstance(payload, dict) else {}
         except Exception:
             pass
     return {}
@@ -116,8 +127,10 @@ def _save_cache(cache: dict) -> None:
     p = _cache_path()
     try:
         p.parent.mkdir(parents=True, exist_ok=True)
-        with open(p, "w", encoding="utf-8") as f:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=p.parent, delete=False) as f:
+            temporary = Path(f.name)
             json.dump(cache, f, indent=2)
+        temporary.replace(p)
     except OSError as exc:
         logger.warning("Diagnostic cache unavailable; continuing without persistence: %s", exc)
 
@@ -161,12 +174,13 @@ def _build_prompt(context: dict, ranked: list[dict]) -> str:
         f"CONTEXT: Answered from {n_asset} records on this asset and "
         f"{n_fleet} fleet-wide matches across {n_assets} assets.\n\n"
         f"Instructions:\n"
-        f"1. Explain in plain language WHY each component is ranked there, "
+        f"1. Explain WHY each component is ranked there in one short clause, "
         f"citing ONLY record IDs from the lists above.\n"
+        f"Keep the entire explanation at most 60 words; do not invent causes or procedures.\n"
         f"2. Highlight any fleet cases that provide rare prior evidence.\n"
         f"3. Mark clearly any superseded records — do not recommend acting on them.\n"
         f"4. Do NOT invent record IDs. Use ONLY the IDs provided above.\n"
-        f"5. Respond in JSON: "
+        f"5. Return at most two rare_cases and two short warnings. Respond in JSON: "
         f'{{"explanation": "...", "rare_cases": ["record_id", ...], '
         f'"warnings": ["..."]}}'
     )
@@ -218,6 +232,7 @@ def _extract_case_facts(groq_service, current: dict, message: str) -> tuple[dict
             [{"role": "user", "content": prompt}],
             system_prompt="Return only strict JSON. Do not add markdown.",
             max_tokens=1200,
+            json_mode=True,
         )
         parsed = _parse_json_object(raw)
         additions = {}
@@ -344,40 +359,6 @@ def _limit_to_one_question(text: str) -> str:
             output.append(char)
     return "".join(output)
 
-    fleet_str = "\n".join(
-        f"  [{r['record_id']}] {r.get('part_name','')} "
-        f"- {r.get('text','')[:80]} "
-        f"({'SUPERSEDED' if r.get('is_superseded') else 'active'})"
-        for r in context["fleet_matches"][:5]
-    )
-
-    history_str = "\n".join(
-        f"  [{r['record_id']}] {r.get('occurred_at','')} "
-        f"{r.get('part_name','')} "
-        f"({'SUPERSEDED' if r.get('is_superseded') else r.get('status','')})"
-        for r in context["asset_history"][:5]
-    )
-
-    return (
-        f"You are a maintenance diagnostic assistant. A technician has reported:\n"
-        f'Symptom: "{symptom}"\n'
-        f"Asset: {asset_id}\n\n"
-        f"The graph has pre-ranked the most likely components:\n{ranked_str}\n\n"
-        f"Recent asset history (newest first):\n{history_str}\n\n"
-        f"Fleet-wide matches from {n_assets} other aircraft:\n{fleet_str}\n\n"
-        f"CONTEXT: Answered from {n_asset} records on this asset and "
-        f"{n_fleet} fleet-wide matches across {n_assets} assets.\n\n"
-        f"Instructions:\n"
-        f"1. Explain in plain language WHY each component is ranked there, "
-        f"citing ONLY record IDs from the lists above.\n"
-        f"2. Highlight any fleet cases that provide rare prior evidence.\n"
-        f"3. Mark clearly any superseded records — do not recommend acting on them.\n"
-        f"4. Do NOT invent record IDs. Use ONLY the IDs provided above.\n"
-        f"5. Respond in JSON: "
-        f'{{"explanation": "...", "rare_cases": ["record_id", ...], '
-        f'"warnings": ["..."]}}'
-    )
-
 
 # ---------------------------------------------------------------------------
 # Endpoint: /diagnose
@@ -395,39 +376,41 @@ def diagnose(
     Body: {asset_id, symptom_text}
     Returns: {ranked_checks, evidence, rare_cases, context_size, citation_validation}
     """
-    # 1. Cache check
-    cache = _load_cache()
-    ck = _cache_key(req.asset_id, req.symptom_text, groq_service.model)
-    in_test = "PYTEST_CURRENT_TEST" in os.environ
-
-    if ck in cache and not in_test:
-        logger.info("diagnose: CACHE HIT %s", ck)
-        return cache[ck]
-
-    # 2. Fail loud if LLM not live (no cache)
-    if not groq_service.is_live:
-        raise HTTPException(
-            status_code=503,
-            detail=(
-                "Groq LLM is not configured (is_live=False). "
-                "Cannot produce a diagnostic without a live model. "
-                "Set GROQ_API_KEY in .env and restart."
-            ),
-        )
-
-    # 3. Build context (pure graph — no LLM)
+    from investigation.explain import templated_explanation
     t0 = time.time()
+    grounding_configuration=load_configuration(settings)
     context = build_diagnostic_context(graph_repo, req.asset_id, req.symptom_text)
-
-    if not context["asset_history"]:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No history found for asset_id={req.asset_id}. "
-                   "Check the ID or ensure the corpus is ingested.",
-        )
-
-    # 4. Rank components (pure graph — no LLM; see rank_diagnostic_checks)
     ranked = rank_diagnostic_checks(context)
+    cache = _load_cache()
+    ck = _cache_key(req.asset_id, req.symptom_text, groq_service.model,
+                    record_count=graph_repo.count_service_records(),
+                    ranker_mode=settings.RETRIEVAL_MODE, context=context)
+    in_test = "PYTEST_CURRENT_TEST" in os.environ
+    cached = cache.get(ck)
+    if not in_test and isinstance(cached, dict) and str(cached.get('explanation') or '').strip():
+        return annotate_diagnose(cached,context,ranked,settings,configuration=grounding_configuration)
+
+    def degraded(reason):
+        if not req.allow_degraded:
+            raise HTTPException(status_code=503, detail=reason)
+        if not context['asset_history']:
+            raise HTTPException(404, f"No history found for asset_id={req.asset_id}.")
+        evidence = _collect_evidence(context, ranked)
+        degraded_result = {
+            'asset_id': req.asset_id, 'symptom_text': req.symptom_text,
+            'ranked_checks': ranked[:10], 'evidence': evidence, 'rare_cases': [],
+            'explanation': None, 'fallback_explanation': templated_explanation(ranked, evidence),
+            'context_size': {**context['context_size'], 'wall_clock_s': round(time.time() - t0, 2)},
+            'citation_validation': {'valid_ids': [], 'invalid_ids': [], 'all_valid': True},
+            'llm_status': 'unavailable',
+            'warnings': ['Language model unavailable; showing historical ranking and a deterministic explanation.'],
+        }
+        return annotate_diagnose(degraded_result,context,ranked,settings,configuration=grounding_configuration)
+
+    if not groq_service.is_live:
+        return degraded('Groq LLM is not configured (is_live=False). Cannot produce a diagnostic without a live model.')
+    if not context['asset_history']:
+        raise HTTPException(404, f"No history found for asset_id={req.asset_id}.")
 
     # 5. Build prompt and call LLM only to phrase the answer
     prompt = _build_prompt(context, ranked)
@@ -439,28 +422,36 @@ def diagnose(
                 "Respond ONLY with valid JSON as instructed. "
                 "Never invent record IDs."
             ),
-            max_tokens=2048,
+            max_tokens=512,
+            json_mode=True,
         )
     except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
+        return degraded(str(exc))
 
     # 6. Parse LLM JSON
+    cleaned = ''
     try:
         # Strip markdown fences if present
         cleaned = re.sub(r"^```[a-z]*\n?", "", raw_llm.strip(), flags=re.MULTILINE)
         cleaned = re.sub(r"```$", "", cleaned.strip())
         llm_json = json.loads(cleaned, strict=False)
     except Exception:
+        if cleaned.lstrip().startswith('{'):
+            return degraded('The model returned malformed structured content; no partial JSON explanation was emitted.')
         llm_json = {"explanation": raw_llm, "rare_cases": [], "warnings": []}
+    if not isinstance(llm_json, dict):
+        return degraded('The model returned a non-object structured explanation; no substitute fields were invented.')
 
     # 7. Citation validation — mandatory
     explanation_text = llm_json.get("explanation", raw_llm)
-    if explanation_text is None or not str(explanation_text).strip():
-        raise HTTPException(
-            status_code=503,
-            detail="The language model returned an empty explanation; no blank diagnosis was emitted.",
-        )
-    citation_result = validate_citations(explanation_text, graph_repo)
+    if not isinstance(explanation_text, str) or not explanation_text.strip():
+        return degraded("The language model returned an empty explanation; no blank diagnosis was emitted.")
+    # Match the bounded lists actually present in _build_prompt, not all retrieved rows.
+    allowed_ids = {str(r.get('record_id')) for r in [
+        *context.get('asset_history', [])[:5], *context.get('fleet_matches', [])[:5],
+    ]}
+    allowed_ids.update(rid for item in ranked[:5] for rid in item.get('evidence_record_ids', [])[:3])
+    citation_result = validate_citations(explanation_text, graph_repo, allowed_ids=allowed_ids)
 
     # 8. Collect evidence records
     all_cited_ids = citation_result["valid"]
@@ -479,8 +470,12 @@ def diagnose(
 
     # 9. Rare cases
     rare_case_ids = llm_json.get("rare_cases", [])
+    if not isinstance(rare_case_ids, list):
+        rare_case_ids = []
     rare_cases = []
     for rid in rare_case_ids:
+        if rid not in allowed_ids:
+            continue
         rec = graph_repo.get_service_record(rid)
         if rec:
             rare_cases.append({
@@ -512,6 +507,8 @@ def diagnose(
         "warnings": llm_json.get("warnings", []),
     }
 
+    result = annotate_diagnose(result,context,ranked,settings,configuration=grounding_configuration)
+
     # 10. Cache result
     if not in_test:
         cache[ck] = result
@@ -531,6 +528,11 @@ def copilot_turn(
     groq_service=Depends(get_groq_service),
 ):
     """Advance a stateless, evidence-grounded diagnostic case by one turn."""
+    return _run_copilot_turn(req, graph_repo, groq_service)
+
+
+def _run_copilot_turn(req, graph_repo, groq_service, *, write_reply=True):
+    """Shared extraction/ranking; managed sessions own their final explanation."""
     if req.asset_id and not _asset_exists(graph_repo, req.asset_id):
         raise HTTPException(status_code=404, detail=f"Unknown asset_id={req.asset_id}")
 
@@ -586,56 +588,30 @@ def copilot_turn(
 
     reply = None
     citation_result = {"valid": [], "invalid": [], "flagged_text": ""}
-    if llm_status != "unavailable":
+    prose_context = None
+    if write_reply and llm_status != "unavailable":
         if not evidence:
             reply = "No relevant service history was found for the accumulated case."
             llm_status = "not_needed"
         else:
             report_mode = bool(selected_records)
-            evidence_payload = [
-                {
-                    "record_id": item["record_id"],
-                    "asset_id": item["asset_id"],
-                    "occurred_at": item["occurred_at"],
-                    "part_name": item["part_name"],
-                    "status": item["status"],
-                    "is_superseded": item["is_superseded"],
-                    "text": item["text"][:700],
-                }
-                for item in evidence
-            ]
-            prompt = (
-                "Write the next diagnostic-copilot reply using ONLY EVIDENCE below. "
-                "Cite record IDs exactly. Do not invent procedures, root causes, or facts. "
-                "Superseded records are historical context only: label them and NEVER recommend acting on them. "
-                "Ask at most ONE clarifying question, only when key information is missing. "
-                "Describe ranking changes from RANKING_DELTA. "
-                + (
-                    "This is a report-help request. Use headings 'Records state' and 'Interpretation'. "
-                    "Say explicitly when root cause or another requested fact is not in the data. "
-                    if report_mode else ""
-                )
-                + f"\nTECHNICIAN_MESSAGE: {req.message}"
-                + f"\nCASE_STATE: {json.dumps(case_state, ensure_ascii=False)}"
-                + f"\nRANKED_CHECKS: {json.dumps(ranked[:10], ensure_ascii=False)}"
-                + f"\nRANKING_DELTA: {json.dumps(delta, ensure_ascii=False)}"
-                + f"\nEVIDENCE: {json.dumps(evidence_payload, ensure_ascii=False)}"
-            )
             try:
+                prompt, prose_context = build_reply_prompt(message=req.message, ranked=ranked,
+                    delta=delta, evidence=evidence, report_mode=report_mode)
                 raw_reply = groq_service.chat(
                     [{"role": "user", "content": prompt}],
                     system_prompt=(
                         "You are an evidence-grounded aircraft maintenance assistant. "
                         "Never present a superseded record as a recommendation."
                     ),
-                    max_tokens=2400,
+                    max_tokens=MAX_REPLY_TOKENS,
                 )
                 if raw_reply is None or not str(raw_reply).strip():
                     raise RuntimeError("The language model returned empty content.")
                 raw_reply = _limit_to_one_question(str(raw_reply).strip())
                 citation_result = validate_citations(raw_reply, graph_repo)
 
-                allowed_ids = {item["record_id"] for item in evidence}
+                allowed_ids = set(prose_context['evidence_record_ids'])
                 out_of_context = [
                     rid for rid in citation_result["valid"] if rid not in allowed_ids
                 ]
@@ -651,13 +627,17 @@ def copilot_turn(
                         flagged = flagged.replace(record_id, f"[UNVERIFIED:{record_id}]")
                     citation_result["flagged_text"] = flagged
                 reply = citation_result["flagged_text"]
+                prose_context['accepted_as_reply'] = True
+                if prose_context['excerpted_record_ids'] or len(prose_context['evidence_record_ids']) < len(evidence):
+                    warnings.append(f"Model phrasing uses {len(prose_context['evidence_record_ids'])} of {len(evidence)} saved evidence records as excerpts; inspect saved evidence for complete narratives.")
             except Exception as exc:
                 logger.warning("Copilot reply unavailable: %s", exc)
                 warnings.append(f"Language model unavailable: {exc}")
                 llm_status = "unavailable"
                 reply = None
 
-    return {
+    beliefs = score_beliefs(ranked[:10], ranker_version=MID_VERSION)
+    result = {
         "session_id": req.session_id or str(uuid.uuid4()),
         "reply": reply,
         "case_state": case_state,
@@ -670,8 +650,15 @@ def copilot_turn(
             "all_valid": len(citation_result["invalid"]) == 0,
         },
         "llm_status": llm_status,
+        "prose_context": prose_context,
         "warnings": _dedupe_strings(warnings),
+        "beliefs": beliefs,
+        **decide(beliefs),
+        "ranker_mode": "mid_heuristic", "ranker_version": MID_VERSION,
     }
+    if not write_reply:
+        result['report_mode'] = bool(selected_records)
+    return result
 
 
 # ---------------------------------------------------------------------------

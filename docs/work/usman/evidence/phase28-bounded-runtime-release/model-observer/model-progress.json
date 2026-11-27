@@ -1,0 +1,178 @@
+{
+  "schema": "halite-model-progress-v1",
+  "observed_at_utc": "2026-11-22T06:23:04.932979+00:00",
+  "container": {
+    "id": "73b89ac7a6079dfc89aca774a581d90dbef146475d28e794fb0f1f8092442f7d",
+    "running": true,
+    "oom_killed": false,
+    "restarts": 0,
+    "memory_limit": 4294967296,
+    "nano_cpus": 2000000000
+  },
+  "resources": {
+    "CPUPerc": "199.87%",
+    "MemUsage": "3.383GiB / 4GiB",
+    "MemPerc": "84.59%",
+    "PIDs": "36"
+  },
+  "recent_chat_completions": [
+    {
+      "server_log_time": "2026/11/22 - 04:20:21",
+      "status": 200,
+      "duration": "8.79594274s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:21:47",
+      "status": 200,
+      "duration": "1m25s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:22:20",
+      "status": 200,
+      "duration": "33.717982499s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:25:21",
+      "status": 500,
+      "duration": "3m0s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:26:00",
+      "status": 200,
+      "duration": "39.639339753s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:27:16",
+      "status": 200,
+      "duration": "1m14s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:30:16",
+      "status": 500,
+      "duration": "2m59s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:30:45",
+      "status": 200,
+      "duration": "29.478942985s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:31:19",
+      "status": 200,
+      "duration": "33.470990664s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:33:00",
+      "status": 200,
+      "duration": "1m41s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:33:39",
+      "status": 200,
+      "duration": "38.05952225s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:34:15",
+      "status": 200,
+      "duration": "36.282221592s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:37:15",
+      "status": 500,
+      "duration": "2m59s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:38:05",
+      "status": 200,
+      "duration": "49.494036235s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:38:50",
+      "status": 200,
+      "duration": "45.263474799s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:41:50",
+      "status": 500,
+      "duration": "2m59s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:42:17",
+      "status": 200,
+      "duration": "26.290152473s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:44:01",
+      "status": 200,
+      "duration": "1m43s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:47:01",
+      "status": 500,
+      "duration": "2m59s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:47:28",
+      "status": 200,
+      "duration": "27.122471507s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:48:37",
+      "status": 200,
+      "duration": "1m8s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:51:23",
+      "status": 200,
+      "duration": "2m45s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:51:57",
+      "status": 200,
+      "duration": "34.369789312s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:54:58",
+      "status": 500,
+      "duration": "2m59s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:55:25",
+      "status": 200,
+      "duration": "26.807469061s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:56:07",
+      "status": 200,
+      "duration": "42.280985038s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:57:06",
+      "status": 200,
+      "duration": "58.358999334s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 04:59:53",
+      "status": 200,
+      "duration": "2m47s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 05:00:22",
+      "status": 200,
+      "duration": "28.599843476s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 05:02:32",
+      "status": 200,
+      "duration": "2m10s"
+    },
+    {
+      "server_log_time": "2026/11/22 - 05:03:19",
+      "status": 200,
+      "duration": "46.885490784s"
+    }
+  ],
+  "log_tail_limit": 2000,
+  "writes_or_inference": false,
+  "interpretation": "Recent server activity only; requests cannot be attributed to a particular research case. Missing parsed lines do not prove a stopped job."
+}

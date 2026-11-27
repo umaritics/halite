@@ -1,0 +1,7 @@
+{
+  "broad_line_rate": 0.757,
+  "lines_valid": 4888,
+  "lines_covered": 3700,
+  "scope": "api, agents, services, graph, db, investigation (including retained legacy)",
+  "nfr_80_percent_met": false
+}

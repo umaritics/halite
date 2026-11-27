@@ -1,0 +1,39 @@
+Frontend tests and build (Node 20)	Run frontend tests	2026-11-21T13:30:04.4114029Z ^[[2m      Tests ^[[22m ^[[1m^[[32m283 passed^[[39m^[[22m^[[90m (283)^[[39m
+Docker Compose real-graph smoke test	Verify persisted sessions and degraded turns	﻿2026-11-21T13:31:03.8161357Z ##[group]Run docker compose exec -T -e SESSION_SMOKE_BASE_URL=http://127.0.0.1:8000 -e SESSION_SMOKE_ADMIN_EMAIL=admin@halite.local -e SESSION_SMOKE_ADMIN_PASSWORD=HaliteDevAdmin2026 -e SESSION_SMOKE_FIXTURE_PATH=/app/tests/fixtures/mid1_smoke.csv backend python scripts/verify_sessions_runtime.py
+Docker Compose real-graph smoke test	Verify persisted sessions and degraded turns	2026-11-21T13:31:03.8162425Z ^[[36;1mdocker compose exec -T -e SESSION_SMOKE_BASE_URL=http://127.0.0.1:8000 -e SESSION_SMOKE_ADMIN_EMAIL=admin@halite.local -e SESSION_SMOKE_ADMIN_PASSWORD=HaliteDevAdmin2026 -e SESSION_SMOKE_FIXTURE_PATH=/app/tests/fixtures/mid1_smoke.csv backend python scripts/verify_sessions_runtime.py^[[0m
+Docker Compose real-graph smoke test	Verify research product charts in the real browser	2026-11-21T13:31:47.9391479Z       "accepted_2024_marker": true,
+Docker Compose real-graph smoke test	Verify research product charts in the real browser	2026-11-21T13:31:47.9392760Z       "undefined_coded_control": true,
+Docker Compose real-graph smoke test	Verify research product charts in the real browser	2026-11-21T13:31:47.9413404Z       "accepted_2024_marker": true,
+Docker Compose real-graph smoke test	Verify research product charts in the real browser	2026-11-21T13:31:47.9413771Z       "undefined_coded_control": true,
+Backend tests (Python 3.11)	Initialize containers	2026-11-21T13:29:59.5281809Z ##[command]/usr/bin/docker create --name da1ada629e5b44f592d9a996264ebe90_neo4j5community_0f4e0d --label b7400f --network github_network_5299bfab02a6433d96a491b6b7604b72 --network-alias neo4j -p 7687:7687 --health-cmd "cypher-shell -u neo4j -p test-password 'RETURN 1'" --health-interval 10s --health-timeout 5s --health-retries 12 -e "NEO4J_AUTH=neo4j/test-password" -e GITHUB_ACTIONS=true -e CI=true neo4j:5-community
+Backend tests (Python 3.11)	Run actions/checkout@v4	2026-11-21T13:30:16.3531071Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Run actions/checkout@v4	2026-11-21T13:30:16.3531295Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Run actions/checkout@v4	2026-11-21T13:30:16.3531496Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Run actions/setup-python@v5	2026-11-21T13:30:17.9159287Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Run actions/setup-python@v5	2026-11-21T13:30:17.9159505Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Run actions/setup-python@v5	2026-11-21T13:30:17.9159690Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Install backend dependencies	2026-11-21T13:30:21.0681505Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Install backend dependencies	2026-11-21T13:30:21.0681740Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Install backend dependencies	2026-11-21T13:30:21.0681938Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Lint runtime errors	2026-11-21T13:30:35.4424652Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Lint runtime errors	2026-11-21T13:30:35.4425222Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Lint runtime errors	2026-11-21T13:30:35.4425474Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Lint runtime errors	2026-11-21T13:30:35.4891130Z All checks passed!
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T13:30:35.4963557Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T13:30:35.4963772Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T13:30:35.4963971Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T13:32:08.5567591Z TOTAL                                                    6433   1169  81.83%
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T13:32:08.5568305Z Required test coverage of 80% reached. Total coverage: 81.83%
+Backend tests (Python 3.11)	Run backend tests with coverage	2026-11-21T13:32:08.5568620Z 499 passed, 4 warnings in 91.50s (0:01:31)
+Backend tests (Python 3.11)	Validate frozen research choice without held-out access	2026-11-21T13:32:09.0868733Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Validate frozen research choice without held-out access	2026-11-21T13:32:09.0868974Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Validate frozen research choice without held-out access	2026-11-21T13:32:09.0869177Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:32:09.2579995Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:32:09.2580216Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:32:09.2580412Z   NEO4J_PASSWORD: test-password
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:32:28.1868637Z   "independent_held_out_point_metrics": "PASS",
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:32:28.1888608Z   "all_question_and_stopping_intervals_replayed": "PASS",
+Backend tests (Python 3.11)	Replay retained frozen held-out results without source downloads	2026-11-21T13:32:28.1918495Z   "tables_verified": 72,
+Backend tests (Python 3.11)	Upload backend verification reports	2026-11-21T13:32:28.2113298Z   NEO4J_URI: bolt://localhost:7687
+Backend tests (Python 3.11)	Upload backend verification reports	2026-11-21T13:32:28.2113504Z   NEO4J_USERNAME: neo4j
+Backend tests (Python 3.11)	Upload backend verification reports	2026-11-21T13:32:28.2113691Z   NEO4J_PASSWORD: test-password

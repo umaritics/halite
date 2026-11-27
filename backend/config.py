@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     LLM_REQUEST_TIMEOUT_S: float = 120.0
 
     # Deprecated: self-hosted Gitea was retired after the Nov 2026 VM incident.
-    # Routes fail closed (410 Gone) unless ENABLE_GITEA_INTEGRATION=true.
+    # Compatibility settings only: retired routes are unregistered regardless of this flag.
     ENABLE_GITEA_INTEGRATION: bool = False
     GITEA_BASE_URL: str = ""
     GITEA_TOKEN: str = ""
@@ -80,6 +80,18 @@ class Settings(BaseSettings):
     MAINT_BUDGET_UTILIZATION: float = 0.90
     MAINT_BUDGET_TOKEN_RESERVE: int = 1000
     MAINT_BUDGET_STATE_FILE: str = ""          # defaults to MAINT_DATA_DIR/analysis_budget.json
+
+    # --- RETRIEVAL_ ---
+    RETRIEVAL_MODE: str = "mid_heuristic"
+
+    # --- INTEGRITY_ ---
+    # Reserved for the integrity owner's additive settings.
+
+    # --- SESSION_ ---
+    SESSION_QUESTIONS_ENABLED: bool = False
+    # Explicit reviewable operating-point file; enabling without it fails closed.
+    SESSION_POLICY_FILE: str = ""
+    SESSION_GROUNDING_FILE: str = ""  # No guessed thresholds or implicit whitelist.
 
     @property
     def neo4j_configured(self) -> bool:

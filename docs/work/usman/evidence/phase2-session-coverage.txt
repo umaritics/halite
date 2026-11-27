@@ -1,0 +1,136 @@
+......................                                                   [100%]
+=============================== warnings summary ===============================
+../../../../../../../tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41
+  /tmp/halite-phase1-venv/lib/python3.12/site-packages/starlette/testclient.py:41: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    [], typing.ContextManager[anyio.abc.BlockingPortal]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+---------- coverage: platform linux, python 3.12.3-final-0 -----------
+Name                                                 Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------------
+backend/agents/__init__.py                               0      0   100%
+backend/agents/base_agent.py                             8      3    62%   6-7, 11
+backend/agents/code_agent.py                            58     44    24%   16-59, 62-93, 96-111, 114, 117, 120
+backend/agents/decision_agent.py                        11      7    36%   8-27
+backend/agents/document_agent.py                        49     39    20%   17-60, 63-76, 79-86
+backend/agents/gitea_agent.py                          128    113    12%   14-17, 20-24, 27-50, 53-90, 93-108, 114-159, 162-175, 178-225
+backend/agents/maintenance_agent.py                     96     83    14%   46-53, 66-67, 75-95, 108-226, 243-247, 261-281
+backend/api/__init__.py                                  0      0   100%
+backend/api/deps.py                                      9      0   100%
+backend/api/router.py                                   28      0   100%
+backend/api/routes/__init__.py                           0      0   100%
+backend/api/routes/alerts.py                            12      5    58%   10, 15-18
+backend/api/routes/auth.py                             240    137    43%   117, 143-148, 184-186, 201-224, 236-242, 254-255, 281-282, 297-303, 313-342, 354-361, 372-440, 448-454, 482-483, 495-496, 521-546, 556-584
+backend/api/routes/chat.py                              16      6    62%   17-42
+backend/api/routes/decisions.py                         49     19    61%   31, 36-37, 42-45, 50-54, 59-61, 66-72
+backend/api/routes/diagnostics.py                      318    195    39%   86, 95-96, 101-105, 109-116, 120-126, 131-158, 192, 202-207, 212-237, 293, 297, 305-309, 316-335, 339-350, 369-493, 508, 533-548, 563-631, 665-717
+backend/api/routes/evaluation.py                         5      1    80%   9
+backend/api/routes/graph.py                             37     22    41%   15, 20-23, 28-31, 36, 51-63
+backend/api/routes/ingest.py                            37     17    54%   23-25, 38-44, 54-61, 71-75
+backend/api/routes/integrity.py                          5      1    80%   9
+backend/api/routes/maintenance.py                      235    163    31%   77-80, 92-93, 97-100, 114-145, 166-183, 197-213, 235-241, 255-267, 284-320, 330, 340-354, 368-371, 377, 389-444, 471, 487-506, 523-557, 574-607, 617
+backend/api/routes/ops.py                               47     16    66%   53-56, 66-70, 74-77, 83, 103-104
+backend/api/routes/retrieval.py                          5      1    80%   9
+backend/api/routes/sessions.py                          80      1    99%   110
+backend/api/routes/webhooks.py                          29     19    34%   31-69
+backend/api/security.py                                251    110    56%   93-95, 103-105, 114-137, 146-162, 165-173, 177-181, 195-209, 219-224, 232-239, 254, 268-269, 283, 290, 305, 336, 348-352, 372-375, 383, 404-419, 450-456, 464-465, 483-501, 516-527, 567
+backend/check_demo_assets.py                            21     21     0%   1-26
+backend/check_groq.py                                    8      8     0%   1-9
+backend/check_health.py                                  5      5     0%   1-6
+backend/config.py                                      106     13    88%   95, 99-101, 105-110, 115, 120, 126, 131, 147, 152
+backend/db/__init__.py                                   0      0   100%
+backend/db/models/__init__.py                            3      0   100%
+backend/db/models/evaluation.py                          0      0   100%
+backend/db/models/identity.py                           75      0   100%
+backend/db/models/integrity.py                           0      0   100%
+backend/db/models/sessions.py                           52      0   100%
+backend/db/session.py                                   73     18    75%   31, 33, 58-65, 70, 116-128
+backend/demo_candidate_pairs.py                         22     22     0%   5-38
+backend/domains/__init__.py                              0      0   100%
+backend/domains/base.py                                 14      0   100%
+backend/domains/maintenance.py                          28     13    54%   34-35, 44-52, 56, 60
+backend/domains/registry.py                             13      4    69%   38-43, 57
+backend/domains/software.py                             27     14    48%   44-51, 55-56, 59-60, 63-65
+backend/find_demo_record.py                             12     12     0%   1-18
+backend/graph/__init__.py                                0      0   100%
+backend/graph/invalidation.py                            2      1    50%   3
+backend/graph/memory/__init__.py                         2      0   100%
+backend/graph/memory/_helpers.py                         3      0   100%
+backend/graph/memory/core.py                           202     97    52%   20, 23, 55, 61-70, 83-93, 96, 102, 115, 141, 149, 151, 164, 171, 176, 203-205, 219, 225-244, 260-319
+backend/graph/memory/integrity.py                       55     47    15%   15-19, 27-40, 56-92, 107
+backend/graph/memory/legacy.py                         133     85    36%   9, 16-19, 24, 28, 31-39, 42-45, 48-57, 60-63, 66-69, 78, 84, 87, 93-97, 100-103, 106, 109, 112-132, 135-154, 158
+backend/graph/memory/retrieval.py                       37     14    62%   7-10, 13-25, 52, 55-59
+backend/graph/memory_store.py                            2      0   100%
+backend/graph/neo4j_client.py                           16     16     0%   1-28
+backend/graph/queries.py                                 2      0   100%
+backend/graph/repo/__init__.py                           2      0   100%
+backend/graph/repo/_helpers.py                          22     16    27%   12-27
+backend/graph/repo/core.py                             130     96    26%   22, 25-34, 45-65, 79-118, 124-128, 135, 145-150, 156-164, 171-195, 199-274
+backend/graph/repo/integrity.py                         57     46    19%   23-28, 49-81, 84-145, 159-167
+backend/graph/repo/legacy.py                           274    246    10%   13-60, 63-79, 82-94, 100-117, 120-131, 134-137, 140-143, 153-156, 165-168, 177-208, 211-217, 220-235, 238-248, 251-261, 264-268, 271-274, 277-280, 283-320, 323-356, 360-458, 461-464, 473-508, 511-593
+backend/graph/repo/retrieval.py                         69     54    22%   10-35, 38-61, 67-76, 81, 84-92, 106-146
+backend/graph/schema.py                                  3      3     0%   1-27
+backend/investigation/__init__.py                        0      0   100%
+backend/investigation/explain.py                        20      0   100%
+backend/investigation/prompts.py                         1      1     0%   2
+backend/investigation/report.py                         10      0   100%
+backend/investigation/sessions.py                      132      7    95%   40, 73, 75, 86, 129, 172, 183
+backend/investigation/turns.py                           9      0   100%
+backend/main.py                                         95     95     0%   1-181
+backend/scripts/__init__.py                              0      0   100%
+backend/scripts/backfill_conflict_scores.py            139    139     0%   12-217
+backend/scripts/benchmark_local_llm_gt.py               99     99     0%   2-180
+backend/scripts/c4_self_consistency.py                  56     56     0%   1-78
+backend/scripts/check_demo_assets.py                    24     24     0%   2-34
+backend/scripts/d3_latency.py                           29     29     0%   1-46
+backend/scripts/evaluate_conflict_detection.py          91     91     0%   1-139
+backend/scripts/fetch_sdr_data.py                      225    225     0%   14-521
+backend/scripts/gather_g1_evidence.py                   40     40     0%   2-55
+backend/scripts/measure_analysis_cost.py               117    117     0%   6-227
+backend/scripts/measure_groq_usage.py                   52     52     0%   2-99
+backend/scripts/measure_misdiagnosis_density.py         90     90     0%   15-217
+backend/scripts/migrate_conflict_analysis_state.py      37     37     0%   6-88
+backend/scripts/recalc_baseline.py                      50     50     0%   1-60
+backend/scripts/test_g3_queries.py                      28     28     0%   1-38
+backend/scripts/verify_confidence_corrections.py        97     97     0%   7-172
+backend/scripts/verify_mid1_runtime.py                 112    112     0%   10-234
+backend/services/__init__.py                             0      0   100%
+backend/services/analysis_budget.py                     51     37    27%   12-14, 30-35, 38, 41-44, 47, 52-55, 68-72, 75-87
+backend/services/analysis_state.py                       8      5    38%   18, 27-34
+backend/services/auth_service.py                       289    103    64%   47-49, 67, 73, 75, 79, 85, 99-100, 111, 150-153, 224, 232, 305-313, 317-327, 334-350, 353-362, 365, 405-463, 473-482, 486-500, 518, 522, 534, 565, 570, 572, 574, 577, 601, 607, 609, 611, 616, 620, 624, 668-677
+backend/services/citation_validation.py                 37     32    14%   19-27, 39-67
+backend/services/conflict_engine.py                    296    271     8%   119-231, 236-249, 253-268, 283-386, 391-409, 429-488, 499-510, 517-526, 553-746
+backend/services/conflict_screen.py                     27     16    41%   34, 39-42, 50-77
+backend/services/context_builder.py                    231    231     0%   1-422
+backend/services/diagnostic_retrieval.py               158     26    84%   122, 127, 133, 184-187, 193, 235-261, 297, 454-461, 467-468
+backend/services/groq_service.py                       123     97    21%   30-41, 48-50, 56, 62-103, 110-174, 177, 187, 195-230
+backend/tests/__init__.py                                0      0   100%
+backend/tests/conftest.py                               83     25    70%   33, 36-38, 49, 59-60, 66-69, 75-76, 82-83, 89, 153-157, 177, 200-202
+backend/tests/test_api_copilot.py                      132     87    34%   18, 22, 25-36, 46, 51-54, 59, 87-90, 94-95, 99-110, 114-121, 125-130, 134-138, 145-162, 166-173, 177-183, 187-194, 198-212, 216-232
+backend/tests/test_api_diagnostics.py                   75     75     0%   2-137
+backend/tests/test_api_maintenance.py                  259    259     0%   18-448
+backend/tests/test_api_security.py                     147    147     0%   17-331
+backend/tests/test_auth_rbac.py                        133     92    31%   44-46, 89-105, 108-127, 132-147, 155-190, 194-283, 288-330
+backend/tests/test_backend_preparation.py               54     54     0%   2-77
+backend/tests/test_backfill_conflict_scores.py          16     16     0%   3-38
+backend/tests/test_citation_validation.py               44     44     0%   2-76
+backend/tests/test_conflict_analysis_migration.py       42     42     0%   3-74
+backend/tests/test_conflict_cascade.py                 121    121     0%   1-199
+backend/tests/test_conflict_engine.py                  260    260     0%   18-444
+backend/tests/test_diagnose_prompt.py                   49     49     0%   7-76
+backend/tests/test_diagnostic_retrieval.py             167    167     0%   7-300
+backend/tests/test_graph_maintenance.py                263    263     0%   17-484
+backend/tests/test_graph_reset_guard.py                 46     46     0%   2-76
+backend/tests/test_investigation_degraded.py            81     81     0%   2-103
+backend/tests/test_investigation_sessions.py           193      1    99%   31
+backend/tests/test_maintenance_agent.py                111    111     0%   17-261
+backend/tests/test_model_adapter_format.py              65     65     0%   2-92
+backend/tests/test_ops.py                               19     19     0%   2-28
+backend/tests/test_regression_software.py               63     63     0%   15-162
+backend/top_assets.py                                   13     13     0%   1-19
+backend/verify_t6.py                                    23     23     0%   1-29
+----------------------------------------------------------------------------------
+TOTAL                                                 8455   6183    27%
+
+22 passed, 1 warning in 26.17s

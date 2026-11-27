@@ -1,0 +1,206 @@
+{
+  "main": "b5c9626b97b05a14f192566798ec02663161edec",
+  "integration_pr": 48,
+  "pull_requests": [
+    {
+      "baseRefName": "codex/usman-frozen-research-policy",
+      "headRefName": "codex/usman-held-out-evaluation",
+      "headRefOid": "5466ae551fb0f6795ed201157fbd1bc116f2e846",
+      "number": 47,
+      "url": "https://github.com/umaritics/halite/pull/47",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#47 (Complete frozen 2025 evaluation with verified results and access provenance)"
+    },
+    {
+      "baseRefName": "codex/usman-policy-selection",
+      "headRefName": "codex/usman-frozen-research-policy",
+      "headRefOid": "cfe9107607ff7b7a076308f628a336b6ca60df29",
+      "number": 46,
+      "url": "https://github.com/umaritics/halite/pull/46",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#46 (Freeze accepted 0.80/0.50 research policy and pre-test protocol)"
+    },
+    {
+      "baseRefName": "codex/usman-research-tool-verification",
+      "headRefName": "codex/usman-policy-selection",
+      "headRefOid": "eb3ff5374a91ffbbeb5b55e3f4ba28bc81329839",
+      "number": 45,
+      "url": "https://github.com/umaritics/halite/pull/45",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#45 (Compare combined answer/ask/abstain policies on frozen 2024 cases)"
+    },
+    {
+      "baseRefName": "codex/usman-legacy-retirement",
+      "headRefName": "codex/usman-research-tool-verification",
+      "headRefOid": "c41b3d2b395a9f05b1db0c61f81c3b06ada6f8f2",
+      "number": 44,
+      "url": "https://github.com/umaritics/halite/pull/44",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#44 (Verify research artifact provenance and enforce exact 80% backend coverage)"
+    },
+    {
+      "baseRefName": "codex/usman-dependency-cleanup",
+      "headRefName": "codex/usman-legacy-retirement",
+      "headRefOid": "da4ecc531c23a0ca56a32a7d13c800714c3a5673",
+      "number": 43,
+      "url": "https://github.com/umaritics/halite/pull/43",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#43 (Retire software APIs and automatic demo seeds; preserve maintenance contracts)"
+    },
+    {
+      "baseRefName": "codex/usman-source-highlighting",
+      "headRefName": "codex/usman-dependency-cleanup",
+      "headRefOid": "c7d686004f2719b89f71a4a049fb0ef556605a95",
+      "number": 42,
+      "url": "https://github.com/umaritics/halite/pull/42",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#42 (Remove unused backend dependency roots and verify resolved environment)"
+    },
+    {
+      "baseRefName": "codex/usman-research-panel",
+      "headRefName": "codex/usman-source-highlighting",
+      "headRefOid": "30aa70af561656a0c1c625bd8ef3acdaf39dae39",
+      "number": 41,
+      "url": "https://github.com/umaritics/halite/pull/41",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#41 (Connect sentence checks to exact saved source-word highlights)"
+    },
+    {
+      "baseRefName": "codex/usman-chart-foundation-review",
+      "headRefName": "codex/usman-research-panel",
+      "headRefOid": "9476086af4ee13af166cb2de7b880fde173b21c6",
+      "number": 40,
+      "url": "https://github.com/umaritics/halite/pull/40",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#40 (Show measured question selection and abstention in the product)"
+    },
+    {
+      "baseRefName": "codex/usman-research-results",
+      "headRefName": "codex/usman-chart-foundation-review",
+      "headRefOid": "2f4c50b9a3cbeafb47f855010a411766e4c18c78",
+      "number": 39,
+      "url": "https://github.com/umaritics/halite/pull/39",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#39 (Prepare shared research charts for frontend owner review)"
+    },
+    {
+      "baseRefName": "codex/usman-model-evaluation",
+      "headRefName": "codex/usman-research-results",
+      "headRefOid": "c42ef405742185d15ef44812059587ff52cc2024",
+      "number": 38,
+      "url": "https://github.com/umaritics/halite/pull/38",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#38 (Publish verified investigation selection results for product charts)"
+    },
+    {
+      "baseRefName": "codex/usman-grounding",
+      "headRefName": "codex/usman-model-evaluation",
+      "headRefOid": "d716fea7bac20dca95b486b65e37a60edd0cf95f",
+      "number": 37,
+      "url": "https://github.com/umaritics/halite/pull/37",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#37 (Provide a verified portable interactive-model comparison runner)"
+    },
+    {
+      "baseRefName": "codex/usman-mobile-integration",
+      "headRefName": "codex/usman-grounding",
+      "headRefOid": "572fcc62a4566a680f5527ea4a3af79886d371c2",
+      "number": 36,
+      "url": "https://github.com/umaritics/halite/pull/36",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#36 (Save sentence grounding audits and prepare independent human calibration)"
+    },
+    {
+      "baseRefName": "codex/usman-live-questions",
+      "headRefName": "codex/usman-mobile-integration",
+      "headRefOid": "d137af4c58345af0ed78483525571311d07cdbd8",
+      "number": 35,
+      "url": "https://github.com/umaritics/halite/pull/35",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#35 (Keep investigation controls usable in the shared phone shell)"
+    },
+    {
+      "baseRefName": "codex/usman-coded-fields-integration",
+      "headRefName": "codex/usman-live-questions",
+      "headRefOid": "a73cce9b1078b45115acf0782c2dfce7d3f79160",
+      "number": 34,
+      "url": "https://github.com/umaritics/halite/pull/34",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#34 (Connect durable information-gain questions and saved posterior updates)"
+    },
+    {
+      "baseRefName": "codex/usman-information-gain",
+      "headRefName": "codex/usman-coded-fields-integration",
+      "headRefOid": "e145367a7a2d0f27a0dd4605b3f1db1a005233f4",
+      "number": 33,
+      "url": "https://github.com/umaritics/halite/pull/33",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#33 (Preserve raw coded fields and add verified missing-value backfill)"
+    },
+    {
+      "baseRefName": "codex/usman-decision-layer",
+      "headRefName": "codex/usman-information-gain",
+      "headRefOid": "bb5502fdbf4d6a9cc0e83c698f82ef5a3d35845c",
+      "number": 32,
+      "url": "https://github.com/umaritics/halite/pull/32",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#32 (Add reproducible information-gain question selection and controls)"
+    },
+    {
+      "baseRefName": "codex/usman-ui-integration",
+      "headRefName": "codex/usman-decision-layer",
+      "headRefOid": "63f319bc39300dc269cad7bac62f8cf592f3b647",
+      "number": 31,
+      "url": "https://github.com/umaritics/halite/pull/31",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#31 (feat: decision core and measured temporal selection)"
+    },
+    {
+      "baseRefName": "codex/usman-investigation-ui",
+      "headRefName": "codex/usman-ui-integration",
+      "headRefOid": "3d92de1e11cb07031786cbc1c71e1b02df08896a",
+      "number": 30,
+      "url": "https://github.com/umaritics/halite/pull/30",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#30 (feat: prepare investigation shell integration for owner review)"
+    },
+    {
+      "baseRefName": "codex/usman-sessions",
+      "headRefName": "codex/usman-investigation-ui",
+      "headRefOid": "51b87a3c949e872741b9454c805cd79fc249b36a",
+      "number": 29,
+      "url": "https://github.com/umaritics/halite/pull/29",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#29 (feat: server-backed investigation frontend package)"
+    },
+    {
+      "baseRefName": "codex/usman-phase1",
+      "headRefName": "codex/usman-sessions",
+      "headRefOid": "ffafbaf7401cb7996dd562b74893db4c2205f206",
+      "number": 28,
+      "url": "https://github.com/umaritics/halite/pull/28",
+      "head_present_in_main": true,
+      "superseded_close_exit": 0,
+      "superseded_close_result": "\u2713 Closed pull request umaritics/halite#28 (feat(sessions): persist owned investigations and verify degraded workflows)"
+    }
+  ]
+}

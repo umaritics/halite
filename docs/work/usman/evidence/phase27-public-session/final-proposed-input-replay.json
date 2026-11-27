@@ -1,0 +1,47 @@
+{
+  "baseline_source": "db574acadd4caf5cf60be45559708c82319711a6",
+  "baseline_session_id": "cbc8d780-9af2-4144-8a21-27cf8209c063",
+  "prepared_prompt": {
+    "version": "copilot-compact-prose-v1",
+    "prompt_sha256": "58c8f6327791a4f7efc43486e2f52467aac2421dbebdca46ca8c74fc9597f24e",
+    "prompt_utf8_bytes": 2042,
+    "max_output_tokens": 192,
+    "evidence_record_ids": [
+      "SWIA2025122876590",
+      "SWIA2025122076513",
+      "SWIA2025121776533"
+    ],
+    "available_evidence_record_ids": [
+      "SWIA2025122876590",
+      "SWIA2025122076513",
+      "SWIA2025121776533",
+      "SWIA2026070606541",
+      "SWIA2025121576470",
+      "SWIA2026070676558",
+      "SWIA2025121276556",
+      "SWIA2025120876572",
+      "SWIA2025120776453",
+      "SWIA2025120676586",
+      "SWIA2025120676529",
+      "SWIA2025120576568",
+      "SWIA2025120576544",
+      "SWIA2026070676497",
+      "SWIA2025120576450",
+      "SWIA2025120376581",
+      "SWIA2025120276547",
+      "SWIA2025120176516",
+      "SWIA2026070676554",
+      "SWIA2025113076461"
+    ],
+    "excerpted_record_ids": [
+      "SWIA2025122876590",
+      "SWIA2025122076513",
+      "SWIA2025121776533"
+    ],
+    "accepted_as_reply": false,
+    "scope": "Up to three prioritized report excerpts for phrasing; complete ranking, decisions and saved evidence remain unchanged."
+  },
+  "full_response_evidence_unmodified": true,
+  "helper_sha256": "6b756c3a656e694df6afaec1bb53366e9cd5fca4a6bfa39e4ecefea0e2fe8a5e",
+  "new_live_output_measured": false
+}

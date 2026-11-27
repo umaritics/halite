@@ -25,7 +25,7 @@ Full security architecture and runbook: [`docs/security-public-deployment.md`](.
 | `https://dev1.corp.curatech.pk/halite-api/api/ops/logs` | `X-Ops-Token` | Recent redacted app logs (**privileged operator secret**) |
 | `https://dev1.corp.curatech.pk/halite-api/api/maintenance/*` | `Authorization: Bearer <HALITE_API_KEY>` | Protected maintenance & diagnostic APIs (`401` without key) |
 | `https://dev1.corp.curatech.pk/halite-api/docs` | Disabled (`404`) | OpenAPI / Swagger hidden on public VM (`EXPOSE_OPENAPI=false`) |
-| `https://dev1.corp.curatech.pk/halite-api/api/webhook/gitea` | Retired (`410`) | Decommissioned Gitea webhook surface |
+| `https://dev1.corp.curatech.pk/halite-api/api/webhook/gitea` | Retired (`404`) | Decommissioned Gitea webhook surface |
 
 ## Frontend: point at the shared API
 
@@ -148,6 +148,15 @@ Share `OPS_TOKEN` with teammates via a password manager — **never commit it**.
 
 Actions → **Fetch staging backend logs** → Run workflow → download artifact `staging-backend-logs`.
 
+The optional `model-progress` target runs `scripts/vm/model_progress.py` over SSH
+without installing it on the VM. It reads only bounded Docker logs, selected
+container state and a one-shot resource snapshot. Only strict completed-chat
+timestamp/status/duration fields are emitted; environment, prompt, raw log, IP
+and unknown fields are excluded. Missing matches do not prove a stopped job,
+and activity cannot identify an individual research case. The default `api`
+target preserves the existing API-log operation. Neither mode performs inference,
+restarts services, deploys, changes settings or writes database records.
+
 ## What partners should / should not do
 
 | Do | Don’t |
@@ -170,3 +179,19 @@ Actions → **Fetch staging backend logs** → Run workflow → download artifac
 - Flow: [FLOW-deploy.md](../../flows/FLOW-deploy.md)
 - Compose: `docker-compose.vm.yml`
 - Script: `scripts/vm/remote_deploy.sh`
+
+After full legacy retirement, `/api/webhook/gitea` is unregistered and returns
+404. Both VM-local and public release probes require404; they no longer expect
+the earlier disabled-handler410. A cross-layer test compares both release
+expectations with the actual router response. Authenticated/anonymous asset,
+closed docs, PostgreSQL and exact-version checks remain unchanged.
+
+
+A separate manual `staging-model-reference.yml` workflow can measure the existing
+phi4-mini against the frozen20-prompt comparison packet after exact-main CI and
+live-version checks. It uses a temporary private loopback SSH tunnel and existing
+4GiB/two-CPU model limits, without publishing11434, deploying, pulling models or
+writing graph/auth data. Output provenance distinguishes GitHub runner hardware
+from staging inference and M4 measurements. The code checks deployment/corpus/
+container stability afterwards and retains raw failed attempts. See the
+investigation model-comparison context/flow and STAGING_REFERENCE_PROTOCOL.md.

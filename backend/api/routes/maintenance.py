@@ -11,6 +11,7 @@ Endpoints:
   GET   /api/maintenance/review-queue     — needs_review records, newest first
   POST  /api/maintenance/review-queue/{id}/accept
   POST  /api/maintenance/review-queue/{id}/reject
+  GET   /api/maintenance/review-queue/{id}/proposal — stored proposal, no model call
   GET   /api/domains                      — registered domains for frontend switcher
 """
 import datetime
@@ -33,6 +34,9 @@ from api.security import (
     require_roles,
 )
 from domains.registry import list_domains
+from integrity import apply
+from integrity.proposal import pin_recomputed_prior, stored_proposal
+from integrity.timeutil import parse_occurred
 from services.conflict_engine import MAINT_CONFIDENCE_THRESHOLD, process_record
 from services.analysis_state import normalize_analysis_for_api
 from services.analysis_budget import BudgetExhausted, DailyBudgetManager
@@ -274,9 +278,11 @@ def get_single_record(
 @router.post("/records", dependencies=[Depends(require_llm_rate_limit)])
 def process_single_record(
     body: RecordProcessRequest,
+    request: Request,
     graph_repo=Depends(get_graph_repo),
     groq_service=Depends(get_groq_service),
     settings=Depends(get_settings),
+    rel_store=Depends(get_rel_store),
 ):
     """
     Run conflict detection on an already-ingested record, or ingest and process a new one.
@@ -286,15 +292,21 @@ def process_single_record(
 
     record_id = body.record_id
     if body.tail_number:
-        import datetime
         if not record_id:
             record_id = f"DEMO{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
-        # Inline ingestion
+
+        # The form sends an ISO date and the importer reads MM/DD/YYYY; without this the record was
+        # skipped as a bad date and the request failed with "not found".
+        occurred = parse_occurred(body.date)
+        if occurred is None:
+            raise HTTPException(status_code=422, detail="date must be YYYY-MM-DD or MM/DD/YYYY")
+
+        # Inline ingestion. A report typed in now is known from now: that is its submission time.
         raw = {
             "OperatorControlNumber": record_id,
             "RegistryNNumber": body.tail_number,
-            "DifficultyDate": body.date,
+            "DifficultyDate": occurred.strftime("%m/%d/%Y"),
+            "SubmissionDate": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "PartName": body.part_name,
             "PartCondition": body.condition,
             "PartLocation": body.location,
@@ -311,6 +323,7 @@ def process_single_record(
         result = process_record(
             graph_repo, groq_service, adapter, record_id,
             threshold=threshold, allow_stub=False,
+            audit=_audit_writer(rel_store, request),
         )
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
@@ -379,11 +392,13 @@ def analysis_status(graph_repo=Depends(get_graph_repo)):
 
 @router.post("/analysis/run")
 def run_analysis_batch(
+    request: Request,
     body: AnalysisRunRequest | None = None,
     _: None = Depends(require_ops_or_admin),
     graph_repo=Depends(get_graph_repo),
     groq_service=Depends(get_groq_service),
     settings=Depends(get_settings),
+    rel_store=Depends(get_rel_store),
 ):
     """Process the next bounded chronological batch of unscored records."""
     if not groq_service.is_live:
@@ -396,6 +411,7 @@ def run_analysis_batch(
     )
     adapter = _get_maintenance_adapter()
     budget = _analysis_budget(settings)
+    audit = _audit_writer(rel_store, request)
     results = []
     model_records = 0
     screen_records = 0
@@ -411,6 +427,7 @@ def run_analysis_batch(
                     allow_stub=False,
                     analysis_mode=settings.MAINT_ANALYSIS_MODE,
                     budget_manager=budget,
+                    audit=audit,
                 )
                 if result.get("analysis_method") in ("llm", "llm-escalated"):
                     model_records += 1
@@ -474,16 +491,10 @@ def corrections(
     )
 
 
-def _record_review_audit(
-    rel_store,
-    request: Request,
-    principal: AuthPrincipal,
-    *,
-    action: str,
-    record_id: str,
-    previous_status: str | None,
-    note: str,
+def _write_audit(
+    rel_store, request: Request, principal: AuthPrincipal | None, action: str, record_id: str, metadata: dict,
 ) -> None:
+    """Best-effort audit event: a failure is logged and never fails the request."""
     if rel_store is None or not rel_store.is_available:
         return
     from services.auth_service import record_audit_event
@@ -493,17 +504,99 @@ def _record_review_audit(
             record_audit_event(
                 db,
                 action=action,
-                organization_id=principal.organization_id,
-                actor_user_id=principal.user_id if principal.kind == "user" else None,
-                actor_email=principal.email,
-                actor_role=principal.role,
+                organization_id=getattr(principal, "organization_id", None),
+                actor_user_id=principal.user_id if principal and principal.kind == "user" else None,
+                actor_email=getattr(principal, "email", None),
+                actor_role=getattr(principal, "role", None),
                 target_type="service_record",
                 target_id=record_id,
-                metadata={"previous_status": previous_status, "note": note},
+                metadata=metadata,
                 ip_address=get_client_ip(request),
             )
     except Exception as exc:
-        logger.warning("Failed to persist review audit event for %s: %s", record_id, exc)
+        logger.warning("Failed to persist audit event %s for %s: %s", action, record_id, exc)
+
+
+def _audit_writer(rel_store, request: Request):
+    """The audit(action, record_id, metadata) callable the integrity code is given."""
+    principal = getattr(request.state, "principal", None)
+
+    def audit(action: str, record_id: str, metadata: dict) -> None:
+        _write_audit(rel_store, request, principal, action, record_id, metadata)
+
+    return audit
+
+
+def _record_review_decision(
+    rel_store, record_id: str, prior_record_id: str | None, decision: str, note: str,
+    principal: AuthPrincipal, record: dict,
+) -> None:
+    """Best-effort review_decisions row with the model's view at the time of the decision."""
+    if rel_store is None or not rel_store.is_available:
+        return
+    from db.models.integrity import ReviewDecision
+
+    model_p = record.get("integrity_p")
+    try:
+        with rel_store.session_scope() as db:
+            db.add(ReviewDecision(
+                record_id=record_id,
+                prior_record_id=prior_record_id,
+                decision=decision,
+                note=note,
+                reviewer_id=principal.user_id or "",
+                reviewer_role=principal.role,
+                model_p=model_p if model_p is not None else record.get("confidence"),
+                model_version=record.get("integrity_model_version") or "",
+            ))
+    except Exception as exc:
+        logger.warning("Failed to persist review decision for %s: %s", record_id, exc)
+
+
+def _reviewer(principal: AuthPrincipal) -> dict:
+    return {
+        "id": principal.user_id or "",
+        "name": principal.full_name,
+        "email": principal.email or "",
+        "role": principal.role,
+    }
+
+
+def _decide(
+    decision: str, record_id: str, note: str, request: Request, principal: AuthPrincipal,
+    graph_repo, rel_store,
+) -> dict:
+    """Shared body of accept and reject: guard, apply to the graph, then record the decision."""
+    sr = graph_repo.get_service_record(record_id)
+    if sr is None:
+        raise HTTPException(status_code=404, detail=f"Record {record_id!r} not found")
+    prev_status = sr.get("status")
+    verb = "accept" if decision == "accepted" else "reject"
+    if prev_status not in ("needs_review", "auto_accepted"):
+        raise HTTPException(
+            status_code=409,
+            detail=f"Record {record_id!r} is in status '{prev_status}', cannot {verb}",
+        )
+    sr = pin_recomputed_prior(graph_repo, sr)
+    decide = apply.accept_proposal if decision == "accepted" else apply.reject_proposal
+    # The reviewer is the actor on the link and prior-status events their decision causes.
+    def audit(action: str, target_id: str, metadata: dict) -> None:
+        _write_audit(rel_store, request, principal, action, target_id, metadata)
+
+    outcome = decide(graph_repo, record_id, reviewer=_reviewer(principal), note=note, audit=audit)
+    _record_review_decision(rel_store, record_id, outcome["prior_record_id"], decision, note, principal, sr)
+    _write_audit(
+        rel_store, request, principal, f"maintenance.review.{decision}", record_id,
+        {
+            "previous_status": prev_status, "note": note,
+            "prior_record_id": outcome["prior_record_id"], "link": outcome["link"],
+        },
+    )
+    logger.info("Record %r %s by %s (%s). Note: %r", record_id, decision, principal.email or principal.user_id, principal.role, note)
+    return {
+        "record_id": record_id, "status": decision, "record": outcome["record"],
+        "prior_record_id": outcome["prior_record_id"], "link": outcome["link"],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -519,42 +612,9 @@ def accept_record(
     graph_repo=Depends(get_graph_repo),
     rel_store=Depends(get_rel_store),
 ):
-    """Accept a queued record (status → accepted). Requires supervisor or admin role."""
+    """Accept a queued record (status → accepted); a supersession becomes a link. Requires supervisor or admin role."""
     note = (body.note if body else None) or ""
-    sr = graph_repo.get_service_record(record_id)
-    if sr is None:
-        raise HTTPException(status_code=404, detail=f"Record {record_id!r} not found")
-    prev_status = sr.get("status")
-    if prev_status not in ("needs_review", "auto_accepted"):
-        raise HTTPException(
-            status_code=409,
-            detail=f"Record {record_id!r} is in status '{prev_status}', cannot accept",
-        )
-    reviewed_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    updated = graph_repo.update_service_record(
-        record_id,
-        {
-            "status": "accepted",
-            "analysis_state": "reviewed",
-            "review_note": note,
-            "reviewed_by_id": principal.user_id or "",
-            "reviewed_by_name": principal.full_name,
-            "reviewed_by_email": principal.email or "",
-            "reviewed_by_role": principal.role,
-            "reviewed_at": reviewed_at,
-        },
-    )
-    _record_review_audit(
-        rel_store,
-        request,
-        principal,
-        action="maintenance.review.accepted",
-        record_id=record_id,
-        previous_status=prev_status,
-        note=note,
-    )
-    logger.info("Record %r accepted by %s (%s). Note: %r", record_id, principal.email or principal.user_id, principal.role, note)
-    return {"record_id": record_id, "status": "accepted", "record": updated}
+    return _decide("accepted", record_id, note, request, principal, graph_repo, rel_store)
 
 
 # ---------------------------------------------------------------------------
@@ -570,41 +630,21 @@ def reject_record(
     graph_repo=Depends(get_graph_repo),
     rel_store=Depends(get_rel_store),
 ):
-    """Reject a queued record (status → rejected). Note is required. Requires supervisor or admin role."""
-    sr = graph_repo.get_service_record(record_id)
-    if sr is None:
+    """Reject a queued record (status → rejected), remove its link and never propose the pair again. Note is required. Requires supervisor or admin role."""
+    return _decide("rejected", record_id, body.note, request, principal, graph_repo, rel_store)
+
+
+# ---------------------------------------------------------------------------
+# GET /api/maintenance/review-queue/{record_id}/proposal
+# ---------------------------------------------------------------------------
+
+@router.get("/review-queue/{record_id}/proposal")
+def review_proposal(record_id: str, graph_repo=Depends(get_graph_repo)):
+    """The stored proposal for the review screen. Reads the graph only; no model is called."""
+    proposal = stored_proposal(graph_repo, record_id)
+    if proposal is None:
         raise HTTPException(status_code=404, detail=f"Record {record_id!r} not found")
-    prev_status = sr.get("status")
-    if prev_status not in ("needs_review", "auto_accepted"):
-        raise HTTPException(
-            status_code=409,
-            detail=f"Record {record_id!r} is in status '{prev_status}', cannot reject",
-        )
-    reviewed_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    updated = graph_repo.update_service_record(
-        record_id,
-        {
-            "status": "rejected",
-            "analysis_state": "reviewed",
-            "review_note": body.note,
-            "reviewed_by_id": principal.user_id or "",
-            "reviewed_by_name": principal.full_name,
-            "reviewed_by_email": principal.email or "",
-            "reviewed_by_role": principal.role,
-            "reviewed_at": reviewed_at,
-        },
-    )
-    _record_review_audit(
-        rel_store,
-        request,
-        principal,
-        action="maintenance.review.rejected",
-        record_id=record_id,
-        previous_status=prev_status,
-        note=body.note,
-    )
-    logger.info("Record %r rejected by %s (%s). Note: %r", record_id, principal.email or principal.user_id, principal.role, body.note)
-    return {"record_id": record_id, "status": "rejected", "record": updated}
+    return proposal
 
 
 # ---------------------------------------------------------------------------

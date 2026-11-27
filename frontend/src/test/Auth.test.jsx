@@ -2,14 +2,15 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AuthProvider } from '../context/AuthContext';
+import { AuthProvider, useAuth } from '../context/AuthContext';
 import { ThemeProvider } from '../context/ThemeContext';
 import ProtectedRoute from '../components/ProtectedRoute';
-import Login from '../pages/Login';
-import AcceptInvite from '../pages/AcceptInvite';
-import TeamAccess from '../pages/TeamAccess';
-import ReviewQueue from '../pages/ReviewQueue';
+import Login from '../features/auth/Login';
+import AcceptInvite from '../features/auth/AcceptInvite';
+import TeamAccess from '../features/admin/TeamAccess';
+import ReviewQueue from '../features/integrity/ReviewQueue';
 import * as client from '../api/client';
+import { integrityAPI } from '../features/integrity/api';
 
 vi.mock('../api/client', async () => {
   const actual = await vi.importActual('../api/client');
@@ -36,7 +37,6 @@ vi.mock('../api/client', async () => {
       ...actual.maintenanceAPI,
       assets: vi.fn(),
       reviewQueue: vi.fn(),
-      getRecord: vi.fn(),
       assetHistory: vi.fn(),
       accept: vi.fn(),
       reject: vi.fn(),
@@ -54,6 +54,7 @@ function renderAuthApp(initialEntries = ['/app/assets']) {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/accept-invite" element={<AcceptInvite />} />
+            <Route path="/app/home" element={<ProtectedRoute><div>Protected Home Workspace</div></ProtectedRoute>} />
             <Route
               path="/app/assets"
               element={
@@ -89,6 +90,7 @@ describe('Website authentication, invite activation & RBAC', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     window.sessionStorage.clear();
+    window.localStorage.clear();
   });
 
   it('redirects unauthenticated visitors to /login and routes back after sign-in', async () => {
@@ -158,7 +160,7 @@ describe('Website authentication, invite activation & RBAC', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /activate account and open workspace/i }));
 
-    expect(await screen.findByText('Protected Assets Workspace')).toBeInTheDocument();
+    expect(await screen.findByText('Protected Home Workspace')).toBeInTheDocument();
     expect(client.authAPI.acceptInvite).toHaveBeenCalledWith({
       token: 'invite-token-valid-123456',
       password: 'SupervisorPass2026',
@@ -193,13 +195,16 @@ describe('Website authentication, invite activation & RBAC', () => {
         },
       ],
     });
-    client.maintenanceAPI.getRecord.mockResolvedValue({
+    vi.spyOn(integrityAPI, 'proposal').mockResolvedValue({
       data: {
-        record_id: 'REC-1',
-        candidates_considered: 2,
+        record: { record_id: 'REC-1', candidates_considered: 2 },
         confidence: 0.4,
-        classification: { label: 'supersedes', rationale: 'Updated report' },
-        best_prior: null,
+        label: 'supersedes',
+        rationale: 'Updated report',
+        method: 'llm',
+        proposed_prior: null,
+        proposal_source: 'none',
+        changed_fields: [],
       },
     });
 
@@ -295,5 +300,45 @@ describe('Website authentication, invite activation & RBAC', () => {
       }),
     );
     expect(await screen.findByText(/\/accept-invite\?token=tok-xyz/)).toBeInTheDocument();
+  });
+});
+
+function SessionProbe() {
+  const { status, logout, login } = useAuth();
+  return <><p>{status}</p><button onClick={() => logout()}>Probe logout</button><button onClick={() => login('next@example.test', 'password')}>Probe login</button></>;
+}
+
+const legacyKeys = ['halite-diagnostic-active-workspace', 'halite-diagnostic-copilot-sessions'];
+function seedLegacy() { legacyKeys.forEach(key => localStorage.setItem(key, 'unowned private notes')); }
+function expectLegacyCleared() { legacyKeys.forEach(key => expect(localStorage.getItem(key)).toBeNull()); }
+
+describe('Global authentication investigation privacy boundary', () => {
+  beforeEach(() => { vi.resetAllMocks(); sessionStorage.clear(); localStorage.clear(); });
+  it('discards unowned records on refresh and logout even when logout fails', async () => {
+    seedLegacy();
+    localStorage.setItem('unrelated-preference', 'keep');
+    client.authAPI.refresh.mockResolvedValue({ data: { access_token: 'jwt', refresh_token: 'refresh', user: { id: 'owner', role: 'technician' } } });
+    client.authAPI.logout.mockRejectedValue(new Error('offline'));
+    render(<AuthProvider><SessionProbe /></AuthProvider>);
+    await screen.findByText('authenticated');
+    expectLegacyCleared();
+    seedLegacy();
+    fireEvent.click(screen.getByRole('button', { name: 'Probe logout' }));
+    await screen.findByText('unauthenticated');
+    expectLegacyCleared();
+    expect(sessionStorage.getItem('halite.session.refresh.v1')).toBeNull();
+    expect(localStorage.getItem('unrelated-preference')).toBe('keep');
+  });
+  it('discards records on failed restoration and a new account login', async () => {
+    seedLegacy();
+    client.authAPI.refresh.mockRejectedValue(new Error('expired'));
+    client.authAPI.login.mockResolvedValue({ data: { access_token: 'new-jwt', refresh_token: 'new-refresh', user: { id: 'next', role: 'technician' } } });
+    render(<AuthProvider><SessionProbe /></AuthProvider>);
+    await screen.findByText('unauthenticated');
+    expectLegacyCleared();
+    seedLegacy();
+    fireEvent.click(screen.getByRole('button', { name: 'Probe login' }));
+    await screen.findByText('authenticated');
+    expectLegacyCleared();
   });
 });

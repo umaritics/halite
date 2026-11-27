@@ -1,0 +1,89 @@
+# Usman work and evidence index
+
+This is a navigation index, not an end-of-session handoff. Start with the
+acceptance matrix for current status and the work log for decisions and progress.
+Historical verification notes describe their own source commits; later integration
+does not imply independent teammate approval.
+
+## Context, decisions and verification notes
+
+- [ACCEPTANCE_MATRIX.md](ACCEPTANCE_MATRIX.md)
+- [CHART_FOUNDATION_REVIEW.md](CHART_FOUNDATION_REVIEW.md)
+- [CODED_FIELDS_INTEGRATION.md](CODED_FIELDS_INTEGRATION.md)
+- [DEPENDENCY_CLEANUP_VERIFICATION.md](DEPENDENCY_CLEANUP_VERIFICATION.md)
+- [EDITABLE_REPORT_VERIFICATION.md](EDITABLE_REPORT_VERIFICATION.md)
+- [FINAL_RESEARCH_PUBLICATION_VERIFICATION.md](FINAL_RESEARCH_PUBLICATION_VERIFICATION.md)
+- [FIGURE_EXPORT_VERIFICATION.md](FIGURE_EXPORT_VERIFICATION.md)
+- [FRONTEND_INTEGRATION.md](FRONTEND_INTEGRATION.md)
+- [FROZEN_POLICY_VERIFICATION.md](FROZEN_POLICY_VERIFICATION.md)
+- [HELD_OUT_VERIFICATION.md](HELD_OUT_VERIFICATION.md)
+- [LEGACY_RETIREMENT_HANDOFF.md](LEGACY_RETIREMENT_HANDOFF.md)
+- [LEGACY_RETIREMENT_VERIFICATION.md](LEGACY_RETIREMENT_VERIFICATION.md)
+- [LOCAL_MACHINE_INCIDENT.md](LOCAL_MACHINE_INCIDENT.md)
+- [MOBILE_SHELL_HANDOFF.md](MOBILE_SHELL_HANDOFF.md)
+- [MODEL_COMPARISON_RUNNER.md](MODEL_COMPARISON_RUNNER.md)
+- [OPERATING_POINT_REVIEW.md](OPERATING_POINT_REVIEW.md)
+- [POLICY_SELECTION_VERIFICATION.md](POLICY_SELECTION_VERIFICATION.md)
+- [PRODUCTION_ACCOUNT_VERIFICATION.md](PRODUCTION_ACCOUNT_VERIFICATION.md)
+- [PUBLIC_BROWSER_VERIFICATION.md](PUBLIC_BROWSER_VERIFICATION.md)
+- [PUBLIC_SESSION_VERIFICATION.md](PUBLIC_SESSION_VERIFICATION.md)
+- [RESEARCH_PANEL_VERIFICATION.md](RESEARCH_PANEL_VERIFICATION.md)
+- [RESEARCH_TOOL_VERIFICATION.md](RESEARCH_TOOL_VERIFICATION.md)
+- [SOURCE_HIGHLIGHTING_VERIFICATION.md](SOURCE_HIGHLIGHTING_VERIFICATION.md)
+- [WORK_LOG.md](WORK_LOG.md)
+- [DECISION_LAYER_DESIGN.md](../../fyp1-final/DECISION_LAYER_DESIGN.md)
+- [OPERATING_POINT_DECISION.md](../../fyp1-final/OPERATING_POINT_DECISION.md)
+- [PANEL_ACTION_REGISTER.md](../../fyp1-final/PANEL_ACTION_REGISTER.md)
+- [USMAN_ARCHITECTURE_AND_DEFENSE.md](../../fyp1-final/USMAN_ARCHITECTURE_AND_DEFENSE.md)
+- [USMAN_FINAL_REPORT_DRAFT.md](../../fyp1-final/USMAN_FINAL_REPORT_DRAFT.md)
+
+## Raw evidence directories
+
+- `phase10-research-panel/`
+- `phase11-source-highlighting/`
+- `phase12-dependencies/`
+- `phase13-retirement/`
+- `phase14-research-tool-verification/`
+- `phase15-policy-selection/`
+- `phase16-frozen-policy/`
+- `phase17-held-out/`
+- `phase18-final-publication/`
+- `phase19-integration/`
+- `phase20-report/`
+
+## Pending independent reviews
+
+- [Usman review](grounding_review_v1/review_usman.html)
+- [Muhammad Umar review](grounding_review_v1/review_umar.html)
+- [Review protocol and export instructions](grounding_review_v1/README.md)
+
+## Integrated application
+
+- Frontend: https://halite-mu.vercel.app
+- Backend health: https://dev1.corp.curatech.pk/halite-api/api/health
+- PR #27/#48/#49 merged; #28–#47 closed after ancestry verification.
+- Release proof: `evidence/phase19-integration/`.
+- Full goal remains active; human labels, actual model results and student/report
+  acceptance must not be inferred from merged code.
+
+
+## Subsequent L4 and report evidence
+
+- [Grounding judge protocol](GROUNDING_JUDGE_PROTOCOL.md)
+- [Grounding judge verification](GROUNDING_JUDGE_VERIFICATION.md)
+- [Research references](../../fyp1-final/USMAN_RESEARCH_REFERENCES.md)
+- `evidence/phase21-grounding-judge/`: raw hosted reports and merge/release metadata.
+
+- [Private staging-reference protocol](STAGING_REFERENCE_PROTOCOL.md)
+- [Actual 180-second reference outcome](STAGING_REFERENCE_RESULTS.md)
+- `evidence/phase22-staging-reference/`: hosted instrument proof and actual reference evidence when executed.
+
+- `evidence/phase23-report-figures/`: source-pinned charts, visual checks and retained CI reports.
+- `evidence/phase24-editable-report/`: editable Word/PDF source hashes and all eleven page renders.
+- `evidence/phase25-reference-deadline/`: original30attempts/six deadline failures, replay and safe after-job observations.
+- `evidence/phase26-public-release/`: merged source/main/deployment proof and real signed-in browser screenshots.
+- `evidence/phase27-public-session/`: actual own-session lifecycle and failed live-model baselines; prepared bounded-input checks.
+- [Editable contribution chapter](../../fyp1-final/USMAN_INVESTIGATION_CHAPTER.docx)
+- [Matching chapter PDF](../../fyp1-final/USMAN_INVESTIGATION_CHAPTER.pdf)
+
+- `evidence/phase28-bounded-runtime-release/`: PR55 exact-head/main/deploy receipts,549-test raw reports, actual second prose timeout, populated browser replay/print and original PDF layout finding.

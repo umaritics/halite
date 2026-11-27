@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import AssetHistory from '../pages/AssetHistory';
+import AssetHistory from '../features/assets/AssetHistory';
 import * as client from '../api/client';
 
 vi.mock('../api/client', () => ({

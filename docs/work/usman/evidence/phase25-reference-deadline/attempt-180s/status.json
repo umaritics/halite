@@ -1,0 +1,8 @@
+{
+  "complete": false,
+  "stage": "measurement",
+  "source_sha": "326cd885bb21e53019f25a6cfae82164bfba0a6a",
+  "measurement_role": "staging_reference",
+  "m4_measurement": false,
+  "error_type": "ValueError"
+}

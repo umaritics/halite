@@ -1,18 +1,19 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import Graph, { MAINT_GRAPH_LIMIT } from '../pages/Graph';
-import { GraphSidePanel } from '../components/GraphViewer';
+import Graph, { MAINT_GRAPH_LIMIT } from '../features/graph/Graph';
+import { GraphSidePanel } from '../features/graph/GraphViewer';
 import { ThemeProvider } from '../context/ThemeContext';
 import * as client from '../api/client';
 
 // WebGL is unavailable in jsdom: record the props the page hands to the renderer instead.
-const fg = vi.hoisted(() => ({ last: null }));
+const fg = vi.hoisted(() => ({ last: null, crash: false }));
 vi.mock('react-force-graph-3d', async () => {
   const React = await import('react');
   return {
     default: React.forwardRef((props, ref) => {
+      if (fg.crash) throw new Error('WebGL context lost');
       fg.last = props;
       React.useImperativeHandle(ref, () => ({ zoomToFit: () => {} }));
       return <div data-testid="force-graph" />;
@@ -45,7 +46,39 @@ describe('Graph page', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     fg.last = null;
+    fg.crash = false;
+    // jsdom has no WebGL: pretend it exists unless a test removes it.
+    window.WebGLRenderingContext = function WebGLRenderingContext() {};
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({});
     overview.mockResolvedValue({ data: { nodes, edges } });
+  });
+
+  it('lists the aircraft as text, with corrections marked, when the browser has no WebGL', async () => {
+    delete window.WebGLRenderingContext;
+    renderPage();
+    expect(await screen.findByText(/needs WebGL/)).toBeInTheDocument();
+    expect(screen.queryByTestId('force-graph')).toBeNull();
+    expect(screen.getByText(/Aircraft 813SK: 3 nodes · 4 edges · 1 correction$/)).toBeInTheDocument();
+    const nodesTable = screen.getByRole('table', { name: 'Nodes' });
+    expect(within(nodesTable).getByText('R1')).toBeInTheDocument();
+    expect(within(nodesTable).getByText('Superseded')).toBeInTheDocument();
+    expect(within(within(nodesTable).getByRole('row', { name: /R2/ })).getByText('Correction')).toBeInTheDocument();
+    const edgesTable = screen.getByRole('table', { name: 'Edges' });
+    expect(within(edgesTable).getByText('SUPERSEDES')).toBeInTheDocument();
+    expect(within(within(edgesTable).getByRole('row', { name: /SUPERSEDES/ })).getByText('Correction')).toBeInTheDocument();
+    // the rest of the page still works
+    expect(screen.getByLabelText('Aircraft')).toHaveValue('813SK');
+  });
+
+  it('shows the same text view, not a crash, when the 3D viewer throws', async () => {
+    fg.crash = true;
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    renderPage();
+    expect(await screen.findByText(/could not be drawn/)).toBeInTheDocument();
+    expect(screen.getByRole('table', { name: 'Nodes' })).toBeInTheDocument();
+    expect(screen.getByRole('table', { name: 'Edges' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Aircraft')).toBeInTheDocument();
+    spy.mockRestore();
   });
 
   it('asks the backend for enough nodes rather than its 200-node default', async () => {
@@ -178,6 +211,13 @@ describe('GraphSidePanel', () => {
     renderPanel(rec, { assetUuid: 'a1' });
     expect(screen.getByText('PUMP')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Open in asset history/ })).toHaveAttribute('href', '/app/asset-history/a1#R1');
+  });
+
+  it('gives the close button an accessible name', () => {
+    const onClose = vi.fn();
+    renderPanel(rec, { onClose });
+    fireEvent.click(screen.getByRole('button', { name: 'Close details' }));
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('does not show the stored confidence, which can be a legacy 1.00 placeholder', () => {

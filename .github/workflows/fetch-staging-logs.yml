@@ -7,6 +7,11 @@ name: Fetch staging backend logs
 on:
   workflow_dispatch:
     inputs:
+      target:
+        description: 'API logs or a sanitized read-only model activity snapshot'
+        type: choice
+        options: [api, model-progress]
+        default: api
       lines:
         description: "Docker log lines to capture"
         required: false
@@ -21,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
       - name: Check deploy secrets
         env:
           VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
@@ -33,6 +41,7 @@ jobs:
           fi
 
       - name: Fetch logs over SSH
+        if: inputs.target != 'model-progress'
         env:
           VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
           VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
@@ -56,6 +65,25 @@ jobs:
             "docker logs --tail $LINES halite-api 2>&1; echo; curl -fsS http://127.0.0.1:8002/api/ops/version || true" \
             > staging-logs/halite-api.log
           wc -l staging-logs/halite-api.log
+
+      - name: Inspect model activity without inference or state changes
+        if: inputs.target == 'model-progress'
+        env:
+          VM_SSH_HOST: ${{ secrets.VM_SSH_HOST }}
+          VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+          VM_SSH_KEY: ${{ secrets.VM_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          progress_ssh_dir=$(mktemp -d)
+          trap 'rm -rf "$progress_ssh_dir"' EXIT
+          mkdir -p staging-logs
+          printf '%s\n' "$VM_SSH_KEY" > "$progress_ssh_dir/key"
+          chmod 600 "$progress_ssh_dir/key"
+          ssh-keyscan -H "$VM_SSH_HOST" > "$progress_ssh_dir/known_hosts" 2>/dev/null
+          ssh -i "$progress_ssh_dir/key" -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$progress_ssh_dir/known_hosts" \
+            "$VM_SSH_USER@$VM_SSH_HOST" 'python3 -' \
+            < scripts/vm/model_progress.py > staging-logs/model-progress.json
 
       - uses: actions/upload-artifact@v4
         with:

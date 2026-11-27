@@ -1,0 +1,11 @@
+{
+  "observation_type": "independent after-job observations; not the original instrument postflight",
+  "source_sha": "326cd885bb21e53019f25a6cfae82164bfba0a6a",
+  "maintenance_record_count": 2079,
+  "same_model_container": true,
+  "restarts": 0,
+  "oom_killed": false,
+  "recent_chat_lines": 31,
+  "recent_http500": 6,
+  "note": "Activity lines alone cannot attribute research cases. The comparison journal supplies the six TimeoutError observations."
+}

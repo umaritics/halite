@@ -1,0 +1,20 @@
+{
+  "independent_held_out_point_metrics": "PASS",
+  "all_question_and_stopping_intervals_replayed": "PASS",
+  "tables_verified": 72,
+  "case_counts": {
+    "n_pairs": 157,
+    "n_originals": 140,
+    "before_or_at_selection_label_time_pairs": 0,
+    "unknown_outcome_pairs_excluded": 0,
+    "pair_discards": {
+      "missing_id": 12,
+      "tail_mismatch_or_empty": 2,
+      "nonforward_submission": 1
+    },
+    "true_part_missing_top10": 113
+  },
+  "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
+  "held_out_tuning": false,
+  "results_sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+}

@@ -1,0 +1,4 @@
+OperatorControlNumber,RegistryNNumber,DifficultyDate,SubmissionDate,AircraftMake,AircraftModel,PartName,Discrepancy
+HGLT2024010100001,N-HGL-LIVE,01/01/2024,2024-01-02T00:00:00Z,SYNTHETIC,HIGHLIGHT-SMOKE,HYDRAULIC PUMP,😀 Hydraulic pump pressure loss at seal during taxi.
+HGLT2024020100002,N-HGL-LIVE,02/01/2024,2024-02-02T00:00:00Z,SYNTHETIC,HIGHLIGHT-SMOKE,HYDRAULIC PUMP,Hydraulic pump inspection found pressure loss at seal.
+HGLT2024030100003,N-HGL-LIVE,03/01/2024,2024-03-02T00:00:00Z,SYNTHETIC,HIGHLIGHT-SMOKE,HYDRAULIC PUMP,Hydraulic pump leak caused pressure loss during taxi.

@@ -1,0 +1,931 @@
+{
+  "source": "Synthetic verification, not research accuracy or a selected operating point",
+  "health": {
+    "status": "ok",
+    "app": "Halite",
+    "demo_mode": false,
+    "neo4j_configured": true,
+    "using_memory_graph": false,
+    "groq_configured": false,
+    "llm_provider": "groq",
+    "graph_mode": "neo4j",
+    "llm_mode": "fallback",
+    "model": "openai/gpt-oss-20b",
+    "maint_threshold": 0.5,
+    "domains": [
+      {
+        "key": "software",
+        "display_name": "Software Engineering",
+        "subject_label": "Component",
+        "record_label": "Decision",
+        "is_default": true
+      },
+      {
+        "key": "maintenance",
+        "display_name": "Maintenance / Field Service",
+        "subject_label": "Asset",
+        "record_label": "ServiceRecord",
+        "is_default": false
+      }
+    ],
+    "maintenance_corpus_loaded": true,
+    "maintenance_record_count": 40,
+    "fallback_invocations": 0,
+    "auth_enabled": true,
+    "auth_db_mode": "postgresql",
+    "openapi_enabled": false,
+    "git_sha": "unknown",
+    "deployed_at": ""
+  },
+  "session_id": "8d5f6038-2e5f-42b3-8120-487e259eb832",
+  "turn_posts": 4,
+  "browser_errors": [],
+  "initial": {
+    "decision": "ask",
+    "question": {
+      "attribute": "how_discovered",
+      "text": "How was the difficulty discovered?",
+      "reason": "Expected to remove 0.217 of 0.797 bits of uncertainty.",
+      "options": [
+        {
+          "value": "C",
+          "label": "Functional Check (C)"
+        },
+        {
+          "value": "V",
+          "label": "Visual (V)"
+        }
+      ]
+    },
+    "beliefs": {
+      "hypotheses": [
+        {
+          "part_name": "PUMP",
+          "score": 2.5589,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100000",
+            "QBRW2023010100001",
+            "QBRW2023010100002",
+            "QBRW2023010100003",
+            "QBRW2023010100004",
+            "QBRW2023010100005",
+            "QBRW2023010100006",
+            "QBRW2023010100007",
+            "QBRW2023010100008",
+            "QBRW2023010100009",
+            "QBRW2023010100010",
+            "QBRW2023010100011",
+            "QBRW2023010100012",
+            "QBRW2023010100013",
+            "QBRW2023010100014",
+            "QBRW2023010100015",
+            "QBRW2023010100016",
+            "QBRW2023010100017",
+            "QBRW2023010100018",
+            "QBRW2023010100019"
+          ],
+          "sources": [
+            "asset_history",
+            "fleet_match"
+          ],
+          "rank": 1,
+          "belief": 0.8386131208080657
+        },
+        {
+          "part_name": "SENSOR",
+          "score": 1.4391,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100020",
+            "QBRW2023010100021",
+            "QBRW2023010100022",
+            "QBRW2023010100023",
+            "QBRW2023010100024",
+            "QBRW2023010100025",
+            "QBRW2023010100026",
+            "QBRW2023010100027",
+            "QBRW2023010100028",
+            "QBRW2023010100029",
+            "QBRW2023010100030",
+            "QBRW2023010100031",
+            "QBRW2023010100032",
+            "QBRW2023010100033",
+            "QBRW2023010100034",
+            "QBRW2023010100035",
+            "QBRW2023010100036",
+            "QBRW2023010100037",
+            "QBRW2023010100038",
+            "QBRW2023010100039"
+          ],
+          "sources": [
+            "asset_history"
+          ],
+          "rank": 2,
+          "belief": 0.0903326370948451
+        }
+      ],
+      "other": 0.07105424209708916,
+      "entropy": 0.7973388310650259,
+      "calibrated": true,
+      "label": "relative support",
+      "ranker_version": "mid_heuristic-v1",
+      "temperature": 0.5025466937513824,
+      "other_score": 1.3184610196616369,
+      "parameters": {
+        "ranker_version": "mid_heuristic-v1",
+        "temperature": 0.5025466937513824,
+        "other_score": 1.3184610196616369,
+        "fit_years": [
+          2023
+        ],
+        "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+      }
+    },
+    "response_sha256": "e86ef2b759ae2d619ec0d03193cdfd699ab09fcfe1808da567c37f4424355869"
+  },
+  "answer": {
+    "beliefs": {
+      "hypotheses": [
+        {
+          "part_name": "PUMP",
+          "score": 2.5589,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100000",
+            "QBRW2023010100001",
+            "QBRW2023010100002",
+            "QBRW2023010100003",
+            "QBRW2023010100004",
+            "QBRW2023010100005",
+            "QBRW2023010100006",
+            "QBRW2023010100007",
+            "QBRW2023010100008",
+            "QBRW2023010100009",
+            "QBRW2023010100010",
+            "QBRW2023010100011",
+            "QBRW2023010100012",
+            "QBRW2023010100013",
+            "QBRW2023010100014",
+            "QBRW2023010100015",
+            "QBRW2023010100016",
+            "QBRW2023010100017",
+            "QBRW2023010100018",
+            "QBRW2023010100019"
+          ],
+          "sources": [
+            "asset_history",
+            "fleet_match"
+          ],
+          "rank": 1,
+          "belief": 0.41786949360403214
+        },
+        {
+          "part_name": "SENSOR",
+          "score": 1.4391,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100020",
+            "QBRW2023010100021",
+            "QBRW2023010100022",
+            "QBRW2023010100023",
+            "QBRW2023010100024",
+            "QBRW2023010100025",
+            "QBRW2023010100026",
+            "QBRW2023010100027",
+            "QBRW2023010100028",
+            "QBRW2023010100029",
+            "QBRW2023010100030",
+            "QBRW2023010100031",
+            "QBRW2023010100032",
+            "QBRW2023010100033",
+            "QBRW2023010100034",
+            "QBRW2023010100035",
+            "QBRW2023010100036",
+            "QBRW2023010100037",
+            "QBRW2023010100038",
+            "QBRW2023010100039"
+          ],
+          "sources": [
+            "asset_history"
+          ],
+          "rank": 2,
+          "belief": 0.4051037020996131
+        }
+      ],
+      "other": 0.17702680429635473,
+      "entropy": 1.4963597615855635,
+      "calibrated": true,
+      "label": "relative support",
+      "ranker_version": "mid_heuristic-v1",
+      "temperature": 0.5025466937513824,
+      "other_score": 1.3184610196616369,
+      "parameters": {
+        "ranker_version": "mid_heuristic-v1",
+        "temperature": 0.5025466937513824,
+        "other_score": 1.3184610196616369,
+        "fit_years": [
+          2023
+        ],
+        "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+      }
+    },
+    "llm_status": "not_needed",
+    "prior": {
+      "hypotheses": [
+        {
+          "part_name": "PUMP",
+          "score": 2.5589,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100000",
+            "QBRW2023010100001",
+            "QBRW2023010100002",
+            "QBRW2023010100003",
+            "QBRW2023010100004",
+            "QBRW2023010100005",
+            "QBRW2023010100006",
+            "QBRW2023010100007",
+            "QBRW2023010100008",
+            "QBRW2023010100009",
+            "QBRW2023010100010",
+            "QBRW2023010100011",
+            "QBRW2023010100012",
+            "QBRW2023010100013",
+            "QBRW2023010100014",
+            "QBRW2023010100015",
+            "QBRW2023010100016",
+            "QBRW2023010100017",
+            "QBRW2023010100018",
+            "QBRW2023010100019"
+          ],
+          "sources": [
+            "asset_history",
+            "fleet_match"
+          ],
+          "rank": 1,
+          "belief": 0.8386131208080657
+        },
+        {
+          "part_name": "SENSOR",
+          "score": 1.4391,
+          "evidence_count": 20,
+          "evidence_record_ids": [
+            "QBRW2023010100020",
+            "QBRW2023010100021",
+            "QBRW2023010100022",
+            "QBRW2023010100023",
+            "QBRW2023010100024",
+            "QBRW2023010100025",
+            "QBRW2023010100026",
+            "QBRW2023010100027",
+            "QBRW2023010100028",
+            "QBRW2023010100029",
+            "QBRW2023010100030",
+            "QBRW2023010100031",
+            "QBRW2023010100032",
+            "QBRW2023010100033",
+            "QBRW2023010100034",
+            "QBRW2023010100035",
+            "QBRW2023010100036",
+            "QBRW2023010100037",
+            "QBRW2023010100038",
+            "QBRW2023010100039"
+          ],
+          "sources": [
+            "asset_history"
+          ],
+          "rank": 2,
+          "belief": 0.0903326370948451
+        }
+      ],
+      "other": 0.07105424209708916,
+      "entropy": 0.7973388310650259,
+      "calibrated": true,
+      "label": "relative support",
+      "ranker_version": "mid_heuristic-v1",
+      "temperature": 0.5025466937513824,
+      "other_score": 1.3184610196616369,
+      "parameters": {
+        "ranker_version": "mid_heuristic-v1",
+        "temperature": 0.5025466937513824,
+        "other_score": 1.3184610196616369,
+        "fit_years": [
+          2023
+        ],
+        "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+      }
+    },
+    "response_sha256": "ec9ec8112d63f178fd3b1c2c595e5aba3fa34e72379fb6523a2a5f3518d9d673"
+  },
+  "final": {
+    "decision": "abstain",
+    "questions_asked": 3,
+    "response_sha256": "66c2d66a2fe80e3de7ff118484ffea7e0222bfcbecca4dca279a9488aa8a44aa"
+  },
+  "sentence_grounding_verified": true,
+  "grounding": {
+    "sentences": [
+      {
+        "text": "Leading historical support: PUMP.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      },
+      {
+        "text": "Active supporting reports: QBRW2023010100000, QBRW2023010100001, QBRW2023010100002, QBRW2023010100003, QBRW2023010100004, QBRW2023010100005, QBRW2023010100006, QBRW2023010100007, QBRW2023010100008, QBRW2023010100009, QBRW2023010100010, QBRW2023010100011, QBRW2023010100012, QBRW2023010100013, QBRW2023010100014, QBRW2023010100015, QBRW2023010100016, QBRW2023010100017, QBRW2023010100018, QBRW2023010100019.",
+        "citations": [
+          "QBRW2023010100000",
+          "QBRW2023010100001",
+          "QBRW2023010100002",
+          "QBRW2023010100003",
+          "QBRW2023010100004",
+          "QBRW2023010100005",
+          "QBRW2023010100006",
+          "QBRW2023010100007",
+          "QBRW2023010100008",
+          "QBRW2023010100009",
+          "QBRW2023010100010",
+          "QBRW2023010100011",
+          "QBRW2023010100012",
+          "QBRW2023010100013",
+          "QBRW2023010100014",
+          "QBRW2023010100015",
+          "QBRW2023010100016",
+          "QBRW2023010100017",
+          "QBRW2023010100018",
+          "QBRW2023010100019"
+        ],
+        "valid_citations": [
+          "QBRW2023010100000",
+          "QBRW2023010100001",
+          "QBRW2023010100002",
+          "QBRW2023010100003",
+          "QBRW2023010100004",
+          "QBRW2023010100005",
+          "QBRW2023010100006",
+          "QBRW2023010100007",
+          "QBRW2023010100008",
+          "QBRW2023010100009",
+          "QBRW2023010100010",
+          "QBRW2023010100011",
+          "QBRW2023010100012",
+          "QBRW2023010100013",
+          "QBRW2023010100014",
+          "QBRW2023010100015",
+          "QBRW2023010100016",
+          "QBRW2023010100017",
+          "QBRW2023010100018",
+          "QBRW2023010100019"
+        ],
+        "invalid_citations": [],
+        "level": "unrated",
+        "score": 0,
+        "best_record_id": "QBRW2023010100019",
+        "acceptable_uncited": false,
+        "reason": "Score recorded; thresholds and whitelist are not yet validated.",
+        "candidates": [
+          {
+            "record_id": "QBRW2023010100000",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100001",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100002",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100003",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100004",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100005",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100006",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100007",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100008",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100009",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100010",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100011",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100012",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100013",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100014",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100015",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100016",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100017",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100018",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          },
+          {
+            "record_id": "QBRW2023010100019",
+            "containment": 0,
+            "cosine": null,
+            "score": 0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true
+          }
+        ]
+      },
+      {
+        "text": "The ranking is provisional.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      },
+      {
+        "text": "Answer the saved multiple-choice question to refine its relative support.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      },
+      {
+        "text": "Historical support does not establish a fault cause or approve a repair.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      },
+      {
+        "text": "Language model unavailable: this text is a deterministic summary of the saved evidence.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      }
+    ],
+    "unsupported_count": 0,
+    "uncited_count": 5,
+    "checked_with": "lexical",
+    "embedding_status": "not_requested",
+    "status": "thresholds_pending",
+    "version": "sentence-grounding-v1",
+    "part_vocabulary_sha256": "bcc753135f8bdeca16546297c713082eb16526ee364df9167990233038956a6b",
+    "parameters": null,
+    "configuration": null,
+    "evidence": [
+      {
+        "record_id": "QBRW2023010100000",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100001",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100002",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100003",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100004",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100005",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100006",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100007",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100008",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100009",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100010",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100011",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100012",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100013",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100014",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100015",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100016",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100017",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100018",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      },
+      {
+        "record_id": "QBRW2023010100019",
+        "asset_id": "N-Q-LIVE",
+        "occurred_at": "2023-01-01",
+        "part_name": "PUMP",
+        "status": "unscored",
+        "is_superseded": false,
+        "text": "Hydraulic pressure loss"
+      }
+    ]
+  },
+  "exact_reload_replay": true,
+  "second_and_third_not_sure_preserve_beliefs": true,
+  "mobile_and_desktop_no_horizontal_overflow": true,
+  "desktop_sidebar_width_px": 256,
+  "phone_keyboard_navigation_and_logout_verified": true,
+  "mobile_active_question_geometry": {
+    "left": 97,
+    "right": 357,
+    "width": 260,
+    "main_width": 326
+  },
+  "mobile_main_width_px": 326,
+  "mobile_content_usable": true,
+  "shared_staging_accessed": false
+}

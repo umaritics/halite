@@ -1,0 +1,40 @@
+{
+  "baseline": {
+    "source_commit": "4136fc30f9c7feb25bd3bc9231e73d4b328cf087",
+    "workflow_url": "https://github.com/umaritics/halite/actions/runs/44858279238",
+    "requirements_sha256": "7c976cfd6d1d6c3f0ac48402d0d9defb7bd24eb36c426737b28ceba3abf45bfe"
+  },
+  "backend_python_files_audited": 165,
+  "removed_direct_requirements": [
+    "langchain",
+    "langchain-community",
+    "langchain-text-splitters",
+    "python-docx",
+    "python-dotenv"
+  ],
+  "added_direct_constraints": [
+    "numpy",
+    "requests"
+  ],
+  "removed_imports_found": {
+    "docx": [],
+    "dotenv": [],
+    "langchain": [],
+    "langchain_community": [],
+    "langchain_text_splitters": []
+  },
+  "required_pandas_imports": [
+    "backend/agents/maintenance_agent.py:82",
+    "backend/scripts/c4_self_consistency.py:16",
+    "backend/scripts/d3_latency.py:17",
+    "backend/scripts/fetch_sdr_data.py:22",
+    "backend/scripts/recalc_baseline.py:5"
+  ],
+  "required_requests_imports": [
+    "backend/scripts/check_demo_assets.py:8",
+    "backend/scripts/d3_latency.py:2",
+    "backend/scripts/gather_g1_evidence.py:3",
+    "backend/scripts/test_g3_queries.py:3"
+  ],
+  "note": "python-dotenv remains required transitively; NumPy was already installed and is pinned to the verified baseline."
+}

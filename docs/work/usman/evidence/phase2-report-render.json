@@ -1,0 +1,21 @@
+{
+  "horizontalOverflow": false,
+  "title": "Investigation 319e7a76-256c-4243-aac6-8b65cb5ca22c",
+  "headings": [
+    "Runtime smoke",
+    "Recorded outcome",
+    "Turn 1",
+    "Evidence"
+  ],
+  "bodyHeight": 686,
+  "longTitleChecks": [
+    {
+      "width": 1280,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 794,
+      "horizontalOverflow": false
+    }
+  ]
+}

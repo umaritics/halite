@@ -1,26 +1,7 @@
 // Helpers for the Diagnostics page. Kept free of React so they can be unit tested.
+import { formatDetail, SIGNED_OUT_MESSAGE, TIMEOUT_MESSAGE } from '../lib/errors';
 
-// FastAPI returns `detail` as a string for HTTPException but as an array of
-// {loc, msg, type} objects for request-validation (422) errors. Rendering the
-// array directly would crash the page, so always flatten to text here.
-export function formatDetail(detail) {
-  if (detail == null) return null;
-  if (typeof detail === 'string') return detail;
-  if (Array.isArray(detail)) {
-    const parts = detail
-      .map((d) => {
-        if (typeof d === 'string') return d;
-        if (d && typeof d.msg === 'string') {
-          const field = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : null;
-          return field ? `${field}: ${d.msg}` : d.msg;
-        }
-        return null;
-      })
-      .filter(Boolean);
-    return parts.length ? parts.join('; ') : null;
-  }
-  return null;
-}
+export { formatDetail };
 
 // Turn a failed diagnose request into something a technician can act on.
 // Never invents a diagnosis; always says what failed and what to do next.
@@ -28,15 +9,18 @@ export function describeDiagnosticError(err) {
   const status = err?.response?.status;
   const detail = formatDetail(err?.response?.data?.detail);
 
+  const isTimeout = err?.code === 'ECONNABORTED';
   const isNetwork =
     !err?.response &&
-    (err?.code === 'ERR_NETWORK' || Boolean(err?.request) || /network/i.test(err?.message || ''));
+    (isTimeout || err?.code === 'ERR_NETWORK' || Boolean(err?.request) || /network/i.test(err?.message || ''));
 
   if (isNetwork) {
     return {
       kind: 'network',
       title: 'Cannot reach the Halite API',
-      message: 'The backend did not respond. Check that the API server is running, then try again.',
+      message: isTimeout
+        ? TIMEOUT_MESSAGE
+        : 'The backend did not respond. Check that the API server is running, then try again.',
       detail: null,
       retryable: true,
     };
@@ -58,7 +42,7 @@ export function describeDiagnosticError(err) {
         kind: 'unauthorized',
         title: 'API authentication required',
         message:
-          'The backend rejected this request as unauthenticated. Configure VITE_HALITE_API_KEY in your environment or sign in.',
+          SIGNED_OUT_MESSAGE,
         detail,
         retryable: false,
       };

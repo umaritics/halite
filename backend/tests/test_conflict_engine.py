@@ -379,27 +379,22 @@ class TestProcessRecord:
             )
 
     def test_applies_link_when_auto_accepted(self):
+        """A citing report is linked by rule R1 to the report it names (previously: the top candidate via the model)."""
         from services.conflict_engine import process_record
         repo = _make_repo()
         adapter = MaintenanceDomainAdapter()
         _setup_asset_with_records(repo)
-        
-        # update R002 to have explicit citation so it hits 1.0 confidence
-        target = repo.get_service_record("R002")
-        target["text"] = "SUPPLEMENTAL REPORT FOR R001"
-        repo.update_service_record("R002", target)
 
-        groq = StubGroqLive(label="supersedes")
-        
-        linked = []
-        def mock_link(new_record_id, old_record_id, **kwargs):
-            linked.append((old_record_id, new_record_id))
-            
-        repo.link_record_supersedes = mock_link
-        
-        result = process_record(repo, groq, adapter, "R002", threshold=0.5, allow_stub=True)
+        # "R001" is below the 6-character floor of a citation ID, so cite a report with a parsable one.
+        repo.create_service_record({"record_id": "PRIOR0001", "asset_key": "NTST", "occurred_at": "2025-01-02",
+                                    "part_name": "Exit Sign", "text": "earlier report"})
+        repo.link_record_about_asset("PRIOR0001", repo.find_or_create_asset("NTST", {})["id"])
+        repo.update_service_record("R002", {"text": "SUPPLEMENTAL REPORT FOR (PRIOR0001)"})
+
+        result = process_record(repo, StubGroqLive(label="no_conflict"), adapter, "R002",
+                                threshold=0.5, allow_stub=True)
         assert result["status_applied"] == "auto_accepted"
-        assert len(linked) == 1
+        assert repo.get_supersedes_link("R002", "PRIOR0001")["method"] == "explicit_citation"
 
 
     def test_no_candidates_is_scored_without_model_classification(self):

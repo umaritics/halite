@@ -5,6 +5,7 @@ export default function ConfidenceBar({
   threshold = 0.50,
   analysisState,
   classification,
+  classificationText,
   candidateCount,
   status,
   legacyPlaceholder = false,
@@ -58,7 +59,7 @@ export default function ConfidenceBar({
       title={`Conflict-check score: a heuristic routing score, not a probability.${methodDetail ? ` ${methodDetail}` : ''}`}
     >
       <div className="flex justify-between items-center text-xs font-mono text-secondary">
-        <span>{classification || 'Conflict check'}</span>
+        <span>{classificationText || classification || 'Conflict check'}</span>
         <span>{value.toFixed(2)}</span>
       </div>
       <div className="text-[10px] leading-tight text-secondary">

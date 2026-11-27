@@ -1,0 +1,43 @@
+{
+  "source_commit": "c2936e4639646374b8006c2be1751c78b910ba02",
+  "workflow_url": "https://github.com/umaritics/halite/actions/runs/44881901280",
+  "jobs": [
+    {
+      "name": "Frontend tests and build (Node 20)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44881901280/job/136778797262"
+    },
+    {
+      "name": "Docker Compose real-graph smoke test",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44881901280/job/136778797407"
+    },
+    {
+      "name": "Backend tests (Python 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44881901280/job/136778797452"
+    }
+  ],
+  "backend_tests": 450,
+  "frontend_tests": 279,
+  "coverage": {
+    "version": "7.17.4",
+    "timestamp": "1795247408112",
+    "lines-valid": "6484",
+    "lines-covered": "5037",
+    "line-rate": "0.7768",
+    "branches-covered": "0",
+    "branches-valid": "0",
+    "branch-rate": "0",
+    "complexity": "0"
+  },
+  "artifact_sha256": {
+    "coverage.xml": "5fb9f4df3e14a2e8bbaab11650ba1c40e6c9e4bd7234369f3b43af6aad434d71",
+    "dependency-cleanup-summary.json": "0c290532a838b56fd1fb69de406380e6212651f0e1a53de336267eca64ab6d83",
+    "dependency-install-report.json": "b5b5ae5d6168655afd3cfbc041f253307ef73d925340655309736e9866523af1",
+    "dependency-installed.json": "756b71b7d9dd48496550f662aa592ee996126de5c090d9a0d46cf104be300bfb",
+    "test-results.xml": "7b60b64d651397bd659745081af008db77a012fd4f887fc0ae97b4d4da687f5a"
+  },
+  "initial_failed_run": "https://github.com/umaritics/halite/actions/runs/44881679485",
+  "correction": "Declared requests used by retained scripts; repeated full hosted verification."
+}

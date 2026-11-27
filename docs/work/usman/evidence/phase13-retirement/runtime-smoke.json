@@ -1,0 +1,136 @@
+{
+  "accept_result": {
+    "record_id": "CI-SMOKE-002",
+    "reviewed_by_email": "admin@halite.local",
+    "status": "accepted"
+  },
+  "asset": {
+    "created_at": "2026-11-21T07:51:39.356038+00:00",
+    "id": "07289e76-2c05-458c-97a3-eb15e29c2cb0",
+    "make": "Boeing",
+    "model": "737",
+    "record_count": 3,
+    "serial_number": "CI-SN-001",
+    "tail_number": "N-CI-123",
+    "updated_at": "2026-11-21T07:51:39.356055+00:00"
+  },
+  "first_ingest": {
+    "assets_created": 1,
+    "duplicates_skipped": 0,
+    "records_created": 3,
+    "rows_skipped_bad_date": 0,
+    "rows_skipped_no_tail": 0
+  },
+  "history_record_ids": [
+    "CI-SMOKE-001",
+    "CI-SMOKE-002",
+    "CI-SMOKE-003"
+  ],
+  "idempotent_ingest": {
+    "assets_created": 1,
+    "duplicates_skipped": 3,
+    "records_created": 0,
+    "rows_skipped_bad_date": 0,
+    "rows_skipped_no_tail": 0
+  },
+  "initial_health": {
+    "app": "Halite",
+    "auth_db_mode": "postgresql",
+    "auth_enabled": true,
+    "demo_mode": false,
+    "deployed_at": "",
+    "domains": [
+      {
+        "display_name": "Maintenance / Field Service",
+        "is_default": true,
+        "key": "maintenance",
+        "record_label": "ServiceRecord",
+        "subject_label": "Asset"
+      }
+    ],
+    "fallback_invocations": 0,
+    "git_sha": "unknown",
+    "graph_mode": "neo4j",
+    "groq_configured": false,
+    "llm_mode": "fallback",
+    "llm_provider": "groq",
+    "maint_threshold": 0.5,
+    "maintenance_corpus_loaded": false,
+    "maintenance_record_count": 0,
+    "model": "openai/gpt-oss-20b",
+    "neo4j_configured": true,
+    "openapi_enabled": true,
+    "status": "ok",
+    "using_memory_graph": false
+  },
+  "loaded_health": {
+    "app": "Halite",
+    "auth_db_mode": "postgresql",
+    "auth_enabled": true,
+    "demo_mode": false,
+    "deployed_at": "",
+    "domains": [
+      {
+        "display_name": "Maintenance / Field Service",
+        "is_default": true,
+        "key": "maintenance",
+        "record_label": "ServiceRecord",
+        "subject_label": "Asset"
+      }
+    ],
+    "fallback_invocations": 0,
+    "git_sha": "unknown",
+    "graph_mode": "neo4j",
+    "groq_configured": false,
+    "llm_mode": "fallback",
+    "llm_provider": "groq",
+    "maint_threshold": 0.5,
+    "maintenance_corpus_loaded": true,
+    "maintenance_record_count": 3,
+    "model": "openai/gpt-oss-20b",
+    "neo4j_configured": true,
+    "openapi_enabled": true,
+    "status": "ok",
+    "using_memory_graph": false
+  },
+  "model_unavailable_failure": {
+    "detail": "process_record: groq_service is not live (is_live=False). Running with a canned LLM response would produce meaningless results. Either configure GROQ_API_KEY or call with allow_stub=True (tests only).",
+    "status": 503
+  },
+  "rbac_technician_review_denied": 403,
+  "reject_result": {
+    "original_text_preserved": true,
+    "record_id": "CI-SMOKE-003",
+    "status": "rejected"
+  },
+  "retirement": {
+    "domains": [
+      {
+        "display_name": "Maintenance / Field Service",
+        "is_default": true,
+        "key": "maintenance",
+        "record_label": "ServiceRecord",
+        "subject_label": "Asset"
+      }
+    ],
+    "initial_graph_empty": true,
+    "retired_routes": {
+      "GET /api/alerts": 404,
+      "GET /api/decisions": 404,
+      "POST /api/chat": 404,
+      "POST /api/ingest/code": 404,
+      "POST /api/ingest/document": 404,
+      "POST /api/ingest/gitea": 404,
+      "POST /api/webhook/gitea": 404
+    }
+  },
+  "review_queue_ids": [
+    "CI-SMOKE-002",
+    "CI-SMOKE-003"
+  ],
+  "unauthenticated_guard_status": 401,
+  "unknown_asset_failure": {
+    "detail": "Asset 'not-a-real-asset' not found",
+    "status": 404
+  }
+}

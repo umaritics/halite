@@ -1,0 +1,1054 @@
+{
+  "session_id": "74c792ce-510c-4c60-addb-a7f441435246",
+  "reply": "Most supported check: DRAG ANGLE (1 records: SWIA2025122876590).\nRanking signals: this aircraft's service history.\nThis ranking is provisional; it does not establish a fault cause.\nRecord SWIA2025120576544 was superseded; it is shown as history only.\nLanguage model unavailable: this text was generated from the ranking, not written by a model.",
+  "case_state": {
+    "symptoms": [
+      "hydraulic pressure drops"
+    ],
+    "observations": [],
+    "checks_done": [],
+    "ruled_out": [],
+    "open_questions": []
+  },
+  "ranked_checks": [
+    {
+      "part_name": "PRESSURE SWITCH",
+      "score": 0.4377,
+      "evidence_count": 9,
+      "evidence_record_ids": [
+        "AALA202502067323",
+        "AALA202503138083",
+        "AALA202504228195",
+        "AALA202505159763",
+        "AALA202507257237",
+        "AALA202508202320",
+        "AALA202509085404",
+        "AALA202511183549",
+        "AALA202601068333"
+      ],
+      "sources": [
+        "fleet_match"
+      ],
+      "rank": 1
+    },
+    {
+      "part_name": "DRAG ANGLE",
+      "score": 0.4,
+      "evidence_count": 1,
+      "evidence_record_ids": [
+        "SWIA2025122876590"
+      ],
+      "sources": [
+        "asset_history"
+      ],
+      "rank": 2
+    },
+    {
+      "part_name": "FRAME",
+      "score": 0.2,
+      "evidence_count": 1,
+      "evidence_record_ids": [
+        "SWIA2025122076513"
+      ],
+      "sources": [
+        "asset_history"
+      ],
+      "rank": 3
+    },
+    {
+      "part_name": "HYDRAULIC LINE",
+      "score": 0.1961,
+      "evidence_count": 4,
+      "evidence_record_ids": [
+        "AALA202502282383",
+        "AALA202505151932",
+        "AALA202507317184",
+        "AALA202508300435"
+      ],
+      "sources": [
+        "fleet_match"
+      ],
+      "rank": 4
+    },
+    {
+      "part_name": "STRINGER",
+      "score": 0.1803,
+      "evidence_count": 5,
+      "evidence_record_ids": [
+        "SWIA2025112876473",
+        "SWIA2025120576568",
+        "SWIA2025120676529",
+        "SWIA2026070676497",
+        "SWIA2026070676558"
+      ],
+      "sources": [
+        "asset_history"
+      ],
+      "rank": 5
+    },
+    {
+      "part_name": "PRESSURE DECK",
+      "score": 0.1492,
+      "evidence_count": 3,
+      "evidence_record_ids": [
+        "AALA202504014632",
+        "AALA202504258159",
+        "AALA202511134227"
+      ],
+      "sources": [
+        "fleet_match"
+      ],
+      "rank": 6
+    },
+    {
+      "part_name": "STRINGER SPLICE",
+      "score": 0.1364,
+      "evidence_count": 2,
+      "evidence_record_ids": [
+        "SWIA2025120676586",
+        "SWIA2026070606541"
+      ],
+      "sources": [
+        "asset_history"
+      ],
+      "rank": 7
+    },
+    {
+      "part_name": "SEAT TRACK",
+      "score": 0.1333,
+      "evidence_count": 1,
+      "evidence_record_ids": [
+        "SWIA2025121776533"
+      ],
+      "sources": [
+        "asset_history"
+      ],
+      "rank": 8
+    },
+    {
+      "part_name": "SLAT TRACK",
+      "score": 0.1227,
+      "evidence_count": 7,
+      "evidence_record_ids": [
+        "SWIA2025113076457",
+        "SWIA2025113076461",
+        "SWIA2025113076507",
+        "SWIA2025113076522",
+        "SWIA2025113076536",
+        "SWIA2025113076564",
+        "SWIA2025113076583"
+      ],
+      "sources": [
+        "asset_history"
+      ],
+      "rank": 9
+    },
+    {
+      "part_name": "HYDRAULIC SYSTEM",
+      "score": 0.0989,
+      "evidence_count": 2,
+      "evidence_record_ids": [
+        "AALA202501136707",
+        "AALA202505198249"
+      ],
+      "sources": [
+        "fleet_match"
+      ],
+      "rank": 10
+    }
+  ],
+  "ranking_delta": {
+    "moved_up": [],
+    "moved_down": [],
+    "new": [
+      {
+        "part_name": "PRESSURE SWITCH",
+        "rank": 1
+      },
+      {
+        "part_name": "DRAG ANGLE",
+        "rank": 2
+      },
+      {
+        "part_name": "FRAME",
+        "rank": 3
+      },
+      {
+        "part_name": "HYDRAULIC LINE",
+        "rank": 4
+      },
+      {
+        "part_name": "STRINGER",
+        "rank": 5
+      },
+      {
+        "part_name": "PRESSURE DECK",
+        "rank": 6
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "rank": 7
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "rank": 8
+      },
+      {
+        "part_name": "SLAT TRACK",
+        "rank": 9
+      },
+      {
+        "part_name": "HYDRAULIC SYSTEM",
+        "rank": 10
+      },
+      {
+        "part_name": "WINDOW FRAME",
+        "rank": 11
+      },
+      {
+        "part_name": "DOOR SILL",
+        "rank": 12
+      },
+      {
+        "part_name": "RIB",
+        "rank": 13
+      },
+      {
+        "part_name": "CLEAT",
+        "rank": 14
+      },
+      {
+        "part_name": "INTERCOSTAL",
+        "rank": 15
+      },
+      {
+        "part_name": "STRUCTURE",
+        "rank": 16
+      },
+      {
+        "part_name": "BULKHEAD WEB",
+        "rank": 17
+      },
+      {
+        "part_name": "STRAP",
+        "rank": 18
+      },
+      {
+        "part_name": "FLOORBEAM",
+        "rank": 19
+      },
+      {
+        "part_name": "WINDOW POST",
+        "rank": 20
+      },
+      {
+        "part_name": "FRAME SPLICE",
+        "rank": 21
+      }
+    ],
+    "dropped": [],
+    "newly_cited_records": [
+      "AALA202501136707",
+      "AALA202502067323",
+      "AALA202502282383",
+      "AALA202503138083",
+      "AALA202504014632",
+      "AALA202504228195",
+      "AALA202504258159",
+      "AALA202505151932",
+      "AALA202505159763",
+      "AALA202505198249",
+      "AALA202507257237",
+      "AALA202507317184",
+      "AALA202508202320",
+      "AALA202508300435",
+      "AALA202509085404",
+      "AALA202511134227",
+      "AALA202511183549",
+      "AALA202601068333",
+      "SWIA2025112876473",
+      "SWIA2025112876478",
+      "SWIA2025113076457",
+      "SWIA2025113076461",
+      "SWIA2025113076466",
+      "SWIA2025113076507",
+      "SWIA2025113076522",
+      "SWIA2025113076536",
+      "SWIA2025113076564",
+      "SWIA2025113076583",
+      "SWIA2025120176516",
+      "SWIA2025120276547",
+      "SWIA2025120376581",
+      "SWIA2025120576450",
+      "SWIA2025120576568",
+      "SWIA2025120676529",
+      "SWIA2025120676586",
+      "SWIA2025120776453",
+      "SWIA2025120876572",
+      "SWIA2025121276556",
+      "SWIA2025121576470",
+      "SWIA2025121776533",
+      "SWIA2025122076513",
+      "SWIA2025122876590",
+      "SWIA2026070606541",
+      "SWIA2026070676497",
+      "SWIA2026070676554",
+      "SWIA2026070676558"
+    ]
+  },
+  "evidence": [
+    {
+      "record_id": "SWIA2025122876590",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-28",
+      "part_name": "DRAG ANGLE",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "RT VERTICAL STAB TO FUSELAGE AFT DRAG ANGLE SHOWS POSSIBLE CRACK. REMOVED, CRACKED RIGHT, AFT DRAG ANGLE ON THE VERTICAL STAB, AND INSTALLED SERVICABLE DRAG ANGLE. SRM 51-42-21-001-001-A01 REV 38, SRM 51-42-13-001-001-A01  REV. 38,  SRM 51-42-22-001-001-A01 REV. 38, & DWG BA670-35002, REV F. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025122076513",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-20",
+      "part_name": "FRAME",
+      "status": "needs_review",
+      "is_superseded": false,
+      "text": "EXFOLIATED CORROSION FOUND AT FRAME 379.00 INSIDE FWD WASTE SERVICE AREA. STRINGER 25R TO 27R.  INSTALLED NEW FRAME 379 IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01, DWG SH670-32280, REV H, AND DWG SH670-32050 REV. J. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY. LEAK CHECK GOOD"
+    },
+    {
+      "record_id": "SWIA2025121776533",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-17",
+      "part_name": "SEAT TRACK",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "UPON REMOVAL OF SEAT RAIL AT RBL9  BETWEEN FS838.00 TO FS852.00 FLOORBEAM FOUND TO BE CORRODED.  REMOVED AND  INSTALLED NEW FLOOR BEAM SECTION AT RBL 9 F/S 847 TO F/S 847+56 UNDER SEAT RAIL AT RBL9  BETWEEN FS838.00 TO FS852.00  IAW SRM 53-00-41-201-001-A03. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2026070606541",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-17",
+      "part_name": "STRINGER SPLICE",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "STRINGER SPLICE AT STR20R AND FS477 IS CORRODED.  REMOVED AND INSTALLED NEW STRINGER SPLICE ON STR20R AT FS477 IAW SRM 51-42-21-001-001-A01,  SRM 51-42-06-001-001-A01 AND DWG SH690-30006 REV C. PERFORMED LEAK CHECK IAW SRM 51-23-03-001-001-A01. LEAK CHECK GOOD WITH NO DEFECTS NOTED. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025121576470",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-15",
+      "part_name": "WINDOW FRAME",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "DURING AUDIT OF TASK CARD 53-220-504 (CONFIG A01) GENERAL VISUAL INSPECTION OF THE INTERNAL FRAME STRUCTURE OF THE WINDSHIELD AND SIDE WINDOWS IT WAS FOUND THAT THE LT INTERNAL WINDOW FRAME STRUCTURE ON THE AFT SIDE OF BS 235 IS CRACKED.  REPAIRED LT INTERNAL WINDOW FRAME STRUCTURE AFT SIDE OF BS 235 IAW REO 690-53-11-2111 REV -A. COMPLIED WITH ALL STEPS OF REO 690-53-11-2111 REV -A. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2026070676558",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-13",
+      "part_name": "STRINGER",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "MAIN AVIONICS STR 24R HAS CORROSION BETWEEN FS349 - FS364. INSTALLED NEW MAIN AVIONICS STRINGER 24R BETWEEN FS333.00 TO FS477.40. IAW. SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG SH690-31350 REV. M. LEAK CHECK GOOD, COMPLIED WITH SKYWEST TRACK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025121276556",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-12",
+      "part_name": "DOOR SILL",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "FWD OUTBOARD DOOR SILL LONGERON AT FWD BAGGAGE DOOR FS 477 TO FS 517 IS CORRODED.   INSTALLED NEW FWD OUTBOARD DOOR SILL LONGERON AT FWD BAGGAGE DOOR FS 477 TO FS 517 REF. SRM 51-42-21-001-001-A01 AND DWG SH690-33750 REV -AF. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY, LEAK CHECKED GOOD."
+    },
+    {
+      "record_id": "SWIA2025120876572",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-08",
+      "part_name": "RIB",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "RT WING BATTERY RIB IS CRACKED AT WS 14.50.  INSTALLED NEW RT WING BATTERY RIB AT WS 14.50 . IAW SRM 51-42-21-001-001-A01,  SRM 51-42-22-001-001-A01. AND DWG CC690-10610, REV. D. .SEE CONTINUE CARD FOR DETAILSCOMPLIED WITH TASK CARD 51-900-1002."
+    },
+    {
+      "record_id": "SWIA2025120776453",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-07",
+      "part_name": "CLEAT",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "EXFOLIATED CORROED CLEAT BS 319, S21R.  CORROSION OVER 50% OF THICKNESS, LIMIT ALLOW. DAMAGE 10% OF CLEAT BS 319, S21R. OUT OF LIMITS IAW SRM 53-21-23-101-002-A02. REQ. REPLACEMENT.INSTALLED NEW CLEAT BS 319, S21R, IAW. SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01, AND DWG SH670-32600, REV AK. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025120676586",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-06",
+      "part_name": "STRINGER SPLICE",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "MAIN AVIONICS STRINGER SPLICE STR 22R HAS CORROSION AT FS333 MX 31317120.  INSTALLED NEW MAIN AVIONICS STRINGER SPLICE S22R AT BS 333 IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG SH670-32420, REV. E. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY. LEAK CHECKED GOOD."
+    },
+    {
+      "record_id": "SWIA2025120676529",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-06",
+      "part_name": "STRINGER",
+      "status": "needs_review",
+      "is_superseded": false,
+      "text": "MAIN AVIONICS STR 22R HAS CORROSION BETWEEN FS280 - FS3295.  INSTALLED NEW MAIN AVIONICS STR 22R BETWEEN FS280 - FS333 REF CRJ-900 SRM 51-42-06-001-001-A01 AND SRM 51-42-21-001-001-A01 AND DWG SH670-31630 REV. K. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY. LEAK CHECK GOOD"
+    },
+    {
+      "record_id": "SWIA2025120576568",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-05",
+      "part_name": "STRINGER",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "MAIN AVIONICS STRINGER 22R HAS CORROSION BETWEEN BS 333 - 349 . INSTALLED NEW MAIN AVIONICS STRINGER 22R BETWEEN BS 333 - 349. IAW SRM 51-42-06-001-001-A01 AND SRM 51-42-21-001-001-A01 AND DWG SH690-31350 REV. M. LEAK CHECK GOOD. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025120576544",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-05",
+      "part_name": "STRINGER SPLICE",
+      "status": "superseded",
+      "is_superseded": true,
+      "text": "MAIN AVIONICS STRINGER SPLICE 21R HAS CORROSION AT FS333.   INSTALLED NEW SPLICE STGR 21R FS333.00. IAW SRM 51-42-06-001-001-A01 AND DWG SH670-32420 REV. E. LEAK CHECK GOOD COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2026070676497",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-05",
+      "part_name": "STRINGER",
+      "status": "needs_review",
+      "is_superseded": false,
+      "text": "MAIN AVIONICS STRINGER 21R HAS CORROSION BETWEEN BS 310 - 319.   INSTALLED NEW STRINGER 21R BS 280 TO 333 IAW SRM 51-42-06-001-001A01.AND DWG SH670-31630, REV. K. LEAK CHECK GOOD. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY"
+    },
+    {
+      "record_id": "SWIA2025120576450",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-05",
+      "part_name": "INTERCOSTAL",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "MAIN AVIONICS INTERCOSTALS 20R HAS CORROSION BETWEEN BS 319 - 333.  MAIN AVIONICS INTERCOSTAL S20R, BS 310 - 319 HAS EXFOLIATED CORROSION AT FASTENERS LOCATION. DAMAGE IS NOT ALLOWED WITHIN A 2D RADIUS OF A FASTENER THEREFORE FOUIND TO BE OUT OF LIMITS IAW SRM 53-21-23-101-002-A02 INSTALLED NEW INTERCOSTAL S20R BS 310 - 319 IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG SH670-31950, REV Y. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025120376581",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-03",
+      "part_name": "STRUCTURE",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "EXFOLIATED CORROSION FOUND AT  AFT BAGGAGE DOOR INNER CHORD BETWEEN BS 1031 TO 1047.   REMOVED AND INSTALLED NEW AFT BAGGAGE DOOR INNER CHORD IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG MM670-35085 REV. L. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2025120276547",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-02",
+      "part_name": "BULKHEAD WEB",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "LH BULKHEAD LOWER WEB AT FS 280.00 HAS CORROSION.  REMOVED LT LOWER WEB AND LT BUTTSTRAP AT BS 280 IAW SRM 51-42-06-001-001-A01, INSTALLED NEW ITEM -1 LOWER WEB AND ITEM -3 LH BUTTSTRAP AT LH BULKHEAD FS 280.00 REF CRJ900 SRM 53-11-10-201-004-A01, FABRICATED, TRIMMED, LOCATED AND DRILLED NEW ITEM -1 LH LOWER WEB AND ITEM -3 LH BUSTTSTRAP MATERIAL USED 7075T6 .040\" PO#5-57788 REF CRJ900 SRM 53-11-10-201-004-A01, AND RESTORE FINISHED AT THE AREA REF SRM [TR51-0068] 51-21-16-001-001-A01.COMPLIED WITH 51-900-1002-SKY"
+    },
+    {
+      "record_id": "SWIA2025120176516",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-01",
+      "part_name": "FLOORBEAM",
+      "status": "auto_accepted",
+      "is_superseded": false,
+      "text": "LH CROSSBEAM AT FS 280.00 HAS CORROSION AND ELONGATED HOLES.  REMOVED AND INSTALLED NEW LH CROSSBEAM AT BS 280 REF SRM 51-42-06-001-001-A01, SRM 51-42-22-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG CC670-34010 REV -K. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+    },
+    {
+      "record_id": "SWIA2026070676554",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-12-01",
+      "part_name": "STRAP",
+      "status": "no_action",
+      "is_superseded": false,
+      "text": "STGR 3L AT FS280 TO FS282 CIRCUMFERENTIAL JOINT STRAP  CRACKED.  COMPLIED WITH PERMANENT REPAIR OF STGR 3L AT FS282 CIRCUMFERENTIAL JOINT STRAP REF REO 670-53-21-493 REV -D,  AND SERVICE BULLETIN 670BA-53-040, REVISION C , FUSELAGE - CENTER FUSELAGE, PRIMARY STRUCTURE FS280.00 TO FS295.00 - INSPECTION AND REINFORCEMENT OF LINTEL STRINGER 3 OF THE MAIN PASSENGER DOOR, (PART B), INCORPORATED. COMPLIED WITH  TASK CARD 51-900-1002-SKY. OPS AND LEAK CHECKS GOOD."
+    },
+    {
+      "record_id": "SWIA2025113076461",
+      "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+      "occurred_at": "2025-11-30",
+      "part_name": "SLAT TRACK",
+      "status": "needs_review",
+      "is_superseded": false,
+      "text": "RIGHT WING, SLAT TRACK 1-1 IS DENTED ON THE LOWER FACE,  REPAIRED RIGHT HAND WING SLAT TRACK 1-1 IAW REO 690-57-42-1354 REV -.  COMPLIED WITH ALL STEPS OF REO 690-57-42-1354 REV -. COMPLIED WITH TASK CARD 51-900-1002-SKY. SEE CONTINUE CARD FOR WORK PERFORMED."
+    }
+  ],
+  "citation_validation": {
+    "valid_ids": [
+      "SWIA2025122876590",
+      "SWIA2025120576544"
+    ],
+    "invalid_ids": [],
+    "all_valid": true
+  },
+  "llm_status": "unavailable",
+  "prose_context": {
+    "version": "copilot-compact-prose-v1",
+    "prompt_sha256": "58c8f6327791a4f7efc43486e2f52467aac2421dbebdca46ca8c74fc9597f24e",
+    "prompt_utf8_bytes": 2042,
+    "max_output_tokens": 192,
+    "evidence_record_ids": [
+      "SWIA2025122876590",
+      "SWIA2025122076513",
+      "SWIA2025121776533"
+    ],
+    "available_evidence_record_ids": [
+      "SWIA2025122876590",
+      "SWIA2025122076513",
+      "SWIA2025121776533",
+      "SWIA2026070606541",
+      "SWIA2025121576470",
+      "SWIA2026070676558",
+      "SWIA2025121276556",
+      "SWIA2025120876572",
+      "SWIA2025120776453",
+      "SWIA2025120676586",
+      "SWIA2025120676529",
+      "SWIA2025120576568",
+      "SWIA2025120576544",
+      "SWIA2026070676497",
+      "SWIA2025120576450",
+      "SWIA2025120376581",
+      "SWIA2025120276547",
+      "SWIA2025120176516",
+      "SWIA2026070676554",
+      "SWIA2025113076461"
+    ],
+    "excerpted_record_ids": [
+      "SWIA2025122876590",
+      "SWIA2025122076513",
+      "SWIA2025121776533"
+    ],
+    "accepted_as_reply": false,
+    "scope": "Up to three prioritized report excerpts for phrasing; complete ranking, decisions and saved evidence remain unchanged."
+  },
+  "warnings": [
+    "Language model unavailable: LLM error: timed out"
+  ],
+  "beliefs": {
+    "hypotheses": [
+      {
+        "part_name": "PRESSURE SWITCH",
+        "score": 0.4377,
+        "evidence_count": 9,
+        "evidence_record_ids": [
+          "AALA202502067323",
+          "AALA202503138083",
+          "AALA202504228195",
+          "AALA202505159763",
+          "AALA202507257237",
+          "AALA202508202320",
+          "AALA202509085404",
+          "AALA202511183549",
+          "AALA202601068333"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 1,
+        "belief": 0.11505206174248313
+      },
+      {
+        "part_name": "DRAG ANGLE",
+        "score": 0.4,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122876590"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 2,
+        "belief": 0.11079534233310988
+      },
+      {
+        "part_name": "FRAME",
+        "score": 0.2,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025122076513"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 3,
+        "belief": 0.09071155406591985
+      },
+      {
+        "part_name": "HYDRAULIC LINE",
+        "score": 0.1961,
+        "evidence_count": 4,
+        "evidence_record_ids": [
+          "AALA202502282383",
+          "AALA202505151932",
+          "AALA202507317184",
+          "AALA202508300435"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 4,
+        "belief": 0.09035846797048537
+      },
+      {
+        "part_name": "STRINGER",
+        "score": 0.1803,
+        "evidence_count": 5,
+        "evidence_record_ids": [
+          "SWIA2025112876473",
+          "SWIA2025120576568",
+          "SWIA2025120676529",
+          "SWIA2026070676497",
+          "SWIA2026070676558"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 5,
+        "belief": 0.08894202355408402
+      },
+      {
+        "part_name": "PRESSURE DECK",
+        "score": 0.1492,
+        "evidence_count": 3,
+        "evidence_record_ids": [
+          "AALA202504014632",
+          "AALA202504258159",
+          "AALA202511134227"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 6,
+        "belief": 0.08621849697483266
+      },
+      {
+        "part_name": "STRINGER SPLICE",
+        "score": 0.1364,
+        "evidence_count": 2,
+        "evidence_record_ids": [
+          "SWIA2025120676586",
+          "SWIA2026070606541"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 7,
+        "belief": 0.08512193319346549
+      },
+      {
+        "part_name": "SEAT TRACK",
+        "score": 0.1333,
+        "evidence_count": 1,
+        "evidence_record_ids": [
+          "SWIA2025121776533"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 8,
+        "belief": 0.0848584637891375
+      },
+      {
+        "part_name": "SLAT TRACK",
+        "score": 0.1227,
+        "evidence_count": 7,
+        "evidence_record_ids": [
+          "SWIA2025113076457",
+          "SWIA2025113076461",
+          "SWIA2025113076507",
+          "SWIA2025113076522",
+          "SWIA2025113076536",
+          "SWIA2025113076564",
+          "SWIA2025113076583"
+        ],
+        "sources": [
+          "asset_history"
+        ],
+        "rank": 9,
+        "belief": 0.08396371462138078
+      },
+      {
+        "part_name": "HYDRAULIC SYSTEM",
+        "score": 0.0989,
+        "evidence_count": 2,
+        "evidence_record_ids": [
+          "AALA202501136707",
+          "AALA202505198249"
+        ],
+        "sources": [
+          "fleet_match"
+        ],
+        "rank": 10,
+        "belief": 0.0819889708775507
+      }
+    ],
+    "other": 0.0819889708775507,
+    "entropy": 3.4497585806462547,
+    "calibrated": false,
+    "label": "relative support",
+    "ranker_version": "mid_heuristic-v1",
+    "temperature": 1.0,
+    "other_score": 0.0989,
+    "parameters": null
+  },
+  "decision": "abstain",
+  "decision_reason": "Decision policy is not configured; ranking is provisional.",
+  "policy_status": "not_configured",
+  "question": null,
+  "policy_inputs": {
+    "b_top": 0.11505206174248313,
+    "other": 0.0819889708775507,
+    "evidence_count": 9,
+    "questions_asked": 0,
+    "best_gain": null,
+    "calibrated": false,
+    "parameters": null
+  },
+  "ranker_mode": "mid_heuristic",
+  "ranker_version": "mid_heuristic-v1",
+  "fallback_explanation": "Most supported check: DRAG ANGLE (1 records: SWIA2025122876590).\nRanking signals: this aircraft's service history.\nThis ranking is provisional; it does not establish a fault cause.\nRecord SWIA2025120576544 was superseded; it is shown as history only.\nLanguage model unavailable: this text was generated from the ranking, not written by a model.",
+  "grounding": {
+    "sentences": [
+      {
+        "text": "Most supported check: DRAG ANGLE (1 records: SWIA2025122876590).",
+        "citations": [
+          "SWIA2025122876590"
+        ],
+        "valid_citations": [
+          "SWIA2025122876590"
+        ],
+        "invalid_citations": [],
+        "level": "unrated",
+        "score": 0.4,
+        "best_record_id": "SWIA2025122876590",
+        "acceptable_uncited": false,
+        "reason": "Score recorded; thresholds and whitelist are not yet validated.",
+        "candidates": [
+          {
+            "record_id": "SWIA2025122876590",
+            "containment": 0.4,
+            "cosine": null,
+            "score": 0.4,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [
+                "1"
+              ],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": false,
+            "source_matches": {
+              "version": "content-token-spans-v1",
+              "encoding": "utf-16",
+              "spans": [
+                {
+                  "start": 33,
+                  "end": 37,
+                  "token": "drag"
+                },
+                {
+                  "start": 38,
+                  "end": 43,
+                  "token": "angle"
+                },
+                {
+                  "start": 94,
+                  "end": 98,
+                  "token": "drag"
+                },
+                {
+                  "start": 99,
+                  "end": 104,
+                  "token": "angle"
+                },
+                {
+                  "start": 152,
+                  "end": 156,
+                  "token": "drag"
+                },
+                {
+                  "start": 157,
+                  "end": 162,
+                  "token": "angle"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "text": "Ranking signals: this aircraft's service history.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      },
+      {
+        "text": "This ranking is provisional; it does not establish a fault cause.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      },
+      {
+        "text": "Record SWIA2025120576544 was superseded; it is shown as history only.",
+        "citations": [
+          "SWIA2025120576544"
+        ],
+        "valid_citations": [
+          "SWIA2025120576544"
+        ],
+        "invalid_citations": [],
+        "level": "unrated",
+        "score": 0.0,
+        "best_record_id": "SWIA2025120576544",
+        "acceptable_uncited": false,
+        "reason": "Score recorded; thresholds and whitelist are not yet validated.",
+        "candidates": [
+          {
+            "record_id": "SWIA2025120576544",
+            "containment": 0.0,
+            "cosine": null,
+            "score": 0.0,
+            "guards": {
+              "missing_conditions": [],
+              "missing_parts": [],
+              "missing_numbers": [],
+              "negation_mismatch": false,
+              "empty_content": false
+            },
+            "eligible_for_supported": true,
+            "source_matches": {
+              "version": "content-token-spans-v1",
+              "encoding": "utf-16",
+              "spans": []
+            }
+          }
+        ]
+      },
+      {
+        "text": "Language model unavailable: this text was generated from the ranking, not written by a model.",
+        "citations": [],
+        "valid_citations": [],
+        "invalid_citations": [],
+        "level": "uncited",
+        "score": null,
+        "best_record_id": null,
+        "acceptable_uncited": false,
+        "reason": "No report citation in this sentence.",
+        "candidates": []
+      }
+    ],
+    "unsupported_count": 0,
+    "uncited_count": 3,
+    "checked_with": "lexical",
+    "embedding_status": "not_requested",
+    "status": "thresholds_pending",
+    "version": "sentence-grounding-v1",
+    "part_vocabulary_sha256": "bcc753135f8bdeca16546297c713082eb16526ee364df9167990233038956a6b",
+    "parameters": null,
+    "configuration": null,
+    "evidence": [
+      {
+        "record_id": "SWIA2025122876590",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-28",
+        "part_name": "DRAG ANGLE",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "RT VERTICAL STAB TO FUSELAGE AFT DRAG ANGLE SHOWS POSSIBLE CRACK. REMOVED, CRACKED RIGHT, AFT DRAG ANGLE ON THE VERTICAL STAB, AND INSTALLED SERVICABLE DRAG ANGLE. SRM 51-42-21-001-001-A01 REV 38, SRM 51-42-13-001-001-A01  REV. 38,  SRM 51-42-22-001-001-A01 REV. 38, & DWG BA670-35002, REV F. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025122076513",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-20",
+        "part_name": "FRAME",
+        "status": "needs_review",
+        "is_superseded": false,
+        "text": "EXFOLIATED CORROSION FOUND AT FRAME 379.00 INSIDE FWD WASTE SERVICE AREA. STRINGER 25R TO 27R.  INSTALLED NEW FRAME 379 IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01, DWG SH670-32280, REV H, AND DWG SH670-32050 REV. J. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY. LEAK CHECK GOOD"
+      },
+      {
+        "record_id": "SWIA2025121776533",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-17",
+        "part_name": "SEAT TRACK",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "UPON REMOVAL OF SEAT RAIL AT RBL9  BETWEEN FS838.00 TO FS852.00 FLOORBEAM FOUND TO BE CORRODED.  REMOVED AND  INSTALLED NEW FLOOR BEAM SECTION AT RBL 9 F/S 847 TO F/S 847+56 UNDER SEAT RAIL AT RBL9  BETWEEN FS838.00 TO FS852.00  IAW SRM 53-00-41-201-001-A03. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2026070606541",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-17",
+        "part_name": "STRINGER SPLICE",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "STRINGER SPLICE AT STR20R AND FS477 IS CORRODED.  REMOVED AND INSTALLED NEW STRINGER SPLICE ON STR20R AT FS477 IAW SRM 51-42-21-001-001-A01,  SRM 51-42-06-001-001-A01 AND DWG SH690-30006 REV C. PERFORMED LEAK CHECK IAW SRM 51-23-03-001-001-A01. LEAK CHECK GOOD WITH NO DEFECTS NOTED. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025121576470",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-15",
+        "part_name": "WINDOW FRAME",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "DURING AUDIT OF TASK CARD 53-220-504 (CONFIG A01) GENERAL VISUAL INSPECTION OF THE INTERNAL FRAME STRUCTURE OF THE WINDSHIELD AND SIDE WINDOWS IT WAS FOUND THAT THE LT INTERNAL WINDOW FRAME STRUCTURE ON THE AFT SIDE OF BS 235 IS CRACKED.  REPAIRED LT INTERNAL WINDOW FRAME STRUCTURE AFT SIDE OF BS 235 IAW REO 690-53-11-2111 REV -A. COMPLIED WITH ALL STEPS OF REO 690-53-11-2111 REV -A. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2026070676558",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-13",
+        "part_name": "STRINGER",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "MAIN AVIONICS STR 24R HAS CORROSION BETWEEN FS349 - FS364. INSTALLED NEW MAIN AVIONICS STRINGER 24R BETWEEN FS333.00 TO FS477.40. IAW. SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG SH690-31350 REV. M. LEAK CHECK GOOD, COMPLIED WITH SKYWEST TRACK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025121276556",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-12",
+        "part_name": "DOOR SILL",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "FWD OUTBOARD DOOR SILL LONGERON AT FWD BAGGAGE DOOR FS 477 TO FS 517 IS CORRODED.   INSTALLED NEW FWD OUTBOARD DOOR SILL LONGERON AT FWD BAGGAGE DOOR FS 477 TO FS 517 REF. SRM 51-42-21-001-001-A01 AND DWG SH690-33750 REV -AF. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY, LEAK CHECKED GOOD."
+      },
+      {
+        "record_id": "SWIA2025120876572",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-08",
+        "part_name": "RIB",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "RT WING BATTERY RIB IS CRACKED AT WS 14.50.  INSTALLED NEW RT WING BATTERY RIB AT WS 14.50 . IAW SRM 51-42-21-001-001-A01,  SRM 51-42-22-001-001-A01. AND DWG CC690-10610, REV. D. .SEE CONTINUE CARD FOR DETAILSCOMPLIED WITH TASK CARD 51-900-1002."
+      },
+      {
+        "record_id": "SWIA2025120776453",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-07",
+        "part_name": "CLEAT",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "EXFOLIATED CORROED CLEAT BS 319, S21R.  CORROSION OVER 50% OF THICKNESS, LIMIT ALLOW. DAMAGE 10% OF CLEAT BS 319, S21R. OUT OF LIMITS IAW SRM 53-21-23-101-002-A02. REQ. REPLACEMENT.INSTALLED NEW CLEAT BS 319, S21R, IAW. SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01, AND DWG SH670-32600, REV AK. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025120676586",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-06",
+        "part_name": "STRINGER SPLICE",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "MAIN AVIONICS STRINGER SPLICE STR 22R HAS CORROSION AT FS333 MX 31317120.  INSTALLED NEW MAIN AVIONICS STRINGER SPLICE S22R AT BS 333 IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG SH670-32420, REV. E. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY. LEAK CHECKED GOOD."
+      },
+      {
+        "record_id": "SWIA2025120676529",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-06",
+        "part_name": "STRINGER",
+        "status": "needs_review",
+        "is_superseded": false,
+        "text": "MAIN AVIONICS STR 22R HAS CORROSION BETWEEN FS280 - FS3295.  INSTALLED NEW MAIN AVIONICS STR 22R BETWEEN FS280 - FS333 REF CRJ-900 SRM 51-42-06-001-001-A01 AND SRM 51-42-21-001-001-A01 AND DWG SH670-31630 REV. K. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY. LEAK CHECK GOOD"
+      },
+      {
+        "record_id": "SWIA2025120576568",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-05",
+        "part_name": "STRINGER",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "MAIN AVIONICS STRINGER 22R HAS CORROSION BETWEEN BS 333 - 349 . INSTALLED NEW MAIN AVIONICS STRINGER 22R BETWEEN BS 333 - 349. IAW SRM 51-42-06-001-001-A01 AND SRM 51-42-21-001-001-A01 AND DWG SH690-31350 REV. M. LEAK CHECK GOOD. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025120576544",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-05",
+        "part_name": "STRINGER SPLICE",
+        "status": "superseded",
+        "is_superseded": true,
+        "text": "MAIN AVIONICS STRINGER SPLICE 21R HAS CORROSION AT FS333.   INSTALLED NEW SPLICE STGR 21R FS333.00. IAW SRM 51-42-06-001-001-A01 AND DWG SH670-32420 REV. E. LEAK CHECK GOOD COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2026070676497",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-05",
+        "part_name": "STRINGER",
+        "status": "needs_review",
+        "is_superseded": false,
+        "text": "MAIN AVIONICS STRINGER 21R HAS CORROSION BETWEEN BS 310 - 319.   INSTALLED NEW STRINGER 21R BS 280 TO 333 IAW SRM 51-42-06-001-001A01.AND DWG SH670-31630, REV. K. LEAK CHECK GOOD. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY"
+      },
+      {
+        "record_id": "SWIA2025120576450",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-05",
+        "part_name": "INTERCOSTAL",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "MAIN AVIONICS INTERCOSTALS 20R HAS CORROSION BETWEEN BS 319 - 333.  MAIN AVIONICS INTERCOSTAL S20R, BS 310 - 319 HAS EXFOLIATED CORROSION AT FASTENERS LOCATION. DAMAGE IS NOT ALLOWED WITHIN A 2D RADIUS OF A FASTENER THEREFORE FOUIND TO BE OUT OF LIMITS IAW SRM 53-21-23-101-002-A02 INSTALLED NEW INTERCOSTAL S20R BS 310 - 319 IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG SH670-31950, REV Y. COMPLIED WITH SKYWEST TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025120376581",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-03",
+        "part_name": "STRUCTURE",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "EXFOLIATED CORROSION FOUND AT  AFT BAGGAGE DOOR INNER CHORD BETWEEN BS 1031 TO 1047.   REMOVED AND INSTALLED NEW AFT BAGGAGE DOOR INNER CHORD IAW SRM 51-42-06-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG MM670-35085 REV. L. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2025120276547",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-02",
+        "part_name": "BULKHEAD WEB",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "LH BULKHEAD LOWER WEB AT FS 280.00 HAS CORROSION.  REMOVED LT LOWER WEB AND LT BUTTSTRAP AT BS 280 IAW SRM 51-42-06-001-001-A01, INSTALLED NEW ITEM -1 LOWER WEB AND ITEM -3 LH BUTTSTRAP AT LH BULKHEAD FS 280.00 REF CRJ900 SRM 53-11-10-201-004-A01, FABRICATED, TRIMMED, LOCATED AND DRILLED NEW ITEM -1 LH LOWER WEB AND ITEM -3 LH BUSTTSTRAP MATERIAL USED 7075T6 .040\" PO#5-57788 REF CRJ900 SRM 53-11-10-201-004-A01, AND RESTORE FINISHED AT THE AREA REF SRM [TR51-0068] 51-21-16-001-001-A01.COMPLIED WITH 51-900-1002-SKY"
+      },
+      {
+        "record_id": "SWIA2025120176516",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-01",
+        "part_name": "FLOORBEAM",
+        "status": "auto_accepted",
+        "is_superseded": false,
+        "text": "LH CROSSBEAM AT FS 280.00 HAS CORROSION AND ELONGATED HOLES.  REMOVED AND INSTALLED NEW LH CROSSBEAM AT BS 280 REF SRM 51-42-06-001-001-A01, SRM 51-42-22-001-001-A01, SRM 51-42-21-001-001-A01 AND DWG CC670-34010 REV -K. COMPLIED WITH TASK CARD 51-900-1002-SKY."
+      },
+      {
+        "record_id": "SWIA2026070676554",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-12-01",
+        "part_name": "STRAP",
+        "status": "no_action",
+        "is_superseded": false,
+        "text": "STGR 3L AT FS280 TO FS282 CIRCUMFERENTIAL JOINT STRAP  CRACKED.  COMPLIED WITH PERMANENT REPAIR OF STGR 3L AT FS282 CIRCUMFERENTIAL JOINT STRAP REF REO 670-53-21-493 REV -D,  AND SERVICE BULLETIN 670BA-53-040, REVISION C , FUSELAGE - CENTER FUSELAGE, PRIMARY STRUCTURE FS280.00 TO FS295.00 - INSPECTION AND REINFORCEMENT OF LINTEL STRINGER 3 OF THE MAIN PASSENGER DOOR, (PART B), INCORPORATED. COMPLIED WITH  TASK CARD 51-900-1002-SKY. OPS AND LEAK CHECKS GOOD."
+      },
+      {
+        "record_id": "SWIA2025113076461",
+        "asset_id": "aa4e5d11-1895-48ec-84e5-d2f7c88aaaeb",
+        "occurred_at": "2025-11-30",
+        "part_name": "SLAT TRACK",
+        "status": "needs_review",
+        "is_superseded": false,
+        "text": "RIGHT WING, SLAT TRACK 1-1 IS DENTED ON THE LOWER FACE,  REPAIRED RIGHT HAND WING SLAT TRACK 1-1 IAW REO 690-57-42-1354 REV -.  COMPLIED WITH ALL STEPS OF REO 690-57-42-1354 REV -. COMPLIED WITH TASK CARD 51-900-1002-SKY. SEE CONTINUE CARD FOR WORK PERFORMED."
+      }
+    ]
+  },
+  "turn_id": "9f697922-4430-47fe-8338-eb03004a15ec",
+  "turn_index": 1
+}

@@ -49,11 +49,15 @@ class GroqService:
             return bool(self.openai_compat_base_url and self.api_key)
         return self.client is not None
 
-    def chat(self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048) -> str:
-        return self.chat_with_usage(messages, system_prompt, max_tokens)["content"]
+    def chat(
+        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048,
+        json_mode: bool = False,
+    ) -> str:
+        return self.chat_with_usage(messages, system_prompt, max_tokens, json_mode=json_mode)["content"]
 
     def _chat_openai_compatible(
-        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048
+        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048,
+        json_mode: bool = False,
     ) -> dict:
         full_messages: list[dict] = []
         if system_prompt:
@@ -67,9 +71,10 @@ class GroqService:
             "temperature": 0.3,
             "stream": False,
             # Ollama OpenAI-compat extensions (ignored by Groq); see docs/local-llm-staging.md
-            "response_format": {"type": "json_object"},
             "reasoning_effort": "none",
         }
+        if json_mode:
+            payload["response_format"] = {"type": "json_object"}
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -88,6 +93,8 @@ class GroqService:
             raise RuntimeError(
                 f"OpenAI-compatible LLM returned empty content (finish_reason={finish_reason})"
             )
+        if not json_mode and choices[0].get('finish_reason') == 'length':
+            raise RuntimeError('Model prose reached its token limit; incomplete content was withheld.')
         usage_raw = body.get("usage") or {}
         usage = {
             "prompt_tokens": usage_raw.get("prompt_tokens"),
@@ -98,7 +105,8 @@ class GroqService:
         return {"content": str(content), "usage": usage}
 
     def chat_with_usage(
-        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048
+        self, messages: list, system_prompt: str | None = None, max_tokens: int = 2048,
+        json_mode: bool = False,
     ) -> dict:
         """Return content plus provider token accounting when Groq supplies it."""
         if self.demo_mode:
@@ -106,7 +114,7 @@ class GroqService:
             return {"content": self._demo_response(messages, system_prompt), "usage": {}}
         if self.provider == "openai_compatible":
             try:
-                return self._chat_openai_compatible(messages, system_prompt, max_tokens)
+                return self._chat_openai_compatible(messages, system_prompt, max_tokens, json_mode=json_mode)
             except Exception as exc:
                 logger.error("OpenAI-compatible LLM error: %s", exc)
                 raise RuntimeError(f"LLM error: {exc}") from exc
@@ -121,6 +129,8 @@ class GroqService:
                 "max_tokens": max_tokens,
                 "temperature": 0.3,
             }
+            if json_mode:
+                request_options["response_format"] = {"type": "json_object"}
             # GPT-OSS counts private reasoning against the completion budget.
             # Groq SDK 0.9 accepts newer API fields through extra_body.
             if self.model.startswith("openai/gpt-oss-"):
@@ -138,6 +148,8 @@ class GroqService:
                     "Groq returned an empty model response "
                     f"(model={self.model}, finish_reason={finish_reason})."
                 )
+            if not json_mode and getattr(response.choices[0], 'finish_reason', None) == 'length':
+                raise RuntimeError('Model prose reached its token limit; incomplete content was withheld.')
             response_usage = getattr(response, "usage", None)
             usage = {
                 "prompt_tokens": getattr(response_usage, "prompt_tokens", None),
@@ -157,7 +169,7 @@ class GroqService:
                     logger.warning("Rate limit hit! Switching to GROQ_API_KEY_FALLBACK.")
                     self.api_key = settings.GROQ_API_KEY_FALLBACK
                     self.client.api_key = self.api_key
-                    return self.chat_with_usage(messages, system_prompt, max_tokens)
+                    return self.chat_with_usage(messages, system_prompt, max_tokens, json_mode=json_mode)
             
             logger.error("Groq API error: %s", exc)
             if self.demo_mode:
@@ -170,6 +182,7 @@ class GroqService:
             messages=[{"role": "user", "content": prompt}],
             system_prompt=system_prompt,
             max_tokens=max_tokens,
+            json_mode=True,
         )
 
     def extract_json_with_usage(
@@ -179,6 +192,7 @@ class GroqService:
             messages=[{"role": "user", "content": prompt}],
             system_prompt=system_prompt,
             max_tokens=max_tokens,
+            json_mode=True,
         )
 
     def _demo_response(self, messages: list, system_prompt: str | None) -> str:  # noqa: C901

@@ -1,0 +1,54 @@
+{
+  "started_at": "2026-11-22T04:20:12.599558+00:00",
+  "plan": {
+    "version": "interactive-model-comparison-v1",
+    "packet_sha256": "2e12df9469de9b8c15be818d8989f902dca5c4d3b687b733a70b0152ab42aa77",
+    "models": [
+      "phi4-mini:latest"
+    ],
+    "model_identities": {
+      "phi4-mini:latest": {
+        "name": "phi4-mini:latest",
+        "digest": "78fad5d182a7c33065e153a5f8ba210754207ba9d91973f57dffa7f487363753",
+        "size": 2491876774,
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "phi3",
+          "families": [
+            "phi3"
+          ],
+          "parameter_size": "3.8B",
+          "quantization_level": "Q4_K_M"
+        }
+      }
+    },
+    "endpoint": "http://127.0.0.1:11435",
+    "server_version": "0.9.6",
+    "execution_source": "ollama_http",
+    "hardware": {
+      "system": "Linux",
+      "machine": "x86_64",
+      "release": "7.0.0-1020-azure"
+    },
+    "measurement_role": "staging_reference",
+    "server_hardware_verified": false,
+    "hardware_note": "Hardware describes the runner; even loopback can be a tunnel. Verify server placement before model selection.",
+    "checker": null,
+    "seed": 1729,
+    "timeout_seconds": 180,
+    "generation": {
+      "temperature": 0,
+      "num_predict": 700,
+      "num_ctx": 4096,
+      "keep_alive": "5m"
+    },
+    "method_files_sha256": {
+      "model_compare.py": "70e75dcc028e8ed7c6ad6d3909d67e74fad39fc685f1313a02e6d8debab360fe",
+      "model_prompts.py": "00f3912a2610830a79ec3608ee3adfff7699def1720b7455a11c8841300d37ab",
+      "grounding.py": "d16c0e2b370e7745628ad0a3c8631c30b4b83e4fb362f027288e399c15b27f91",
+      "grounding_parts_v1.json": "267972506ed7a0c5d0235b7f4f08cf60d17ceb25337c44f4d6d3e7fe6cf54a90"
+    },
+    "protocol": "One warmup per model excluded; serial primary and paired no-evidence prose calls in seeded arm order. No retries, fallback, model pull or automatic winner."
+  }
+}

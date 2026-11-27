@@ -1,0 +1,65 @@
+{
+  "source_commit": "c5d279a07d16005d61c05c992c8f108403c0c478",
+  "workflow_url": "https://github.com/umaritics/halite/actions/runs/44882587938",
+  "jobs": [
+    {
+      "name": "Frontend tests and build (Node 20)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44882587938/job/136780908576"
+    },
+    {
+      "name": "Backend tests (Python 3.11)",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44882587938/job/136780908763"
+    },
+    {
+      "name": "Docker Compose real-graph smoke test",
+      "conclusion": "success",
+      "url": "https://github.com/umaritics/halite/actions/runs/44882587938/job/136780908786"
+    }
+  ],
+  "backend_tests": 453,
+  "frontend_tests": 279,
+  "new_artifact_tool_tests": [
+    "test_retained_official_faa_archive_reproduces_every_committed_code_and_fingerprint",
+    "test_faa_command_refuses_changed_provenance_without_publishing_output",
+    "test_faa_command_writes_only_the_checksum_matched_archive",
+    "test_lookup_reader_preserves_shared_inline_and_numeric_cells[False-False]",
+    "test_lookup_reader_preserves_shared_inline_and_numeric_cells[True-True]",
+    "test_lookup_extraction_rejects_missing_malformed_or_ambiguous_rows[missing-one official lookup]",
+    "test_lookup_extraction_rejects_missing_malformed_or_ambiguous_rows[header-lookup header]",
+    "test_lookup_extraction_rejects_missing_malformed_or_ambiguous_rows[duplicate-duplicate]",
+    "test_lookup_extraction_rejects_missing_malformed_or_ambiguous_rows[incomplete-Incomplete]",
+    "test_vocabulary_fit_normalizes_parts_excludes_unknowns_and_preserves_existing_output",
+    "test_vocabulary_fit_refuses_selection_or_held_out_data_without_output[2024]",
+    "test_vocabulary_fit_refuses_selection_or_held_out_data_without_output[2025]",
+    "test_vocabulary_command_exports_fit_only_metadata_and_refuses_empty_corpus"
+  ],
+  "coverage": {
+    "covered_statements": 4744,
+    "total_statements": 5851,
+    "percent": 81.08015723807897,
+    "minimum_percent": 80,
+    "gate_passed": true,
+    "source_scopes": [
+      "api",
+      "agents",
+      "services",
+      "graph",
+      "db",
+      "investigation"
+    ],
+    "source_omissions_added": false,
+    "previous_same_scope_covered": 4656,
+    "previous_same_scope_total": 5851
+  },
+  "artifact_sha256": {
+    "coverage.xml": "13fbc5cce47858bcd2cdde1710dbf194daed2e072c553158cd520ccc16388168",
+    "dependency-cleanup-summary.json": "d147130f83bc70a671c20b8bbe564c5edb316bb85c035b3e35a493a5a9d18f29",
+    "dependency-install-report.json": "489220fb2d1c4df3181da7da9ea27f53ff59f05dc852ed5d64fea4cff48ba5a9",
+    "dependency-installed.json": "c378761820b4212edce01a0c39671a5aed5e9048ab2a6e773a1e8b4a11541247",
+    "test-results.xml": "778321772962173e9f03aa722d3cf225e7f2e487186fac14e2f609d419e3ed30"
+  },
+  "retained_official_archive_sha256": "5ab1d86f963a2f7c2ac2298c787bc875d5212aa4cd6f82df076122958651ced0",
+  "local_work": "Small standard-library exact archive extraction only; no install/model/database build."
+}

@@ -72,6 +72,25 @@ def main() -> None:
     require(initial_health.get("auth_enabled") is True, initial_health)
     proof["initial_health"] = initial_health
 
+    # This runner owns a fresh disposable database. Verify actual Neo4j startup,
+    # in addition to the lifecycle unit adapters, before any fixture is ingested.
+    domains = initial_health["domains"]
+    require(len(domains) == 1 and domains[0]["key"] == "maintenance"
+            and domains[0]["is_default"] is True, domains)
+    graph_status, initial_graph = api("GET", "/api/graph/overview")
+    require(graph_status == 200, initial_graph)
+    require(initial_graph["nodes"] == [] and initial_graph["edges"] == [], initial_graph)
+    retired_statuses = {}
+    for method, path in (("POST", "/api/chat"), ("GET", "/api/decisions"),
+                         ("POST", "/api/ingest/document"), ("POST", "/api/ingest/code"),
+                         ("POST", "/api/ingest/gitea"), ("GET", "/api/alerts"),
+                         ("POST", "/api/webhook/gitea")):
+        retired_status, retired_body = api(method, path, {} if method == "POST" else None)
+        require(retired_status == 404, {"path": path, "body": retired_body})
+        retired_statuses[f"{method} {path}"] = retired_status
+    proof["retirement"] = {"initial_graph_empty": True, "domains": domains,
+                           "retired_routes": retired_statuses}
+
     unauth_status, unauth_body = api(
         "GET", "/api/maintenance/assets", authenticated=False
     )

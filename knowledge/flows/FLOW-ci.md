@@ -1,32 +1,123 @@
 ---
 id: flow-ci
-title: CI / verification flow
+title: CI and verification flow
 status: active
 owners: [Usman]
-updated: 2026-10-16
+updated: 2026-11-20
 ---
 
-# FLOW-ci — GitHub Actions gates
+# CI verification flow
 
-## Jobs
-
-1. **backend** — pytest with `DEMO_MODE=true`, empty Groq secrets, and an
-   ephemeral Neo4j 5 service so repository contracts execute in both stores.
-2. **frontend** — `npm ci`, `npm test`, `npm run build`.
-3. **docker-smoke** — compose up, health, `verify_mid1_runtime.py`, frontend root HTML check, teardown.
-
-## Dependency graph
+1. Pull requests (and configured branch pushes) trigger `.github/workflows/ci.yml`.
+2. Backend starts ephemeral Neo4j and PostgreSQL, installs declared development
+   dependencies, runs Ruff runtime-error lint and pytest with terminal/XML coverage
+   plus JUnit. Session contracts run against both SQLite and a private temporary
+   PostgreSQL schema; graph contracts run against both memory and Neo4j.
+3. Coverage and JUnit artifacts upload even if tests fail, so failures stay reviewable.
+4. Frontend installs its lockfile dependencies, runs Vitest and builds production assets.
+5. Docker smoke builds/starts Compose, verifies real graph/auth/corpus APIs using the
+   synthetic fixture, checks frontend HTML, captures logs and tears down its volumes.
 
 ```mermaid
 flowchart TB
-  Push[push / pull_request] --> WF[.github/workflows/ci.yml]
-  WF --> B[backend pytest]
-  WF --> F[frontend test+build]
-  WF --> D[docker compose smoke]
-  D --> V[verify_mid1_runtime.py]
-  D --> N[(ephemeral Neo4j)]
+  Change[Push / pull request] --> Workflow[ci.yml]
+  Workflow --> Lint[Ruff runtime errors]
+  Lint --> Tests[pytest + JUnit + terminal/XML coverage]
+  Tests --> Artifacts[upload-artifact reports]
+  Tests --> Neo4j[(ephemeral Neo4j)]
+  Tests --> Postgres[(ephemeral PostgreSQL / private test schemas)]
+  Workflow --> Frontend[Vitest + production build]
+  Workflow --> Compose[Docker Compose smoke]
+  Compose --> Verify[verify_mid1_runtime.py]
+  Compose --> Logs[Capture service state / logs]
+  Logs --> Cleanup[Remove disposable stack]
 ```
 
-## Mid-I evidence note
+A configured workflow is not evidence of a successful remote run. Record the run
+URL and terminal job results in the work log before claiming CI passed. Coverage
+scope is explicit; the NFR-04 80% target is not satisfied by a report alone.
+Staging deployment remains separate and main-only; no test targets shared data.
 
-Usman audit: backend + docker jobs green; frontend job red (Shahmeer mock). Overall workflow must be green before merge claims.
+## Hosted research page browser check
+
+```mermaid
+flowchart LR
+  CI[Disposable Docker smoke runner] --> Stack[Neo4j / Postgres / API]
+  CI --> Build[Production frontend build]
+  Build --> Preview[Vite preview same-origin API proxy]
+  Preview --> Browser[Chromium research verifier]
+  Stack --> Browser
+  Browser --> Proof[Screenshots + measured JSON artifact]
+```
+
+Normal chart reads use real JWT/API/artifact checksums. Only UI failure/empty
+subchecks intercept responses, explicitly labelled in proof. No staging data is
+used; the job tears down its own Compose volumes after verification.
+
+## Measured dependency resolution
+
+```mermaid
+flowchart LR
+  Requirements[Runtime and dev requirements] --> Install[Hosted pip install / JSON report]
+  Install --> Inventory[Installed distribution inventory]
+  Inventory --> Audit[Static import and dependency audit]
+  Baseline[Verified baseline package evidence] --> Audit
+  Audit --> Tests[Lint / runtime tests / real env-file parsing]
+  Audit --> Artifacts[Dependency summary and raw reports]
+  Tests --> Artifacts
+```
+
+Pandas is an actual runtime dependency. Dotenv remains needed transitively;
+removing its direct requirement does not mean the package disappears. NumPy
+remains at the already-installed baseline instead of an unrelated major upgrade.
+
+## Coverage target enforcement
+
+```mermaid
+flowchart LR
+  Tests[Existing six source scopes / pytest] --> Coverage[Coverage with two-decimal precision]
+  Coverage --> Gate[Require at least 80 percent]
+  Gate --> Result[CI pass or explicit failure]
+  Coverage --> XML[Raw XML / JUnit artifacts even after failure]
+```
+
+No file omission or source-scope reduction is used to cross the target. Artifact
+tooling tests exercise retained real inputs and explicit isolation/error paths.
+
+The backend job runs the frozen-policy preflight after successful tests. Its
+JSON artifact records policy/protocol fingerprints and confirms no held-out
+access or runtime activation. The full test/coverage artifact retains it.
+
+## Replay completed frozen test evidence
+
+```mermaid
+flowchart LR
+  Backend[Hosted backend tests / coverage] --> Freeze[Frozen-policy preflight]
+  Freeze --> Cases[Committed 2025 results / saved case traces]
+  Cases --> Replay[Independent point scoring / all interval replay]
+  Replay --> Gate[Pass or explicit integrity failure]
+```
+
+This is verification of retained evidence, without downloading or reranking a
+new test archive. Actual evaluation and source receipts remain pinned to run
+44906082558 / source 5a5060b. The one-shot access label is removed.
+
+## Explicit authenticated public website acceptance
+
+```mermaid
+flowchart LR
+  Intent[Manual main-only VERIFY] --> Runner[Hosted Chromium]
+  Secrets[Encrypted dedicated account secrets] --> Runner
+  Runner --> Site[Canonical public frontend]
+  Site --> Guard[Block non-auth API mutations]
+  Guard --> Auth[Real login / refresh / logout]
+  Guard --> Reads[Research / home / session reads]
+  Reads --> Compare[Committed artifact hashes / rendered values]
+  Compare --> Proof[Sanitized JSON / authenticated screenshots]
+  Auth --> Proof
+```
+
+No inference or corpus writes occur. Health before/after must agree with the
+workflow's exact source. Do not dispatch before its normal backend deployment
+has completed. Do not merge while a separate exact-source measurement is running.
+Failure stops at its recorded stage; no failed stage is presented as acceptance.

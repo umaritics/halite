@@ -34,7 +34,6 @@ async def lifespan(app: FastAPI):
     if use_demo:
         logger.info("Halite running in DEMO mode (in-memory graph)")
         store = MemoryGraphStore()
-        store.seed_demo_data()
         graph_repo = GraphRepository(store)
     else:
         logger.info("Halite connecting to Neo4j AuraDB")
@@ -47,8 +46,7 @@ async def lifespan(app: FastAPI):
             )
             store.init_schema()
             graph_repo = GraphRepository(store)
-            graph_repo.seed_demo_data()
-            logger.info("Neo4j connected and seeded")
+            logger.info("Neo4j connected; existing data preserved")
         except Exception as exc:
             logger.error("Neo4j unavailable (%s) — falling back to in-memory graph", exc)
             if store:
@@ -57,7 +55,6 @@ async def lifespan(app: FastAPI):
                 except Exception:
                     pass
             store = MemoryGraphStore()
-            store.seed_demo_data()
             graph_repo = GraphRepository(store)
 
     llm_api_key = settings.GROQ_API_KEY

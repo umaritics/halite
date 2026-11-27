@@ -1,0 +1,3 @@
+[report]
+# Keep the 80% acceptance gate from passing on a rounded-up 79.58%.
+precision = 2

@@ -1,0 +1,9 @@
+{
+  "ranker_version": "mid_heuristic-v1",
+  "temperature": 0.5025466937513824,
+  "other_score": 1.3184610196616369,
+  "fit_years": [
+    2023
+  ],
+  "corpus_sha256": "505d2223549fddb91dfecd4a19e8beb145c3b2b346bd723ecbdd2440def6a609"
+}

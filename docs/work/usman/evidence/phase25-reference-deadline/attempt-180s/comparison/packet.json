@@ -1,0 +1,1149 @@
+{
+  "version": "interactive-model-prompts-v1",
+  "seed": 1729,
+  "year": 2024,
+  "source_kind": "Real FAA observations and strictly earlier retrieved reports",
+  "corpus": {
+    "sources": [
+      {
+        "file": "usman_decision_2023.csv.gz",
+        "projection_sha256": "d94620eb59ea86dfb4ac53ebc614d5eb42901cef4328cab20a1ecfbd9c2206cd"
+      },
+      {
+        "file": "usman_decision_2024.csv.gz",
+        "projection_sha256": "da33b8d064fc8ce1ba8133a5719aa135ffb9d01ac3be911172bf483755f447cb"
+      }
+    ],
+    "corpus_sha256": "bec0b4f2083ce8f03034fbe5dbd71b2fb120603254f149b60b7c795c605380bf",
+    "rows": 128771,
+    "invalid": 0,
+    "duplicate_identical": 0,
+    "ambiguous_ids": 0,
+    "records": 128771
+  },
+  "cases": [
+    {
+      "case_id": "AALA202410161011",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED INBOUND INTO DFW DUE TO THE FLIGHT CREW REPORTING THAT ENROUTE A GREEN HYDRAULIC SYSTEM ENGINE #1 PUMP LOW PRESSURE MESSAGE DISPLAYED WHICH WAS FOLLOWED BY A GREEN HYDRAULIC SYSTEM RESERVOIR LOW LEVEL MESSAGE. THE GREEN HYDRAULIC SYSTEM SHOWED LOSS OF QUANTITY WITH AN AMBER INDICATION. THE FLIGHT CREW ACCOMPLISHED THE ECAM PROCEDURES AND THE AIRCRAFT LANDED SAFELY AT DFW WHERE IT WAS TOWED TO THE GATE. **SUPPLEMENTAL REPORT WILL BE SUBMITED** (OPEN)",
+      "evidence": [
+        {
+          "record_id": "AALA202407160765",
+          "part_name": "HINGE FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: LEFT HAND HORIZONTAL STABILIZER ELEVATOR HINGE FITTING # 4 HAS LATERAL PLAY / WEAR. REPLACED HINGE FITTING PER AMM 55-16-42.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407161384",
+          "part_name": "HINGE FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: LEFT HAND HORIZONTAL STABILIZER ELEVATOR HINGE FITTING # 5 HAS LATERAL PLAY / WEAR. REPLACED HINGE FITTING PER AMM 55-16-42.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407161471",
+          "part_name": "HINGE FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: RIGHT HAND HORIZONTAL STABILIZER ELEVATOR HINGE FITTING # 4 HAS LATERAL PLAY / WEAR. REPLACED HINGE FITTING PER AMM 55-16-42.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202310124420",
+          "part_name": "LIFE VEST",
+          "text": "AIRCRAFT WAS NOT GROUNDED: CABIN CREW REPORTED SPARE LIFE VEST KIT MISSING ONE VEST. MAINTENANCE INSTALLED LIFE VEST PER AMM 25-66-52.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202404297343",
+          "part_name": "LIFE VEST",
+          "text": "AIRCRAFT WAS NOT GROUNDED: MISSING CHILD LIFE VEST IN SPARE KIT. MAINTENANCE INSTALLED LIFE VEST PER AMM 25-66-52.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202410094497",
+          "part_name": "LIFE VEST",
+          "text": "AIRCRAFT WAS NOT GROUNDED: CAPTAINS LIFE VEST FOUND OPEN. MAINTENANCE REPLACED LIFE VEST PER AMM 25-66-52.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202410030245",
+          "part_name": "WIRE",
+          "text": "AIRCRAFT WAS GROUNDED: EMERGENCY LIGHT WIRING BROKEN AT 13ABC (ONE FOOT FROM FLOOR DISCONNECT). SPLICED WIRE PER ESPM 20-43-11.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-10-16T10:06:33.730000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202407160765",
+          "AALA202407161384",
+          "AALA202407161471",
+          "AALA202310124420",
+          "AALA202404297343",
+          "AALA202410094497",
+          "AALA202410030245"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202408305512",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY ESCAPE PATH LIGHT ON SEAT 14C IS INOPERATIVE. .",
+      "evidence": [
+        {
+          "record_id": "AALA202407036333",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AISLE EMERGENCY EXIT LITE AT 31C NEEDS RESECURE. SECURED LIGHT. PER AMM 33-51-11.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408121112",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY EQUIPMENT CEILING LIGHTS MISSING LIGHTING END CAP AT 21D. INSTALLED NEW CEILING LIGHT END CAP ON ROW 21D AS REQUIRED.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408122135",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY LIGHT PANEL HANGING LOOSE AT SEAT 20C.   (OPEN).",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202406030558",
+          "part_name": "DOOR LATCH",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD LAVATORY DOOR REPORTED HARD TO OPEN AND CLOSE. ADJUSTED DOOR LATCH ASSEMBLY, OPERTIONAL CHECK GOOD. PER CMM 25-44-49.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408261155",
+          "part_name": "CONNECTOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: ROW 13 SEAT MOUNTED EMERGENCY LIGHT INOPERATIVE. SECURED CONNECTOR.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408267634",
+          "part_name": "CONNECTOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: ROW 14 SEAT MOUNTED EMERGENCY LIGHT INOPERATIVE. SECURED CONNECTOR.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408267818",
+          "part_name": "CONNECTOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY PATH LIGHTING AT SEAT ROW 22ABC IS INOPERATIVE. SECURED CONNECTOR.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-08-30T14:48:45.647000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202407036333",
+          "AALA202408121112",
+          "AALA202408122135",
+          "AALA202406030558",
+          "AALA202408261155",
+          "AALA202408267634",
+          "AALA202408267818"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202407116413",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS GROUNDED: RIGHT MAIN TANK FUEL INDICATOR FLUCTUATED 1300 LBS AFTER LEVEL OFF AT FL350, DISPLAYING A FUEL IMBALANCE YELLOW WARNING ON THE RIGHT MAIN TANK FUEL INDICATOR.",
+      "evidence": [
+        {
+          "record_id": "AALA202404099730",
+          "part_name": "STRINGER",
+          "text": "AIR CART IN BASE MAINTENANCE: CRACK IN UPPER FLANGE OF RIGHT WING STRINGER #9 FROM WS 485 TO WS 591. REPLACED STRINGER PER EA 352320.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202406243723",
+          "part_name": "STRINGER",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN RIGHT WING TANK INTERTRAL UPPER AFT STRINGER U9 BETWEEN RIB 19 AND RIB 22. REPLACED STRINGER PER EA 352320.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403060090",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING LOCATED AT BS 540 AND RBL 54.60 REPLACEMENT REQUIRED PER BOEING SERVICE BULLETIN B737-57-1309. REPLACED SHEAR FITTING PER AARD 57-14-00-1 REPAIR 1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403062004",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING AT BS 540 AND LBL 32.40. REPLACED SHEAR FITTING PER AARD 57-14-00-1 REPAIR 1. THIS ACCOMPLISHES BOEING SB B737-57-1309.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403062078",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING AT BS 540 AND RBL 6.14. REPLACED SHEAR FITTING PER AARD 57-14-00-1 REPAIR 1. THIS ACCOMPLISHES BOEING SB B737-57-1309.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202406118149",
+          "part_name": "LOCK",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: WHEN OPENING CAPTAINS WINDOW, THE OPEN LOCK DOES NOT ENGAGE. WHEN CLOSING THE WINDOW, THE WINDOW OPEN LOCK DOES NOT PREVENT CLOSURE. CLEANED AND LUBED LATCH MECHANISM. OPERTIONAL CHECK GOOD. PER AMM 56-12-11.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-07-11T13:24:33.197000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202404099730",
+          "AALA202406243723",
+          "AALA202403060090",
+          "AALA202403062004",
+          "AALA202403062078",
+          "AALA202406118149"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202402200046",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: FORWARD GALLEY OVEN NUMBER 1 PRODUCES SMOKE WHILE HEATING.  (OPEN).",
+      "evidence": [
+        {
+          "record_id": "AALA202401115053",
+          "part_name": "DOOR FRAME",
+          "text": "AIRCRAFT WAS GROUNDED: AIRCRAFT HAS EXPERIENCED REPEATED L2 DOOR LEAK. PARTIAL WORK ACCOMPLISHED. ACCOMPLISHED PERMANENT REPAIR TO L2 DOOR SURROUND STRUCTURE. PER SRM 51-70-01-2R AND 53-70-15-2R1. PERFORMED CABIN PRESSURE LEAK CHECK TEST, LEAK CHECK GOOD.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202402059082",
+          "part_name": "OVEN",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD GALLEY RIGHT SIDE OVEN SMOKES WHEN USED. MAINTENANCE REPLACED OVEN AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202402121955",
+          "part_name": "OVEN",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD GALLEY OVEN 2 HAS BURNING PLASTIC SMELL WHEN IN USE.  VERIFIED NO ITEMS IN OVEN WHEN DISCREPANCY NOTED. (OPEN)",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202402122101",
+          "part_name": "OVEN",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD GALLEY OVENS HAD BURNING SMELL DURING FLIGHT. REMOVED AND REPLACED FORWARD GALLEY OVEN.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202307051638",
+          "part_name": "ROLL PIN",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LOUD HUMMING NOISE THROUGHOUT FLIGHT AFT LEFT DOOR. FOUND ROLL PIN STICKING OUT OF THE TOP FORWARD UPPER FLAPPER DOOR. SECURED PIN. OPERATION AND LEAK CHECK GOOD.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-02-20T16:09:06.253000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202401115053",
+          "AALA202402059082",
+          "AALA202402121955",
+          "AALA202402122101",
+          "AALA202307051638"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202401058823",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: AFT LEFT LAVATORY DOOR DIFFICULT TO OPEN AND WON'T CLOSE. .",
+      "evidence": [
+        {
+          "record_id": "AALA202312131727",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: CREW REPORTS LEFT HAND AFT LAVATORY DOOR STICKS AND IS DIFFICULT TO OPEN. ADJUSTED LAVATORY \"D\" DOOR PER CMM 25-40-64. OPERATIONAL CHECK GOOD.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312135663",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AFT LEFT LAVATORY DOOR IS REPORTED TO BE VERY DIFFICULT TO OPERATE. ADJUSTED AFT LEFT LAVATORY DOOR PER AMM 25-40-64.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312149752",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD LAVATORY DOOR DIFFICULT TO OPEN DURING FLIGHT. MAINTENANCE LUBRICATED THE LAVATORY DOOR AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202306064949",
+          "part_name": "STARTER",
+          "text": "AIRCRAFT WAS GROUNDED: AFTER PUSHBACK, ENGINE #1 START, N2 AT ZERO. START ABORTED. ON SECOND START ATTEMPT, ABORTED START AGAIN, ENGINE FIRE INDICATION. BOTH FIRE BOTTLES DISCHARGED. MAINTENANCE FOUND #1 ENGINE STARTER SEIZED CAUSING AN OVERHEAT AND FIRE INDICATION. REPLACED STARTER PER AMM 80-11-01.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312148566",
+          "part_name": "DOOR LATCH",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AFT LEFT LAVATORY DOOR DIFFICULT TO OPEN OR CLOSE. MAINTENANCE ADJUSTED LAVATORY DOOR LATCH AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312209229",
+          "part_name": "DOOR LATCH",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FLIGHT DECK DOOR DIFFICULT TO OPEN OR CLOSE. MAINTENANCE LUBRICATED THE FLIGHT DECK DOOR LATCHES AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-01-05T16:34:05.093000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202312131727",
+          "AALA202312135663",
+          "AALA202312149752",
+          "AALA202306064949",
+          "AALA202312148566",
+          "AALA202312209229"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202401187350",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS GROUNDED: FORWARD RIGHT EMERGENCY EXIT HATCH (ROW 16F) 1 SHOCK MOUNT REQUIRES REPLACEMENT. .",
+      "evidence": [
+        {
+          "record_id": "AALA202401184824",
+          "part_name": "SHOCK MOUNT",
+          "text": "AIRCRAFT WAS GROUNDED: AFT RIGHT EMERGENCY EXIT HATCH (17F) 1 SHOCK MOUNT REQUIRES REPLACEMENT. REMOVED AND REPLACED DAMAGED SHOCK MOUNT ON RIGHT HAND AFT EMERGENCY EXIT DOOR. PER SRM 51-40-02.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202308180596",
+          "part_name": "GUST LOCK",
+          "text": "AIRCRAFT WAS NOT GROUNDED: 1L DOOR GUST LOCK DOES NOT STAY IN DOWN POSITION. LUBED FORWARD ENTRY DOOR 1L GUST LOCK ENGAGES AND DISENGAGES. PER AMM 12-25-11.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202309156037",
+          "part_name": "GUST LOCK",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD ENTRY DOOR GUST LOCK LATCH DIFFICULT TO ENGAGE. CLEANED AND LUBED L1 DOOR GUST LOCK RELEASE LEVER.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312261914",
+          "part_name": "GIRT BAR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AFT EMERGENCY, EXIT DOOR ON AIRCRAFT LEFT ONCE DISARM, SHOWING A PIECE OF PLASTIC HANGING OUT. RESECURED GIRT BAR ON AFT LEFT EXIT DOOR. PER AMM 25-66-01.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-01-18T11:51:56.463000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202401184824",
+          "AALA202308180596",
+          "AALA202309156037",
+          "AALA202312261914"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202405204064",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED DUE TO: HYDRAULIC SYSTEM-A LOW PRESSURE LIGHT CAME ON IN FLIGHT WITH DECREASING QUANTITY; AIRCRAFT LANDED SAFELY AT CUN. .",
+      "evidence": [
+        {
+          "record_id": "AALA202312141154",
+          "part_name": "LAMP",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LEFT HAND AFT SERVICE DOOR EXTERIOR EMERGENCY LIGHT INOPERATIVE. MAINTENANCE REPLACED LAMP FOR LEFT HAND AFT SERVICE DOOR EXTERIOR EMERGENCY LIGHT PER AMM 33-51-04.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202405136196",
+          "part_name": "LAMP",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AN EMERGENCY WAS DECLARED DUE TO: NO INDICATION FOR RIGHT MAIN GEAR; AIRCRAFT LANDED SAFELY AT DFW. RELAMPED RIGHT HAND MLG INDICATOR LIGHT. OPERTIONAL CHECK GOOD. PER AMM 33-18-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202306202583",
+          "part_name": "BULB",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY EXIT LIGHT NOT ARMED LIGHT IS BURNED OUT. REPLACED LAMP EMERGENCY EXIT LIGHTS. OPERATION CHECKS OK PER AMM 33-18-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202305248568",
+          "part_name": "CLAMP",
+          "text": "AIRCRAFT WAS GROUNDED: FLIGHT DECK AND CABIN TEMPERATURE CONTROL ERRATIC AND UNCONTROLLABLE. FLIGHT DECLARED AN EMERGENCY AND DIVERTED TO AVP LANDING SAFELY. MAINTENANCE FOUND THE LEFT PACK MIX MUFFLER BOOT BLOWN OUT AND CLAMP MISSING. REPLACED BELOW (AALA202305236496), CLAMP (AALA202305248568), AND MUFFLER (AALA202305244769) PER AMM 21-51-71.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-05-20T12:38:58.937000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202312141154",
+          "AALA202405136196",
+          "AALA202306202583",
+          "AALA202305248568"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202402145963",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: PERFORM EMERGENCY LIGHT OPERATIONAL TEST. .",
+      "evidence": [
+        {
+          "record_id": "AALA202401298505",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: WHILE ACCOMPLISH JOB CARD TEST EMERGENCY LIGHT 08T20033001 FOUND EMERGENCY AISLE LIGHT LOCATED ON THE CEILING BETWEEN STA 787 AND STA 907 INOPERATIVE.**SUPPLEMENTAL REPORT WILL BE SUBMITTED**(OPEN).",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202401298910",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: ROW 10 EMERGENCY EXIT LIGHT MISSING. REMOVED AND REPLACED EMERGENCY EXIT ROW SEAT LIGHT ROW 10.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202401318380",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY EXIT LIGHTS NOT WORKING AT 21C, 26C, ,27C. PERFORMED EMERGENCY LIGHTS OPERATIONAL TEST, NORMAL PER AMM 33-51-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312079510",
+          "part_name": "ANGLE",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: ELONGATED HOLE IN PASSENGER CABIN SUPPORT ANGLE AT BS 500D, RBL 44.5. REPLACED VERTICAL SUPPORT ANGLE PER AARD 51-00-05-1",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312187239",
+          "part_name": "ANGLE",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CORROSION ON AFT CARGO COMPARTMENT FLOOR BOARD SUPPORT ANGLE AT BS 772, LBL 13. REPAIRED ANGLE PER SRM 53-00-53 R2.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312188415",
+          "part_name": "ANGLE",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CORROSION ON AFT CARGO COMPARTMENT FLOOR BOARD SUPPORT ANGLE AT BS 772, LBL 9. REPAIRED ANGLE PER SRM 53-00-53 R2.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312060117",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: FORWARD CARGO COMPARTMENT INTERCOSTAL BETWEEN BS 500D AND BS 500E AT LBL 24 REQUIRES REPLACEMENT DUE EXISTING REPAIR. REPLACED INTERCOSTAL PER AARD AARD 51-00-05-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312060810",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: FORWARD CARGO COMPARTMENT INTERCOSTAL BETWEEN BS 440 AND BS 460 AT LBL 24 REQUIRES REPLACEMENT DUE EXISTING REPAIR. REPLACED INTERCOSTAL PER AARD AARD 51-00-05-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312065904",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: FORWARD CARGO COMPARTMENT INTERCOSTAL BETWEEN BS 460 AND BS 480 AT LBL 24 REQUIRES REPLACEMENT DUE EXISTING REPAIR. REPLACED INTERCOSTAL PER AARD AARD 51-00-05-1.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-02-14T15:34:14.380000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202401298505",
+          "AALA202401298910",
+          "AALA202401318380",
+          "AALA202312079510",
+          "AALA202312187239",
+          "AALA202312188415",
+          "AALA202312060117",
+          "AALA202312060810",
+          "AALA202312065904"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202410229405",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: FLIGHT CREW REPORTED MANY INTERMITTENTECAM MESSAGES FOR DOOR RIGHT AFT EMERGENCY EXIT DURING FLIGHT. NO PRESSURIZATION ISSUES WERE NOTED AND THE FLIGHT CREW FOLLOWED QRH PROCEDURE.",
+      "evidence": [
+        {
+          "record_id": "AALA202409127030",
+          "part_name": "PROXIMITY SENSOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: 3R EMERGENCY EXIT CONTINOUSLY CYCLING OPEN AND CLOSED IN FLIGHT ON DOORS PAGES WITH NO PRESSURIZATION ISSUES REPORTED. **SUPPLEMENTAL REPORT FOR AALA202409047030: MAINTENANCE ADJUSTED THE 3R EMERGENCY EXIT DOOR PROXIMITY SWITCH AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.** (CLOSED)",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202410171868",
+          "part_name": "PROXIMITY SENSOR",
+          "text": "AIRCRAFT WAS GROUNDED: AT FL 350 1/2 WAY THROUGH 3 HOUR FLIGHT,  SLIDE ANNUNCIATION ON ECAM FOR DOOR 3R FLASHES INTERMITTENTLY . EMERGENCY EXIT AMBER CAUTION ALSO FLASHES INTERMITTENTLY. PRESSURIZATION IS NORMAL ANDVISUAL CHECK OF DOOR AND SLIDE IS NORMAL. MAINTENANCE REPLACED RIGHT HAND AFT EMERGENCY EXIT ARMING HANDLE PROXIMITY SENSOR 6WN2 AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK PER AMM 52-73-11.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408202025",
+          "part_name": "ACTUATOR",
+          "text": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED AND THE AIRCRAFT RETURNED TO LAX DUE TO THE FLIGHT CREW REPORTING AN ECAM MESSAGE FOR FLIGHT CONTROL FLAPS LOCKED, WING TIP BRAKE ON DURING FLAP RETRACTION AFTER TAKEOFF. **SUPPLEMENTAL REPORT FOR AALA202408162025: MAINTENANCE FOUNFD THE FPPU ANGLE OUT OF SPECIFIED LIMITS AND REPLACED THE LEFT WING #1 FLAP TRACK ACTUATOR AND THE RIGHT WING #1 FLAP TRACK ACTUATOR (AALA202408204525) PER AMM 27-54-49. A SATISFACTORY OPERATIONAL CHECK WAS ACCOMPLISHED WITH NO DEFECTS NOTED** (CLOSED)",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408204525",
+          "part_name": "ACTUATOR",
+          "text": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED AND THE AIRCRAFT RETURNED TO LAX DUE TO THE FLIGHT CREW REPORTING AN ECAM MESSAGE FOR FLIGHT CONTROL FLAPS LOCKED, WING TIP BRAKE ON DURING FLAP RETRACTION AFTER TAKEOFF. **ORIGINAL REPORT WAS AALA202408162025** MAINTENANCE FOUNFD THE FPPU ANGLE OUT OF SPECIFIED LIMITS AND REPLACED THE LEFT WING #1 FLAP TRACK ACTUATOR AND THE RIGHT WING #1 FLAP TRACK ACTUATOR (AALA202408204525) PER AMM 27-54-49. A SATISFACTORY OPERATIONAL CHECK WAS ACCOMPLISHED WITH NO DEFECTS NOTED.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408306905",
+          "part_name": "BATTERY",
+          "text": "AIRCRAFT WAS NOT GROUNDED: WHILE ACCOMPLISHING EMERGENCY LIGHT SYSTEM TEST A EMERGENCY POWER SUPPLY UNIT BATTERY FORWARD FAULT OCCURED. REPLACED THE EMERGENCY POWER SUPPLY UNIT FORWARD L BATTERY.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-10-22T10:05:37.870000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202409127030",
+          "AALA202410171868",
+          "AALA202408202025",
+          "AALA202408204525",
+          "AALA202408306905"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202404084023",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: FUEL WOULD NOT ENTER TANK, VALVE STICKING CAUSING IMBALANCE..",
+      "evidence": [
+        {
+          "record_id": "AALA202403150486",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING AT BS 540 AND LBL 6.14. REPLACED SHEAR FITTING PER AARD 57-14-00-1 REPAIR 1. THIS ACCOMPLISHES BOEING SB-737-57-1309.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403151005",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING AT BS 540 AND RBL 15.04. REPLACED SHEAR FITTING PER AARD 57-14-00-1 REPAIR 1. THIS ACCOMPLISHES BOEING SB-737-57-1309.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403151262",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING AT BS 540 AND LBL 40.87. REPLACED SHEAR FITTING PER AARD 57-14-00-1 REPAIR 1. THIS ACCOMPLISHES BOEING SB-737-57-1309.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202404087903",
+          "part_name": "PUMP",
+          "text": "AIRCRAFT WAS NOT GROUNDED: NUMBER 2 AFT FUEL PUMP LIGHT IS NOT ILLUMINATED WITH THE FUEL PUMP TURNED OFF. PUSHED TO TEST IS INTERMITENT.**SUPPLEMENTAL REPORT WILL BE SUBMITTED**(OPEN).",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403185985",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN FLOOR INTERCOASTAL AT STA 537.45, RBL 2. REPLACED INTERCOSTAL PER SRM 51-40-05.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-04-08T16:38:34.043000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202403150486",
+          "AALA202403151005",
+          "AALA202403151262",
+          "AALA202404087903",
+          "AALA202403185985"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202405298381",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS GROUNDED: L1 DOOR CANNOT BE OPENED ON ARRIVAL AT THE GATE, IT IS JAMMED CLOSED. .",
+      "evidence": [
+        {
+          "record_id": "AALA202403134438",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LEFT AFT OVERWING EMERGENCY LIGHT FLICKERING. REMOVE AND REPLACED LEFT AFT OVERWING EXIT LIGHT. PER AMM 33-21-00. FUNCTIONAL CHECK GOOD.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202401110870",
+          "part_name": "SLIDE",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD ENTRY DOOR SLIDE NEEDS BE TUCKED BACK INTO FAIRING. RESEATED L1 SLIDE FLAP. PER AMM 25-66-01.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202306124383",
+          "part_name": "SKIN",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN LEFT HAND HORIZONTAL STABILIZER LOWER SKIN LOCATED AT STABILIZER STA 147.90, 9 INCHES FROM AFT SPAR. REPAIRED SKIN PER SRM 55-10-01-2R-11.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202306141201",
+          "part_name": "SKIN",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: OUT OF ROUND HOLE IN RIGHT HAND HORIZONTAL STABILIZER UPPER SKIN LOCATED AT STAB STA 92.70, 7TH HOLE FROM FORWARD END. INSTALLED FILLER DOUBLER REPAIR PER SRM 55-10-01-2R-3.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-05-29T12:05:37.333000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202403134438",
+          "AALA202401110870",
+          "AALA202306124383",
+          "AALA202306141201"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202407257887",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS GROUNDED: GUST LOCK DOES NOT KEEP THE L1 CABIN DOOR LOCKED IN PLACE OPEN..",
+      "evidence": [
+        {
+          "record_id": "AALA202407241503",
+          "part_name": "PIN",
+          "text": "AIRCRAFT WAS GROUNDED: LEFT FORWARD BOARDING DOOR DIFFICULT TO CLOSE AND OPEN. INSPECTED DOOR, FOUND L-1 DOOR GUST LOCK PIN SHEARED, REMOVED AND INSTALLED SERVICEABLE L-1 DOOR GUST LOCK PIN, OPERTIONAL CHECK GOOD. PER AMM 52-11-21.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202311062794",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FLIGHT ATTENDANT REPORT L1 BOARDING DOOR VERY DIFFICULT TO OPEN OR SHUT AND LOCKING HANDLE REQUIRES MORE FORCE TO OPERATE OPEN OR CLOSED. LUBRICATED 1L DOOR. FUNCTIONAL CHECK GOOD. PER AMM 52-11-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407058662",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: 2F-1L (B/C) BATHROOM DOOR LOCK STUCK. UNABLE TO OPEN FROM INSIDE, REQUIRES A KNIFE/PEN TO OPEN FROM OUTSIDE. MAINTENACE REPLACED GUIDE DOOR BROKEN IAW CMM 25-45-80.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407087304",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FLIGHT CREW REPORTED LAVATORY E DOOR STUCK CLOSED. **SUPPLEMENTAL REPORT WILL BE SUBMITTED** (OPEN)",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202301231422",
+          "part_name": "DOOR LATCH",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD LAVATORY DOOR IS DIFFICULT TO OPEN. ADJUSTED DOOR LATCH. ACCOMPLISHED SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407055193",
+          "part_name": "DOOR LATCH",
+          "text": "AIRCRAFT WAS NOT GROUNDED: COCKPIT DOOR HARD TO OPEN FROM THE INSIDE. LUBRICATED DOOR LATCH AND LOCK ASSEMBLY.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407057789",
+          "part_name": "DOOR LATCH",
+          "text": "AIRCRAFT WAS NOT GROUNDED: PILOT CREW REST COMPARTMENT DOOR JAMMED. HANDLE AND LATCH LOOSE. MAINTENANCE ADJUSTED PILOT CREW REST DOOR LATCH IAW AMM 25-29-01.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-07-25T14:34:45.957000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202407241503",
+          "AALA202311062794",
+          "AALA202407058662",
+          "AALA202407087304",
+          "AALA202301231422",
+          "AALA202407055193",
+          "AALA202407057789"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202408276799",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: FORWARD SERVICE DOOR GIRT BAR MISSING RED TAB..",
+      "evidence": [
+        {
+          "record_id": "AALA202401036368",
+          "part_name": "GIRT BAR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FLIGHT ATTENDANT HAVING DIFFICULTY ARMING L1 DOOR, PROBLEM ATTACHING GIRT BAR. ADJUSTED THE Z-FOLD ON THE L1 GIRT BAR. PER AMM 25-66-01. OPERATIONAL CHECK GOOD.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408122736",
+          "part_name": "GIRT BAR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD ENTRY GIRT BAR IS DIFFICULT TO MOVE AND HAS A TEAR IN IT. ADJUSTED FABRIC ATTACHED TO GIRT BAR AND CLEANED LOCKING MECHANISMS ON BOTH SIDES. PER M/M 25-66-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408124760",
+          "part_name": "GIRT BAR",
+          "text": "AIRCRAFT WAS GROUNDED: FLIGHT ATTANDENT REPORTS FORWARD SERVICE DOOR GIRT BAR MISSING WHITE PLASTIC STOP COLLAR. REMOVED AND REPLACED FORWARD GALLEY R1 DOOR GIRT BAR. PER MM 25-66-01 AND EO 2523J012.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202405246869",
+          "part_name": "SIGN",
+          "text": "AIRCRAFT WAS GROUNDED: EXIT SIGN MISSING FROM AFT SERVICE DOOR. REMOVED AND REPLACED EXIT SIGN FROM AFT SERVICE DOOR. OPERTIONAL CHECK GOOD. PER AMM 33-51-01.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202406039680",
+          "part_name": "SIGN",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY EXIT SIGN ABOVE LEFT AFT DOOR CAME OFF. RE-INSTALLED EXIT LIGHT CAP, OPERTIONAL CHECK GOOD. PER AMM 33-51-01.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202309069581",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AFT LAVATORY DOOR LATCH IS HARD TO OPEN FROM THE INSIDE. ADJUSTED AS NEEDED PER AMM 25-40-11.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408088682",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: CHRONIC HISTORY OF LAVSTORY-D DOOR DIFFICULT TO OPERATE.**SUPPLEMENTAL REPORT WILL BE SUBMITTED**(OPEN).",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202408143709",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LEFT AFT LAVATORY TOP OF DOOR BENT. DOOR STICKS SHUT. UNJAMMED AFT LEFT LAVATORY DOOR. OPERATIONAL CHECK GOOD.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-08-27T15:27:02.107000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202401036368",
+          "AALA202408122736",
+          "AALA202408124760",
+          "AALA202405246869",
+          "AALA202406039680",
+          "AALA202309069581",
+          "AALA202408088682",
+          "AALA202408143709"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202408141063",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: FLIGHT ATTENDANTS REPORT THE  AFT GALLEY CHILLER IS MAKING A LOUD NOISE AND BURNING RUBBER SMELL. THEY TURNED THE CHILLER OFF AND NOISE WENT AWAY BUT SMELL REMAINS.",
+      "evidence": [
+        {
+          "record_id": "AALA202307104803",
+          "part_name": "BOTTLE",
+          "text": "AIRCRAFT WAS NOT GROUNDED: CIDS PANEL SHOWING CHECK DOOR PRESSURE 4L. MAINTENANCE SERVICED THE 4L DOOR ASSIST BOTTLE PER AMM 52-10-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202401030908",
+          "part_name": "BOTTLE",
+          "text": "AIRCRAFT WAS NOT GROUNDED: DURING TAXI OUT, # 1 FLIGHT ATTENDANT CALLED AND SAID THE FLIGHT ATTENDANT PANEL SHOWED A MESSAGE: \"CK 4L DOOR PRESSURE\". SERVICED DOOR ASSIST BOTTLE ON DOOR 4L PER AMM 52-10-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202405302877",
+          "part_name": "BOTTLE",
+          "text": "AIRCRAFT WAS NOT GROUNDED: CHECK DOOR PRESSURE WARNING FOR DOOR 1R ON FA PANEL. SERVICED 1R DOOR IAW AMM 52-10-00. GOOD FOR SERVICE.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202407088740",
+          "part_name": "SLIDE",
+          "text": "AIRCRAFT WAS GROUNDED: R2 DOOR SLIDE PRESSURE LIGHT FLASHING ON FA PANEL. PERFORMED TSM 25-62-00-810-808-A. R/R DEU-B IAW 23-73-47 NO HELP. CONTINUED FOLLOWING TSM AND R/R R2 ESCAPE SLIDE INFLATION RESERVOIR IAW 25-62-49, OPS CHECK OK AT THIS TIME.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312283924",
+          "part_name": "CONNECTOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY EXIT LT ABOVE 2R OVERHEAD BIN WON'T TURN OFF. MAINTENANCE FOUND DISCREPANT LIGHT IS CEILING LIGHT AT DOOR 2R.  FOUND LOOSE CONNECTOR.  RECONNECTED CONNECTOR.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312302270",
+          "part_name": "CONNECTOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMER EXIT LT. ABOVE 2R WON'T TURN OFF. MAINTENANCE RESEATED CONNECTION ON CEILING LIGHT AT 2R. OP CHECKS GOOD IAW AMM 33-21-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202405288108",
+          "part_name": "CONNECTOR",
+          "text": "AIRCRAFT WAS GROUNDED: EMERGENCY EXIT SIGN 51WL OVERHEAD BETWEEN L3 AND R3 DOORS INOPERATIVE. RESECURED POWER SUPPLY CANNON PLUG.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-08-14T14:41:38.957000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202307104803",
+          "AALA202401030908",
+          "AALA202405302877",
+          "AALA202407088740",
+          "AALA202312283924",
+          "AALA202312302270",
+          "AALA202405288108"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202401171607",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED DUE TO: AIRCRAFT CONTROL ISSUES WITH EVERY RIGHT HAND DEFLECTION OF YOKE. AIRCRAFT RETURN TO AND LANDED SAFELY AT CLT WITHOUT FURTHER INCIDENT.  (OPEN).",
+      "evidence": [
+        {
+          "record_id": "AALA202311026994",
+          "part_name": "WARNING LIGHT",
+          "text": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS NOT DECLARED DUE TO A FEEL DIFFERENCES PRESSURE LIGHT AND VERY LITTLE CONTROL RESPONSE. AIRCRAFT LANDED SAFELY AT JFK WITHOUT FURTHER INCIDENT. FEEL DIFFERENCES PRESSURE LIGHT ILLUMINATES ARE CONSIDERED A NUISANCE EVENT, PER FIM TASK 27-31-00-810-815. AILERON CONTROL WHEEL FORCE TEST ACCOMPLISHED, PER 27-11-00-700-805. ALL PARAMETERS NORMAL.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202305300575",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING LOCATED AT BS 540 AND RBL 6.14. REPLACED SHEAR FITTING PER AARD 57-14-00-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202305300782",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING LOCATED AT BS 540 AND RBL 15.04. REPLACED SHEAR FITTING PER AARD 57-14-00-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202305300935",
+          "part_name": "FITTING",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN CENTER WING BOX FORWARD SPAR UPPER SHEAR FITTING LOCATED AT BS 540 AND LBL 6.14. REPLACED SHEAR FITTING PER AARD 57-14-00-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202308298782",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LEFT AFT LAVATORY DOOR VERY DIFFICULT TO OPEN. **SUPPLEMENTAL REPORT FOR AALA202308258782: REPLACED LEFT AFT LAV DOOR PER AMM 25-40-00.** (CLOSED)",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202309050921",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LAVATORY D ENTRY DOOR DIFFICULT TO OPEN / CLOSE. ADJUSTED LAVATORY D DOOR PER AMM 25-40-00.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-01-17T17:11:20.843000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202311026994",
+          "AALA202305300575",
+          "AALA202305300782",
+          "AALA202305300935",
+          "AALA202308298782",
+          "AALA202309050921"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202409111684",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: CENTER TANK PUMP 1 INOPERATIVE. VALVE INDICATES CLOSED IN THE AMBER POSITION WHEN THE PUMP IS IN THE ON POSITION AND WITH FUEL IN THE CENTER TANK. CENTER TANK FUEL DOES NOT FEED TO THE NUMBER 1 ENGINE.  (OPEN)",
+      "evidence": [
+        {
+          "record_id": "AALA202409039638",
+          "part_name": "SCREW",
+          "text": "AIRCRAFT WAS GOUNDED: ECAM - LANDING GEAR DOOR NOT CLOSED. MAINTENANCE FOUND LEFT HAND MAIN LANDING GEAR DOOR UPLOCK SENSOR 27GA TARGET MISSING ATTACH SCREW AND INSTALLED IT PER AMM 32-31-00. A SATISFACTORY OPERATIONAL CHECK WAS ACCOMPLISHED.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202409031926",
+          "part_name": "LGCIU",
+          "text": "AIRCRAFT WAS GROUNDED: LEFT MAIN LANDING GEAR DOOR FAILED TO CLOSE ON RETRACT. DOOR SUCCESSFULLY CLOSED FOLLOWING LANDING GEAR CYCLE IN ACCORDANCE WITH ECAM PROCEDURE. FLIGHT CREW ALSO REPORTED A LANDING GEAR DOOR NOT CLOSED ECAM MESSAGE ON GEAR EXTENSION FOR LANDING AT DESTINATION CITY. MAINTENANCE REPLACED #1 LGCIU (AALA202409031926) AND # 2 LGCIU (AALA202409034012) PER AMM 32-31-71. A SATISFACTORY OPERATIONAL CHECK WAS ACCOMPLISHED WITH NO FAULTS NOTED.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202409034012",
+          "part_name": "LGCIU",
+          "text": "AIRCRAFT WAS GROUNDED: LEFT MAIN LANDING GEAR DOOR FAILED TO CLOSE ON RETRACT. DOOR SUCCESSFULLY CLOSED FOLLOWING LANDING GEAR CYCLE IN ACCORDANCE WITH ECAM PROCEDURE. FLIGHT CREW ALSO REPORTED A LANDING GEAR DOOR NOT CLOSED ECAM MESSAGE ON GEAR EXTENSION FOR LANDING AT DESTINATION CITY. MAINTENANCE REPLACED #1 LGCIU (AALA202409031926) AND # 2 LGCIU (AALA202409034012) PER AMM 32-31-71. A SATISFACTORY OPERATIONAL CHECK WAS ACCOMPLISHED WITH NO FAULTS NOTED.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202306284491",
+          "part_name": "BATTERY",
+          "text": "AIRCRAFT WAS GROUNDED: FORWARD MEGAPHONE INOPERATIVE. REMOVED AND REPLACED MEGAPHONE BATTERIES PER AMM 25-65-51-920-001-A.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202401030167",
+          "part_name": "BATTERY",
+          "text": "AIRCRAFT WAS GROUNDED: EMERGENCY POWER SUPPLY UNIT 13WL BATTERY FAILED SYSTEM TEST. REPLACED BATTERY AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202401030694",
+          "part_name": "BATTERY",
+          "text": "AIRCRAFT WAS GROUNDED: EMERGENCY POWER SUPPLY UNIT 12WL BATTERY FAILED SYSTEM TEST. REPLACED BATTERY AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-09-11T12:35:40.180000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202409039638",
+          "AALA202409031926",
+          "AALA202409034012",
+          "AALA202306284491",
+          "AALA202401030167",
+          "AALA202401030694"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202412093057",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED INBOUND INTO SEA DUE TO THE FLIGHT CREW REPORTING A LEFT WING BLEED AIR LEAK CAUTION MESSAGE. FLIGHT CREW ACCOMPLISHED ECAM PROCEDURES AND LANDED SAFELY AT SEA WITHOUT FURTHER INCIDENT.",
+      "evidence": [
+        {
+          "record_id": "AALA202411185758",
+          "part_name": "BATTERY",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY POWER SUPPLY UNIT 10WL BATTERY FAULT DISPLAYED DURING SYSTEM TEST. EPSU 10WL BATTERY FAULT. REPLACED EMERGENCY POWER SUPPLY UNIT 10WL BATTERY AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202411185105",
+          "part_name": "WIRE",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FORWARD LEFT HAND EMERGENCY EXIT DOOR AFT WALL EMERGENCY LIGHT (90WL3) BOTTOM INOPERATIVE. MAINTENANCE FOUND WIRE LOOSE, RECONNECTED WIRE AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202411156201",
+          "part_name": "PUMP",
+          "text": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED AND THE AIRCRAFT DIVERTED TO ATL DUE TO THE FLIGHT CREW REPORTING YELLOW HYDRAULIC SYSTEM LOW LEVEL ECAM MESSAGE. THE FLIGHT CREW ACCOMPLISHED ECAM PROCEDURES AND LANDED SAFELY AT ATL WITHOUT FURTHER INCIDENT.   MAINTENANCE FOUND HYDRAULIC FLUID LEAKING FROM  THE #2 ENGINE AND REPLACED THE ENGINE DRIVEN HYDRAULIC PUMP PER AMM 29-13-51. A SATISFACTORY LEAK / OPERATIONAL CHECK WAS ACCOMPLISHED.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-12-09T12:11:42.950000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202411185758",
+          "AALA202411185105",
+          "AALA202411156201"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202412242023",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: RIGHT HAND AFT EMERGENCY SIDEWALL LIGHT INOPERATIVE. .",
+      "evidence": [
+        {
+          "record_id": "AALA202412044587",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY EXIT LIGHT ON SEAT 16C IS BROKEN AND JUST HANGING BY THE WIRES. RSECURED EMERGENCY LIGHT ON SEAT 16C AND PERFORMED OPERATIONAL CHECK GOOD. PER AMM 33-51-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202412099248",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: EMERGENCY LIGHT SEAT 8C DETACHED. REATTACHED 8C EMERGENCY LIGHT ASSEMBLY. PER AMM 33-51-11.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202412101897",
+          "part_name": "LIGHT",
+          "text": "AIRCRAFT WAS NOT GROUNDED: 24H SEAT MOUNTED EMERGENCY LIGHT INOPERATIVE. **SUPPLEMENTAL REPORT FOR (AALA202412051897): REMOVED AND REPLACED 24H SEAT MOUNTED EMERGENCY LIGHT. PER AMM 33-59-05. OPS CHECK GOOD**(CLOSED).",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312141154",
+          "part_name": "LAMP",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LEFT HAND AFT SERVICE DOOR EXTERIOR EMERGENCY LIGHT INOPERATIVE. MAINTENANCE REPLACED LAMP FOR LEFT HAND AFT SERVICE DOOR EXTERIOR EMERGENCY LIGHT PER AMM 33-51-04.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202412090483",
+          "part_name": "LAMP",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AFT RIGHT DOOR EXTERIOR EMERGENCY EXIT LIGHT INOPERATIVE. RELAMPED AFT RIGHT DOOR EXTEROIR EMERGENCY EXIT LIGHT. PER AMM 33-51-04.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202412114313",
+          "part_name": "LAMP",
+          "text": "AIRCRAFT WAS NOT GROUNDED: AFT LEFT DOOR EXTERIOR EMERGENCY EXIT LIGHT INOPERATIVE.**SUPPLEMENTAL REPORT FOR (AALA202412094313): RELAMPED, OPERTIONAL CHECK. PER AMM 33-51-04**(CLOSED).",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202410303491",
+          "part_name": "SLIDE",
+          "text": "AIRCRAFT WAS GROUNDED: L1 ENTRY DOOR SLIDE PACK APPEARS TO NEED TO BE REPACKED, SLIDE IS COMING OUT OF BOTTOM OF SLIDE BOX. REMOVE AND REPLACED L1 DOOR EMERGENCY ESCAPE SLIDE. PER W/C 08L22125001.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-12-24T19:21:07.540000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202412044587",
+          "AALA202412099248",
+          "AALA202412101897",
+          "AALA202312141154",
+          "AALA202412090483",
+          "AALA202412114313",
+          "AALA202410303491"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202404039025",
+      "year": 2024,
+      "task": "facts",
+      "observation": "AIRCRAFT WAS NOT GROUNDED: AFT LAVATORY-E DOOR STICKS. HARD TO OPEN AND CLOSE. (OPEN).",
+      "evidence": [
+        {
+          "record_id": "AALA202403141375",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: LAVATORY-D DOOR DIFFICULT TO OPEN AND CLOSE. LUBRICATED AND ADJUSTED LAVATORY-D DOOR. FUNCTIONAL CHECK GOOD. PER AMM 25-40-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403180028",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FIRST CLASS LAVATORY DOOR HARD TO OPEN. MAINTENANCE ADJUSTED DOOR PER AMM 25-45-18.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202403188469",
+          "part_name": "DOOR",
+          "text": "AIRCRAFT WAS NOT GROUNDED: FWD LAV DOOR DIFFICULT TO OPEN - MORE PRONOUNCED AT ALTITUDE. MAINTENANCE ADJUSTED FWD LAV DOOR PER IAW AMM 25-40-00.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202312112947",
+          "part_name": "GUIDE ARM",
+          "text": "AIRCRAFT WAS GROUNDED: L1 DOOR WILL NOT OPEN. FOUND L1 DOOR GUIDE ARM RADIUS LINKS PIN SCREW LOOSE IN GUIDE ARM TRACK. REMOVE AND REPLACED GUIDE ARM RADIUS LINKS PIN, WASHERS, AND SCREW PER AMM 52-11-21. OPERATIONAL CHECK GOOD.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202303308123",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: CRACK IN FORWARD PASSENGER CABIN FLOOR SUPPORT INTERCOSTAL LOCATED AT BS 294, BL 0. REPLACED INTERCOSTAL PER AARD 51-00-05-1 AND DWG #141A5410-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202304251147",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: UNSPECIFIED DAMAGE TO INTERCOSTAL LOCATED FROM BS 947 TO BS 967 AT LBL 50. INTERCOSTAL WAS DAMAGED DURING REMOVAL TO FACILITATE OTHER MAINTENANCE. REPLACED INTERCOSTAL PER AARD 51-00-05-1.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202304252564",
+          "part_name": "INTERCOSTAL",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: EXISTING REPAIR ON AFT PASSENGER CABIN FLOOR INTERCOSTAL LOCATED FROM BS 947 TO BS 967 AT LBL 24. REPLACED INTERCOSTAL PER AARD 51-00-05-1.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-04-03T15:06:20.477000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202403141375",
+          "AALA202403180028",
+          "AALA202403188469",
+          "AALA202312112947",
+          "AALA202303308123",
+          "AALA202304251147",
+          "AALA202304252564"
+        ]
+      }
+    },
+    {
+      "case_id": "AALA202404307702",
+      "year": 2024,
+      "task": "prose",
+      "observation": "AIRCRAFT WAS GROUNDED: AN EMERGENCY WAS DECLARED INBOUND TO MIA DUE TO A YELLOW HYDRAULIC SYSTEM RESERVOIR LOW LEVEL ECAM MESSAGE IN FLIGHT. THE AIRCRAFT LANDED SAFELY AT MIA WITHOUT FURTHER INCIDENT.  (OPEN)",
+      "evidence": [
+        {
+          "record_id": "AALA202310044447",
+          "part_name": "SLIDE RAFT",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: R1 DOOR SLIDE RAFT BULGING AT TOP. REPLACED SLIDE RAFT PER TASK CARD 26C84152002.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202310091791",
+          "part_name": "SIGN",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: EMERGENCY EXIT SIGN ATTACHED TO PANEL NUMBER 451KC IS INOPERATIVE. REPLACED EMERGENCY EXIT SIGN PER AMM 33-51-11 AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        },
+        {
+          "record_id": "AALA202310091399",
+          "part_name": "BATTERY",
+          "text": "AIRCRAFT IN BASE MAINTENANCE: EMERGENCY POWER SUPPLY UNIT 10WL INOPERATIVE. REPLACED BATTERY FOR EMERGENCY POWER SUPPLY UNIT 10WL PER AMM 33-51-38 AND ACCOMPLISHED A SATISFACTORY OPERATIONAL CHECK.",
+          "status": "auto_accepted"
+        }
+      ],
+      "audit": {
+        "knowledge_time": "2024-04-30T14:08:07.857000-05:00",
+        "query_chain_excluded": true,
+        "strict_submission_bound": true,
+        "source_record_ids": [
+          "AALA202310044447",
+          "AALA202310091791",
+          "AALA202310091399"
+        ]
+      }
+    }
+  ],
+  "held_out_2025_used": false,
+  "method_sha256": "00f3912a2610830a79ec3608ee3adfff7699def1720b7455a11c8841300d37ab",
+  "protocol": {
+    "primary_prompts": 20,
+    "fact_prompts": 10,
+    "prose_prompts": 10,
+    "no_evidence_prose_prompts": 10,
+    "baseline": "Identical prose instruction/observation; supplied evidence replaced by an empty list.",
+    "purpose": "Model selection only; not an outcome-accuracy or held-out test."
+  },
+  "packet_sha256": "2e12df9469de9b8c15be818d8989f902dca5c4d3b687b733a70b0152ab42aa77"
+}

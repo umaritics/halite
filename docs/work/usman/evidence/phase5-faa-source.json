@@ -1,0 +1,23 @@
+{
+  "source": "https://sdrs.faa.gov/Documents/SDRS%20Look-Up%20Tables.zip",
+  "sha256": "5ab1d86f963a2f7c2ac2298c787bc875d5212aa4cd6f82df076122958651ced0",
+  "bytes": 639653,
+  "files": [
+    "2026-07-06_AirCraft.xlsx",
+    "2026-07-06_Component.xlsx",
+    "2026-07-06_Engine.xlsx",
+    "2026-07-06_Propeller.xlsx",
+    "2026-07-09_HowDiscovered.xlsx",
+    "2026-07-09_JASC.xlsx",
+    "2026-07-09_NatureofCondition.xlsx",
+    "2026-07-09_OperatorType.xlsx",
+    "2026-07-09_PartCondition.xlsx",
+    "2026-07-09_PartLocation.xlsx",
+    "2026-07-09_PartMake.xlsx",
+    "2026-07-09_PartName.xlsx",
+    "2026-07-09_PrecautionCode.xlsx",
+    "2026-07-09_StageofOperation.xlsx",
+    "2026-07-09_SubmitterType.xlsx",
+    "2026-07-09_TimeSinceCode.xlsx"
+  ]
+}

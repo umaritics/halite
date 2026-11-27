@@ -22,7 +22,7 @@ The software-domain screens still exist in the repo but are **not reachable** (s
 | Domain lock | `frontend/src/context/DomainContext.jsx` (fixed to `maintenance`) |
 | Navigation | `frontend/src/components/Sidebar.jsx` (maintenance destinations + admin `Team & Access` + user/sign-out footer) |
 | API adapter | `frontend/src/api/client.js` (`authAPI`, `adminAPI`, `maintenanceAPI`, single-flight 401 refresh interceptor) |
-| Pages | `pages/Login.jsx`, `pages/AcceptInvite.jsx`, `pages/TeamAccess.jsx`, `pages/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx`; Copilot evidence details are rendered by `components/DiagnosticEvidenceInspector.jsx` |
+| Pages | `features/auth/Login.jsx`, `features/auth/AcceptInvite.jsx`, `features/admin/TeamAccess.jsx`, `features/assets/Assets.jsx`, `AssetHistory.jsx`, `ServiceRecords.jsx`, `Diagnostics.jsx`, `ReviewQueue.jsx`, `MaintenanceIngest.jsx`, `Graph.jsx`, `Settings.jsx`, `Landing.jsx`; Copilot evidence details are rendered by `components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)` |
 | Pure helpers | `frontend/src/utils/diagnostics.js` (error mapping, explanation recovery, `[UNVERIFIED]` split), `diagnosticEvidence.js` (exact aircraft provenance, discrepancy labels, deterministic evidence grouping), `diagnosticWorkspace.js` (versioned active-workspace persistence), `format.js` (dates), `loadError.js` |
 | Tests | `frontend/src/test/*` (Vitest, API mocked) |
 | Runtime target | `frontend/.env.development` (staging) · override with local `.env.local` |
@@ -49,7 +49,7 @@ not capture `/api/*` or `/assets/*`.
   one-shot UI under **Quick diagnose**.
 - Review queue rows carry `classification_label`, `classification_rationale`, `confidence`, `candidates_considered`, `history_size`; coverage comes from `/maintenance/analysis/status`.
 - Service Records consumes paginated `/maintenance/records`; Corrections consumes `/maintenance/corrections`.
-- `GET /maintenance/records/{id}` re-runs the conflict engine (a model call) each time it is viewed.
+- `GET /maintenance/records/{id}` still re-runs the conflict engine in dry-run mode (a model call) each time it is called, but the review screen no longer uses it: it reads `GET /maintenance/review-queue/{id}/proposal`, which returns the stored proposal.
 
 ## Behaviour rules (do not weaken)
 
@@ -61,13 +61,13 @@ not capture `/api/*` or `/assets/*`.
 | Missing model output is stated ("No written explanation returned"), not silently omitted | `Diagnostics.jsx` |
 | Copilot `reply:null` is a visible model-unavailable state while deterministic ranking/evidence remain visible | `Diagnostics.jsx` |
 | Copilot sessions use guarded `localStorage`; storage failure does not disable the page | `Diagnostics.jsx` |
-| The unsaved active Copilot workspace uses a separate, versioned local-storage key with a seven-day maximum age. Route remount/refresh hydrates messages, case state, latest responses, aircraft, draft, selected evidence component, up to 50 recently inspected source records, and scroll intent without sending a Copilot turn. **New investigation** clears only this active snapshot; named saved sessions remain | `Diagnostics.jsx`, `utils/diagnosticWorkspace.js` |
+| The unsaved active Copilot workspace uses a separate, versioned local-storage key with a seven-day maximum age. Route remount/refresh hydrates messages, case state, latest responses, aircraft, draft, selected evidence component, up to 50 recently inspected source records, and scroll intent without sending a Copilot turn. **New investigation** clears only this active snapshot; named saved sessions remain | `Diagnostics.jsx`, `utils/diagnosticWorkspace.js (removed 2026-11-24)` |
 | Evidence links from Diagnostics carry explicit router state. Asset History shows **Back to investigation** only for that source and always routes explicitly to `/app/diagnostics`; direct/Assets entry retains **Back to Assets** without claiming an investigation exists | `Diagnostics.jsx`, `AssetHistory.jsx` |
 | Live-ranking motion is driven only by successful-turn `ranked_checks` + `ranking_delta`; initial/session-restored/unchanged/error states do not animate, and reduced-motion disables movement | `Diagnostics.jsx` |
-| A live-ranked component's inspector is keyed only by that check's `evidence_record_ids`; it shows the turn's grounded evidence immediately, may enrich it from the read-only asset-history endpoint, and resolves ID-only entries through the read-only paginated records list. It never uses `GET /maintenance/records/{id}` because that endpoint can invoke the conflict model. Dropped/ruled-out selections never retain stale evidence | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
-| Case State is the sole structured presentation of model-extracted symptoms, observations, completed checks, and ruled-out components. The inspector shows only an observation count/reference; it does not repeat the facts. Original technician wording stays in the conversation. Symptoms and observations remain separate backend fields | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
-| Live Ranking owns rank, heuristic score, and the single score disclaimer. The inspector uses a contextual `Evidence for …` heading without repeating rank or score | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx` |
-| Inspector evidence is grouped only when exact grounded aircraft identity, component, and condition agree. It previews three exact-ID/date reports, preserves every cited ID, distinguishes cited versus retrieved counts, and expands each original narrative individually. Same-aircraft, other-aircraft/fleet, and unavailable/unverified provenance use exact known identifiers—never substring matching | `components/DiagnosticEvidenceInspector.jsx`, `utils/diagnosticEvidence.js`, [DEC-20261025-evidence-provenance](../../decisions/DEC-20261025-evidence-provenance.md) |
+| A live-ranked component's inspector is keyed only by that check's `evidence_record_ids`; it shows the turn's grounded evidence immediately, may enrich it from the read-only asset-history endpoint, and resolves ID-only entries through the read-only paginated records list. It never uses `GET /maintenance/records/{id}` because that endpoint can invoke the conflict model. Dropped/ruled-out selections never retain stale evidence | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)` |
+| Case State is the sole structured presentation of model-extracted symptoms, observations, completed checks, and ruled-out components. The inspector shows only an observation count/reference; it does not repeat the facts. Original technician wording stays in the conversation. Symptoms and observations remain separate backend fields | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)` |
+| Live Ranking owns rank, heuristic score, and the single score disclaimer. The inspector uses a contextual `Evidence for …` heading without repeating rank or score | `Diagnostics.jsx`, `components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)` |
+| Inspector evidence is grouped only when exact grounded aircraft identity, component, and condition agree. It previews three exact-ID/date reports, preserves every cited ID, distinguishes cited versus retrieved counts, and expands each original narrative individually. Same-aircraft, other-aircraft/fleet, and unavailable/unverified provenance use exact known identifiers—never substring matching | `components/DiagnosticEvidenceInspector.jsx (removed 2026-11-24)`, `utils/diagnosticEvidence.js (removed 2026-11-24)`, [DEC-20261025-evidence-provenance](../../decisions/DEC-20261025-evidence-provenance.md) |
 | **Reflect, never hide or alter, what Umar/Usman's backends return.** Shown as sent: rank `score` (labelled "rank score", not a probability), `context_size.wall_clock_s`, every `evidence_record_ids` entry (expandable), the model's text even when no evidence exists (labelled unsupported), `confidence` / `jasc_code` / `source` on history, JASC on the records list, and the `/api/health` runtime flags + `git_sha` on Settings. A field the backend did not send is omitted, never shown as `false`/`No` | [DEC-20261016-frontend-reflects-backend-outputs](../../decisions/DEC-20261016-frontend-reflects-backend-outputs.md) |
 | Review Accept/Reject change real data: the screen changes only after the server confirms; no bare-key shortcuts | [DEC-20261016-review-actions-server-confirmed](../../decisions/DEC-20261016-review-actions-server-confirmed.md) |
 | Load failures are shown as failures, never as "empty" | `AssetHistory.jsx`, `ReviewQueue.jsx`, `ServiceRecords.jsx` |
@@ -75,7 +75,7 @@ not capture `/api/*` or `/assets/*`.
 | Only backend-supplied values are displayed (no invented supersession reason, no "Invalid Date") | `AssetHistory.jsx`, `utils/format.js` |
 | No UI control may wipe the graph (Settings reset removed) | `Settings.jsx` |
 | Ingest writes only after an explicit confirm; counts are the backend's own numbers; failures are inline, never `alert()` | `MaintenanceIngest.jsx`, `CsvUploader.jsx`, `IngestResult.jsx`, [DEC-20261017-ingest-csv-upload-ui](../../decisions/DEC-20261017-ingest-csv-upload-ui.md) |
-| Graph shows only stored edges for one aircraft; counts are what is drawn; `SUPERSEDES` is styled apart; no invented edges | `Graph.jsx`, `utils/graphScope.js`, [DEC-20261017-graph-aircraft-focus](../../decisions/DEC-20261017-graph-aircraft-focus.md) |
+| Graph shows only stored edges for one aircraft; counts are what is drawn; `SUPERSEDES` is styled apart; no invented edges | `Graph.jsx`, `features/graph/graphScope.js`, [DEC-20261017-graph-aircraft-focus](../../decisions/DEC-20261017-graph-aircraft-focus.md) |
 
 ## Performance
 
@@ -113,3 +113,22 @@ shape, not live integration. There is no linter. Evidence and live checks: `docs
   empty citation lists (3 of 3 symptoms) while the ranking was present; the same merged code run locally returned a full
   explanation for 1 of 2. **Settings now shows staging's pinned model as `openai/gpt-oss-20b`; the local stack uses
   `openai/gpt-oss-120b`**, a likely (unconfirmed) cause. Needs staging logs / `GROQ_MODEL` on the VM. The UI shows the notice above.
+
+## Prepared investigation/home feature packages
+
+Usman's server-backed feature packages and manifests now exist under
+`src/features/investigation/` and `src/features/home/`. The independent preview and
+feature tests verify their behavior. The existing App still mounts the old
+Diagnostics page until the separately authorized registration handoff is applied.
+See [investigation_frontend.md](investigation_frontend.md) and
+`docs/work/usman/FRONTEND_INTEGRATION.md`; no completed production migration is
+claimed by the feature-package evidence alone.
+
+### Authorized integration review branch
+
+`codex/usman-ui-integration` applies the minimal feature registry, App/Sidebar
+registration, home defaults and AuthContext legacy-key clearing, following the
+user's explicit preparation authorization. Shahmeer review remains pending.
+256 tests and a real BrowserRouter/API/PostgreSQL/Neo4j browser flow passed,
+including global logout/deep-link/account isolation. See
+`docs/work/usman/FRONTEND_INTEGRATION.md` and its integration evidence.
