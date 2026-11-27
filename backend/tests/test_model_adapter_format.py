@@ -92,6 +92,20 @@ def test_copilot_fact_extraction_uses_structured_local_output(local_provider):
     assert requests[0]["response_format"] == {"type": "json_object"}
 
 
+def test_copilot_fact_extraction_coerces_string_and_null_fields(local_provider, monkeypatch):
+    from api.routes import diagnostics
+    monkeypatch.setattr(diagnostics, "_parse_json_object", lambda raw: {
+        "symptoms": "hydraulic leak", "observations": None,
+        "checks_done": ["visual check"], "ruled_out": [],
+    })
+    additions, warnings = diagnostics._extract_case_facts(local_provider[0], {}, "hydraulic leak")
+    assert warnings == []
+    assert additions["symptoms"] == ["hydraulic leak"]
+    assert additions["observations"] == []
+    assert additions["checks_done"] == ["visual check"]
+    assert additions["ruled_out"] == []
+
+
 @pytest.mark.parametrize('json_mode', [False, True])
 def test_local_token_cutoff_rejects_prose_without_changing_json_extraction(monkeypatch, json_mode):
     original = httpx.Client
