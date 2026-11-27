@@ -81,7 +81,7 @@
     "backend/investigation/experiments/temporal_questions.py": "2a56e645f15f6ef8b029ae58236fbb43a16c0d80be18b02f26945788af2021d0",
     "backend/investigation/experiments/simulated_technician.py": "d29944d402be41e5875334819ab7dc0b321752a0697932b76bfe63377ad403bb",
     "backend/investigation/experiments/policy_selection.py": "a8eb1576511c0756f84b708f341a4bf2791e3f3f1736f3e5f503f60e42c89b86",
-    "backend/services/diagnostic_retrieval.py": "2ba4174e78e5499d4b0a3bdad1936812a486779dc5388061afd322eaef0601fa",
+    "backend/services/diagnostic_retrieval.py": "733083c9d687bd0f092fed2a5a3835058922362fd833be29dad583dfdaefb979",
     "docs/work/usman/evidence/phase16-frozen-policy/label-availability-audit.json": "1e0714d8e80b18e02416ffc646f5106aec1a6c034937a1f511f1ee9c5be6c719",
     "backend/investigation/experiments/abstention_curve.py": "964a92c45da095b946a1ffcef317479a97f5fe7e4c1d6e48a82e6d6772de7ce4",
     "backend/investigation/experiments/calibration.py": "e408f514cf76522bb24ca0cbc14649abea78a30cd19835e7933bc6d8d1a892b7",

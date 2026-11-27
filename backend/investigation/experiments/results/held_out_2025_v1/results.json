@@ -86,7 +86,7 @@
       "backend/investigation/experiments/temporal_questions.py": "2a56e645f15f6ef8b029ae58236fbb43a16c0d80be18b02f26945788af2021d0",
       "backend/investigation/experiments/simulated_technician.py": "d29944d402be41e5875334819ab7dc0b321752a0697932b76bfe63377ad403bb",
       "backend/investigation/experiments/policy_selection.py": "a8eb1576511c0756f84b708f341a4bf2791e3f3f1736f3e5f503f60e42c89b86",
-      "backend/services/diagnostic_retrieval.py": "2ba4174e78e5499d4b0a3bdad1936812a486779dc5388061afd322eaef0601fa",
+      "backend/services/diagnostic_retrieval.py": "733083c9d687bd0f092fed2a5a3835058922362fd833be29dad583dfdaefb979",
       "docs/work/usman/evidence/phase16-frozen-policy/label-availability-audit.json": "1e0714d8e80b18e02416ffc646f5106aec1a6c034937a1f511f1ee9c5be6c719",
       "backend/investigation/experiments/abstention_curve.py": "964a92c45da095b946a1ffcef317479a97f5fe7e4c1d6e48a82e6d6772de7ce4",
       "backend/investigation/experiments/calibration.py": "e408f514cf76522bb24ca0cbc14649abea78a30cd19835e7933bc6d8d1a892b7",
@@ -96,12 +96,12 @@
     },
     "held_out_evaluated_at_freeze": false,
     "belief_label": "relative support",
-    "file_sha256": "2b75eff8bf50ae71c146de282896280ffc55d663137fce42635569d7a97974de"
+    "file_sha256": "15194e4e704f9634561ac347efded36338efd42f0c0d4c652d7250190db40eb3"
   },
   "protocol": {
     "version": "held-out-2025-v1",
     "status": "frozen-before-2025-access",
-    "selected_policy_sha256": "2b75eff8bf50ae71c146de282896280ffc55d663137fce42635569d7a97974de",
+    "selected_policy_sha256": "15194e4e704f9634561ac347efded36338efd42f0c0d4c652d7250190db40eb3",
     "year": 2025,
     "fit_years": [
       2023
@@ -170,8 +170,8 @@
   },
   "pretest_receipt": {
     "recorded_before_test_access_utc": "2026-11-21T12:53:36.444866+00:00",
-    "policy_sha256": "2b75eff8bf50ae71c146de282896280ffc55d663137fce42635569d7a97974de",
-    "protocol_sha256": "2082840979d1f286de07f9e013b21ea27ead57069e5149152f75ee62bbb1481d",
+    "policy_sha256": "15194e4e704f9634561ac347efded36338efd42f0c0d4c652d7250190db40eb3",
+    "protocol_sha256": "bd00cde688102b5906ea8f4eb359e8be66b0c969e6b8fa6ac8d3341695739e96",
     "procedure_files_sha256": {
       "backend/investigation/experiments/held_out.py": "f9f884a4232a47c8874547c823b64db382d16a0b38b856c5f6731045a4083ec1",
       "backend/tests/test_held_out.py": "e23bbac74dbac085d355d1f19b027502eaa787ddc958b9ec30559636d3707bda",
