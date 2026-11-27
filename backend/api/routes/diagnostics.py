@@ -238,6 +238,12 @@ def _extract_case_facts(groq_service, current: dict, message: str) -> tuple[dict
         additions = {}
         for field in _CASE_FIELDS:
             value = parsed.get(field, [])
+            if isinstance(value, str):
+                # Models occasionally emit a bare string for an array field;
+                # keep the content rather than discarding the extraction.
+                value = [value] if value.strip() else []
+            if value is None:
+                value = []
             if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
                 raise ValueError(f"invalid case-state field: {field}")
             additions[field] = _dedupe_strings(value)
