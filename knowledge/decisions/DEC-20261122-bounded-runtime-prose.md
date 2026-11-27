@@ -40,3 +40,18 @@ must state missing detail rather than infer omitted narrative. This is not a
 claim of whole-corpus review, semantic accuracy or a general latency guarantee.
 Real post-release default-session/quick checks and saved-browser replay/print are
 required before accepting the fix. Retain both failed baseline attempts.
+
+## Actual release observation
+
+Sourceb9bad63 passed549backend tests plus frontend/full-stack and merged11beed1.
+Default session still timed out (154.35s total) and quick diagnosis also returned
+fallback (126.42s). Input/output bounds are enforced but do not establish latency
+acceptance. Preserve them as explicit source-coverage bounds; investigate service
+execution before claiming an availability fix. Public populated replay/closure/
+one-click printing passed44993544541; PDF visual margins need a separate fix.
+
+The separate print correction merged/deployed via PR56, with actual browser
+44994441004 and all4PDFpages visually reviewed. All20full saved narratives
+retained. This independent printing acceptance does not change the two failed
+model-availability measurements. Initial clipping suspicion was disproved by
+close-up inspection; zero-margin crowding was corrected.

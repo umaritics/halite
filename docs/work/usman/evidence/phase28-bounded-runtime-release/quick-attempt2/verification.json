@@ -1,0 +1,27 @@
+{
+  "state": "failed",
+  "started_at": "2026-11-22T06:28:02.276074+00:00",
+  "source_sha": "11beed1f2b050057942ba31321ce7f2e7b0bf80f",
+  "synthetic_scenario": true,
+  "automatic_retries": false,
+  "corpus_writes": false,
+  "elapsed_seconds": 126.42473455000436,
+  "live_explanation_verified": false,
+  "response_keys": [
+    "asset_id",
+    "symptom_text",
+    "ranked_checks",
+    "evidence",
+    "rare_cases",
+    "explanation",
+    "fallback_explanation",
+    "context_size",
+    "citation_validation",
+    "llm_status",
+    "warnings",
+    "grounding"
+  ],
+  "source_and_corpus_unchanged": true,
+  "logout": "confirmed",
+  "finished_at": "2026-11-22T06:30:12.981275+00:00"
+}

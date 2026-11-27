@@ -39,3 +39,29 @@ turn persistence, closure or printing; those complete lifecycle flows have
 disposable full-stack evidence but need a separate labelled production account
 check. The browser run did not invoke a model or certify repair correctness.
 Independent owner review, human grounding labels and M4 decisions remain separate.
+
+## Populated closed workspace and print — phase28
+
+Run44993544541 on exact backend11beed1 passed with require_saved_case=true.
+It selected newly closed case74c792ce-510c-4c60-addb-a7f441435246, verified exact
+turn replay after refresh/reload, closed read-only guard and one-click authenticated
+A4PDF export. Home/history rendered both labelled synthetic cases. All seven
+screenshots inspected;326px phone content and both research themes remain sound.
+The actual turn has llm_status unavailable; fallback is shown honestly.
+
+Functional printing passed, but rendering/inspecting all3PDF pages exposed
+crowded page boundaries with zero print margins. Original retained with its hash.
+PR56 adds16mmA4margins and pagination controls; fresh deployed export/visual
+review required before print layout acceptance. See PUBLIC_SESSION_VERIFICATION.md
+and evidence/phase28-bounded-runtime-release/.
+
+Final print release: mainCI44994039620/deploy44994297938 passed; public health
+confirmed exact6c3cd0d6fbac7a703570894257f0cad738a4e14b and2,079records.
+Hosted browser44994441004 passed real own-case replay, closure and one-click
+print plus all public read/auth/phone checks, with zero page errors/prohibited
+requests. All4exportedPDF pages rendered and visually reviewed; all20record IDs
+and20full normalized narratives independently match the saved response. New
+PDF SHA2568ec1c3dbdc0830b1d5242de0cc62c1324f0e15a731c513f1103f199a7c0fc839.
+A close-up of the original disproved the initially suspected missing glyphs;
+the confirmed issue was zero-margin edge crowding. Correction is now visually
+accepted. Model availability remains failed on both measured runtime paths.

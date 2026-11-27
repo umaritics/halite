@@ -9,8 +9,9 @@ remain explicit. This review does not claim those verticals are finished.
 
 The exact 3-page PDF with SHA b88fca77d2024ab43d93b6cec1a56e18a6076b8bbcf5b6a9b88bd19b22cf7a61
 was rendered with bundled Poppler and all pages inspected. Original print CSS
-had zero page margins; evidence reached the edges and a top-of-page line was
-clipped. Visual print acceptance is therefore pending, despite the functional
+had zero page margins; evidence reached the page edges. An initial suspicion
+of clipped record IDs was disproved by full-resolution cropped inspection: all
+original glyphs are present. The confirmed issue is crowded page boundaries. Visual print acceptance is therefore pending, despite the functional
 print/reload/browser pass. Prepared A4/16mm print correction must be deployed
 and exported afresh, then every resulting page reviewed. Original PDF retained.
 

@@ -1308,3 +1308,28 @@ Prepared own report CSS correction:A4/16mm margins, fitting evidence entries
 together, widow/orphan control; hosted export honors CSS page size. Original
 PDF retained; new deployed export/review required. No claim of print visual
 acceptance before correction. Model transport investigation remains open.
+
+Quick path post-release also failed live explanation after126.42s, with
+marked fallback, source/corpus stable and explicit logout. No more repeated
+runtime calls until a measured workaround is prepared. Print PR56 source0504375
+passed fullCI44993808561 and merged6c3cd0d. MainCI44994039620/release/new PDF
+review pending. Earlier password continues to authenticate; no rejected retry.
+
+Final print release: mainCI44994039620/deploy44994297938 passed; public health
+confirmed exact6c3cd0d6fbac7a703570894257f0cad738a4e14b and2,079records.
+Hosted browser44994441004 passed real own-case replay, closure and one-click
+print plus all public read/auth/phone checks, with zero page errors/prohibited
+requests. All4exportedPDF pages rendered and visually reviewed; all20record IDs
+and20full normalized narratives independently match the saved response. New
+PDF SHA2568ec1c3dbdc0830b1d5242de0cc62c1324f0e15a731c513f1103f199a7c0fc839.
+A close-up of the original disproved the initially suspected missing glyphs;
+the confirmed issue was zero-margin edge crowding. Correction is now visually
+accepted. Model availability remains failed on both measured runtime paths.
+
+Next runtime step: a read-only private single-request timing probe using the
+exact retained compact prompt, installed model and source pin. Compare actual
+completion/runtime metadata with the120s production deadline before changing
+transport/deadlines. Do not start the full600s-reference benchmark before the
+runtime model acceptance path works; do not create more synthetic sessions
+without a measured candidate workaround. Actual human labels/M4/owner gates
+remain as in ACCEPTANCE_MATRIX.md. Laptop remains spared heavy workloads.
