@@ -1,0 +1,25 @@
+{
+  "generated_at": "2026-11-27T17:15:30.866397+00:00",
+  "config": {
+    "raw_dir": "data/raw",
+    "pairs": "data/processed/correction_pairs.csv",
+    "split": "test",
+    "max_pairs": null
+  },
+  "runs": [
+    {
+      "suite": "B",
+      "ranker": "b4",
+      "split": "test",
+      "pairs_evaluated": 141,
+      "pairs_skipped": 0,
+      "top1_accuracy": 0.0567,
+      "top3_accuracy": 0.1064,
+      "top5_accuracy": 0.1348,
+      "top1_ci_95": [
+        0.0213,
+        0.0993
+      ]
+    }
+  ]
+}
