@@ -300,6 +300,11 @@ def _collect_evidence(context: dict, ranked: list[dict], extra: list[dict] | Non
             for r in records
             if r.get("is_superseded") or r.get("status") == "superseded"
         ],
+        *[
+            str(r.get("record_id", r.get("id", "")))
+            for r in records
+            if r.get("record_id", r.get("id"))
+        ],
     ]
     result = []
     seen = set()

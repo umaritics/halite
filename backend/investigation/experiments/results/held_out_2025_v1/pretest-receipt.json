@@ -1,7 +1,7 @@
 {
   "recorded_before_test_access_utc": "2026-11-21T12:53:36.444866+00:00",
-  "policy_sha256": "8f4657e3e412b82a80f0972ac829642171dc495710e9a349cec82785748fdb76",
-  "protocol_sha256": "93ff4fcc4ffc9e64e59ff97da953fed82f2208dda1bf63da0fdad2e7ee2e61a9",
+  "policy_sha256": "2b75eff8bf50ae71c146de282896280ffc55d663137fce42635569d7a97974de",
+  "protocol_sha256": "2082840979d1f286de07f9e013b21ea27ead57069e5149152f75ee62bbb1481d",
   "procedure_files_sha256": {
     "backend/investigation/experiments/held_out.py": "f9f884a4232a47c8874547c823b64db382d16a0b38b856c5f6731045a4083ec1",
     "backend/tests/test_held_out.py": "e23bbac74dbac085d355d1f19b027502eaa787ddc958b9ec30559636d3707bda",

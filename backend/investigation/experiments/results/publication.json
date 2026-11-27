@@ -19,12 +19,12 @@
     {
       "id": "held_out",
       "path": "held_out_2025_v1/results.json",
-      "sha256": "0815e2089902105e9c459ffe0afeffc664a1dc2039419ae415070b972b876a12"
+      "sha256": "5aeea5dee9e73a0c985813f7a7dfb2eda78d1402180112e5e2d60b65be3401bb"
     },
     {
       "id": "held_out_verification",
       "path": "held_out_2025_v1/verification.json",
-      "sha256": "657bf76ed09574d35a25865c493cafb9bc234e50d4db20ed8e0283752c59f185"
+      "sha256": "708578f09b37bcdaca78009f9557ddd2458dc1999e638a02cc1e1e0775d585c6"
     }
   ]
 }

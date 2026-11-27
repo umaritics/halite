@@ -19,7 +19,14 @@ def test_summary_contract_and_single_registration(client, vertical, title, link)
     path = f"/api/{vertical}/summary"
     response = client.get(path)
     assert response.status_code == 200
-    assert response.json() == {"title": title, "link": link, "stats": []}
+    body = response.json()
+    assert body["title"] == title and body["link"] == link and body["stats"] == []
+    if vertical == "retrieval":
+        assert body["mode"] == "mid_heuristic"
+        assert body["ranker_version"] == "mid_heuristic-v1-b1"
+        assert body["corpus_loaded"] is False
+    else:
+        assert body == {"title": title, "link": link, "stats": []}
     routes = [r for r in client.app.routes if getattr(r, "path", None) == path]
     assert len(routes) == 1
     assert routes[0].methods == {"GET"}
